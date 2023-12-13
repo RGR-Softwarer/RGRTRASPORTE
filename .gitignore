@@ -2,3 +2,5 @@ RGRTRASPORTE/bin*
 RGRTRASPORTE/Dominio/bin*
 .vs*
 RGRTRASPORTE/obj*
+/bin/
+/obj/
