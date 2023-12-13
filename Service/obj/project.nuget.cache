@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "GUFJjBB72J01QxfIhskAUPn+4sWM21mHK62/hvQxF5Ox+m/U9o1dg9b42A0FnsidzFAzwWw+6fnQ4QVYSh6gTw==",
+  "success": true,
+  "projectFilePath": "C:\\Workspace\\RGRTRASPORTE\\Service\\Service.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Gustavo\\.nuget\\packages\\fluentvalidation\\11.8.1\\fluentvalidation.11.8.1.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -1,0 +1,16 @@
+C:\Workspace\RGRTRASPORTE\Infra.Data\bin\Debug\net8.0\Infra.Data.deps.json
+C:\Workspace\RGRTRASPORTE\Infra.Data\bin\Debug\net8.0\Infra.Data.dll
+C:\Workspace\RGRTRASPORTE\Infra.Data\bin\Debug\net8.0\Infra.Data.pdb
+C:\Workspace\RGRTRASPORTE\Infra.Data\bin\Debug\net8.0\Dominio.dll
+C:\Workspace\RGRTRASPORTE\Infra.Data\bin\Debug\net8.0\Dominio.pdb
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\Infra.Data.csproj.AssemblyReference.cache
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\Infra.Data.GeneratedMSBuildEditorConfig.editorconfig
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\Infra.Data.AssemblyInfoInputs.cache
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\Infra.Data.AssemblyInfo.cs
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\Infra.Data.csproj.CoreCompileInputs.cache
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\Infra.Data.sourcelink.json
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\Infra.Data.csproj.CopyComplete
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\Infra.Data.dll
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\refint\Infra.Data.dll
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\Infra.Data.pdb
+C:\Workspace\RGRTRASPORTE\Infra.Data\obj\Debug\net8.0\ref\Infra.Data.dll
