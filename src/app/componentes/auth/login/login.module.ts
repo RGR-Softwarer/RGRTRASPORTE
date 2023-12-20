@@ -17,6 +17,7 @@ import { CardModule } from 'primeng/card';
         ReactiveFormsModule,
         CardModule,
     ],
-    declarations: [LoginComponent]
+    declarations: [LoginComponent],
+
 })
 export class LoginModule { }
