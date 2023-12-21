@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
-import { PasswordValidator } from '../../../validators/PasswordValidator';
+import { PasswordValidator } from '../../../services/validators/password.validator';
 import { LoginService } from '../../../services/login/login.service';
 import { ToastService } from '../../../services/utils/notificacao/toast.service';
 
@@ -32,9 +32,6 @@ export class LoginComponent implements AfterViewInit {
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.loginService.authenticate(this.loginForm.value.email!, this.loginForm.value.senha!)
-      console.log('Form Data: ', this.loginForm.value);
-    } else {
-      console.log('Formulário inválido');
     }
   }
 

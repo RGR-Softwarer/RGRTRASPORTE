@@ -1,3 +1,6 @@
+import { Router } from '@angular/router';
+import { AppContextService } from './../context/app.context';
+import { AppContext } from './../../dominio/entidade/app.context';
 import { ApiService } from './../http/api.service';
 import { Injectable } from '@angular/core';
 import { catchError } from 'rxjs/operators';
@@ -10,27 +13,27 @@ import { ToastService } from '../utils/notificacao/toast.service';
 })
 export class LoginService {
 
-  constructor(private apiService: ApiService, private toastService: ToastService) { }
+  constructor(private apiService: ApiService, private toastService: ToastService, private AppContextService: AppContextService , private router: Router)
+  { }
 
   public authenticate(email: string, senha: string): boolean {
     this.apiService.post(`${environment.apiBaseUrl}/Auth/login`, { email, senha }).pipe(
       catchError(this.handleError)
     ).subscribe({
       next: data => {
-        console.log('Login successful:', data);
         if (data.sucesso) {
           this.toastService.exibirMensagemSucesso('Sucesso', 'Login bem-sucedido');
-          return true
-        }        
+          this.AppContextService.salvaAppContext(new AppContext(email, data.dados));
+          this.router.navigate(['']);
+          return true;
+        }
         return false;
       },
       error: error => {
         console.error('Login failed:', error);
-        // Lógica de tratamento de erro
       },
       complete: () => {
         console.log('Login request completed');
-        // Lógica após a conclusão da requisição (opcional)
       }
     });
     return false;
