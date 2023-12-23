@@ -8,7 +8,6 @@ import { routes } from './app.routes';
 import { HttpClientModule } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MenuModule } from './componentes/dashboard/menu/menu.module';
 
 @NgModule({
     imports: [
@@ -18,7 +17,6 @@ import { MenuModule } from './componentes/dashboard/menu/menu.module';
         HttpClientModule,
         ToastModule,
         BrowserAnimationsModule,
-        MenuModule
     ],
     declarations: [
         AppComponent,
