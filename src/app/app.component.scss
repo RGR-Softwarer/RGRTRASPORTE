@@ -1,18 +1,10 @@
 .app-container {
-    display: flex; /* ou 'grid' */
-    flex-direction: column; /* se estiver usando 'flex' */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .content {
-    flex-grow: 1; /* se estiver usando 'flex' */
-}
-.app-menu, .content {
-    position: relative;
-}
-.app-menu {
-    z-index: 1;
-}
-
-.content {
-    z-index: 2;
+    flex-grow: 1;
+    padding: 20px;
 }
