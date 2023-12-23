@@ -10,11 +10,11 @@ const dashboardRoutes: Routes = [
 
 @NgModule({
   declarations: [
-    DashboardComponent
+    DashboardComponent,
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild(dashboardRoutes)
+    RouterModule.forChild(dashboardRoutes),
   ]
 })
 export class DashboardModule { }
