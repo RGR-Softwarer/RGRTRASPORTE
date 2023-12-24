@@ -1,0 +1,9 @@
+<nz-breadcrumb>
+    <ng-container *ngFor="let breadcrumb of breadcrumbs$ | async; let last = last">
+      <nz-breadcrumb-item>
+        <a *ngIf="!last; else lastBreadcrumb" [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
+        <ng-template #lastBreadcrumb>{{ breadcrumb.label }}</ng-template>
+      </nz-breadcrumb-item>
+    </ng-container>
+  </nz-breadcrumb>
+  

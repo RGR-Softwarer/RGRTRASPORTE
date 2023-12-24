@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AppContext } from '../../../dominio/entidade/app.context';
-import { AppContextService } from '../../../services/context/app.context';
+import { AppContext } from '../../dominio/entidade/app.context';
+import { AppContextService } from '../../services/context/app.context';
 
 @Component({
   selector: 'app-dashboard',

@@ -1,8 +1,7 @@
 import { Component, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { PasswordValidator } from '../../../services/validators/password.validator';
 import { LoginService } from '../../../services/login/login.service';
-import { ToastService } from '../../../services/utils/notificacao/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +19,8 @@ export class LoginComponent implements AfterViewInit {
 
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email, Validators.pattern(this.emailRegex), Validators.minLength(10)]),
-    senha: new FormControl('', [Validators.required, PasswordValidator.validate])
+    senha: new FormControl('', [Validators.required, PasswordValidator.validate]),
+    lembrar: new FormControl()
   });
 
   ngAfterViewInit(): void {
@@ -32,6 +32,13 @@ export class LoginComponent implements AfterViewInit {
   onSubmit(): void {
     if (this.loginForm.valid) {
       this.loginService.authenticate(this.loginForm.value.email!, this.loginForm.value.senha!)
+    }    else {
+      Object.values(this.loginForm.controls).forEach(control => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
     }
   }
 

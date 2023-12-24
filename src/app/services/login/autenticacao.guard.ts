@@ -1,17 +1,22 @@
-import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Injectable } from '@angular/core';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { Observable } from 'rxjs';
 import { AppContextService } from '../context/app.context';
 
-export const AuthGuard = () => {
-  const appContextService = inject(AppContextService);
-  const router = inject(Router);
+@Injectable({
+  providedIn: 'root'
+})
+export class AutenticacaoGuard implements CanActivate {
+  constructor(private appContextService: AppContextService, private router: Router) {}
 
-  return (): boolean => {
-    if (appContextService.usuarioLogado()) {
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    if (this.appContextService.obterUsuarioLogado()) {
       return true;
     } else {
-      router.navigate(['auth/login']);
-      return false;
+      return this.router.createUrlTree(['/auth/login']);
     }
-  };
-};
+  }
+}

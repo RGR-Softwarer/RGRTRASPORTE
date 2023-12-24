@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core';
-import { MessageService } from 'primeng/api';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ToastService {
 
-  constructor(private messageService: MessageService) {}
+  constructor(private notificationService: NzNotificationService) {}
 
-  exibirMensagemSucesso(summary: string, detail: string) {
-    this.messageService.add({severity:'success', summary, detail});
+  exibirMensagemSucesso(titulo: string, conteudo: string) {
+    this.notificationService.success(titulo, conteudo);
   }
 
-  exibirMensagemErro(summary: string, detail: string) {
-    this.messageService.add({severity:'error', summary, detail});
+  exibirMensagemErro(titulo: string, conteudo: string) {
+    this.notificationService.error(titulo, conteudo);
   }
-
 }

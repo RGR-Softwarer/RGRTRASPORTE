@@ -19,6 +19,7 @@ export class AppContextService {
   }
 
   usuarioLogado(): boolean {
+    this.obterUsuarioLogado();
     return this.appSubject.getValue() != null;
   }
 
@@ -32,11 +33,14 @@ export class AppContextService {
 
   obterLocalStorage(): AppContext | null {
     let appContextData = localStorage.getItem('appContext');
-    if (appContextData) {
+    if (appContextData != null && appContextData.trim() !== '') {
       let objeto = JSON.parse(appContextData);
-      return new AppContext(objeto.username, objeto.token);
+      let appContext = new AppContext(objeto.username, objeto.token);
+      this.appSubject.next(appContext);
+      return appContext;
     } else {
       return null;
     }
+
   }
 }
