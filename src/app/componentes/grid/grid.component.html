@@ -1,0 +1,95 @@
+<div class="components-table-demo-control-bar">
+  @if(valorConfiguracao.mostrarOpcoes){
+  <form nz-form nzLayout="inline" [formGroup]="formularioConfiguracao">
+    @for (switch of listOfSwitch; track switch.nome) {
+    <nz-form-item>
+      <nz-form-label>{{ switch.nome }}</nz-form-label>
+      <nz-form-control
+        ><nz-switch [formControlName]="switch.formControlName"></nz-switch
+      ></nz-form-control>
+    </nz-form-item>
+    } @for (radio of listOfRadio; track radio.nome) {
+    <nz-form-item>
+      <nz-form-label>{{ radio.nome }}</nz-form-label>
+      <nz-form-control>
+        <nz-radio-group [formControlName]="radio.formControlName">
+          @for (o of radio.listOfOption; track o.valor) {
+          <label nz-radio-button [nzValue]="o.valor">{{ o.rotulo }}</label>
+          }
+        </nz-radio-group>
+      </nz-form-control>
+    </nz-form-item>
+    }
+  </form>
+  }
+</div>
+<nz-table
+  #tabelaDinamica
+  [nzScroll]="{ x: rolagemX, y: rolagemY }"
+  [nzData]="listaDados"
+  [nzTableLayout]="valorConfiguracao.layoutTabela"
+  [nzBordered]="valorConfiguracao.comBorda"
+  [nzSimple]="valorConfiguracao.simples"
+  [nzLoading]="valorConfiguracao.carregando"
+  [nzPaginationType]="valorConfiguracao.tipoPaginacao"
+  [nzPaginationPosition]="valorConfiguracao.posicao"
+  [nzShowSizeChanger]="valorConfiguracao.alteradorTamanho"
+  [nzFrontPagination]="valorConfiguracao.paginacao"
+  [nzShowPagination]="valorConfiguracao.paginacao"
+  [nzFooter]="valorConfiguracao.rodape ? 'Aqui é o Rodapé' : null"
+  [nzTitle]="valorConfiguracao.titulo ? 'Aqui é o Título' : null"
+  [nzSize]="valorConfiguracao.tamanho"
+  (nzCurrentPageDataChange)="mudancaDadosPaginaAtual($event)"
+>
+  <thead>
+    @if(valorConfiguracao.cabecalho){
+    <tr>
+      @if(valorConfiguracao.expansivel){
+      <th nzWidth="40px" [nzLeft]="colunaFixa"></th>
+      } @if(valorConfiguracao.caixaSelecao){
+      <th
+        nzWidth="60px"
+        [(nzChecked)]="todosMarcados"
+        [nzLeft]="colunaFixa"
+        [nzIndeterminate]="indeterminado"
+        (nzCheckedChange)="marcarTodos($event)"
+      ></th>
+      }
+      <th [nzLeft]="colunaFixa">Name</th>
+      <th>Age</th>
+      <th>Address</th>
+      <th [nzRight]="colunaFixa">Action</th>
+    </tr>
+    }
+  </thead>
+  <tbody>
+    @for (data of tabelaDinamica.data; track $index) {
+    <ng-container>
+      <tr>
+        @if(valorConfiguracao.expansivel){
+        <td [nzLeft]="colunaFixa" [(nzExpand)]="data.expandido"></td>
+        } @if(valorConfiguracao.caixaSelecao){
+        <td
+          [nzLeft]="colunaFixa"
+          [(nzChecked)]="data.marcado"
+          (nzCheckedChange)="atualizarStatus()"
+        ></td>
+        }
+        <td [nzLeft]="colunaFixa">{{ data.nome }}</td>
+        <td>{{ data.idade }}</td>
+        <td [nzEllipsis]="valorConfiguracao.elipse">{{ data.endereco }}</td>
+        <td [nzRight]="colunaFixa" [nzEllipsis]="valorConfiguracao.elipse">
+          <a href="#">Delete</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a href="#">More action</a>
+        </td>
+      </tr>
+      @if (valorConfiguracao.expansivel) {
+      <tr [nzExpand]="data.expandido">
+        <span>{{ data.descricao }}</span>
+      </tr>
+      }
+    </ng-container>
+    }
+  </tbody>
+</nz-table>
