@@ -26,7 +26,7 @@
 <nz-table
   #tabelaDinamica
   [nzScroll]="{ x: rolagemX, y: rolagemY }"
-  [nzData]="listaDados"
+  [nzData]="dadosExibidos"
   [nzTableLayout]="valorConfiguracao.layoutTabela"
   [nzBordered]="valorConfiguracao.comBorda"
   [nzSimple]="valorConfiguracao.simples"
@@ -36,8 +36,8 @@
   [nzShowSizeChanger]="valorConfiguracao.alteradorTamanho"
   [nzFrontPagination]="valorConfiguracao.paginacao"
   [nzShowPagination]="valorConfiguracao.paginacao"
-  [nzFooter]="valorConfiguracao.rodape ? 'Aqui é o Rodapé' : null"
-  [nzTitle]="valorConfiguracao.titulo ? 'Aqui é o Título' : null"
+  [nzFooter]="valorConfiguracao.rodape ? valorConfiguracao.rodapeTabela : null"
+  [nzTitle]="valorConfiguracao.titulo ? valorConfiguracao.tituloTabela : null"
   [nzSize]="valorConfiguracao.tamanho"
   (nzCurrentPageDataChange)="mudancaDadosPaginaAtual($event)"
 >
@@ -54,11 +54,9 @@
         [nzIndeterminate]="indeterminado"
         (nzCheckedChange)="marcarTodos($event)"
       ></th>
+      } @for (key of obterChaves(dadosExibidos[0]); track $index) {
+      <th [nzLeft]="colunaFixa">{{ key }}</th>
       }
-      <th [nzLeft]="colunaFixa">Name</th>
-      <th>Age</th>
-      <th>Address</th>
-      <th [nzRight]="colunaFixa">Action</th>
     </tr>
     }
   </thead>
@@ -74,15 +72,9 @@
           [(nzChecked)]="data.marcado"
           (nzCheckedChange)="atualizarStatus()"
         ></td>
+        } @for (key of obterChaves(data); track $index) {
+        <td [nzLeft]="colunaFixa">{{ data[key] }}</td>
         }
-        <td [nzLeft]="colunaFixa">{{ data.nome }}</td>
-        <td>{{ data.idade }}</td>
-        <td [nzEllipsis]="valorConfiguracao.elipse">{{ data.endereco }}</td>
-        <td [nzRight]="colunaFixa" [nzEllipsis]="valorConfiguracao.elipse">
-          <a href="#">Delete</a>
-          <nz-divider nzType="vertical"></nz-divider>
-          <a href="#">More action</a>
-        </td>
       </tr>
       @if (valorConfiguracao.expansivel) {
       <tr [nzExpand]="data.expandido">
