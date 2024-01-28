@@ -55,10 +55,9 @@
         (nzCheckedChange)="marcarTodos($event)"
       ></th>
       }
-      <th [nzLeft]="colunaFixa">Name</th>
-      <th>Age</th>
-      <th>Address</th>
-      <th [nzRight]="colunaFixa">Action</th>
+      @for (key of obterChaves(dadosExibidos[0]); track $index) {
+        <th [nzLeft]="colunaFixa">{{ key }}</th>
+        }
     </tr>
     }
   </thead>
@@ -74,15 +73,9 @@
           [(nzChecked)]="data.marcado"
           (nzCheckedChange)="atualizarStatus()"
         ></td>
-        }
-        <td [nzLeft]="colunaFixa">{{ data.nome }}</td>
-        <td>{{ data.idade }}</td>
-        <td [nzEllipsis]="valorConfiguracao.elipse">{{ data.endereco }}</td>
-        <td [nzRight]="colunaFixa" [nzEllipsis]="valorConfiguracao.elipse">
-          <a href="#">Delete</a>
-          <nz-divider nzType="vertical"></nz-divider>
-          <a href="#">More action</a>
-        </td>
+        } @for (key of obterChaves(data); track $index) {
+          <td [nzLeft]="colunaFixa">{{ data[key] }}</td>
+          }
       </tr>
       @if (valorConfiguracao.expansivel) {
       <tr [nzExpand]="data.expandido">

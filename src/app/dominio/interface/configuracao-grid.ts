@@ -22,4 +22,6 @@ comBorda: boolean;
   layoutTabela: NzTableLayout;
   posicao: NzTablePaginationPosition;
   tipoPaginacao: NzTablePaginationType;
+  tituloTabela: string;
+  rodapeTabela: string;
 }
