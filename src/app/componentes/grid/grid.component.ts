@@ -1,6 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { ConfiguracaoGrid } from '../../dominio/interface/configuracao-grid';
+import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
+import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/configuracao-grid';
+
+interface ItemData {
+  nome: string;
+  idade: number | string;
+  endereco: string;
+  marcado: boolean;
+  expandido: boolean;
+  descricao: string;
+  desativado?: boolean;
+}
 
 @Component({
   selector: 'app-grid',
@@ -8,16 +19,17 @@ import { ConfiguracaoGrid } from '../../dominio/interface/configuracao-grid';
   styleUrl: './grid.component.scss'
 })
 export class GridComponent implements OnInit {
-  @Input() formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
-  @Input() dadosEntrada: any[] = [];
+  @Input() formularioConfiguracao: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
 
-  dadosExibidos: readonly any[] = [];
+  //formularioConfiguracao: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
+  listaDados: readonly ItemData[] = [];
+  dadosExibidos: readonly ItemData[] = [];
   todosMarcados = false;
   indeterminado = false;
   colunaFixa = false;
   rolagemX: string | null = null;
   rolagemY: string | null = null;
-  valorConfiguracao!: ConfiguracaoGrid;
+  valorConfiguracao: ConfiguracaoGrid;
   listOfSwitch = [
     { nome: 'Com Borda', formControlName: 'comBorda' },
     { nome: 'Carregando', formControlName: 'carregando' },
@@ -79,7 +91,7 @@ export class GridComponent implements OnInit {
     }
   ];
 
-  mudancaDadosPaginaAtual($event: readonly any[]): void {
+  mudancaDadosPaginaAtual($event: readonly ItemData[]): void {
     this.dadosExibidos = $event;
     this.atualizarStatus();
   }
@@ -101,6 +113,47 @@ export class GridComponent implements OnInit {
     this.atualizarStatus();
   }
 
+  gerarDados(): readonly ItemData[] {
+    const dados = [];
+    for (let i = 1; i <= 100; i++) {
+      dados.push({
+        nome: 'John Brown',
+        idade: `${i}2`,
+        endereco: `Nova York No. ${i} Lake Park`,
+        descricao: `Meu nome é John Brown, tenho ${i}2 anos, morando em Nova York No. ${i} Lake Park.`,
+        marcado: false,
+        expandido: false
+      });
+    }
+    return dados;
+  }
+
+  constructor(private formBuilder: NonNullableFormBuilder) {
+    this.formularioConfiguracao = this.formBuilder.group({
+      comBorda: [false],
+      carregando: [false],
+      paginacao: [true],
+      alteradorTamanho: [false],
+      titulo: [true],
+      cabecalho: [true],
+      rodape: [true],
+      expansivel: [true],
+      caixaSelecao: [true],
+      cabecalhoFixo: [false],
+      semResultado: [false],
+      elipse: [false],
+      simples: [false],
+      mostrarOpcoes: [false],
+      tamanho: 'small' as NzTableSize,
+      tipoPaginacao: 'default' as NzTablePaginationType,
+      rolagemTabela: 'unset' as RolagemTabela,
+      layoutTabela: 'auto' as NzTableLayout,
+      posicao: 'bottom' as NzTablePaginationPosition
+    });
+
+    this.valorConfiguracao = this.formularioConfiguracao.value as ConfiguracaoGrid;
+  }
+
   ngOnInit(): void {
     this.formularioConfiguracao.valueChanges.subscribe(valor => {
       this.valorConfiguracao = valor as ConfiguracaoGrid;
@@ -114,16 +167,11 @@ export class GridComponent implements OnInit {
     });
     this.formularioConfiguracao.controls.semResultado.valueChanges.subscribe(vazio => {
       if (vazio) {
-        this.dadosExibidos = [];
+        this.listaDados = [];
       } else {
-        this.dadosExibidos = this.dadosEntrada;
+        this.listaDados = this.gerarDados();
       }
     });
-    this.dadosExibidos = this.dadosEntrada || [];
-    this.valorConfiguracao = this.formularioConfiguracao.value as ConfiguracaoGrid;
-  }
-
-  obterChaves(obj: any): string[] {
-    return Object.keys(obj);
+    this.listaDados = this.gerarDados();
   }
 }
