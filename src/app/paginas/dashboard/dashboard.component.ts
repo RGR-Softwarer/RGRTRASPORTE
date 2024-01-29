@@ -37,7 +37,8 @@ export class DashboardComponent implements OnInit {
       layoutTabela: 'auto' as NzTableLayout,
       posicao: 'bottom' as NzTablePaginationPosition,
       tituloTabela: 'Título da Tabela',
-      rodapeTabela: 'Rodapé da Tabela'
+      rodapeTabela: 'Rodapé da Tabela',
+      adicionar: [false],
     });
   }   
 

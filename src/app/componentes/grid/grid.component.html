@@ -1,6 +1,7 @@
 <div>
+  @if(valorConfiguracao.adicionar){
   <button nz-button (click)="adicionar()" nzType="primary">Add</button>
-  @if(valorConfiguracao.mostrarOpcoes){
+  } @if(valorConfiguracao.mostrarOpcoes){
   <form nz-form nzLayout="inline" [formGroup]="formularioConfiguracao">
     @for (switch of listOfSwitch; track switch.nome) {
     <nz-form-item>
@@ -55,10 +56,9 @@
         [nzIndeterminate]="indeterminado"
         (nzCheckedChange)="marcarTodos($event)"
       ></th>
+      } @for (key of obterChaves(dadosExibidos[0]); track $index) {
+      <th [nzLeft]="colunaFixa">{{ key }}</th>
       }
-      @for (key of obterChaves(dadosExibidos[0]); track $index) {
-        <th [nzLeft]="colunaFixa">{{ key }}</th>
-        }
     </tr>
     }
   </thead>
@@ -75,8 +75,8 @@
           (nzCheckedChange)="atualizarStatus()"
         ></td>
         } @for (key of obterChaves(data); track $index) {
-          <td [nzLeft]="colunaFixa">{{ data[key] }}</td>
-          }
+        <td [nzLeft]="colunaFixa">{{ data[key] }}</td>
+        }
       </tr>
       @if (valorConfiguracao.expansivel) {
       <tr [nzExpand]="data.expandido">

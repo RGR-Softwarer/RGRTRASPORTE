@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/configuracao-grid';
 import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-grid',
@@ -11,6 +12,8 @@ import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTabl
 export class GridComponent implements OnInit {
   @Input() formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
   @Input() dadosEntrada: readonly any[] = [];
+
+  @Input() adicionarUrl: string = '';
 
   formularioConfiguracaoPadrao: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
   listaDados: readonly any[] = [];
@@ -82,7 +85,7 @@ export class GridComponent implements OnInit {
     }
   ];
 
-  constructor(private formBuilder: NonNullableFormBuilder) {
+  constructor(private formBuilder: NonNullableFormBuilder, private router: Router) {
     this.formularioConfiguracaoPadrao = this.formBuilder.group({
       comBorda: [true],
       carregando: [false],
@@ -104,7 +107,8 @@ export class GridComponent implements OnInit {
       layoutTabela: 'auto' as NzTableLayout,
       posicao: 'bottom' as NzTablePaginationPosition,
       tituloTabela: 'Título da Tabela',
-      rodapeTabela: 'Rodapé da Tabela'
+      rodapeTabela: 'Rodapé da Tabela',
+      adicionar: [false]
     });
   }
 
@@ -140,6 +144,10 @@ export class GridComponent implements OnInit {
       this.formularioConfiguracao = this.formularioConfiguracaoPadrao;
     }
 
+    if(this.adicionarUrl !== ''){
+      this.formularioConfiguracao.controls.adicionar.setValue(true);
+    }
+
     this.formularioConfiguracao.valueChanges.subscribe(valor => {
       this.valorConfiguracao = valor as ConfiguracaoGrid;
     });
@@ -162,6 +170,6 @@ export class GridComponent implements OnInit {
   }
 
   adicionar(){
-    
+    this.router.navigate([this.adicionarUrl]);
   }
 }

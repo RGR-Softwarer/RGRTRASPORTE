@@ -2,14 +2,13 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-cadastro-veiculo',
-  templateUrl: './cadastro-veiculo.component.html',
-  styleUrl: './cadastro-veiculo.component.scss'
+  templateUrl: './veiculo.component.html',
+  styleUrl: './veiculo.component.scss'
 })
 
 export class CadastroVeiculoComponent implements OnInit {
   dados: readonly any[] = [];
-
-
+  adicionarUrl : string = '/cadastro/veiculo/adicionar';
 
   ngOnInit() {
     this.dados = this.gerarDados();

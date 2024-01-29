@@ -24,4 +24,5 @@ comBorda: boolean;
   tipoPaginacao: NzTablePaginationType;
   tituloTabela: string;
   rodapeTabela: string;
+  adicionar: boolean;
 }
