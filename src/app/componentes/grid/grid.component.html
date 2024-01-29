@@ -1,4 +1,5 @@
-<div class="components-table-demo-control-bar">
+<div>
+  <button nz-button (click)="adicionar()" nzType="primary">Add</button>
   @if(valorConfiguracao.mostrarOpcoes){
   <form nz-form nzLayout="inline" [formGroup]="formularioConfiguracao">
     @for (switch of listOfSwitch; track switch.nome) {

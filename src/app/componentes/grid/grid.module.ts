@@ -7,6 +7,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 
 @NgModule({
   declarations: [GridComponent],
@@ -18,6 +19,7 @@ import { NzSwitchModule } from 'ng-zorro-antd/switch';
     NzDividerModule,
     NzRadioModule,
     NzSwitchModule,
+    NzButtonModule
   ],
   exports: [GridComponent]
 })

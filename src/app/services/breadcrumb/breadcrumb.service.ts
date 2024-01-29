@@ -23,25 +23,31 @@ export class BreadcrumbService {
 
   private criarBreadcrumbs(rota: ActivatedRoute, url: string = '', breadcrumbs: ItemBreadcrumb[] = []): ItemBreadcrumb[] {
     const filhos: ActivatedRoute[] = rota.children;
+  
+    filhos.forEach(filho => {
+      const segmentosRota = filho.snapshot.url.map(segmento => segmento.path);
+  
+      segmentosRota.forEach((segmento, index) => {
+        if (segmento) {
+          url += `/${segmento}`;
+  
+          let rotulo = this.primeiraLetraMaiscula(segmento);
+          if (index === segmentosRota.length - 1) {
+            rotulo = filho.snapshot.data['breadcrumb'] ? this.primeiraLetraMaiscula(filho.snapshot.data['breadcrumb']) : rotulo;
+          }
 
-    if (filhos.length === 0) {
-      return breadcrumbs;
-    }
-
-    for (const filho of filhos) {
-      const urlRota: string = filho.snapshot.url.map(segmento => segmento.path).join('/');
-      if (urlRota !== '') {
-        url += `/${urlRota}`;
-      }
-
-      const rotulo = filho.snapshot.data['breadcrumb'];
-      if (rotulo) {
-        breadcrumbs.push({ label: rotulo, url });
-      }
-
-      return this.criarBreadcrumbs(filho, url, breadcrumbs);
-    }
-
+          breadcrumbs.push({ label: rotulo, url });
+        }
+      });
+  
+      this.criarBreadcrumbs(filho, url, breadcrumbs);
+    });
+  
     return breadcrumbs;
   }
+  
+  private primeiraLetraMaiscula(s: string): string {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }   
+  
 }

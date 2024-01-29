@@ -25,14 +25,9 @@
     margin: 0 16px;
   }
 
-  .inner-content {
-    padding: 24px;
-    background: #fff;
-    min-height: 360px;
-  }
-
   nz-footer {
     text-align: center;
+    padding: 8px 50px;
   }
 
   nz-layout{
@@ -53,10 +48,5 @@
   
     nz-content {
       margin: 0 8px;
-    }
-  
-    .inner-content {
-      padding: 16px;
-      min-height: 280px;
     }
   }

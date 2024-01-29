@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { ConfiguracaoGrid } from '../../dominio/interface/configuracao-grid';
+import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/configuracao-grid';
+import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
 
 @Component({
   selector: 'app-grid',
@@ -11,6 +12,7 @@ export class GridComponent implements OnInit {
   @Input() formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
   @Input() dadosEntrada: readonly any[] = [];
 
+  formularioConfiguracaoPadrao: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
   listaDados: readonly any[] = [];
   dadosExibidos: readonly any[] = [];
   todosMarcados = false;
@@ -80,6 +82,32 @@ export class GridComponent implements OnInit {
     }
   ];
 
+  constructor(private formBuilder: NonNullableFormBuilder) {
+    this.formularioConfiguracaoPadrao = this.formBuilder.group({
+      comBorda: [true],
+      carregando: [false],
+      paginacao: [true],
+      alteradorTamanho: [false],
+      titulo: [false],
+      cabecalho: [true],
+      rodape: [false],
+      expansivel: [false],
+      caixaSelecao: [false],
+      cabecalhoFixo: [false],
+      semResultado: [false],
+      elipse: [false],
+      simples: [false],
+      mostrarOpcoes: [false],
+      tamanho: 'small' as NzTableSize,
+      tipoPaginacao: 'default' as NzTablePaginationType,
+      rolagemTabela: 'unset' as RolagemTabela,
+      layoutTabela: 'auto' as NzTableLayout,
+      posicao: 'bottom' as NzTablePaginationPosition,
+      tituloTabela: 'Título da Tabela',
+      rodapeTabela: 'Rodapé da Tabela'
+    });
+  }
+
   mudancaDadosPaginaAtual($event: readonly any[]): void {
     this.dadosExibidos = $event;
     this.atualizarStatus();
@@ -101,12 +129,17 @@ export class GridComponent implements OnInit {
     });
     this.atualizarStatus();
   }
-  
+
   obterChaves(obj: any): string[] {
     return Object.keys(obj);
   }
 
   ngOnInit(): void {
+
+    if (this.formularioConfiguracao === undefined){      
+      this.formularioConfiguracao = this.formularioConfiguracaoPadrao;
+    }
+
     this.formularioConfiguracao.valueChanges.subscribe(valor => {
       this.valorConfiguracao = valor as ConfiguracaoGrid;
     });
@@ -126,5 +159,9 @@ export class GridComponent implements OnInit {
     });
     this.listaDados = this.dadosEntrada;
     this.valorConfiguracao = this.formularioConfiguracao.value as ConfiguracaoGrid;
+  }
+
+  adicionar(){
+    
   }
 }
