@@ -1,0 +1,24 @@
+<form nz-form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div nz-row [nzGutter]="[16, 16]">
+    @for(field of formFields; track $index){
+    <ng-container>
+      @if(field.visible){
+      <div nz-col [nzSpan]="field.nzSpan">
+        <nz-form-item>
+          <nz-form-label [nzFor]="field.key">
+            {{ field.label }}
+            @if(field.required){
+            <span class="required-asterisk">*</span>
+            }
+          </nz-form-label>
+          <nz-form-control>
+            <input nz-input [formControlName]="field.key" [type]="field.type" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      }
+    </ng-container>
+    }
+  </div>
+  <button nz-button nzType="primary">Submit</button>
+</form>

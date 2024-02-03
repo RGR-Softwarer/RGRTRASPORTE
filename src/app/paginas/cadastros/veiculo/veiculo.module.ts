@@ -4,7 +4,7 @@ import { CadastroVeiculoComponent } from './veiculo.component';
 import { RouterModule, Routes } from '@angular/router';
 import { GridModule } from '../../../componentes/grid/grid.module';
 
-const dashboardRoutes: Routes = [
+const veiculoRoutes: Routes = [
   { path: '', component: CadastroVeiculoComponent }
 ];
 
@@ -12,7 +12,7 @@ const dashboardRoutes: Routes = [
   declarations: [CadastroVeiculoComponent],
   imports: [
     CommonModule,
-    RouterModule.forChild(dashboardRoutes),
+    RouterModule.forChild(veiculoRoutes),
     GridModule,
   ]
 })
