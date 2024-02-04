@@ -2,31 +2,29 @@
 using Dominio.Interfaces.Infra.Data;
 using Infra.CrossCutting.Handlers.Notifications;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
-namespace PainelDeIndicadores.Controllers
+namespace RGRTRASPORTE.Controllers
 {
     public abstract class AbstractControllerBase : ControllerBase
     {
         private readonly INotificationHandler _notificationHandler;
         private readonly IUnitOfWork _unitOfWork;
 
-
-        public AbstractControllerBase(INotificationHandler notificationHandler, IUnitOfWork unitOfWork)
+        protected AbstractControllerBase(INotificationHandler notificationHandler, IUnitOfWork unitOfWork)
         {
             _notificationHandler = notificationHandler;
             _unitOfWork = unitOfWork;
         }
 
-        protected ActionResult QResult(object value = null)
+        protected async Task<ActionResult> RGRResult(HttpStatusCode statusCode = HttpStatusCode.OK, object value = null)
         {
-
             var existeErro = _notificationHandler.HasNotification();
 
             if (existeErro)
-                _unitOfWork.RollBack();
+                await _unitOfWork.RollBack();
             else
-                _unitOfWork.Commit();
-
+                await _unitOfWork.Commit();
 
             var resposta = new RetornoGenericoDto
             {
@@ -35,8 +33,10 @@ namespace PainelDeIndicadores.Controllers
                 Sucesso = !existeErro
             };
 
-
-            return new ObjectResult(resposta);
+            return new ObjectResult(resposta)
+            {
+                StatusCode = (int)statusCode
+            };
         }
     }
 }

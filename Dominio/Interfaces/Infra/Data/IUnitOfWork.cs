@@ -2,7 +2,7 @@
 {
     public interface IUnitOfWork
     {
-        int Commit();
-        void RollBack();
+        Task<int> Commit();
+        Task RollBack();
     }
 }

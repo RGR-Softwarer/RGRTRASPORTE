@@ -13,15 +13,19 @@ namespace RGRTRASPORTE
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(Startup));
+
             services.AddControllers();
 
             services.AddSingleton(Configuration);
 
-            services.AddContext(Configuration.GetValue<string>("ConnectionStrings:RGRTRASPORTE"));
+            services.AddContext(Configuration);
 
             services.AddSwagger(Configuration);
 
             services.AddServices();
+
+            services.AddRepositorys();
         }
 
 

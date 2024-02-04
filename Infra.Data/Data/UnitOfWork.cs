@@ -1,5 +1,6 @@
 ﻿using Dominio.Interfaces.Infra.Data;
 using Infra.Data.Context;
+using System.Threading.Tasks;
 
 namespace Infra.Data.Data
 {
@@ -7,19 +8,21 @@ namespace Infra.Data.Data
     {
         private readonly RGRContext _dbContext;
 
-
         public UnitOfWork(RGRContext dbContext)
         {
             _dbContext = dbContext;
         }
-        public int Commit()
+        public async Task<int> Commit()
         {
-            return _dbContext.SaveChanges();
+            return await _dbContext.SaveChangesAsync();
         }
 
-        public void RollBack()
+        public async Task RollBack()
         {
-            _dbContext.ChangeTracker.Entries().ToList().ForEach(x => x.Reload());
+            var tasks = _dbContext.ChangeTracker.Entries()
+                    .Select(entry => entry.ReloadAsync()).ToList();
+
+            await Task.WhenAll(tasks);
         }
     }
 }
