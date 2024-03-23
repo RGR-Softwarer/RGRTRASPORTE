@@ -9,12 +9,24 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Service;
+using System.Text.Json.Serialization;
 
 namespace Infra.Ioc
 {
     public static class ContainerServicesCollections
     {
-        public static IServiceCollection AddSwagger(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureApi(this IServiceCollection services)
+        {
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            });           
+
+            return services;
+        }
+
+        public static IServiceCollection AddSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(c =>
             {

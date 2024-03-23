@@ -21,7 +21,9 @@ namespace RGRTRASPORTE
 
             services.AddContext(Configuration);
 
-            services.AddSwagger(Configuration);
+            services.AddSwagger();
+
+            services.ConfigureApi();
 
             services.AddServices();
 
@@ -37,6 +39,13 @@ namespace RGRTRASPORTE
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Painel.Api v1"));
             }
+
+            app.UseCors(builder =>
+            {
+                builder.WithOrigins("http://localhost:4200");
+                builder.AllowAnyMethod();
+                builder.AllowAnyHeader();
+            });
 
             app.UseHttpsRedirection();
 

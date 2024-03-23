@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.8.1" />
     <PackageReference Include="NPOI" Version="2.6.2" />
   </ItemGroup>
 

@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Infra.CrossCutting.Handlers.Notifications;
+﻿using Infra.CrossCutting.Handlers.Notifications;
 
 namespace Service.Bases
 {
@@ -10,17 +9,6 @@ namespace Service.Bases
         public NotificationBase(INotificationHandler notificacaoHandler)
         {
             _notificacaoHandler = notificacaoHandler;
-        }
-
-        public bool Validar<TEntity>(TEntity model, AbstractValidator<TEntity> validator)
-        {
-            var validationresult = validator.Validate(model);
-
-            if (!validationresult.IsValid)
-                _notificacaoHandler.AddNotification(
-                    validationresult.Errors.Select(x => x.ErrorMessage).ToList());
-
-            return validationresult.IsValid;
         }
     }
 }

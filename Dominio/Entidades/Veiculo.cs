@@ -7,7 +7,7 @@ namespace Dominio.Entidades
         public string Placa { get; private set; }
         public string Modelo { get; private set; }
         public string Marca { get; private set; }
-        public int? Ano { get; private set; }
+        public int Ano { get; private set; }
         public string Cor { get; private set; }
         public string Renavam { get; private set; }
         public TipoCombustivelEnum TipoCombustivel { get; private set; }
