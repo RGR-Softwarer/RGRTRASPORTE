@@ -12,7 +12,16 @@
             }
           </nz-form-label>
           <nz-form-control>
+            @if(field.type !== 'select'){
             <input nz-input [formControlName]="field.key" [type]="field.type" />
+          }
+          @if(field.type === 'select'){
+            <nz-select [formControlName]="field.key" nzPlaceHolder="Selecione">
+              @for (option of field.options; track $index) {
+              <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
+              }
+            </nz-select>
+          }
           </nz-form-control>
         </nz-form-item>
       </div>

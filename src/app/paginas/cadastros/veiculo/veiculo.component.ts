@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { TrasportadorUrls } from '../../../dominio/enum/trasportador-url-enum';
 
 @Component({
   selector: 'app-cadastro-veiculo',
@@ -6,27 +7,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrl: './veiculo.component.scss'
 })
 
-export class CadastroVeiculoComponent implements OnInit {
-  dados: readonly any[] = [];
-  adicionarUrl : string = '/cadastro/veiculo/adicionar';
-
-  ngOnInit() {
-    this.dados = this.gerarDados();
-  }
-
-  gerarDados(): readonly any[] {
-    const dados = [];
-    for (let i = 1; i <= 100; i++) {
-      dados.push({
-        Marca: 'Toyota ' + i,
-        Modelo: 'Corolla',
-        Ano: 2020,
-        Placa: `ABC-1234`,
-        Descricao: `Marca: Toyota, Modelo: Corolla, Ano: 2020, Placa: ABC-1234`,
-      });
-      
-    }
-    return dados;
-  }
-
+export class CadastroVeiculoComponent {
+  adicionarUrl: string = '/cadastro/veiculo/adicionar';
+  buscarTodosUrl: string = TrasportadorUrls.ObterTodos + 'veiculo';  
 }

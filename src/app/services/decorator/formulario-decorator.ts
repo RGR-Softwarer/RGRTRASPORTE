@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 export interface FormCamposMetadata {
   key: string;
   label: string;
@@ -5,6 +6,12 @@ export interface FormCamposMetadata {
   required: boolean;
   nzSpan : number;
   visible: boolean;
+  options: FormCampoOption[];
+}
+
+export interface FormCampoOption {
+  label: string;
+  value: any;
 }
 
 export interface FormCampoConstrutor {
@@ -12,15 +19,21 @@ export interface FormCampoConstrutor {
   formFields?: FormCamposMetadata[]; 
 }
 
-export function FormCampo(label: string, type: string, visible: boolean = true, required: boolean = false, colSpan16: number = 4) {
-  
-  const nzSpan = colSpan16 / 16 * 24; 
+export function FormCampo(label: string, type: 'text' | 'number' | 'select', visible: boolean = true, required: boolean = false, enumType?: any, colSpan16: number = 4) {
+  return function(target: any, propertyName: string) {
+    const nzSpan = colSpan16 / 16 * 24;
 
-  return function(target: any, key: string) {
+    let options: FormCampoOption[] = [];
+
+    if(type === 'select' && enumType) {
+      options = Object.entries(enumType).map(([key, label]) => ({ label, value: key })) as FormCampoOption[];
+    }
+
     const constructor = target.constructor as FormCampoConstrutor;
     if (!constructor.formFields) {
       constructor.formFields = [];
     }
-    constructor.formFields.push({ key, label, type, required, nzSpan, visible });
+
+    constructor.formFields.push({ key: propertyName, label, type, required, nzSpan, visible, options });
   };
 }

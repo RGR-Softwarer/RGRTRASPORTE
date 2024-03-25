@@ -5,7 +5,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { ReactiveFormsModule } from '@angular/forms'; // Import necessário
-
+import {NzSelectModule} from 'ng-zorro-antd/select';
 
 @NgModule({
   declarations: [FormularioComponent],
@@ -14,7 +14,8 @@ import { ReactiveFormsModule } from '@angular/forms'; // Import necessário
     NzFormModule,
     NzInputModule,
     NzButtonModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NzSelectModule
   ],
   exports: [
     FormularioComponent,

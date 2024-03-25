@@ -5,19 +5,18 @@ import { ApiService } from './../http/api.service';
 import { Injectable } from '@angular/core';
 import { catchError } from 'rxjs/operators';
 import { of, throwError } from 'rxjs';
-import { environment } from '../../../environments/environment';
 import { ToastService } from '../utils/notificacao/toast.service';
+import { ClienteUrls } from '../../dominio/enum/cliente-url-enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
 
-  constructor(private apiService: ApiService, private toastService: ToastService, private AppContextService: AppContextService , private router: Router)
-  { }
+  constructor(private apiService: ApiService, private toastService: ToastService, private AppContextService: AppContextService, private router: Router) { }
 
   public authenticate(email: string, senha: string): boolean {
-    this.apiService.post(`${environment.apiBaseUrl}/Auth/login`, { email, senha }).pipe(
+    this.apiService.post(ClienteUrls.Login, { email, senha }).pipe(
       catchError(this.handleError)
     ).subscribe({
       next: data => {

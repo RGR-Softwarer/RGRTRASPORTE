@@ -3,6 +3,11 @@ import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/configuracao-grid';
 import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
 import { Router } from '@angular/router';
+import { ApiService } from '../../services/http/api.service';
+import { ToastService } from '../../services/utils/notificacao/toast.service';
+import { firstValueFrom } from 'rxjs';
+import { Veiculo } from '../../dominio/entidade/veiculo';
+import { FormCampoConstrutor } from '../../services/decorator/formulario-decorator';
 
 @Component({
   selector: 'app-grid',
@@ -11,9 +16,12 @@ import { Router } from '@angular/router';
 })
 export class GridComponent implements OnInit {
   @Input() formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
-  @Input() dadosEntrada: readonly any[] = [];
-
+  @Input() buscarTodosUrl: string = '';
   @Input() adicionarUrl: string = '';
+
+
+  dadosEntrada: readonly any[] = [];
+  formFields: any[] = [];
 
   formularioConfiguracaoPadrao: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
   listaDados: readonly any[] = [];
@@ -85,7 +93,7 @@ export class GridComponent implements OnInit {
     }
   ];
 
-  constructor(private formBuilder: NonNullableFormBuilder, private router: Router) {
+  constructor(private formBuilder: NonNullableFormBuilder, private router: Router, private apiService: ApiService, private toastService: ToastService) {
     this.formularioConfiguracaoPadrao = this.formBuilder.group({
       comBorda: [true],
       carregando: [false],
@@ -134,17 +142,39 @@ export class GridComponent implements OnInit {
     this.atualizarStatus();
   }
 
-  obterChaves(obj: any): string[] {
-    return Object.keys(obj);
+
+  obterChavesColunas(obj: any): { label: string, visible: boolean }[] {
+    if (obj === undefined) {
+      return [];
+    }
+    const chaves = Object.keys(obj);
+
+    return chaves.map(chave => {
+      const metadadoCorrespondente = this.formFields.find(m => m.key === chave);
+      return metadadoCorrespondente ? { label: metadadoCorrespondente.label, visible: metadadoCorrespondente.visible } : { label: chave, visible: true };
+    });
   }
 
-  ngOnInit(): void {
+  obterChaves(obj: any): { label: string, visible: boolean }[] {
+    if (obj === undefined) {
+      return [];
+    }
 
-    if (this.formularioConfiguracao === undefined){      
+    const chaves = Object.keys(obj);
+
+    return chaves.map(chave => {
+      const metadadoCorrespondente = this.formFields.find(m => m.key === chave);
+      return metadadoCorrespondente ? { label: chave, visible: metadadoCorrespondente.visible } : { label: chave, visible: true };
+    });
+  }
+
+  async ngOnInit(): Promise<void> {
+
+    if (this.formularioConfiguracao === undefined) {
       this.formularioConfiguracao = this.formularioConfiguracaoPadrao;
     }
 
-    if(this.adicionarUrl !== ''){
+    if (this.adicionarUrl !== '') {
       this.formularioConfiguracao.controls.adicionar.setValue(true);
     }
 
@@ -165,11 +195,34 @@ export class GridComponent implements OnInit {
         this.listaDados = this.dadosEntrada;
       }
     });
-    this.listaDados = this.dadosEntrada;
+
     this.valorConfiguracao = this.formularioConfiguracao.value as ConfiguracaoGrid;
+
+    this.dadosEntrada = await this.obterTodos() as Veiculo[];
+
+    const objetoConstructor = new Veiculo().constructor as FormCampoConstrutor;
+    this.formFields = objetoConstructor.formFields ?? [];
+
+    debugger;
+    this.listaDados = this.dadosEntrada;
   }
 
-  adicionar(){
+  adicionar() {
     this.router.navigate([this.adicionarUrl]);
+  }
+
+  async obterTodos(): Promise<any[]> {
+    try {
+      const data = await firstValueFrom(this.apiService.get(this.buscarTodosUrl));
+      if (data.sucesso) {
+        return data.dados;
+      } else {
+        this.toastService.exibirMensagemErro('Erro', 'Erro ao obter dados');
+        return [];
+      }
+    } catch (error) {
+      this.toastService.exibirMensagemErro('Erro', 'Erro ao obter dados');
+      return [];
+    }
   }
 }

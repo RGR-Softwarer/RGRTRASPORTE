@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Veiculo } from '../../dominio/entidade/veiculo';
 import { FormCampoConstrutor } from '../../services/decorator/formulario-decorator';
 import { ToastService } from '../../services/utils/notificacao/toast.service';
 
