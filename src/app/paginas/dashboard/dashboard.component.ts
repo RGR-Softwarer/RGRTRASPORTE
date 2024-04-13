@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AppContext } from '../../dominio/entidade/app.context';
 import { AppContextService } from '../../services/context/app.context';
 import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
-import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/configuracao-grid';
+import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 
 @Component({
@@ -15,7 +15,7 @@ export class DashboardComponent implements OnInit {
   formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
   minhaListaDeObjetos: readonly any[] = [];
 
-  constructor(private appContextService: AppContextService, private formBuilder: NonNullableFormBuilder) { 
+  constructor(private appContextService: AppContextService, private formBuilder: NonNullableFormBuilder) {
     this.formularioConfiguracao = this.formBuilder.group({
       comBorda: [false],
       carregando: [false],
@@ -39,15 +39,16 @@ export class DashboardComponent implements OnInit {
       tituloTabela: 'Título da Tabela',
       rodapeTabela: 'Rodapé da Tabela',
       adicionar: [false],
+      action: [false]
     });
-  }   
+  }
 
   ngOnInit() {
     this.userContext = this.appContextService.obterUsuarioLogado();
     console.log(this.userContext);
     this.minhaListaDeObjetos = this.gerarDados();
   }
-  
+
   gerarDados(): readonly any[] {
     const dados = [];
     for (let i = 1; i <= 100; i++) {

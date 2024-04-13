@@ -6,9 +6,7 @@
     @for (switch of listOfSwitch; track switch.nome) {
     <nz-form-item>
       <nz-form-label>{{ switch.nome }}</nz-form-label>
-      <nz-form-control
-        ><nz-switch [formControlName]="switch.formControlName"></nz-switch
-      ></nz-form-control>
+      <nz-form-control><nz-switch [formControlName]="switch.formControlName"></nz-switch></nz-form-control>
     </nz-form-item>
     } @for (radio of listOfRadio; track radio.nome) {
     <nz-form-item>
@@ -25,39 +23,24 @@
   </form>
   }
 </div>
-<nz-table
-  #tabelaDinamica
-  [nzScroll]="{ x: rolagemX, y: rolagemY }"
-  [nzData]="listaDados"
-  [nzTableLayout]="valorConfiguracao.layoutTabela"
-  [nzBordered]="valorConfiguracao.comBorda"
-  [nzSimple]="valorConfiguracao.simples"
-  [nzLoading]="valorConfiguracao.carregando"
-  [nzPaginationType]="valorConfiguracao.tipoPaginacao"
-  [nzPaginationPosition]="valorConfiguracao.posicao"
-  [nzShowSizeChanger]="valorConfiguracao.alteradorTamanho"
-  [nzFrontPagination]="valorConfiguracao.paginacao"
-  [nzShowPagination]="valorConfiguracao.paginacao"
-  [nzFooter]="valorConfiguracao.rodape ? 'Aqui é o Rodapé' : null"
-  [nzTitle]="valorConfiguracao.titulo ? 'Aqui é o Título' : null"
-  [nzSize]="valorConfiguracao.tamanho"
-  (nzCurrentPageDataChange)="mudancaDadosPaginaAtual($event)"
->
+<nz-table #tabelaDinamica [nzScroll]="{ x: rolagemX, y: rolagemY }" [nzData]="listaDados"
+  [nzTableLayout]="valorConfiguracao.layoutTabela" [nzBordered]="valorConfiguracao.comBorda"
+  [nzSimple]="valorConfiguracao.simples" [nzLoading]="valorConfiguracao.carregando"
+  [nzPaginationType]="valorConfiguracao.tipoPaginacao" [nzPaginationPosition]="valorConfiguracao.posicao"
+  [nzShowSizeChanger]="valorConfiguracao.alteradorTamanho" [nzFrontPagination]="valorConfiguracao.paginacao"
+  [nzShowPagination]="valorConfiguracao.paginacao" [nzFooter]="valorConfiguracao.rodape ? 'Aqui é o Rodapé' : null"
+  [nzTitle]="valorConfiguracao.titulo ? 'Aqui é o Título' : null" [nzSize]="valorConfiguracao.tamanho"
+  (nzCurrentPageDataChange)="mudancaDadosPaginaAtual($event)">
   <thead>
     @if(valorConfiguracao.cabecalho){
     <tr>
       @if(valorConfiguracao.expansivel){
       <th nzWidth="40px" [nzLeft]="colunaFixa"></th>
       } @if(valorConfiguracao.caixaSelecao){
-      <th
-        nzWidth="60px"
-        [(nzChecked)]="todosMarcados"
-        [nzLeft]="colunaFixa"
-        [nzIndeterminate]="indeterminado"
-        (nzCheckedChange)="marcarTodos($event)"
-      ></th>
-      } @for (key of obterChavesColunas(dadosExibidos[0]); track $index) { 
-        @if (key.visible) {
+      <th nzWidth="60px" [(nzChecked)]="todosMarcados" [nzLeft]="colunaFixa" [nzIndeterminate]="indeterminado"
+        (nzCheckedChange)="marcarTodos($event)"></th>
+      } @for (key of obterChavesColunas(dadosExibidos[0]); track $index) {
+      @if (key.visible) {
       <th [nzLeft]="colunaFixa">{{ key.label }}</th>
       }@else{
       <th [nzLeft]="colunaFixa" style="display: none">{{ key.label }}</th>
@@ -72,11 +55,7 @@
         @if(valorConfiguracao.expansivel){
         <td [nzLeft]="colunaFixa" [(nzExpand)]="data.expandido"></td>
         } @if(valorConfiguracao.caixaSelecao){
-        <td
-          [nzLeft]="colunaFixa"
-          [(nzChecked)]="data.marcado"
-          (nzCheckedChange)="atualizarStatus()"
-        ></td>
+        <td [nzLeft]="colunaFixa" [(nzChecked)]="data.marcado" (nzCheckedChange)="atualizarStatus()"></td>
         } @for (key of obterChaves(data); track $index) { @if (key.visible) {
         <td [nzLeft]="colunaFixa">{{ data[key.label] }}</td>
         }@else {
@@ -86,6 +65,13 @@
       @if (valorConfiguracao.expansivel) {
       <tr [nzExpand]="data.expandido">
         <span>{{ data.descricao }}</span>
+      </tr>
+      }
+      @if (valorConfiguracao.action) {
+      <tr>
+        @for (acao of acoes; track $index) {
+        <a (click)=acao.acao>acao.label</a>
+        }
       </tr>
       }
     </ng-container>

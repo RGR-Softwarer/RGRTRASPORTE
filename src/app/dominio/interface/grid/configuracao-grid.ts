@@ -3,7 +3,7 @@ import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTabl
 export type RolagemTabela = 'unset' | 'scroll' | 'fixed';
 
 export interface ConfiguracaoGrid {
-comBorda: boolean;
+  comBorda: boolean;
   carregando: boolean;
   paginacao: boolean;
   alteradorTamanho: boolean;
@@ -25,4 +25,5 @@ comBorda: boolean;
   tituloTabela: string;
   rodapeTabela: string;
   adicionar: boolean;
+  action: boolean;
 }
