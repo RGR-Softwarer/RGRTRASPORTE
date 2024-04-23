@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
-import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/configuracao-grid';
+import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
 import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/http/api.service';
@@ -8,6 +8,7 @@ import { ToastService } from '../../services/utils/notificacao/toast.service';
 import { firstValueFrom } from 'rxjs';
 import { Veiculo } from '../../dominio/entidade/veiculo';
 import { FormCampoConstrutor } from '../../services/decorator/formulario-decorator';
+import { Action } from '../../dominio/interface/grid/action-grid';
 
 @Component({
   selector: 'app-grid',
@@ -18,6 +19,8 @@ export class GridComponent implements OnInit {
   @Input() formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
   @Input() buscarTodosUrl: string = '';
   @Input() adicionarUrl: string = '';
+  @Input() acoes?: Action[];
+
 
 
   dadosEntrada: readonly any[] = [];
@@ -116,7 +119,8 @@ export class GridComponent implements OnInit {
       posicao: 'bottom' as NzTablePaginationPosition,
       tituloTabela: 'Título da Tabela',
       rodapeTabela: 'Rodapé da Tabela',
-      adicionar: [false]
+      adicionar: [false],
+      action: [false]
     });
   }
 
