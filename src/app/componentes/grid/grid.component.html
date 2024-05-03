@@ -39,11 +39,14 @@
       } @if(valorConfiguracao.caixaSelecao){
       <th nzWidth="60px" [(nzChecked)]="todosMarcados" [nzLeft]="colunaFixa" [nzIndeterminate]="indeterminado"
         (nzCheckedChange)="marcarTodos($event)"></th>
-      } @for (key of obterChavesColunas(dadosExibidos[0]); track $index) {
-      @if (key.visible) {
+      } @for (key of obterChavesColunas(dadosExibidos[0]); track $index) { @if
+      (key.visible) {
       <th [nzLeft]="colunaFixa">{{ key.label }}</th>
       }@else{
       <th [nzLeft]="colunaFixa" style="display: none">{{ key.label }}</th>
+      } } @if(valorConfiguracao.action && acoes?.length?? 0 > 0)
+      { @for ( acao of acoes; track $index) {
+      <th [nzLeft]="colunaFixa">{{ acao.label }}</th>
       } }
     </tr>
     }
@@ -59,19 +62,20 @@
         } @for (key of obterChaves(data); track $index) { @if (key.visible) {
         <td [nzLeft]="colunaFixa">{{ data[key.label] }}</td>
         }@else {
-        <td [nzLeft]="colunaFixa" style="display: none"> {{ data[key.label] }} </td>
-        } }
+        <td [nzLeft]="colunaFixa" style="display: none">
+          {{ data[key.label] }}
+        </td>
+        } } @if (valorConfiguracao.action) {
+        <td>
+          @for (acao of acoes; track $index) {
+          <a (click)="acao.acao(data)">{{ acao.label }}</a>
+          }
+        </td>
+        }
       </tr>
       @if (valorConfiguracao.expansivel) {
       <tr [nzExpand]="data.expandido">
         <span>{{ data.descricao }}</span>
-      </tr>
-      }
-      @if (valorConfiguracao.action) {
-      <tr>
-        @for (acao of acoes; track $index) {
-        <a (click)=acao.acao>acao.label</a>
-        }
       </tr>
       }
     </ng-container>

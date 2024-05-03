@@ -19,9 +19,8 @@ export class GridComponent implements OnInit {
   @Input() formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
   @Input() buscarTodosUrl: string = '';
   @Input() adicionarUrl: string = '';
-  @Input() acoes?: Action[];
-
-
+  //@Input() acoes?: Action[]; 
+  @Input() acoes?: Action[] = [{ label: 'Editar', acao: this.editar.bind(this) }];
 
   dadosEntrada: readonly any[] = [];
   formFields: any[] = [];
@@ -120,7 +119,7 @@ export class GridComponent implements OnInit {
       tituloTabela: 'Título da Tabela',
       rodapeTabela: 'Rodapé da Tabela',
       adicionar: [false],
-      action: [false]
+      action: [true]
     });
   }
 
@@ -207,13 +206,18 @@ export class GridComponent implements OnInit {
     const objetoConstructor = new Veiculo().constructor as FormCampoConstrutor;
     this.formFields = objetoConstructor.formFields ?? [];
 
-    debugger;
     this.listaDados = this.dadosEntrada;
   }
 
-  adicionar() {
+  adicionar () {
     this.router.navigate([this.adicionarUrl]);
   }
+
+  editar(item: any): void {
+    console.log('item', item);
+    // Supondo que 'item' tem uma propriedade 'id'
+    //this.router.navigate([this.adicionarUrl], { queryParams: { id: item.id } });
+  }  
 
   async obterTodos(): Promise<any[]> {
     try {

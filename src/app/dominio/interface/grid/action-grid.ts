@@ -1,4 +1,4 @@
 export interface Action {
     label: string
-    acao: Function
+    acao: (item: any) => void;
 }
