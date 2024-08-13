@@ -36,9 +36,9 @@ namespace Infra.Ioc
             return services;
         }
 
-        public static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddContext(this IServiceCollection services, string queryString)
         {
-            services.AddDbContext<RGRContext>(options => options.UseNpgsql(configuration.GetValue<string>("ConnectionStrings:RGRTRASPORTE")));
+            services.AddDbContext<RGRContext>(options => options.UseNpgsql(queryString));
 
             return services;
         }

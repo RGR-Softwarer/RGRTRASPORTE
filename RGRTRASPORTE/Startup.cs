@@ -1,4 +1,5 @@
 ﻿using Infra.Ioc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace RGRTRASPORTE
 {
@@ -19,7 +20,7 @@ namespace RGRTRASPORTE
 
             services.AddSingleton(Configuration);
 
-            services.AddContext(Configuration);
+            services.AddContext(Configuration.GetValue<string>("ConnectionStrings:RGRTRASPORTE"));
 
             services.AddSwagger();
 
