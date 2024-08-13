@@ -1,6 +1,6 @@
 ﻿using Dominio.Enums;
 
-namespace Dominio.Entidades
+namespace Dominio.Entidades.Veiculos
 {
     public class Veiculo : BaseEntity
     {

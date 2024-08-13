@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Dominio.Dtos;
-using Dominio.Entidades;
+using Dominio.Entidades.Veiculos;
 using Dominio.Interfaces.Infra.Data;
 using Dominio.Interfaces.Service;
 using Infra.CrossCutting.Handlers.Notifications;
