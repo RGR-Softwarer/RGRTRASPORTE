@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades;
+﻿using Dominio.Entidades.Veiculos;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
