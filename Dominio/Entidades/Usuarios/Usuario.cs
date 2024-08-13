@@ -13,7 +13,7 @@ namespace Dominio.Entidades.Usuarios
        
         public virtual long Codigo { get; set; }
 
-        public virtual Enumeradores.Pessoas.TipoPessoa TipoPessoa { get; set; }
+        //public virtual Enumeradores.Pessoas.TipoPessoa TipoPessoa { get; set; }
 
         public virtual string CPF { get; set; }
 
