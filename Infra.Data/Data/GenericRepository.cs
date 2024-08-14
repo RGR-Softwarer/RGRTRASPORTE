@@ -134,7 +134,7 @@ namespace Infra.Data.Data
 
         #region Métodos Privados - Auditoria
 
-        private async Task AuditarAsync(AuditadoDto auditado, T entidade, List<Dominio.Entidades.Auditoria.HistoricoPropriedade> alteracoes, AcaoBancoDadosEnum acao, string descricaoAcao = "")
+        private void AuditarAsync(AuditadoDto auditado, T entidade, List<Dominio.Entidades.Auditoria.HistoricoPropriedade> alteracoes, AcaoBancoDadosEnum acao, string descricaoAcao = "")
         {
             var historico = new HistoricoObjeto
             {
