@@ -26,7 +26,7 @@ namespace RGRTRASPORTE.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> GetByIdAsync(long id)
         {
             var veiculo = await _veiculoService.ObterPorIdAsync(id);
 
@@ -69,7 +69,7 @@ namespace RGRTRASPORTE.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(long id)
         {
             await _veiculoService.RemoverAsync(id);
 

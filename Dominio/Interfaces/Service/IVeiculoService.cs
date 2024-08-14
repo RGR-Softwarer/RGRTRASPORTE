@@ -5,11 +5,11 @@ namespace Dominio.Interfaces.Service
     public interface IVeiculoService
     {
         Task<List<VeiculoDto>> ObterTodosAsync();
-        Task<VeiculoDto> ObterPorIdAsync(int id);
+        Task<VeiculoDto> ObterPorIdAsync(long id);
         Task AdicionarAsync(VeiculoDto dto);
         Task AdicionarEmLoteAsync(List<VeiculoDto> dto);
         void EditarAsync(VeiculoDto dto);
         void EditarEmLoteAsync(List<VeiculoDto> dto);
-        Task RemoverAsync(int id);
+        Task RemoverAsync(long id);
     }
 }

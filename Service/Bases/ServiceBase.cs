@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿using Dominio.Dtos.Auditoria;
+using Dominio.Enums;
+using FluentValidation;
 using Infra.CrossCutting.Handlers.Notifications;
 using Service.Bases;
 
@@ -42,5 +44,18 @@ namespace Service
 
             return existeErro;
         }
+
+        public AuditadoDto Auditado
+        {
+            get
+            {
+                return new AuditadoDto()
+                {
+                    OrigemAuditado = OrigemAuditadoEnum.Sistema,
+                    TipoAuditado = TipoAuditadoEnum.Sistema,
+                };
+            }
+        }
+
     }
 }

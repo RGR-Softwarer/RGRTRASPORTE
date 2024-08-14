@@ -16,5 +16,6 @@ namespace Dominio.Entidades.Veiculos
         public CategoriaCNHEnum CategoriaCNH { get; private set; }
         public StatusVeiculoEnum Status { get; private set; }
         public string Observacao { get; private set; }
+        protected override string Descricao => Id.ToString();
     }
 }

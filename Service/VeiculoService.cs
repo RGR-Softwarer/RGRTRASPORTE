@@ -28,7 +28,7 @@ namespace Service
             return new List<VeiculoDto>();
         }
 
-        public async Task<VeiculoDto> ObterPorIdAsync(int id)
+        public async Task<VeiculoDto> ObterPorIdAsync(long id)
         {
             var veiculo = await _veiculoRepository.ObterPorIdAsync(id);
 
@@ -44,7 +44,7 @@ namespace Service
         public async Task AdicionarAsync(VeiculoDto dto)
         {
             var veiculo = _mapper.Map<Veiculo>(dto);
-            await _veiculoRepository.AdicionarAsync(veiculo);
+            await _veiculoRepository.AdicionarAsync(veiculo, Auditado);
         }
 
         public async Task AdicionarEmLoteAsync(List<VeiculoDto> dto)
@@ -57,17 +57,17 @@ namespace Service
         {
             if (dto != null)
             {
-                 _veiculoRepository.Editar(_mapper.Map<Veiculo>(dto));
+                 _veiculoRepository.Atualizar(_mapper.Map<Veiculo>(dto), Auditado);
             }
         }
 
         public void EditarEmLoteAsync(List<VeiculoDto> dto)
         {
             if (dto.Count > 0)
-                 _veiculoRepository.EditarEmLoteAsync(_mapper.Map<List<Veiculo>>(dto));
+                 _veiculoRepository.AtualizarEmLoteAsync(_mapper.Map<List<Veiculo>>(dto));
         }
 
-        public async Task RemoverAsync(int id)
+        public async Task RemoverAsync(long id)
         {
             var veiculo = await _veiculoRepository.ObterPorIdAsync(id);
             if (veiculo != null)

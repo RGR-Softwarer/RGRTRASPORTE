@@ -1,4 +1,6 @@
-﻿using Dominio.Entidades.Veiculos;
+﻿using Dominio.Entidades;
+using Dominio.Entidades.Auditoria;
+using Dominio.Entidades.Veiculos;
 using Infra.Data.Configurators;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +8,7 @@ namespace Infra.Data.Context
 {
     public class RGRContext : DbContext
     {
+        public List<(BaseEntity Entity, HistoricoObjeto HistoricoObjeto)> PendingEntities = new();
 
         public RGRContext(DbContextOptions<RGRContext> options) : base(options) { }
 
@@ -15,7 +18,10 @@ namespace Infra.Data.Context
 
         #endregion
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            // Method intentionally left empty.
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
