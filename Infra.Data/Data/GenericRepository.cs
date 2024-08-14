@@ -43,7 +43,7 @@ namespace Infra.Data.Data
             await AddAsync(entidade);
 
             if (auditado != null)
-                await AuditarAsync(auditado, entidade, null, AcaoBancoDadosEnum.Insert);
+                AuditarAsync(auditado, entidade, null, AcaoBancoDadosEnum.Insert);
         }
 
         public async Task AdicionarEmLoteAsync(List<T> listaEntidades)
@@ -56,7 +56,7 @@ namespace Infra.Data.Data
             Update(entidade);
 
             if (auditado != null)
-                _ = AuditarAsync(auditado, entidade, entidade.GetChanges(), AcaoBancoDadosEnum.Update);
+                AuditarAsync(auditado, entidade, entidade.GetChanges(), AcaoBancoDadosEnum.Update);
         }
 
         public void AtualizarEmLoteAsync(List<T> listaEntidades)
