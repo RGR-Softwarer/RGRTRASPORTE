@@ -36,6 +36,14 @@ pipeline {
                 }
             }
         }
+stage('SonarQube Analysis') {
+    def scannerHome = tool 'SonarScanner for .NET'
+    withSonarQubeEnv() {
+      sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll begin /k:\"RGR-TRANSPORTE\""
+      sh "dotnet build"
+      sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll end"
+    }
+  }
     }
     post {
         always {            
