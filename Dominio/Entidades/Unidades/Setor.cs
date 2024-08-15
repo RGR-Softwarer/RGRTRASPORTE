@@ -24,7 +24,6 @@
                     case false:
                         return "Inativo";
                     default:
-                        return "";
                 }
             }
         }

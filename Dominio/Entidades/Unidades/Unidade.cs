@@ -50,7 +50,6 @@ namespace Dominio.Entidades.Unidades
                     case false:
                         return "Inativo";
                     default:
-                        return "";
                 }
             }
         }
