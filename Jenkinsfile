@@ -4,19 +4,22 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm 
+                script {
+                    // Se você tiver configurado o pipeline como "Pipeline script from SCM" ou "Multibranch Pipeline"
+                    checkout scm 
+                }
             }
         }
         stage('Parar Serviços') {
             steps {
-                script {                   
+                script {
                     sh "docker-compose down"
                 }
             }
         }
-        stage('Construir e Subir Serviços') { 
+        stage('Construir e Subir Serviços') {
             steps {
-                script {                    
+                script {
                     sh "docker-compose up -d --build"
                 }
             }
@@ -30,8 +33,8 @@ pipeline {
         }
         stage('Limpar Recursos Docker') {
             steps {
-                script {                   
-                    sh "docker network prune -f"                   
+                script {
+                    sh "docker network prune -f"
                     sh "docker volume prune -f"
                 }
             }
@@ -41,16 +44,16 @@ pipeline {
                 script {
                     def scannerHome = tool name: 'SonarScanner for .NET', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                     withSonarQubeEnv('SonarQube Server') {
-                        sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll begin /k:\"RGR-TRANSPORTE\""
+                        sh "dotnet ${scannerHome}/bin/SonarScanner.MSBuild.dll begin /k:\"RGR-TRANSPORTE\" /d:sonar.host.url=\"http://66.135.11.124:9000\""
                         sh "dotnet build"
-                        sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll end"
+                        sh "dotnet ${scannerHome}/bin/SonarScanner.MSBuild.dll end"
                     }
                 }
             }
         }
     }
     post {
-        always {            
+        always {
             cleanWs()
         }
     }
