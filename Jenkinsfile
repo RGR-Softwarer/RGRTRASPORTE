@@ -1,6 +1,11 @@
 pipeline {
     agent any 
 
+    environment {
+        // Adiciona o caminho para ferramentas .NET globais ao PATH
+        PATH = "$PATH:$HOME/.dotnet/tools"
+    }
+
     stages {
         stage('Checkout') {
             steps {
