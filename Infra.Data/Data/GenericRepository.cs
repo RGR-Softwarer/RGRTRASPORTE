@@ -142,7 +142,7 @@ namespace Infra.Data.Data
                 Data = DateTime.UtcNow,
                 Objeto = entidade.GetType().Name,
                 Acao = acao,
-                Descricao = entidade.DescricaoAuditoria ?? string.Empty,
+                DescricaoObjeto = entidade.DescricaoAuditoria ?? string.Empty,
                 DescricaoAcao = !string.IsNullOrWhiteSpace(descricaoAcao) ? descricaoAcao : acao.ObterDescricao(),
                 IP = auditado.IP,
                 TipoAuditado = auditado.TipoAuditado,

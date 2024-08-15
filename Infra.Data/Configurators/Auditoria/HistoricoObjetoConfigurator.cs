@@ -10,7 +10,7 @@ namespace Infra.Data.Configurators.Auditoria
         protected override void InternalConfigure(EntityTypeBuilder<HistoricoObjeto> builder)
         {
             builder.Property(h => h.Objeto).IsRequired().HasMaxLength(255);
-            builder.Property(h => h.Descricao).IsRequired().HasMaxLength(1000);
+            builder.Property(h => h.DescricaoObjeto).IsRequired().HasMaxLength(1000);
             builder.Property(h => h.DescricaoAcao).HasMaxLength(500);
             builder.Property(h => h.IP).HasMaxLength(50);
             builder.Property(h => h.Acao).IsRequired().HasConversion<int>();
