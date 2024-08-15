@@ -8,7 +8,7 @@ namespace Dominio.Entidades.Auditoria
 
         public long CodigoObjeto { get; set; }
 
-        public string Descricao { get; set; }
+        public string DescricaoObjeto { get; set; }
 
         public AcaoBancoDadosEnum Acao { get; set; }
 

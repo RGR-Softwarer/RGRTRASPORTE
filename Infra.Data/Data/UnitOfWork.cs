@@ -39,7 +39,7 @@ namespace Infra.Data.Data
         private Task ProcessarAuditoriaAsync(BaseEntity entity, HistoricoObjeto historicoObjeto)
         {
             historicoObjeto.CodigoObjeto = entity.Id;
-            historicoObjeto.Descricao = entity.DescricaoAuditoria;
+            historicoObjeto.DescricaoObjeto = entity.DescricaoAuditoria;
 
             _dbContext.Set<HistoricoObjeto>().Add(historicoObjeto);
             return _dbContext.SaveChangesAsync();
