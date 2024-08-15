@@ -39,10 +39,11 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
+                    def scannerHome = tool name: 'SonarScanner for .NET', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
                     withSonarQubeEnv('SonarQube Server') {
-                        sh "dotnet sonarscanner begin /k:\"RGR-TRANSPORTE\" /d:sonar.host.url=\"http://66.135.11.124:9000\""
+                        sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll begin /k:\"RGR-TRANSPORTE\""
                         sh "dotnet build"
-                        sh "dotnet sonarscanner end"
+                        sh "dotnet ${scannerHome}/SonarScanner.MSBuild.dll end"
                     }
                 }
             }
