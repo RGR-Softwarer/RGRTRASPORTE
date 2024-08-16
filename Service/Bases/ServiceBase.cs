@@ -10,7 +10,7 @@ namespace Service
     {
         private readonly INotificationHandler _notificacaoHandler;
 
-        public ServiceBase(INotificationHandler notificationHandler) : base(notificationHandler)
+        public ServiceBase(INotificationHandler notificationHandler)
         {
             _notificacaoHandler = notificationHandler;
         }
@@ -45,13 +45,13 @@ namespace Service
             return existeErro;
         }
 
-        public AuditadoDto Auditado
+        public static AuditadoDto Auditado
         {
             get
             {
                 return new AuditadoDto()
                 {
-                    OrigemAuditado = OrigemAuditadoEnum.Sistema,
+                    OrigemAuditado = OrigemAuditadoEnum.Integradoras,
                     TipoAuditado = TipoAuditadoEnum.Sistema,
                 };
             }

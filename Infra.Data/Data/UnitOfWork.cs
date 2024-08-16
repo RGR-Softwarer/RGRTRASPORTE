@@ -36,13 +36,14 @@ namespace Infra.Data.Data
             await Task.WhenAll(tasks);
         }
 
-        private Task ProcessarAuditoriaAsync(BaseEntity entity, HistoricoObjeto historicoObjeto)
+        private async Task ProcessarAuditoriaAsync(BaseEntity entity, HistoricoObjeto historicoObjeto)
         {
             historicoObjeto.CodigoObjeto = entity.Id;
             historicoObjeto.DescricaoObjeto = entity.DescricaoAuditoria;
 
             _dbContext.Set<HistoricoObjeto>().Add(historicoObjeto);
-            return _dbContext.SaveChangesAsync();
+
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

@@ -5,6 +5,7 @@ using Dominio.Enums;
 using Dominio.Interfaces.Infra.Data;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Infra.Data.Data
 {
@@ -25,17 +26,33 @@ namespace Infra.Data.Data
 
         public async Task<List<T>> ObterTodosAsync()
         {
-            return await _context.Set<T>().ToListAsync();
+            return await _context.Set<T>().AsNoTracking().ToListAsync();
+        }
+
+        public async Task<List<T>> ObterTodosAsync(int inicioRegistros, int maximoRegistros, string propriedadeOrdenar, bool decrescente = false)
+        {
+            var query = _context.Set<T>().AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(propriedadeOrdenar))
+            {
+                var parameter = Expression.Parameter(typeof(T), "x");
+                var property = Expression.Property(parameter, propriedadeOrdenar);
+                var lambda = Expression.Lambda<Func<T, object>>(Expression.Convert(property, typeof(object)), parameter);
+
+                query = decrescente ? query.OrderByDescending(lambda) : query.OrderBy(lambda);
+            }
+
+            return await query.Skip(inicioRegistros).Take(maximoRegistros).ToListAsync();
         }
 
         public async Task<T> ObterPorIdAsync(long id, bool auditado = false)
         {
-            var registro = await _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
+            var registro = await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
             if (auditado)
-                registro.Initialize();
+                registro?.Initialize();
 
-            return await _context.Set<T>().FirstOrDefaultAsync(x => x.Id == id);
+            return registro;
         }
 
         public async Task AdicionarAsync(T entidade, AuditadoDto auditado = null)
@@ -81,20 +98,6 @@ namespace Infra.Data.Data
             return await _context.Set<T>().CountAsync();
         }
 
-        public async Task<List<T>> ObterTodosAsync(int inicioRegistros, int maximoRegistros, string propriedadeOrdenar, bool decrescente = false)
-        {
-            var query = _context.Set<T>().AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(propriedadeOrdenar))
-            {
-                query = decrescente
-                    ? query.OrderByDescending(x => EF.Property<object>(x, propriedadeOrdenar))
-                    : query.OrderBy(x => EF.Property<object>(x, propriedadeOrdenar));
-            }
-
-            return await query.Skip(inicioRegistros).Take(maximoRegistros).ToListAsync();
-        }
-
         #endregion Métodos Públicos
 
         #region Métodos Privados
@@ -104,9 +107,9 @@ namespace Infra.Data.Data
             await _context.Set<T>().AddAsync(entity);
         }
 
-        private async Task AddManyAsync(List<T> entity)
+        private async Task AddManyAsync(List<T> entities)
         {
-            await _context.Set<T>().AddRangeAsync(entity);
+            await _context.Set<T>().AddRangeAsync(entities);
         }
 
         private void Update(T entity)
@@ -115,9 +118,10 @@ namespace Infra.Data.Data
             _context.Entry(entity).State = EntityState.Modified;
         }
 
-        private void UpdateMany(List<T> entity)
+        private void UpdateMany(List<T> entities)
         {
-            _context.Set<T>().AttachRange(entity);
+            _context.Set<T>().AttachRange(entities);
+            _context.Entry(entities).State = EntityState.Modified;
         }
 
         private void Remove(T entity)
@@ -152,7 +156,7 @@ namespace Infra.Data.Data
             if (alteracoes?.Count > 0)
                 historico.HistoricoPropriedade = alteracoes;
 
-            _context.PendingEntities.Add((entidade, historico));         
+            _context.PendingEntities.Add((entidade, historico));
         }
 
         #endregion

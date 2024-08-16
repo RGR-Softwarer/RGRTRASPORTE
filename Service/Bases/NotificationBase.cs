@@ -1,14 +1,7 @@
-﻿using Infra.CrossCutting.Handlers.Notifications;
-
-namespace Service.Bases
+﻿namespace Service.Bases
 {
-    public class NotificationBase
+    public abstract class NotificationBase
     {
-        private readonly INotificationHandler _notificacaoHandler;
-
-        public NotificationBase(INotificationHandler notificacaoHandler)
-        {
-            _notificacaoHandler = notificacaoHandler;
-        }
+        protected NotificationBase() { }
     }
 }

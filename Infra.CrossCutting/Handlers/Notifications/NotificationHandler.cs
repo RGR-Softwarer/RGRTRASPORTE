@@ -32,7 +32,7 @@ namespace Infra.CrossCutting.Handlers.Notifications
             }
         }
 
-        public bool HasNotification() => _notifications.Any();
+        public bool HasNotification() => _notifications.Count > 0;
 
         public void DisposeNotifications() => _notifications = new List<Notification>();
     }

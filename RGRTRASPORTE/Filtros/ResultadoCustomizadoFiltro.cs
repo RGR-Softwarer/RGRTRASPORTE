@@ -29,18 +29,21 @@ namespace RGRTRASPORTE.Filtros
             }
             else
             {
-                _logger.LogError(context.Exception, context.Exception.Message);
+                _logger.LogError(context.Exception, "An error occurred: {Message}", context.Exception?.Message);
             }
         }
 
         private static RetornoGenericoDto CriarResultadoCustomizado(ExceptionContext contexto, object value = null)
         {
-            var mensagens = new List<string>();
-            mensagens.Add(contexto.Exception.Message);
+            var mensagens = new List<string>
+            {
+                contexto.Exception.Message
+            };
+
             return new RetornoGenericoDto
             {
                 Sucesso = true,
-                Dados = null,
+                Dados = value,
                 Mensagens = mensagens
             };
         }
