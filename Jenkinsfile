@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    // Se você tiver configurado o pipeline como "Pipeline script from SCM" ou "Multibranch Pipeline"
+                    // Realiza o checkout do código fonte
                     checkout scm 
                 }
             }
@@ -18,6 +18,7 @@ pipeline {
         stage('Parar Serviços') {
             steps {
                 script {
+                    // Para os serviços Docker que estão rodando
                     sh "docker-compose down"
                 }
             }
@@ -25,6 +26,7 @@ pipeline {
         stage('Construir e Subir Serviços') {
             steps {
                 script {
+                    // Constrói e sobe os serviços Docker
                     sh "docker-compose up -d --build"
                 }
             }
@@ -33,7 +35,7 @@ pipeline {
             steps {
                 script {
                     // Executa os testes e coleta cobertura de código
-                    sh "dotnet test --collect:\"XPlat Code Coverage\""
+                    sh "dotnet test --collect:\"XPlat Code Coverage\" --results-directory ./TestResults"
                 }
             }
         }
@@ -41,8 +43,11 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh "dotnet sonarscanner begin /k:\"RGR-TRANSPORTE\" /d:sonar.host.url=\"http://66.135.11.124:9000\" /d:sonar.cs.opencover.reportsPaths=\"**/TestResults/*/coverage.opencover.xml\""
+                        // Inicia o scanner do SonarQube
+                        sh "dotnet sonarscanner begin /k:\"RGR-TRANSPORTE\" /d:sonar.host.url=\"http://66.135.11.124:9000\" /d:sonar.cs.opencover.reportsPaths=\"TestResults/coverage.cobertura.xml\""
+                        // Compila o código após a configuração do SonarQube
                         sh "dotnet build"
+                        // Finaliza o scanner do SonarQube
                         sh "dotnet sonarscanner end"
                     }
                 }
@@ -51,6 +56,7 @@ pipeline {
         stage('Limpar Imagens Docker') {
             steps {
                 script {
+                    // Limpa imagens Docker não utilizadas
                     sh "docker image prune -f"
                 }
             }
@@ -58,6 +64,7 @@ pipeline {
         stage('Limpar Recursos Docker') {
             steps {
                 script {
+                    // Limpa redes e volumes Docker não utilizados
                     sh "docker network prune -f"
                     sh "docker volume prune -f"
                 }
@@ -66,6 +73,7 @@ pipeline {
     }
     post {
         always {
+            // Limpa o workspace após a execução do pipeline
             cleanWs()
         }
     }
