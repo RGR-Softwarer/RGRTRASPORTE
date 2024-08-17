@@ -1,4 +1,4 @@
-﻿namespace Dominio.Enums
+﻿namespace Dominio.Enums.Auditoria
 {
     public enum OrigemAuditadoEnum
     {
@@ -11,8 +11,8 @@
         {
             switch (acao)
             {
-                case OrigemAuditadoEnum.Sistema: return "Sistema";                
-                case OrigemAuditadoEnum.Integradoras: return "Integradoras";                
+                case OrigemAuditadoEnum.Sistema: return "Sistema";
+                case OrigemAuditadoEnum.Integradoras: return "Integradoras";
                 default: return "Não mapeado";
             }
         }

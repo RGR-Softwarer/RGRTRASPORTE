@@ -1,5 +1,5 @@
 ﻿using Dominio.Dtos.Auditoria;
-using Dominio.Enums;
+using Dominio.Enums.Auditoria;
 using FluentValidation;
 using Infra.CrossCutting.Handlers.Notifications;
 using Service.Bases;

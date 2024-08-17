@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades.Veiculos;
+﻿using Dominio.Entidades.Veiculo;
 using FluentValidation;
 
 namespace Dominio.Validators
@@ -18,7 +18,7 @@ namespace Dominio.Validators
             RuleFor(v => v.Marca)
                 .NotEmpty().WithMessage("A marca é obrigatória.");
 
-            RuleFor(v => v.Ano)
+            RuleFor(v => v.AnoFabricacao)
                 .InclusiveBetween(1900, System.DateTime.Now.Year).WithMessage("Ano inválido.");
 
             RuleFor(v => v.Cor)
@@ -32,9 +32,6 @@ namespace Dominio.Validators
 
             RuleFor(v => v.TipoVeiculo)
                 .IsInEnum().WithMessage("Tipo de veículo inválido.");
-
-            RuleFor(v => v.Capacidade)
-                .NotEmpty().WithMessage("A capacidade é obrigatória.");
 
             RuleFor(v => v.CategoriaCNH)
                 .IsInEnum().WithMessage("Categoria da CNH inválida.");

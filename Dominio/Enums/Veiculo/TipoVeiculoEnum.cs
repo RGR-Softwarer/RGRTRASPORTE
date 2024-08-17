@@ -1,4 +1,4 @@
-﻿namespace Dominio.Enums
+﻿namespace Dominio.Enums.Veiculo
 {
     public enum TipoVeiculoEnum
     {

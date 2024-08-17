@@ -1,5 +1,5 @@
 ﻿using Dominio.Dtos.Auditoria;
-using Dominio.Entidades.Veiculos;
+using Dominio.Entidades.Veiculo;
 
 namespace Dominio.Interfaces.Infra.Data
 {

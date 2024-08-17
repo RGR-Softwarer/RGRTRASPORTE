@@ -2,6 +2,7 @@
 using Dominio.Entidades;
 using Dominio.Entidades.Auditoria;
 using Dominio.Enums;
+using Dominio.Enums.Auditoria;
 using Dominio.Interfaces.Infra.Data;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
