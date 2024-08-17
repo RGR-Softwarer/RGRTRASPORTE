@@ -110,7 +110,7 @@ namespace Teste.Services.Veiculos
         public async Task RemoverAsync_DeveNotificar_QuandoVeiculoNaoExistir()
         {
             // Arrange
-            _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync((Veiculo)null);
+            _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync(null as Veiculo);
 
             // Act
             await _veiculoService.RemoverAsync(1);

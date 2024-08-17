@@ -29,6 +29,25 @@ pipeline {
                 }
             }
         }
+        stage('Executar Testes e Coletar Cobertura') {
+            steps {
+                script {
+                    // Executa os testes e coleta cobertura de código
+                    sh "dotnet test --collect:\"XPlat Code Coverage\""
+                }
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQube Server') {
+                        sh "dotnet sonarscanner begin /k:\"RGR-TRANSPORTE\" /d:sonar.host.url=\"http://66.135.11.124:9000\" /d:sonar.cs.opencover.reportsPaths=\"**/TestResults/*/coverage.opencover.xml\""
+                        sh "dotnet build"
+                        sh "dotnet sonarscanner end"
+                    }
+                }
+            }
+        }
         stage('Limpar Imagens Docker') {
             steps {
                 script {
@@ -41,17 +60,6 @@ pipeline {
                 script {
                     sh "docker network prune -f"
                     sh "docker volume prune -f"
-                }
-            }
-        }
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarQube Server') {
-                        sh "dotnet sonarscanner begin /k:\"RGR-TRANSPORTE\" /d:sonar.host.url=\"http://66.135.11.124:9000\""
-                        sh "dotnet build"
-                        sh "dotnet sonarscanner end"
-                    }
                 }
             }
         }
