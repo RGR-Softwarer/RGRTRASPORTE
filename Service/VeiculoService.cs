@@ -5,6 +5,7 @@ using Dominio.Interfaces.Infra.Data;
 using Dominio.Interfaces.Service;
 using Dominio.Validators;
 using Infra.CrossCutting.Handlers.Notifications;
+using System.Net;
 
 namespace Service
 {
@@ -12,11 +13,13 @@ namespace Service
     {
         private readonly IVeiculoRepository _veiculoRepository;
         private readonly IMapper _mapper;
+        private readonly INotificationHandler _notificationHandler;
 
         public VeiculoService(INotificationHandler notificationHandler, IVeiculoRepository veiculoRepository, IMapper mapper) : base(notificationHandler)
         {
             _veiculoRepository = veiculoRepository;
             _mapper = mapper;
+            _notificationHandler = notificationHandler;
         }
 
         public async Task<List<VeiculoDto>> ObterTodosAsync()
@@ -74,8 +77,15 @@ namespace Service
         public async Task RemoverAsync(long id)
         {
             var veiculo = await _veiculoRepository.ObterPorIdAsync(id);
-            if (veiculo != null)
-                _veiculoRepository.Remover(veiculo);
+
+            if (veiculo == null)
+            {
+                _notificationHandler.AddNotification("Veículo não encontrado", HttpStatusCode.NotFound);
+                return;
+            }
+
+            _veiculoRepository.Remover(veiculo);
         }
+
     }
 }
