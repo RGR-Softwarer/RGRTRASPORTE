@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Dominio.Dtos;
+using Dominio.Dtos.Veiculo;
 using Dominio.Entidades.Veiculo;
 
 namespace RGRTRASPORTE.Mapper

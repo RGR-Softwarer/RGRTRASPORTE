@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
-using Dominio.Dtos;
+using Dominio.Dtos.Veiculo;
 using Dominio.Entidades.Veiculo;
 using Dominio.Interfaces.Infra.Data;
 using Dominio.Interfaces.Service;
+using Dominio.Validators;
 using Infra.CrossCutting.Handlers.Notifications;
 
 namespace Service
@@ -44,6 +45,9 @@ namespace Service
         public async Task AdicionarAsync(VeiculoDto dto)
         {
             var veiculo = _mapper.Map<Veiculo>(dto);
+
+            Validar(veiculo, new VeiculoValidator());
+
             await _veiculoRepository.AdicionarAsync(veiculo, Auditado);
         }
 

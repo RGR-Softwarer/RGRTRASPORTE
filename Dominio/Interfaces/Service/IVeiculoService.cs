@@ -1,4 +1,4 @@
-﻿using Dominio.Dtos;
+﻿using Dominio.Dtos.Veiculo;
 
 namespace Dominio.Interfaces.Service
 {

@@ -1,4 +1,4 @@
-﻿using Dominio.Dtos;
+﻿using Dominio.Dtos.Veiculo;
 using Dominio.Interfaces.Infra.Data;
 using Dominio.Interfaces.Service;
 using Infra.CrossCutting.Handlers.Notifications;

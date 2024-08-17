@@ -29,13 +29,7 @@ namespace Dominio.Validators
 
             RuleFor(v => v.TipoCombustivel)
                 .IsInEnum().WithMessage("Tipo de combustível inválido.");
-
-            RuleFor(v => v.TipoVeiculo)
-                .IsInEnum().WithMessage("Tipo de veículo inválido.");
-
-            RuleFor(v => v.CategoriaCNH)
-                .IsInEnum().WithMessage("Categoria da CNH inválida.");
-
+            
             RuleFor(v => v.Status)
                 .IsInEnum().WithMessage("Status do veículo inválido.");
 

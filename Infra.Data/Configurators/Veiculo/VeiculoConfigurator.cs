@@ -17,8 +17,6 @@ namespace Infra.Data.Configurators.Veiculo
             builder.Property(p => p.Cor);
             builder.Property(p => p.Renavam).IsRequired();
             builder.Property(p => p.TipoCombustivel).IsRequired();
-            builder.Property(p => p.TipoVeiculo).IsRequired();
-            builder.Property(p => p.CategoriaCNH).IsRequired();
             builder.Property(p => p.Status).IsRequired();
             builder.Property(p => p.Observacao);
             builder.Property(p => p.VencimentoLicenciamento);

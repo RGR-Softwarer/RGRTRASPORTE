@@ -14,8 +14,6 @@ namespace Dominio.Entidades.Veiculo
         public string Renavam { get; }
         public virtual DateTime? VencimentoLicenciamento { get; }
         public TipoCombustivelEnum TipoCombustivel { get; }
-        public TipoVeiculoEnum TipoVeiculo { get; }
-        public CategoriaCNHEnum CategoriaCNH { get; }
         public StatusVeiculoEnum Status { get; }
         public string Observacao { get; }
         public long? ModeloVeiculoId { get; }
