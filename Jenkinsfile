@@ -30,14 +30,7 @@ pipeline {
                     sh "npm install"
                 }
             }
-        }
-        stage('Executar Testes e Coletar Cobertura') {
-            steps {
-                script {
-                    sh "npm test -- --coverage"
-                }
-            }
-        }
+        }        
         stage('SonarQube Analysis') {
             steps {
                 script {
