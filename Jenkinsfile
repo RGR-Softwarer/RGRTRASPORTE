@@ -19,8 +19,8 @@ pipeline {
         stage('Construir e Subir Serviços') {
             steps {
                 script {
-                    // Habilita o BuildKit, que utiliza o buildx
-                    sh "DOCKER_BUILDKIT=1 docker-compose up -d --build"
+                    // Usar o método padrão de build sem BuildKit
+                    sh "docker-compose up -d --build"
                 }
             }
         }
