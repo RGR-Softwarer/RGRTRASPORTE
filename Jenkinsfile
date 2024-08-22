@@ -37,7 +37,7 @@ pipeline {
                     withSonarQubeEnv('SonarQube Server') {
                         sh '''
                             sonar-scanner \
-                            -Dsonar.projectKey=rgrfront \
+                            -Dsonar.projectKey=RGR-FRONT \
                             -Dsonar.sources=. \
                             -Dsonar.host.url=http://66.135.11.124:9000
                         '''
