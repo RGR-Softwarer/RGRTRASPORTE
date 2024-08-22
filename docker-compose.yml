@@ -6,4 +6,4 @@ services:
       dockerfile: Dockerfile
     image: rgrfront:latest
     ports:
-      - "4500:80"
+      - "4200:80"
