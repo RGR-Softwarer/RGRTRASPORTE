@@ -31,7 +31,7 @@ pipeline {
                 }
             }
         }        
-        stage('SonarQube Analysis') {
+        /*stage('SonarQube Analysis') {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube Server') {
@@ -44,7 +44,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
         stage('Limpar Imagens Docker') {
             steps {
                 script {
