@@ -1,10 +1,6 @@
 pipeline {
     agent any 
 
-    environment {
-        PATH = "$PATH:$HOME/.dotnet/tools"
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -23,7 +19,8 @@ pipeline {
         stage('Construir e Subir Serviços') {
             steps {
                 script {
-                    sh "docker-compose up -d --build"
+                    // Habilita o BuildKit, que utiliza o buildx
+                    sh "DOCKER_BUILDKIT=1 docker-compose up -d --build"
                 }
             }
         }
@@ -47,7 +44,7 @@ pipeline {
                     withSonarQubeEnv('SonarQube Server') {
                         sh '''
                             sonar-scanner \
-                            -Dsonar.projectKey=RGRFRONT \
+                            -Dsonar.projectKey=rgrfront \
                             -Dsonar.sources=. \
                             -Dsonar.host.url=http://66.135.11.124:9000
                         '''
