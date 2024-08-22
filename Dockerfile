@@ -20,7 +20,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copiar a build do projeto para o diretório de servimento do NGINX
-COPY --from=build /app/dist/rgrtrasporte /usr/share/nginx/html
+COPY --from=build /app/dist/rgrtrasporte/browser /usr/share/nginx/html
 
 # Copiar a configuração personalizada do Nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
