@@ -4,6 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: RGRFRONT:latest
+    image: rgrfront:latest
     ports:
       - "4500:80"
