@@ -20,7 +20,7 @@ RUN npm run build
 FROM nginx:alpine
 
 # Copiar a build do projeto para o diretório de servimento do NGINX
-COPY --from=build /app/dist/your-node-app /usr/share/nginx/html
+COPY --from=build /app/dist/rgrtrasporte /usr/share/nginx/html
 
 # Expor a porta 80 do contêiner
 EXPOSE 80
