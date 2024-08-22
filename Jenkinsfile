@@ -1,6 +1,10 @@
 pipeline {
     agent any 
 
+    environment {
+        PATH = "$PATH:$HOME/.dotnet/tools"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -16,6 +20,13 @@ pipeline {
                 }
             }
         }
+        stage('Construir e Subir Serviços') {
+            steps {
+                script {
+                    sh "docker-compose up -d --build"
+                }
+            }
+        }
         stage('Instalar Dependências') {
             steps {
                 script {
@@ -23,22 +34,24 @@ pipeline {
                 }
             }
         }
-        stage('Análise SonarQube') {
+        stage('Executar Testes e Coletar Cobertura') {
             steps {
                 script {
-                    withSonarQubeEnv('SonarQube Server') {
-                        sh "sonar-scanner \
-                            -Dsonar.projectKey=RGRFRONT \
-                            -Dsonar.sources=. \
-                            -Dsonar.host.url=http://66.135.11.124:9000"
-                    }
+                    sh "npm test -- --coverage"
                 }
             }
         }
-        stage('Construir e Subir Serviços com Docker Compose') {
+        stage('SonarQube Analysis') {
             steps {
                 script {
-                    sh "docker-compose up -d --build"
+                    withSonarQubeEnv('SonarQube Server') {
+                        sh '''
+                            sonar-scanner \
+                            -Dsonar.projectKey=RGRFRONT \
+                            -Dsonar.sources=. \
+                            -Dsonar.host.url=http://66.135.11.124:9000
+                        '''
+                    }
                 }
             }
         }
