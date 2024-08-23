@@ -15,18 +15,6 @@ namespace RGRTRASPORTE
         {
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowSpecificOrigin",
-                    builder =>
-                    {
-                        builder.WithOrigins("http://localhost:4200") // URL do seu frontend Angular
-                               .AllowAnyHeader()
-                               .AllowAnyMethod();
-                    });
-            });
-
-
             services.AddControllers();
 
             services.AddSingleton(Configuration);
@@ -49,18 +37,28 @@ namespace RGRTRASPORTE
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Painel.Api v1"));
 
-            app.UseCors(builder =>
+            if (env.IsDevelopment())
+            {
+                app.UseCors(builder =>
             {
                 builder.WithOrigins("http://localhost:4200");
                 builder.AllowAnyMethod();
                 builder.AllowAnyHeader();
             });
+            }
+            else
+            {
+                app.UseCors(builder =>
+                {
+                    builder.WithOrigins("http://66.135.11.124:4200");
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyHeader();
+                });
+            }
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            app.UseCors("AllowSpecificOrigin"); // Adiciona a política de CORS
 
             app.UseAuthorization();
 
