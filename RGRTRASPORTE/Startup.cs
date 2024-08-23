@@ -37,24 +37,12 @@ namespace RGRTRASPORTE
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Painel.Api v1"));
 
-            if (env.IsDevelopment())
+            app.UseCors(builder =>
             {
-                app.UseCors(builder =>
-            {
-                builder.WithOrigins("http://localhost:4200");
-                builder.AllowAnyMethod();
-                builder.AllowAnyHeader();
+                builder.AllowAnyOrigin() // Permite todas as origens
+                .AllowAnyMethod()
+                .AllowAnyHeader();
             });
-            }
-            else
-            {
-                app.UseCors(builder =>
-                {
-                    builder.WithOrigins("http://66.135.11.124:4200");
-                    builder.AllowAnyMethod();
-                    builder.AllowAnyHeader();
-                });
-            }
 
             app.UseHttpsRedirection();
 
