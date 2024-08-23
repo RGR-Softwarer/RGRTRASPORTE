@@ -15,6 +15,18 @@ namespace RGRTRASPORTE
         {
             services.AddAutoMapper(typeof(Startup));
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200") // URL do seu frontend Angular
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
+
+
             services.AddControllers();
 
             services.AddSingleton(Configuration);
@@ -47,6 +59,8 @@ namespace RGRTRASPORTE
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("AllowSpecificOrigin"); // Adiciona a política de CORS
 
             app.UseAuthorization();
 
