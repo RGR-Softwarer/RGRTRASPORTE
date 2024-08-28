@@ -45,6 +45,9 @@ pipeline {
                     
                     // Exibe o conteúdo do diretório para verificação
                     sh "ls -la TestResults/CoverageReport"
+                    
+                    // Verifica se o arquivo de cobertura foi gerado corretamente
+                    sh "test -f TestResults/CoverageReport/coverage.cobertura.xml"
                 }
             }
         }
