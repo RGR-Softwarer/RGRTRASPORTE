@@ -43,11 +43,11 @@ pipeline {
                     // Converte o relatório de cobertura para o formato Cobertura
                     sh "~/.dotnet/tools/reportgenerator -reports:TestResults/*/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:Cobertura"
                     
+                    // Renomeia o arquivo gerado para o nome esperado pelo SonarQube
+                    sh "mv TestResults/CoverageReport/Cobertura.xml TestResults/CoverageReport/coverage.cobertura.xml"
+                    
                     // Exibe o conteúdo do diretório para verificação
                     sh "ls -la TestResults/CoverageReport"
-                    
-                    // Verifica se o arquivo de cobertura foi gerado corretamente
-                    sh "test -f TestResults/CoverageReport/coverage.cobertura.xml"
                 }
             }
         }
