@@ -5,10 +5,9 @@ using Infra.Data.Context;
 using Infra.Data.Data;
 using Infra.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Service;
+using Service.Services;
 using System.Text.Json.Serialization;
 
 namespace Infra.Ioc
@@ -21,7 +20,7 @@ namespace Infra.Ioc
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            });           
+            });
 
             return services;
         }
@@ -44,11 +43,12 @@ namespace Infra.Ioc
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
-        {            
+        {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<INotificationHandler, NotificationHandler>();
 
             services.AddScoped<IVeiculoService, VeiculoService>();
+            services.AddScoped<IModeloVeicularService, ModeloVeicularService>();
 
             return services;
         }
@@ -56,6 +56,7 @@ namespace Infra.Ioc
         public static IServiceCollection AddRepositorys(this IServiceCollection services)
         {
             services.AddScoped<IVeiculoRepository, VeiculoRepository>();
+            services.AddScoped<IModeloVeicularRepository, ModeloVeicularRepository>();
 
             return services;
         }

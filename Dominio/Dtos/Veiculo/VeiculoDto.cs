@@ -13,15 +13,11 @@ namespace Dominio.Dtos.Veiculo
         public int AnoFabricacao { get; init; }
         public string Cor { get; init; }
         public string Renavam { get; init; }
-
         public DateTime? VencimentoLicenciamento { get; init; }
-
         public TipoCombustivelEnum TipoCombustivel { get; init; }
-        public TipoVeiculoEnum TipoVeiculo { get; init; }
-        public CategoriaCNHEnum CategoriaCNH { get; init; }
         public StatusVeiculoEnum Status { get; init; }
-
         public string Observacao { get; init; }
         public long? ModeloVeiculoId { get; init; }
+        public string PlacaFormatada { get; init; } 
     }
 }

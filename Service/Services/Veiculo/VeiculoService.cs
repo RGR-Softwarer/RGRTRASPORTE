@@ -7,7 +7,7 @@ using Dominio.Validators;
 using Infra.CrossCutting.Handlers.Notifications;
 using System.Net;
 
-namespace Service
+namespace Service.Services
 {
     public class VeiculoService : ServiceBase, IVeiculoService
     {
@@ -64,14 +64,14 @@ namespace Service
         {
             if (dto != null)
             {
-                 _veiculoRepository.Atualizar(_mapper.Map<Veiculo>(dto), Auditado);
+                _veiculoRepository.Atualizar(_mapper.Map<Veiculo>(dto), Auditado);
             }
         }
 
         public void EditarEmLoteAsync(List<VeiculoDto> dto)
         {
             if (dto.Count > 0)
-                 _veiculoRepository.AtualizarEmLoteAsync(_mapper.Map<List<Veiculo>>(dto));
+                _veiculoRepository.AtualizarEmLoteAsync(_mapper.Map<List<Veiculo>>(dto));
         }
 
         public async Task RemoverAsync(long id)

@@ -5,7 +5,7 @@ using Dominio.Entidades.Veiculo;
 using Dominio.Interfaces.Infra.Data;
 using Infra.CrossCutting.Handlers.Notifications;
 using Moq;
-using Service;
+using Service.Services;
 using System.Net;
 
 namespace Teste.Services.Veiculos
@@ -31,14 +31,14 @@ namespace Teste.Services.Veiculos
             // Arrange
             var veiculos = new List<Veiculo>
             {
-                new Veiculo(), // Supondo que você vai usar AutoMapper para preencher os dados
+                new Veiculo(),
                 new Veiculo()
             };
 
             var veiculosDto = new List<VeiculoDto>
             {
-                new VeiculoDto { Id = 1, Modelo = "Modelo1", Marca = "Marca1", Placa = "ABC-1234" },
-                new VeiculoDto { Id = 2, Modelo = "Modelo2", Marca = "Marca2", Placa = "DEF-5678" }
+                new VeiculoDto { Id = 1, Modelo = "Modelo1", Marca = "Marca1", Placa = "ABC-1234", PlacaFormatada = "ABC-1234" },
+                new VeiculoDto { Id = 2, Modelo = "Modelo2", Marca = "Marca2", Placa = "DEF-5678", PlacaFormatada = "DEF-5678" }
             };
 
             _veiculoRepositoryMock.Setup(r => r.ObterTodosAsync()).ReturnsAsync(veiculos);
@@ -58,8 +58,8 @@ namespace Teste.Services.Veiculos
         public async Task ObterPorIdAsync_DeveRetornarVeiculoDto_QuandoVeiculoExistir()
         {
             // Arrange
-            var veiculo = new Veiculo(); // Usando AutoMapper para preencher os dados
-            var veiculoDto = new VeiculoDto { Id = 1, Modelo = "Modelo1", Marca = "Marca1", Placa = "ABC-1234" };
+            var veiculo = new Veiculo();
+            var veiculoDto = new VeiculoDto { Id = 1, Modelo = "Modelo1", Marca = "Marca1", Placa = "ABC-1234", PlacaFormatada = "ABC-1234" };
 
             _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync(veiculo);
             _mapperMock.Setup(m => m.Map<VeiculoDto>(veiculo)).Returns(veiculoDto);
@@ -77,10 +77,9 @@ namespace Teste.Services.Veiculos
         public async Task AdicionarAsync_DeveAdicionarVeiculo_QuandoDtoValido()
         {
             // Arrange
-            var veiculoDto = new VeiculoDto { Modelo = "Modelo1", Marca = "Marca1", Placa = "ABC-1234" };
-            var veiculo = new Veiculo(); // Criar uma instância válida de Veiculo
+            var veiculoDto = new VeiculoDto { Modelo = "Modelo1", Marca = "Marca1", Placa = "ABC-1234", PlacaFormatada = "ABC-1234" };
+            var veiculo = new Veiculo();
 
-            // Configura o mock para mapear de VeiculoDto para Veiculo
             _mapperMock.Setup(m => m.Map<Veiculo>(veiculoDto)).Returns(veiculo);
 
             // Act
@@ -94,7 +93,7 @@ namespace Teste.Services.Veiculos
         public async Task RemoverAsync_DeveRemoverVeiculo_QuandoVeiculoExistir()
         {
             // Arrange
-            var veiculo = new Veiculo(); // Usando AutoMapper para preencher os dados
+            var veiculo = new Veiculo();
 
             _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync(veiculo);
             _veiculoRepositoryMock.Setup(r => r.Remover(veiculo));
