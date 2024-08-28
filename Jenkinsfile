@@ -37,10 +37,14 @@ pipeline {
         stage('Executar Testes e Coletar Cobertura') {
             steps {
                 script {
+                    // Executa os testes e coleta a cobertura de código
                     sh "dotnet test --collect:\"XPlat Code Coverage\" --logger trx --results-directory ./TestResults"
                     
                     // Converte o relatório de cobertura para o formato Cobertura
                     sh "~/.dotnet/tools/reportgenerator -reports:TestResults/*/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:Cobertura"
+                    
+                    // Exibe o conteúdo do diretório para verificação
+                    sh "ls -la TestResults/CoverageReport"
                 }
             }
         }
