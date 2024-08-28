@@ -30,7 +30,11 @@ pipeline {
         stage('Executar Testes e Coletar Cobertura') {
             steps {
                 script {
+                    // Executa os testes e coleta a cobertura de código
                     sh "dotnet test --collect:\"XPlat Code Coverage\" --logger trx --results-directory ./TestResults"
+                    
+                    // Converte o relatório de cobertura para o formato Cobertura, se necessário
+                    sh "reportgenerator -reports:TestResults/*/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:Cobertura"
                 }
             }
         }
@@ -38,7 +42,7 @@ pipeline {
             steps {
                 script {
                     withSonarQubeEnv('SonarQube Server') {
-                        sh "dotnet sonarscanner begin /k:\"RGR-TRANSPORTE\" /d:sonar.host.url=\"http://66.135.11.124:9000\" /d:sonar.cs.opencover.reportsPaths=\"TestResults/coverage.cobertura.xml\" /d:sonar.cs.vstest.reportsPaths=\"TestResults/*.trx\" /d:sonar.scanner.scanAll=false"
+                        sh "dotnet sonarscanner begin /k:\"RGR-TRANSPORTE\" /d:sonar.host.url=\"http://66.135.11.124:9000\" /d:sonar.cs.opencover.reportsPaths=\"TestResults/CoverageReport/coverage.cobertura.xml\" /d:sonar.cs.vstest.reportsPaths=\"TestResults/*.trx\" /d:sonar.scanner.scanAll=false"
                         sh "dotnet build"
                         sh "dotnet sonarscanner end"
                     }
