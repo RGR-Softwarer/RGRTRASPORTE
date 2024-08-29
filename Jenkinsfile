@@ -1,5 +1,5 @@
 pipeline {
-    agent any 
+    agent any
 
     environment {
         PATH = "$PATH:$HOME/.dotnet/tools"
@@ -16,7 +16,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    checkout scm 
+                    checkout scm
                 }
             }
         }
@@ -42,6 +42,9 @@ pipeline {
                     
                     // Converte o relatório de cobertura para o formato Cobertura
                     sh "~/.dotnet/tools/reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:Cobertura"
+                    
+                    // Verifica o conteúdo do relatório de cobertura
+                    sh "cat TestResults/CoverageReport/Cobertura.xml"
                     
                     // Verifica se o arquivo de cobertura foi gerado corretamente
                     sh "ls -la TestResults/CoverageReport"
