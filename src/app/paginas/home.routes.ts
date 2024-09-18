@@ -20,6 +20,11 @@ export const routes: Routes = [
         path: 'frota',
         data: { breadcrumb: 'Frota', icon: 'car' },  // Icone de carro para Frota
         children: [
+          { 
+            path: '', 
+            redirectTo: '/inicio',  
+            pathMatch: 'full' 
+          },
           {
             path: 'veiculo',
             loadChildren: () => import('./cadastros/veiculo/veiculo.module').then(m => m.CadastroVeiculoModule),
@@ -28,19 +33,19 @@ export const routes: Routes = [
           {
             path: 'veiculo/adicionar',
             loadChildren: () => import('./cadastros/veiculo/veiculo-formulario/veiculo-formulario.module').then(m => m.VeiculoFormularioModule),
-            data: { breadcrumb: 'Adicionar', hideFromMenu: true }
+            data: { breadcrumb: 'Adicionar', oculta: true }
           }
         ]
       },
       { 
         path: 'cadastro/pacote', 
         loadChildren: () => import('./cadastros/pacote/pacote.module').then(m => m.CadastroPacoteModule), 
-        data: { breadcrumb: 'Pacote', icon: 'product' }  // Icone de pacote
+        data: { breadcrumb: 'Pacote', icon: 'book' }  // Icone de pacote
       },
       { 
         path: 'cadastro/pacote/adicionar', 
         loadChildren: () => import('./cadastros/pacote/pacote-formulario/pacote-formulario.module').then(m => m.PacoteFormularioModule), 
-        data: { breadcrumb: 'Adicionar', hideFromMenu: true } 
+        data: { breadcrumb: 'Adicionar', oculta: true } 
       },
       { 
         path: 'cadastro/viagem', 
@@ -50,7 +55,7 @@ export const routes: Routes = [
       { 
         path: 'cadastro/viagem/adicionar', 
         loadChildren: () => import('./cadastros/viagem/viagem-formulario/viagem-formulario.module').then(m => m.ViagemFormularioModule), 
-        data: { breadcrumb: 'Adicionar', hideFromMenu: true } 
+        data: { breadcrumb: 'Adicionar', oculta: true } 
       }
     ]
   },

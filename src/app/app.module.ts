@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { ToastService } from './services/utils/notificacao/toast.service';
@@ -24,22 +24,15 @@ const antDesignIcons = AllIcons as {
 
   const icons: IconDefinition[] = Object.keys(antDesignIcons).map(key => antDesignIcons[key])
 
-@NgModule({
-    imports: [
-        BrowserModule,
+@NgModule({ declarations: [
+        AppComponent,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
         CommonModule,
         RouterModule.forRoot(routes),
-        HttpClientModule,
         BrowserAnimationsModule,
         NzNotificationModule,
         NzLayoutModule,
         HomeModule,
-        NzBreadCrumbModule,
-    ],
-    declarations: [
-        AppComponent,
-    ],    
-    providers: [ToastService, { provide: NZ_I18N, useValue: pt_BR }, { provide: NZ_ICONS, useValue: icons }],
-    bootstrap: [AppComponent],
-})
+        NzBreadCrumbModule], providers: [ToastService, { provide: NZ_I18N, useValue: pt_BR }, { provide: NZ_ICONS, useValue: icons }, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule { }

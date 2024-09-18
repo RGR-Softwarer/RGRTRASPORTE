@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
     const childRoutes = this.router.config.find((route: Route) => route.component === HomeComponent)?.children || [];
 
     this.menus = childRoutes
-      .filter((route: Route) => route.data && route.data['breadcrumb'] && !route.data['hideFromMenu']) // Exclui rotas com hideFromMenu
+      .filter((route: Route) => route.data && route.data['breadcrumb'] && !route.data['oculta']) // Exclui rotas com hideFromMenu
       .map((route: Route) => {
         return {
           path: route.path,
@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
   getSubRoutes(route: Route): any[] {
     if (route.children && route.children.length > 0) {
       return route.children
-        .filter((subRoute: Route) => subRoute.data && subRoute.data['breadcrumb'] && !subRoute.data['hideFromMenu']) // Exclui sub-rotas com hideFromMenu
+        .filter((subRoute: Route) => subRoute.data && subRoute.data['breadcrumb'] && !subRoute.data['oculta']) // Exclui sub-rotas com hideFromMenu
         .map((subRoute: Route) => ({
           path: `${route.path}/${subRoute.path}`, // Caminho completo da sub-rota
           breadcrumb: subRoute.data?.['breadcrumb'],

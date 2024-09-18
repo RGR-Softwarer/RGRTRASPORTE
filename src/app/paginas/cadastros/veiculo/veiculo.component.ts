@@ -9,7 +9,7 @@ import { Action } from '../../../dominio/interface/grid/action-grid';
 })
 
 export class CadastroVeiculoComponent {
-  adicionarUrl: string = '/cadastro/veiculo/adicionar';
+  adicionarUrl: string = '/frota/veiculo/adicionar';
   buscarTodosUrl: string = TrasportadorUrls.ObterTodos + 'veiculo';  
   acoes: Action[] = [{ label: 'Editar', acao: () => {} }];
 }
