@@ -2,25 +2,25 @@
   <nz-sider nzCollapsible [(nzCollapsed)]="menuAberto" [nzTrigger]="null">
     <div class="logo"></div>
     <ul nz-menu nzTheme="dark" nzMode="inline">
-      <li nz-submenu nzTitle="User" nzIcon="user">
-        <ul>
-          <li nz-menu-item>Tom</li>
-          <li nz-menu-item>Bill</li>
-          <li nz-menu-item>Alex</li>
-        </ul>
-      </li>
-      <li nz-submenu nzTitle="Team" nzIcon="team">
-        <ul>
-          <li nz-menu-item>Team 1</li>
-          <li nz-menu-item>Team 2</li>
-        </ul>
-      </li>
-      <li nz-menu-item>
-        <span nz-icon nzType="file"></span>
-        <span>File</span>
-      </li>
+      <ng-container *ngFor="let menu of menus">
+        <!-- Verifica se há submenus -->
+        <li *ngIf="menu.submenu.length > 0" nz-submenu [nzTitle]="menu.breadcrumb" [nzIcon]="menu.icon">
+          <ul>
+            <li *ngFor="let sub of menu.submenu" nz-menu-item [routerLink]="sub.path">
+              <span nz-icon [nzType]="sub.icon"></span> <!-- Ícone dinâmico -->
+              <span>{{ sub.breadcrumb }}</span>
+            </li>
+          </ul>
+        </li>
+        <!-- Caso contrário, exibe o item normal -->
+        <li *ngIf="menu.submenu.length === 0" nz-menu-item [routerLink]="menu.path">
+          <span nz-icon [nzType]="menu.icon"></span> <!-- Ícone dinâmico -->
+          <span>{{ menu.breadcrumb }}</span>
+        </li>
+      </ng-container>
     </ul>
   </nz-sider>
+
   <nz-layout>
     <nz-header>
       <span
@@ -31,9 +31,9 @@
       ></span>
     </nz-header>
     <nz-content>
-        <app-breadcrumb></app-breadcrumb>   
-      <router-outlet></router-outlet>     
+      <app-breadcrumb></app-breadcrumb>
+      <router-outlet></router-outlet>
     </nz-content>
     <nz-footer>Copyright ©{{ anoAtual }} Todos os direitos reservados para RGR SISTEMAS</nz-footer>
-</nz-layout>
+  </nz-layout>
 </nz-layout>
