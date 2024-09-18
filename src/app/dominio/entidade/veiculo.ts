@@ -17,7 +17,7 @@ export class Veiculo {
     @FormCampo('Marca', 'text', true, false)
     public marca?: string;
 
-    @FormCampo('Ano', 'text', true, false)
+    @FormCampo('Ano', 'text', true, true)
     public ano?: string;
 
     @FormCampo('Cor', 'text', true, false)
