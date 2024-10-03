@@ -20,11 +20,11 @@ namespace Dominio.Entidades
 
         public long Id { get; set; }
 
-        protected virtual string Descricao => Id.ToString();
+        protected virtual string DescricaoFormatada => Id.ToString();
 
         public virtual string DescricaoAuditoria
         {
-            get { return Descricao; }
+            get { return DescricaoFormatada; }
         }
 
         #endregion

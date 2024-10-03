@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Dominio.Dtos.Auditoria;
 using Dominio.Dtos.Veiculo;
-using Dominio.Entidades.Veiculo;
-using Dominio.Interfaces.Infra.Data;
+using Dominio.Entidades.Veiculos;
+using Dominio.Interfaces.Infra.Data.Veiculo;
 using Infra.CrossCutting.Handlers.Notifications;
 using Moq;
 using Service.Services;
@@ -96,13 +96,13 @@ namespace Teste.Services.Veiculos
             var veiculo = new Veiculo();
 
             _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync(veiculo);
-            _veiculoRepositoryMock.Setup(r => r.Remover(veiculo));
+            _veiculoRepositoryMock.Setup(r => r.RemoverAsync(veiculo));
 
             // Act
             await _veiculoService.RemoverAsync(1);
 
             // Assert
-            _veiculoRepositoryMock.Verify(r => r.Remover(It.IsAny<Veiculo>()), Times.Once);
+            _veiculoRepositoryMock.Verify(r => r.RemoverAsync(It.IsAny<Veiculo>()), Times.Once);
         }
 
         [Fact]
@@ -116,7 +116,7 @@ namespace Teste.Services.Veiculos
 
             // Assert
             _notificationHandlerMock.Verify(n => n.AddNotification(It.IsAny<string>(), It.IsAny<HttpStatusCode>()), Times.Once);
-            _veiculoRepositoryMock.Verify(r => r.Remover(It.IsAny<Veiculo>()), Times.Never);
+            _veiculoRepositoryMock.Verify(r => r.RemoverAsync(It.IsAny<Veiculo>()), Times.Never);
         }
     }
 }

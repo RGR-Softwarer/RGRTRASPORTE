@@ -1,7 +1,7 @@
 ﻿using Dominio.Dtos.Auditoria;
-using Dominio.Entidades.Veiculo;
+using Dominio.Entidades.Veiculos;
 
-namespace Dominio.Interfaces.Infra.Data
+namespace Dominio.Interfaces.Infra.Data.Veiculo
 {
     public interface IModeloVeicularRepository
     {
@@ -9,10 +9,10 @@ namespace Dominio.Interfaces.Infra.Data
         Task<List<ModeloVeicular>> ObterTodosAsync();
         Task<ModeloVeicular> ObterPorIdAsync(long id, bool auditado = false);
         Task AdicionarEmLoteAsync(List<ModeloVeicular> listaEntidades);
-        void Remover(ModeloVeicular entidade);
-        void RemoverEmLoteAsync(List<ModeloVeicular> listaEntidades);
-        void Atualizar(ModeloVeicular entidade, AuditadoDto auditado = null);
-        void AtualizarEmLoteAsync(List<ModeloVeicular> listaEntidades);
+        Task RemoverAsync(ModeloVeicular entidade);
+        Task RemoverEmLoteAsync(List<ModeloVeicular> listaEntidades);
+        Task AtualizarAsync(ModeloVeicular entidade, AuditadoDto auditado = null);
+        Task AtualizarEmLoteAsync(List<ModeloVeicular> listaEntidades);
         Task AdicionarAsync(ModeloVeicular entidade, AuditadoDto auditado = null);
     }
 }

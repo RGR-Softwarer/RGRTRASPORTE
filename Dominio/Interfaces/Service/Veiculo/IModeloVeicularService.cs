@@ -7,7 +7,7 @@ namespace Dominio.Interfaces.Service
         Task<List<ModeloVeicularDto>> ObterTodosAsync();
         Task<ModeloVeicularDto> ObterPorIdAsync(long id);
         Task AdicionarAsync(ModeloVeicularDto dto);
-        void EditarAsync(ModeloVeicularDto dto);
+        Task EditarAsync(ModeloVeicularDto dto);
         Task RemoverAsync(long id);
     }
 }

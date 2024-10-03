@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades.Veiculo;
+﻿using Dominio.Entidades.Veiculos;
 using FluentValidation;
 
 namespace Dominio.Validators

@@ -99,7 +99,97 @@ namespace Infra.Data.Migrations
                     b.ToTable("HistoricoPropriedade", (string)null);
                 });
 
-            modelBuilder.Entity("Dominio.Entidades.Veiculo.ModeloVeicular", b =>
+            modelBuilder.Entity("Dominio.Entidades.Localidades.Localidade", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Bairro")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Cep")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Cidade")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Logradouro")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Uf")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Localidade", (string)null);
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Pessoas.Motorista", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CNH")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Motorista");
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Pessoas.Passageiros.Passageiro", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CPF")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("LocalidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Sexo")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Telefone")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocalidadeId");
+
+                    b.ToTable("Passageiro", (string)null);
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Veiculos.ModeloVeicular", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -139,7 +229,7 @@ namespace Infra.Data.Migrations
                     b.ToTable("ModeloVeicular", (string)null);
                 });
 
-            modelBuilder.Entity("Dominio.Entidades.Veiculo.Veiculo", b =>
+            modelBuilder.Entity("Dominio.Entidades.Veiculos.Veiculo", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -151,9 +241,6 @@ namespace Infra.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("AnoModelo")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("CategoriaCNH")
                         .HasColumnType("integer");
 
                     b.Property<string>("Cor")
@@ -191,9 +278,6 @@ namespace Infra.Data.Migrations
                     b.Property<int>("TipoCombustivel")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TipoVeiculo")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime?>("VencimentoLicenciamento")
                         .HasColumnType("timestamp with time zone");
 
@@ -202,6 +286,178 @@ namespace Infra.Data.Migrations
                     b.HasIndex("ModeloVeiculoId");
 
                     b.ToTable("Veiculo", (string)null);
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("DestinoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Distancia")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("HorarioChegada")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("HorarioSaida")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("MotoristaId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("OrigemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("VeiculoId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DestinoId");
+
+                    b.HasIndex("MotoristaId");
+
+                    b.HasIndex("OrigemId");
+
+                    b.HasIndex("VeiculoId");
+
+                    b.ToTable("GatilhoViagem", (string)null);
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Viagens.Viagem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("CodigoViagem")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("DataViagem")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("DestinoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal>("Distancia")
+                        .HasColumnType("numeric");
+
+                    b.Property<bool>("Excesso")
+                        .HasColumnType("boolean");
+
+                    b.Property<long?>("GatilhoViagemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("GatinhoViagemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("HorarioChegada")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("HorarioSaida")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Lotado")
+                        .HasColumnType("boolean");
+
+                    b.Property<long>("MotoristaId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("NumeroPassageiros")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("OrigemId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Situacao")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("VeiculoId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DestinoId");
+
+                    b.HasIndex("GatilhoViagemId");
+
+                    b.HasIndex("GatinhoViagemId");
+
+                    b.HasIndex("MotoristaId");
+
+                    b.HasIndex("OrigemId");
+
+                    b.HasIndex("VeiculoId");
+
+                    b.ToTable("Viagem", (string)null);
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Viagens.ViagemPassageiro", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<long>("PassageiroId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ViagemId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PassageiroId");
+
+                    b.HasIndex("ViagemId");
+
+                    b.ToTable("ViagemPassageiro", (string)null);
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Viagens.ViagemPosicao", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("DataHora")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Latitude")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Longitude")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("ViagemId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ViagemId");
+
+                    b.ToTable("ViagemPosicao", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Auditoria.HistoricoPropriedade", b =>
@@ -215,9 +471,20 @@ namespace Infra.Data.Migrations
                     b.Navigation("HistoricoObjeto");
                 });
 
-            modelBuilder.Entity("Dominio.Entidades.Veiculo.Veiculo", b =>
+            modelBuilder.Entity("Dominio.Entidades.Pessoas.Passageiros.Passageiro", b =>
                 {
-                    b.HasOne("Dominio.Entidades.Veiculo.ModeloVeicular", "ModeloVeiculo")
+                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "Localidade")
+                        .WithMany()
+                        .HasForeignKey("LocalidadeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Localidade");
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Veiculos.Veiculo", b =>
+                {
+                    b.HasOne("Dominio.Entidades.Veiculos.ModeloVeicular", "ModeloVeiculo")
                         .WithMany("Veiculos")
                         .HasForeignKey("ModeloVeiculoId")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -225,14 +492,129 @@ namespace Infra.Data.Migrations
                     b.Navigation("ModeloVeiculo");
                 });
 
+            modelBuilder.Entity("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", b =>
+                {
+                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "Destino")
+                        .WithMany()
+                        .HasForeignKey("DestinoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dominio.Entidades.Pessoas.Motorista", "Motorista")
+                        .WithMany()
+                        .HasForeignKey("MotoristaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "Origem")
+                        .WithMany()
+                        .HasForeignKey("OrigemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dominio.Entidades.Veiculos.Veiculo", "Veiculo")
+                        .WithMany()
+                        .HasForeignKey("VeiculoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Destino");
+
+                    b.Navigation("Motorista");
+
+                    b.Navigation("Origem");
+
+                    b.Navigation("Veiculo");
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Viagens.Viagem", b =>
+                {
+                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "Destino")
+                        .WithMany()
+                        .HasForeignKey("DestinoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", null)
+                        .WithMany("Viagem")
+                        .HasForeignKey("GatilhoViagemId");
+
+                    b.HasOne("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", "GatinhoViagem")
+                        .WithMany()
+                        .HasForeignKey("GatinhoViagemId");
+
+                    b.HasOne("Dominio.Entidades.Pessoas.Motorista", "Motorista")
+                        .WithMany()
+                        .HasForeignKey("MotoristaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "Origem")
+                        .WithMany()
+                        .HasForeignKey("OrigemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dominio.Entidades.Veiculos.Veiculo", "Veiculo")
+                        .WithMany()
+                        .HasForeignKey("VeiculoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Destino");
+
+                    b.Navigation("GatinhoViagem");
+
+                    b.Navigation("Motorista");
+
+                    b.Navigation("Origem");
+
+                    b.Navigation("Veiculo");
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Viagens.ViagemPassageiro", b =>
+                {
+                    b.HasOne("Dominio.Entidades.Pessoas.Passageiros.Passageiro", "Passageiro")
+                        .WithMany()
+                        .HasForeignKey("PassageiroId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dominio.Entidades.Viagens.Viagem", "Viagem")
+                        .WithMany()
+                        .HasForeignKey("ViagemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Passageiro");
+
+                    b.Navigation("Viagem");
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Viagens.ViagemPosicao", b =>
+                {
+                    b.HasOne("Dominio.Entidades.Viagens.Viagem", "Viagem")
+                        .WithMany()
+                        .HasForeignKey("ViagemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Viagem");
+                });
+
             modelBuilder.Entity("Dominio.Entidades.Auditoria.HistoricoObjeto", b =>
                 {
                     b.Navigation("HistoricoPropriedade");
                 });
 
-            modelBuilder.Entity("Dominio.Entidades.Veiculo.ModeloVeicular", b =>
+            modelBuilder.Entity("Dominio.Entidades.Veiculos.ModeloVeicular", b =>
                 {
                     b.Navigation("Veiculos");
+                });
+
+            modelBuilder.Entity("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", b =>
+                {
+                    b.Navigation("Viagem");
                 });
 #pragma warning restore 612, 618
         }

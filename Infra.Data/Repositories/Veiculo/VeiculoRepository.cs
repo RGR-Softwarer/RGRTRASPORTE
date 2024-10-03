@@ -1,5 +1,5 @@
-﻿using Dominio.Entidades.Veiculo;
-using Dominio.Interfaces.Infra.Data;
+﻿using Dominio.Entidades.Veiculos;
+using Dominio.Interfaces.Infra.Data.Veiculo;
 using Infra.Data.Context;
 using Infra.Data.Data;
 

@@ -1,17 +1,17 @@
 ﻿using Dominio.Dtos.Auditoria;
 
-namespace Dominio.Interfaces.Infra.Data
+namespace Dominio.Interfaces.Infra.Data.Veiculo
 {
     public interface IVeiculoRepository
     {
-        IQueryable<Dominio.Entidades.Veiculo.Veiculo> Query();
-        Task<List<Entidades.Veiculo.Veiculo>> ObterTodosAsync();
-        Task<Entidades.Veiculo.Veiculo> ObterPorIdAsync(long id, bool auditado = false);
-        Task AdicionarEmLoteAsync(List<Entidades.Veiculo.Veiculo> listaEntidades);
-        void Remover(Entidades.Veiculo.Veiculo entidade);
-        void RemoverEmLoteAsync(List<Entidades.Veiculo.Veiculo> listaEntidades);
-        void Atualizar(Entidades.Veiculo.Veiculo entidade, AuditadoDto auditado = null);
-        void AtualizarEmLoteAsync(List<Entidades.Veiculo.Veiculo> listaEntidades);
-        Task AdicionarAsync(Entidades.Veiculo.Veiculo entidade, AuditadoDto auditado = null);
+        IQueryable<Entidades.Veiculos.Veiculo> Query();
+        Task<List<Entidades.Veiculos.Veiculo>> ObterTodosAsync();
+        Task<Entidades.Veiculos.Veiculo> ObterPorIdAsync(long id, bool auditado = false);
+        Task AdicionarEmLoteAsync(List<Entidades.Veiculos.Veiculo> listaEntidades);
+        Task RemoverAsync(Entidades.Veiculos.Veiculo entidade);
+        Task RemoverEmLoteAsync(List<Entidades.Veiculos.Veiculo> listaEntidades);
+        Task AtualizarAsync(Entidades.Veiculos.Veiculo entidade, AuditadoDto auditado = null);
+        Task AtualizarEmLoteAsync(List<Entidades.Veiculos.Veiculo> listaEntidades);
+        Task AdicionarAsync(Entidades.Veiculos.Veiculo entidade, AuditadoDto auditado = null);
     }
 }

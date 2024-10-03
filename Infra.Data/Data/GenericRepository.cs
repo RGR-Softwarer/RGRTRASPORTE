@@ -69,7 +69,7 @@ namespace Infra.Data.Data
             await AddManyAsync(listaEntidades);
         }
 
-        public void Atualizar(T entidade, AuditadoDto auditado = null)
+        public async Task AtualizarAsync(T entidade, AuditadoDto auditado = null)
         {
             Update(entidade);
 
@@ -77,17 +77,17 @@ namespace Infra.Data.Data
                 AuditarAsync(auditado, entidade, entidade.GetChanges(), AcaoBancoDadosEnum.Update);
         }
 
-        public void AtualizarEmLoteAsync(List<T> listaEntidades)
+        public async Task AtualizarEmLoteAsync(List<T> listaEntidades)
         {
             UpdateMany(listaEntidades);
         }
 
-        public void Remover(T entidade)
+        public async Task RemoverAsync(T entidade)
         {
             Remove(entidade);
         }
 
-        public void RemoverEmLoteAsync(List<T> listaEntidades)
+        public async Task RemoverEmLoteAsync(List<T> listaEntidades)
         {
             RemoveLote(listaEntidades);
         }

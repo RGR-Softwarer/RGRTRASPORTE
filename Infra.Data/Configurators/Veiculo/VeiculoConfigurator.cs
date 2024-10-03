@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Infra.Data.Configurators.Veiculo
 {
-    internal class VeiculoConfigurator : BaseEntityConfigurator<Dominio.Entidades.Veiculo.Veiculo>
+    internal class VeiculoConfigurator : BaseEntityConfigurator<Dominio.Entidades.Veiculos.Veiculo>
     {
-        protected override void InternalConfigure(EntityTypeBuilder<Dominio.Entidades.Veiculo.Veiculo> builder)
+        protected override void InternalConfigure(EntityTypeBuilder<Dominio.Entidades.Veiculos.Veiculo> builder)
         {
             builder.Property(p => p.Placa).IsRequired();
             builder.Property(p => p.Modelo).IsRequired();

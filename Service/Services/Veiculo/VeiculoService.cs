@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Dominio.Dtos.Veiculo;
-using Dominio.Entidades.Veiculo;
-using Dominio.Interfaces.Infra.Data;
+using Dominio.Entidades.Veiculos;
+using Dominio.Interfaces.Infra.Data.Veiculo;
 using Dominio.Interfaces.Service;
 using Dominio.Validators;
 using Infra.CrossCutting.Handlers.Notifications;
@@ -60,18 +60,18 @@ namespace Service.Services
             await _veiculoRepository.AdicionarEmLoteAsync(veiculo);
         }
 
-        public void EditarAsync(VeiculoDto dto)
+        public async Task EditarAsync(VeiculoDto dto)
         {
             if (dto != null)
             {
-                _veiculoRepository.Atualizar(_mapper.Map<Veiculo>(dto), Auditado);
+                await _veiculoRepository.AtualizarAsync(_mapper.Map<Veiculo>(dto), Auditado);
             }
         }
 
-        public void EditarEmLoteAsync(List<VeiculoDto> dto)
+        public async Task EditarEmLoteAsync(List<VeiculoDto> dto)
         {
             if (dto.Count > 0)
-                _veiculoRepository.AtualizarEmLoteAsync(_mapper.Map<List<Veiculo>>(dto));
+                await _veiculoRepository.AtualizarEmLoteAsync(_mapper.Map<List<Veiculo>>(dto));
         }
 
         public async Task RemoverAsync(long id)
@@ -84,7 +84,7 @@ namespace Service.Services
                 return;
             }
 
-            _veiculoRepository.Remover(veiculo);
+           await _veiculoRepository.RemoverAsync(veiculo);
         }
 
     }

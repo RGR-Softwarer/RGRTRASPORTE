@@ -8,10 +8,10 @@ namespace Dominio.Interfaces.Infra.Data
         Task<List<T>> ObterTodosAsync();
         Task<T> ObterPorIdAsync(long id, bool auditado = false);
         Task AdicionarEmLoteAsync(List<T> listaEntidades);
-        void Remover(T entidade);
-        void RemoverEmLoteAsync(List<T> listaEntidades);
-        void Atualizar(T entidade, AuditadoDto auditado = null);
-        void AtualizarEmLoteAsync(List<T> listaEntidades);
+        Task RemoverAsync(T entidade);
+        Task RemoverEmLoteAsync(List<T> listaEntidades);
+        Task AtualizarAsync(T entidade, AuditadoDto auditado = null);
+        Task AtualizarEmLoteAsync(List<T> listaEntidades);
         Task AdicionarAsync(T entidade, AuditadoDto auditado = null);
     }
 }

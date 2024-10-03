@@ -57,7 +57,7 @@ namespace RGRTRASPORTE.Controllers
         [HttpPut]
         public async Task<IActionResult> PutAsync(VeiculoDto dto)
         {
-            _veiculoService.EditarAsync(dto);
+            await _veiculoService.EditarAsync(dto);
 
             return await RGRResult();
         }
@@ -65,7 +65,7 @@ namespace RGRTRASPORTE.Controllers
         [HttpPut("Lote")]
         public async Task<IActionResult> PutEmLoteAsync(List<VeiculoDto> dto)
         {
-            _veiculoService.EditarEmLoteAsync(dto);
+            await _veiculoService.EditarEmLoteAsync(dto);
 
             return await RGRResult();
         }
@@ -108,7 +108,7 @@ namespace RGRTRASPORTE.Controllers
         [HttpPut("ModeloVeicular")]
         public async Task<IActionResult> PutModeloVeicularAsync(ModeloVeicularDto dto)
         {
-            _modeloVeicularService.EditarAsync(dto);
+            await _modeloVeicularService.EditarAsync(dto);
 
             return await RGRResult();
         }

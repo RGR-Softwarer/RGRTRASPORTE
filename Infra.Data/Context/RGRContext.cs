@@ -1,6 +1,6 @@
 ﻿using Dominio.Entidades;
 using Dominio.Entidades.Auditoria;
-using Dominio.Entidades.Veiculo;
+using Dominio.Entidades.Veiculos;
 using Infra.Data.Configurators.Veiculo;
 using Microsoft.EntityFrameworkCore;
 

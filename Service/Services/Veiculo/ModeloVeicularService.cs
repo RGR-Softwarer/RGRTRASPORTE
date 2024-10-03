@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Dominio.Dtos.Veiculo;
-using Dominio.Entidades.Veiculo;
-using Dominio.Interfaces.Infra.Data;
+using Dominio.Entidades.Veiculos;
+using Dominio.Interfaces.Infra.Data.Veiculo;
 using Dominio.Interfaces.Service;
 using Infra.CrossCutting.Handlers.Notifications;
 using System.Net;
@@ -51,11 +51,11 @@ namespace Service.Services
             await _modeloVeicularRepository.AdicionarAsync(modeloVeicular, Auditado);
         }
 
-        public void EditarAsync(ModeloVeicularDto dto)
+        public async Task EditarAsync(ModeloVeicularDto dto)
         {
             if (dto != null)
             {
-                _modeloVeicularRepository.Atualizar(_mapper.Map<ModeloVeicular>(dto), Auditado);
+                await _modeloVeicularRepository.AtualizarAsync(_mapper.Map<ModeloVeicular>(dto), Auditado);
             }
         }
 
@@ -69,7 +69,7 @@ namespace Service.Services
                 return;
             }
 
-            _modeloVeicularRepository.Remover(modeloVeicular);
+            await _modeloVeicularRepository.RemoverAsync(modeloVeicular);
         }
     }
 }
