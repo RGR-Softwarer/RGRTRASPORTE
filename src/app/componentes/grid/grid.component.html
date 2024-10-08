@@ -1,84 +1,76 @@
 <div>
-  @if(valorConfiguracao.adicionar){
-  <button nz-button (click)="adicionar()" nzType="primary">Add</button>
-  } @if(valorConfiguracao.mostrarOpcoes){
-  <form nz-form nzLayout="inline" [formGroup]="formularioConfiguracao">
-    @for (switch of listOfSwitch; track switch.nome) {
-    <nz-form-item>
-      <nz-form-label>{{ switch.nome }}</nz-form-label>
-      <nz-form-control><nz-switch [formControlName]="switch.formControlName"></nz-switch></nz-form-control>
-    </nz-form-item>
-    } @for (radio of listOfRadio; track radio.nome) {
-    <nz-form-item>
-      <nz-form-label>{{ radio.nome }}</nz-form-label>
-      <nz-form-control>
-        <nz-radio-group [formControlName]="radio.formControlName">
-          @for (o of radio.listOfOption; track o.valor) {
-          <label nz-radio-button [nzValue]="o.valor">{{ o.rotulo }}</label>
-          }
-        </nz-radio-group>
-      </nz-form-control>
-    </nz-form-item>
-    }
-  </form>
-  }
-</div>
-<nz-table #tabelaDinamica [nzScroll]="{ x: rolagemX, y: rolagemY }" [nzData]="listaDados"
-  [nzTableLayout]="valorConfiguracao.layoutTabela" [nzBordered]="valorConfiguracao.comBorda"
-  [nzSimple]="valorConfiguracao.simples" [nzLoading]="valorConfiguracao.carregando"
-  [nzPaginationType]="valorConfiguracao.tipoPaginacao" [nzPaginationPosition]="valorConfiguracao.posicao"
-  [nzShowSizeChanger]="valorConfiguracao.alteradorTamanho" [nzFrontPagination]="valorConfiguracao.paginacao"
-  [nzShowPagination]="valorConfiguracao.paginacao" [nzFooter]="valorConfiguracao.rodape ? 'Aqui é o Rodapé' : null"
-  [nzTitle]="valorConfiguracao.titulo ? 'Aqui é o Título' : null" [nzSize]="valorConfiguracao.tamanho"
-  (nzCurrentPageDataChange)="mudancaDadosPaginaAtual($event)">
-  <thead>
-    @if(valorConfiguracao.cabecalho){
-    <tr>
-      @if(valorConfiguracao.expansivel){
-      <th nzWidth="40px" [nzLeft]="colunaFixa"></th>
-      } @if(valorConfiguracao.caixaSelecao){
-      <th nzWidth="60px" [(nzChecked)]="todosMarcados" [nzLeft]="colunaFixa" [nzIndeterminate]="indeterminado"
-        (nzCheckedChange)="marcarTodos($event)"></th>
-      } @for (key of obterChavesColunas(dadosExibidos[0]); track $index) { @if
-      (key.visible) {
-      <th [nzLeft]="colunaFixa">{{ key.label }}</th>
-      }@else{
-      <th [nzLeft]="colunaFixa" style="display: none">{{ key.label }}</th>
-      } } @if(valorConfiguracao.action && acoes?.length?? 0 > 0)
-      { @for ( acao of acoes; track $index) {
-      <th [nzLeft]="colunaFixa">{{ acao.label }}</th>
-      } }
-    </tr>
-    }
-  </thead>
-  <tbody>
-    @for (data of tabelaDinamica.data; track $index) {
-    <ng-container>
-      <tr>
-        @if(valorConfiguracao.expansivel){
-        <td [nzLeft]="colunaFixa" [(nzExpand)]="data.expandido"></td>
-        } @if(valorConfiguracao.caixaSelecao){
-        <td [nzLeft]="colunaFixa" [(nzChecked)]="data.marcado" (nzCheckedChange)="atualizarStatus()"></td>
-        } @for (key of obterChaves(data); track $index) { @if (key.visible) {
-        <td [nzLeft]="colunaFixa">{{ data[key.label] }}</td>
-        }@else {
-        <td [nzLeft]="colunaFixa" style="display: none">
-          {{ data[key.label] }}
-        </td>
-        } } @if (valorConfiguracao.action) {
-        <td>
-          @for (acao of acoes; track $index) {
-          <a (click)="acao.acao(data)">{{ acao.label }}</a>
-          }
-        </td>
-        }
-      </tr>
-      @if (valorConfiguracao.expansivel) {
-      <tr [nzExpand]="data.expandido">
-        <span>{{ data.descricao }}</span>
-      </tr>
-      }
+  <!-- Botão para adicionar novo item -->
+  <button *ngIf="valorConfiguracao.adicionar" nz-button (click)="adicionar()" nzType="primary">Add</button>
+
+  <!-- Formulário para configurações adicionais da grid -->
+  <form *ngIf="valorConfiguracao.mostrarOpcoes" nz-form nzLayout="inline" [formGroup]="formularioConfiguracao">
+    <ng-container *ngFor="let switch of listOfSwitch">
+      <nz-form-item>
+        <nz-form-label>{{ switch.nome }}</nz-form-label>
+        <nz-form-control>
+          <nz-switch [formControlName]="switch.formControlName"></nz-switch>
+        </nz-form-control>
+      </nz-form-item>
     </ng-container>
-    }
+    <ng-container *ngFor="let radio of listOfRadio">
+      <nz-form-item>
+        <nz-form-label>{{ radio.nome }}</nz-form-label>
+        <nz-form-control>
+          <nz-radio-group [formControlName]="radio.formControlName">
+            <label *ngFor="let o of radio.listOfOption" nz-radio-button [nzValue]="o.valor">
+              {{ o.rotulo }}
+            </label>
+          </nz-radio-group>
+        </nz-form-control>
+      </nz-form-item>
+    </ng-container>
+  </form>
+</div>
+
+<nz-table
+  [nzScroll]="{ x: rolagemX, y: rolagemY }"
+  [nzData]="listaDados"
+  [nzTableLayout]="valorConfiguracao.layoutTabela"
+  [nzBordered]="valorConfiguracao.comBorda"
+  [nzSimple]="valorConfiguracao.simples"
+  [nzLoading]="valorConfiguracao.carregando"
+  [nzPaginationType]="valorConfiguracao.tipoPaginacao"
+  [nzPaginationPosition]="valorConfiguracao.posicao"
+  [nzShowSizeChanger]="valorConfiguracao.alteradorTamanho"
+  [nzFrontPagination]="valorConfiguracao.paginacao"
+  [nzShowPagination]="valorConfiguracao.paginacao"
+  [nzFooter]="valorConfiguracao.rodape ? 'Aqui é o Rodapé' : null"
+  [nzTitle]="valorConfiguracao.titulo ? 'Aqui é o Título' : null"
+  [nzSize]="valorConfiguracao.tamanho"
+  (nzCurrentPageDataChange)="mudancaDadosPaginaAtual($event)"
+>
+  <!-- Cabeçalho da tabela -->
+  <thead *ngIf="valorConfiguracao.cabecalho">
+    <tr>
+      <ng-container *ngFor="let col of gridColumns">
+        <th *ngIf="col.visible">{{ col.label }}</th>
+      </ng-container>
+      <!-- Adiciona título à coluna de ações -->
+      <th *ngIf="acoes && acoes.length > 0">
+        Opções
+      </th>
+    </tr>
+  </thead>
+
+  <!-- Corpo da tabela -->
+  <tbody>
+    <tr *ngFor="let data of listaDados">
+      <ng-container *ngFor="let col of gridColumns">
+        <td *ngIf="col.visible">{{ data[col.key] }}</td>
+      </ng-container>
+      <!-- Ações para cada linha -->
+      <td *ngIf="acoes">
+        <ng-container *ngFor="let acao of acoes">
+          <button nz-button nzType="primary" (click)="acao.acao(data)">
+            {{ acao.label }}
+          </button>
+        </ng-container>
+      </td>
+    </tr>
   </tbody>
 </nz-table>

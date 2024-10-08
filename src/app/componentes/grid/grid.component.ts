@@ -1,32 +1,28 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
-import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
+import { NzTableSize, NzTablePaginationType, NzTableLayout, NzTablePaginationPosition } from 'ng-zorro-antd/table';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/http/api.service';
 import { ToastService } from '../../services/utils/notificacao/toast.service';
 import { firstValueFrom } from 'rxjs';
 import { Veiculo } from '../../dominio/entidade/veiculo';
-import { FormCampoConstrutor } from '../../services/decorator/formulario-decorator';
+import { FormCampoConstrutor, FormCamposMetadata } from '../../services/decorator/formulario-decorator';
 import { Action } from '../../dominio/interface/grid/action-grid';
 
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
-  styleUrl: './grid.component.scss'
+  styleUrls: ['./grid.component.scss']
 })
 export class GridComponent implements OnInit {
   @Input() formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
   @Input() buscarTodosUrl: string = '';
   @Input() adicionarUrl: string = '';
-  //@Input() acoes?: Action[]; 
   @Input() acoes?: Action[] = [{ label: 'Editar', acao: this.editar.bind(this) }];
 
-  dadosEntrada: readonly any[] = [];
-  formFields: any[] = [];
-
-  formularioConfiguracaoPadrao: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
-  listaDados: readonly any[] = [];
+  gridColumns: FormCamposMetadata[] = []; 
+  listaDados: any[] = [];
   dadosExibidos: readonly any[] = [];
   todosMarcados = false;
   indeterminado = false;
@@ -34,6 +30,10 @@ export class GridComponent implements OnInit {
   rolagemX: string | null = null;
   rolagemY: string | null = null;
   valorConfiguracao!: ConfiguracaoGrid;
+  dadosEntrada: any[] = [];
+
+  formularioConfiguracaoPadrao: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
+
   listOfSwitch = [
     { nome: 'Com Borda', formControlName: 'comBorda' },
     { nome: 'Carregando', formControlName: 'carregando' },
@@ -49,6 +49,7 @@ export class GridComponent implements OnInit {
     { nome: 'Elipse', formControlName: 'elipse' },
     { nome: 'Paginação Simples', formControlName: 'simples' }
   ];
+
   listOfRadio = [
     {
       nome: 'Tamanho',
@@ -95,7 +96,13 @@ export class GridComponent implements OnInit {
     }
   ];
 
-  constructor(private formBuilder: NonNullableFormBuilder, private router: Router, private apiService: ApiService, private toastService: ToastService) {
+  constructor(
+    private formBuilder: NonNullableFormBuilder, 
+    private router: Router, 
+    private apiService: ApiService, 
+    private toastService: ToastService
+  ) {
+    // Inicializa as configurações padrão da grid
     this.formularioConfiguracaoPadrao = this.formBuilder.group({
       comBorda: [true],
       carregando: [false],
@@ -123,6 +130,44 @@ export class GridComponent implements OnInit {
     });
   }
 
+  async ngOnInit(): Promise<void> {
+    // Usa as configurações padrão se nenhuma configuração for passada
+    if (!this.formularioConfiguracao) {
+      this.formularioConfiguracao = this.formularioConfiguracaoPadrao;
+    }
+
+    if (this.adicionarUrl !== '') {
+      this.formularioConfiguracao.controls.adicionar.setValue(true);
+    }
+
+    this.formularioConfiguracao.valueChanges.subscribe(valor => {
+      this.valorConfiguracao = valor as ConfiguracaoGrid;
+    });
+
+    this.formularioConfiguracao.controls.rolagemTabela.valueChanges.subscribe(rolagem => {
+      this.colunaFixa = rolagem === 'fixed';
+      this.rolagemX = rolagem === 'scroll' || rolagem === 'fixed' ? '100vw' : null;
+    });
+    
+    this.formularioConfiguracao.controls.cabecalhoFixo.valueChanges.subscribe(fixo => {
+      this.rolagemY = fixo ? '240px' : null;
+    });
+
+    this.formularioConfiguracao.controls.semResultado.valueChanges.subscribe(vazio => {
+      this.listaDados = vazio ? [] : this.dadosEntrada;
+    });
+
+    this.valorConfiguracao = this.formularioConfiguracao.value as ConfiguracaoGrid;
+
+    // Carrega dados da API
+    this.dadosEntrada = await this.obterTodos();
+    this.listaDados = this.dadosEntrada;
+
+    // Gera colunas baseadas nos metadados da entidade
+    const objetoConstructor = new Veiculo().constructor as FormCampoConstrutor;
+    this.gridColumns = objetoConstructor.formFields ?? [];
+  }
+
   mudancaDadosPaginaAtual($event: readonly any[]): void {
     this.dadosExibidos = $event;
     this.atualizarStatus();
@@ -136,88 +181,22 @@ export class GridComponent implements OnInit {
     this.indeterminado = !todosMarcados && !todosDesmarcados;
   }
 
-  marcarTodos(valor: boolean): void {
-    this.dadosExibidos.forEach(dado => {
-      if (!dado.desativado) {
-        dado.marcado = valor;
-      }
-    });
-    this.atualizarStatus();
-  }
-
-
-  obterChavesColunas(obj: any): { label: string, visible: boolean }[] {
-    if (obj === undefined) {
-      return [];
-    }
-    const chaves = Object.keys(obj);
-
-    return chaves.map(chave => {
-      const metadadoCorrespondente = this.formFields.find(m => m.key === chave);
-      return metadadoCorrespondente ? { label: metadadoCorrespondente.label, visible: metadadoCorrespondente.visible } : { label: chave, visible: true };
-    });
-  }
-
-  obterChaves(obj: any): { label: string, visible: boolean }[] {
-    if (obj === undefined) {
-      return [];
-    }
-
-    const chaves = Object.keys(obj);
-
-    return chaves.map(chave => {
-      const metadadoCorrespondente = this.formFields.find(m => m.key === chave);
-      return metadadoCorrespondente ? { label: chave, visible: metadadoCorrespondente.visible } : { label: chave, visible: true };
-    });
-  }
-
-  async ngOnInit(): Promise<void> {
-
-    if (this.formularioConfiguracao === undefined) {
-      this.formularioConfiguracao = this.formularioConfiguracaoPadrao;
-    }
-
-    if (this.adicionarUrl !== '') {
-      this.formularioConfiguracao.controls.adicionar.setValue(true);
-    }
-
-    this.formularioConfiguracao.valueChanges.subscribe(valor => {
-      this.valorConfiguracao = valor as ConfiguracaoGrid;
-    });
-    this.formularioConfiguracao.controls.rolagemTabela.valueChanges.subscribe(rolagem => {
-      this.colunaFixa = rolagem === 'fixed';
-      this.rolagemX = rolagem === 'scroll' || rolagem === 'fixed' ? '100vw' : null;
-    });
-    this.formularioConfiguracao.controls.cabecalhoFixo.valueChanges.subscribe(fixo => {
-      this.rolagemY = fixo ? '240px' : null;
-    });
-    this.formularioConfiguracao.controls.semResultado.valueChanges.subscribe(vazio => {
-      if (vazio) {
-        this.listaDados = [];
-      } else {
-        this.listaDados = this.dadosEntrada;
-      }
-    });
-
-    this.valorConfiguracao = this.formularioConfiguracao.value as ConfiguracaoGrid;
-
-    this.dadosEntrada = await this.obterTodos() as Veiculo[];
-
-    const objetoConstructor = new Veiculo().constructor as FormCampoConstrutor;
-    this.formFields = objetoConstructor.formFields ?? [];
-
-    this.listaDados = this.dadosEntrada;
-  }
-
-  adicionar () {
-    this.router.navigate([this.adicionarUrl]);
-  }
-
   editar(item: any): void {
-    console.log('item', item);
-    // Supondo que 'item' tem uma propriedade 'id'
-    //this.router.navigate([this.adicionarUrl], { queryParams: { id: item.id } });
+    this.router.navigate(['/frota/veiculo/editar'], { 
+      state: { 
+        isEditMode: true, 
+        objeto: JSON.stringify(item) // Converte objeto para string JSON para evitar problemas de serialização
+      }
+    });
   }  
+
+  adicionar(): void {
+    this.router.navigate(['/frota/veiculo/adicionar'], { 
+      queryParams: { 
+        isEditMode: false // Define que não está no modo de edição
+      }
+    });
+  }
 
   async obterTodos(): Promise<any[]> {
     try {
@@ -233,4 +212,5 @@ export class GridComponent implements OnInit {
       return [];
     }
   }
+  
 }

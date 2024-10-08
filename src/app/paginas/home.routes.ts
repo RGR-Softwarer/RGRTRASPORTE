@@ -34,6 +34,11 @@ export const routes: Routes = [
             path: 'veiculo/adicionar',
             loadChildren: () => import('./cadastros/veiculo/veiculo-formulario/veiculo-formulario.module').then(m => m.VeiculoFormularioModule),
             data: { breadcrumb: 'Adicionar', oculta: true }
+          },
+          {
+            path: 'veiculo/editar',
+            loadChildren: () => import('./cadastros/veiculo/veiculo-formulario/veiculo-formulario.module').then(m => m.VeiculoFormularioModule),
+            data: { breadcrumb: 'Editar', oculta: true }
           }
         ]
       },

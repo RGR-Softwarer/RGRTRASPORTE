@@ -1,33 +1,37 @@
 <form nz-form [formGroup]="form" (ngSubmit)="onSubmit()">
   <div nz-row [nzGutter]="[16, 16]">
-    @for(field of formFields; track $index){
-    <ng-container>
-      @if(field.visible){
-      <div nz-col [nzSpan]="field.nzSpan">
-        <nz-form-item>
-          <nz-form-label [nzFor]="field.key">
-            {{ field.label }}
-            @if(field.required){
-            <span class="required-asterisk">*</span>
-            }
-          </nz-form-label>
-          <nz-form-control>
-            @if(field.type !== 'select'){
-            <input nz-input [formControlName]="field.key" [type]="field.type" />
-          }
-          @if(field.type === 'select'){
-            <nz-select [formControlName]="field.key" nzPlaceHolder="Selecione">
-              @for (option of field.options; track $index) {
-              <nz-option [nzValue]="option.value" [nzLabel]="option.label"></nz-option>
-              }
-            </nz-select>
-          }
-          </nz-form-control>
-        </nz-form-item>
-      </div>
-      }
+    <ng-container *ngFor="let field of formFields">
+      <ng-container *ngIf="field.visible">
+        <div nz-col [nzSpan]="field.nzSpan">
+          <nz-form-item>
+            <nz-form-label [nzFor]="field.key">
+              {{ field.label }}
+              <span *ngIf="field.required" class="required-asterisk">*</span>
+            </nz-form-label>
+            <nz-form-control>
+              <ng-container *ngIf="field.type !== 'select'">
+                <input nz-input [id]="field.key" [formControlName]="field.key" [type]="field.type" />
+              </ng-container>
+              <ng-container *ngIf="field.type === 'select'">
+                <nz-select [id]="field.key" [formControlName]="field.key" nzPlaceHolder="Selecione">
+                  <nz-option *ngFor="let option of field.options" 
+                             [nzValue]="option.value" 
+                             [nzLabel]="option.label">
+                  </nz-option>
+                </nz-select>
+              </ng-container>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </ng-container>
     </ng-container>
-    }
   </div>
-  <button nz-button nzType="primary">Submit</button>
+
+  <!-- Botões de Ação -->
+  <div class="button-group">
+    <button nz-button nzType="primary" *ngIf="isEditMode">Salvar</button>
+    <button nz-button nzType="primary" *ngIf="!isEditMode">Adicionar</button>
+    <!-- Prevent Default para evitar a submissão -->
+    <button nz-button nzType="default" (click)="voltar(); $event.preventDefault()">Voltar</button>
+  </div>
 </form>
