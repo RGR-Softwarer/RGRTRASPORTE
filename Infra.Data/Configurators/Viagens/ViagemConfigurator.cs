@@ -27,7 +27,6 @@ namespace Infra.Data.Configurators.Viagens
             builder.HasOne(v => v.Motorista).WithMany().HasForeignKey(v => v.MotoristaId);
             builder.HasOne(v => v.Origem).WithMany().HasForeignKey(v => v.OrigemId);
             builder.HasOne(v => v.Destino).WithMany().HasForeignKey(v => v.DestinoId);
-            builder.HasOne(v => v.GatinhoViagem).WithMany().HasForeignKey(v => v.GatinhoViagemId);
 
             builder.ToTable(nameof(Viagem));
         }

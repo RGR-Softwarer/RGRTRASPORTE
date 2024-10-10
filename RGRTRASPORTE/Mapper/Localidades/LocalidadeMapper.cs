@@ -8,6 +8,8 @@ namespace RGRTRASPORTE.Mapper.Localidades
     {
         public LocalidadeMapper()
         {
+            Console.WriteLine("LocalidadeMapper carregado.");
+
             CreateMap<Localidade, LocalidadeDto>().ReverseMap();
         }
     }

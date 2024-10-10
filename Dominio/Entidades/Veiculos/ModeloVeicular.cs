@@ -4,16 +4,16 @@ namespace Dominio.Entidades.Veiculos
 {
     public class ModeloVeicular : BaseEntity
     {
-        public  bool Situacao { get; }
-        public  bool DescricaoModelo { get; }
-        public  TipoModeloVeiculoEnum Tipo { get; }
-        public  int QuantidadeAssento { get; }
-        public  int QuantidadeEixo { get; }
-        public  int CapacidadeMaxima { get; }
-        public  int PassageirosEmPe { get; }
-        public  bool PossuiBanheiro { get; }
-        public  bool PossuiClimatizador { get; }
-        public  ICollection<Veiculo> Veiculos { get; }
+        public bool Situacao { get; private set; }
+        public bool DescricaoModelo { get; private set; }
+        public TipoModeloVeiculoEnum Tipo { get; private set; }
+        public int QuantidadeAssento { get; private set; }
+        public int QuantidadeEixo { get; private set; }
+        public int CapacidadeMaxima { get; private set; }
+        public int PassageirosEmPe { get; private set; }
+        public bool PossuiBanheiro { get; private set; }
+        public bool PossuiClimatizador { get; private set; }
+        public ICollection<Veiculo> Veiculos { get; private set; }
         public string DescricaoAtivo
         {
             get { return Situacao ? "Ativo" : "Inativo"; }

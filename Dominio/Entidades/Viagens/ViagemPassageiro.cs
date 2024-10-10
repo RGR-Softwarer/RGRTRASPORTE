@@ -4,9 +4,9 @@ namespace Dominio.Entidades.Viagens
 {
     public class ViagemPassageiro : BaseEntity
     {
-        public virtual Viagem Viagem { get; }
-        public long ViagemId { get; }
-        public virtual Passageiro Passageiro { get; }
-        public long PassageiroId { get; }
+        public virtual Viagem Viagem { get; private set; }
+        public long ViagemId { get; private set; }
+        public virtual Passageiro Passageiro { get; private set; }
+        public long PassageiroId { get; private set; }
     }
 }

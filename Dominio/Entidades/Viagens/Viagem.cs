@@ -8,40 +8,40 @@ namespace Dominio.Entidades.Viagens
 {
     public class Viagem : BaseEntity
     {
-        public string CodigoViagem { get; }
+        public string CodigoViagem { get; private set; }
         //public DateTime DataCriacao { get; set; }
-        public DateTime DataViagem { get; }
+        public DateTime DataViagem { get; private set; }
         //public DateTime? DataAtualizacao { get; set; }
-        public virtual Veiculo Veiculo { get; }
-        public long VeiculoId { get; }
-        public virtual Motorista Motorista { get; }
-        public long MotoristaId { get; }
-        public virtual Localidade Origem { get; }
-        public long OrigemId { get; }
-        public virtual Localidade Destino { get; }
-        public long DestinoId { get; }
-        public virtual GatilhoViagem GatinhoViagem { get; }
-        public long? GatinhoViagemId { get; }
-        public DateTime HorarioSaida { get; }
-        public DateTime HorarioChegada { get; }
-        public SituacaoViagemEnum Situacao { get; }
-        public string MotivoProblema { get; }
-        public string DescricaoViagem { get; }
-        public DateTime? DataInicioViagem { get; }
-        public decimal? LatitudeInicioViagem { get; }
-        public decimal? LongitudeInicioViagem { get; }
-        public DateTime? DataFimViagem { get; }
-        public decimal? LatitudeFimViagem { get; }
-        public decimal? LongitudeFimViagem { get; }
-        public decimal Distancia { get; }
-        public decimal? DistanciaRealizada { get; }
-        public string PolilinhaRota { get; }
-        public string? PolilinhaRotaRealizada { get; }
+        public virtual Veiculo Veiculo { get; private set; }
+        public long VeiculoId { get; private set; }
+        public virtual Motorista Motorista { get; private set; }
+        public long MotoristaId { get; private set; }
+        public virtual Localidade Origem { get; private set; }
+        public long OrigemId { get; private set; }
+        public virtual Localidade Destino { get; private set; }
+        public long DestinoId { get; private set; }
+        public virtual GatilhoViagem GatinhoViagem { get; private set; }
+        public long? GatinhoViagemId { get; private set; }
+        public DateTime HorarioSaida { get; private set; }
+        public DateTime HorarioChegada { get; private set; }
+        public SituacaoViagemEnum Situacao { get; private set; }
+        public string MotivoProblema { get; private set; }
+        public string DescricaoViagem { get; private set; }
+        public DateTime? DataInicioViagem { get; private set; }
+        public decimal? LatitudeInicioViagem { get; private set; }
+        public decimal? LongitudeInicioViagem { get; private set; }
+        public DateTime? DataFimViagem { get; private set; }
+        public decimal? LatitudeFimViagem { get; private set; }
+        public decimal? LongitudeFimViagem { get; private set; }
+        public decimal Distancia { get; private set; }
+        public decimal? DistanciaRealizada { get; private set; }
+        public string PolilinhaRota { get; private set; }
+        public string? PolilinhaRotaRealizada { get; private set; }
         //public Dominio.Entidades.Programacao.ProgramacaoViagemPosicao UltimaPosicao { get; set; }
 
-        public int NumeroPassageiros { get; }
-        public bool Lotado { get; }
-        public bool Excesso { get; }
+        public int NumeroPassageiros { get; private set; }
+        public bool Lotado { get; private set; }
+        public bool Excesso { get; private set; }
 
         #region Propriedades Virtuais
 

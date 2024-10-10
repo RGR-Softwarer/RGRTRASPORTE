@@ -15,7 +15,8 @@ namespace Infra.Data.Configurators.Localidades
             builder.Property(l => l.Cidade).IsRequired();
             builder.Property(l => l.Bairro).IsRequired();
             builder.Property(l => l.Logradouro).IsRequired();
-
+            builder.Property(l => l.Complemento).IsRequired();
+            
             builder.ToTable(nameof(Localidade));
         }
     }

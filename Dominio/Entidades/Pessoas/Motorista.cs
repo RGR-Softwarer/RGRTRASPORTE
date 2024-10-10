@@ -4,16 +4,16 @@ namespace Dominio.Entidades.Pessoas
 {
     public class Motorista : BaseEntity
     {
-        public string Nome { get; }
-        public bool Situacao { get; }
-        public string CPF { get; }
+        public string Nome { get; private set; }
+        public bool Situacao { get; private set; }
+        public string CPF { get; private set; }
         public string RG { get; }
-        public string Telefone { get; }
-        public string Email { get; }
+        public string Telefone { get; private set; }
+        public string Email { get; private set; }
         public string CNH { get; set; }
-        public CategoriaCNHEnum CategoriaCNH { get; }
-        public DateTime ValidadeCNH { get; }
-        public string Observacao { get; }
+        public CategoriaCNHEnum CategoriaCNH { get; private set; }
+        public DateTime ValidadeCNH { get; private set; }
+        public string Observacao { get; private set; }
 
         #region Propriedades Virtuais
 

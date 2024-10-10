@@ -7,23 +7,23 @@ namespace Dominio.Entidades.Viagens.Gatilho
 {
     public class GatilhoViagem : BaseEntity
     {
-        public string Descricao { get; }
-        public virtual Veiculo Veiculo { get; }
-        public long VeiculoId { get; }
-        public virtual Motorista Motorista { get; }
-        public long MotoristaId { get; }
-        public virtual Localidade Origem { get; }
-        public long OrigemId { get; }
-        public virtual Localidade Destino { get; }
-        public long DestinoId { get; }
-        public DateTime HorarioSaida { get; }
-        public DateTime HorarioChegada { get; }
-        public string DescricaoViagem { get; }
-        public decimal Distancia { get; }
-        public string PolilinhaRota { get; }
-        public bool Ativo { get; }
-        public virtual ICollection<Viagem> Viagem { get; }
-        public List<DiaSemanaEnum> DiasSemana { get; }
+        public string Descricao { get; private set; }
+        public virtual Veiculo Veiculo { get; private set; }
+        public long VeiculoId { get; private set; }
+        public virtual Motorista Motorista { get; private set; }
+        public long MotoristaId { get; private set; }
+        public virtual Localidade Origem { get; private set; }
+        public long OrigemId { get; private set; }
+        public virtual Localidade Destino { get; private set; }
+        public long DestinoId { get; private set; }
+        public DateTime HorarioSaida { get; private set; }
+        public DateTime HorarioChegada { get; private set; }
+        public string DescricaoViagem { get; private set; }
+        public decimal Distancia { get; private set; }
+        public string PolilinhaRota { get; private set; }
+        public bool Ativo { get; private set; }
+        public virtual ICollection<Viagem> Viagem { get; private set; }
+        public List<DiaSemanaEnum> DiasSemana { get; private set; }
 
         #region Propriedades Virtuais
 

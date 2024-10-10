@@ -3,6 +3,7 @@ using System;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infra.Data.Migrations
 {
     [DbContext(typeof(RGRContext))]
-    partial class RGRContextModelSnapshot : ModelSnapshot
+    [Migration("20241010011440_RGR000006")]
+    partial class RGR000006
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -435,6 +438,9 @@ namespace Infra.Data.Migrations
                     b.Property<bool>("Excesso")
                         .HasColumnType("boolean");
 
+                    b.Property<long?>("GatilhoViagemId")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("GatinhoViagemId")
                         .HasColumnType("bigint");
 
@@ -486,6 +492,8 @@ namespace Infra.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DestinoId");
+
+                    b.HasIndex("GatilhoViagemId");
 
                     b.HasIndex("GatinhoViagemId");
 
@@ -641,8 +649,12 @@ namespace Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", "GatinhoViagem")
+                    b.HasOne("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", null)
                         .WithMany("Viagem")
+                        .HasForeignKey("GatilhoViagemId");
+
+                    b.HasOne("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", "GatinhoViagem")
+                        .WithMany()
                         .HasForeignKey("GatinhoViagemId");
 
                     b.HasOne("Dominio.Entidades.Pessoas.Motorista", "Motorista")
