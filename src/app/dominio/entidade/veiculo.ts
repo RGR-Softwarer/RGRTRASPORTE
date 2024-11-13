@@ -5,45 +5,45 @@ import { TipoCombustivelEnum } from '../enum/veiculo/tipo-combustivel-enum';
 import { TipoVeiculoEnum } from '../enum/veiculo/tipo-veiculo-enum';
 
 export class Veiculo {
-    @FormCampo('ID', 'number', false)
+    @FormCampo('ID', 'numero', false)
     public id?: number;
 
-    @FormCampo('Placa', 'text', true, true)
+    @FormCampo('Placa', 'texto', true, true)
     public placa?: string;
 
-    @FormCampo('Modelo', 'text', true, false)
+    @FormCampo('Modelo', 'texto', true, false)
     public modelo?: string;
 
-    @FormCampo('Marca', 'text', true, false)
+    @FormCampo('Marca', 'texto', true, false)
     public marca?: string;
 
-    @FormCampo('Ano', 'text', true, true)
+    @FormCampo('Ano', 'texto', true, true)
     public ano?: string;
 
-    @FormCampo('Cor', 'text', true, false)
+    @FormCampo('Cor', 'texto', true, false)
     public cor?: string;
 
-    @FormCampo('Renavam', 'number', true, false)
+    @FormCampo('Renavam', 'numero', true, false)
     public renavam?: string;
 
-    @FormCampo('Tipo de Combustível', 'select', true, false, TipoCombustivelEnum)
+    @FormCampo('Tipo de Combustível', 'enum', true, false, TipoCombustivelEnum)
     public tipoCombustivel?: TipoCombustivelEnum;
 
-    @FormCampo('Tipo de Veículo', 'select', true, false, TipoVeiculoEnum)
+    @FormCampo('Tipo de Veículo', 'enum', true, false, TipoVeiculoEnum)
     public tipoVeiculo?: TipoVeiculoEnum;
 
-    @FormCampo('Categoria', 'text', true, false)
+    @FormCampo('Categoria', 'texto', true, false)
     public categoria?: string;
 
-    @FormCampo('Capacidade', 'text', true, false)
+    @FormCampo('Capacidade', 'texto', true, false)
     public capacidade?: string;
 
-    @FormCampo('Categoria CNH', 'select', true, false, CategoriaCNHEnum)
+    @FormCampo('Categoria CNH', 'enum', true, false, CategoriaCNHEnum)
     public categoriaCNH?: CategoriaCNHEnum;
 
-    @FormCampo('Status', 'select', true, false, StatusVeiculoEnum)
+    @FormCampo('Status', 'enum', true, false, StatusVeiculoEnum)
     public status?: StatusVeiculoEnum;
 
-    @FormCampo('Observação', 'text', true, false)
+    @FormCampo('Observação', 'texto', true, false)
     public observacao?: string;
 }

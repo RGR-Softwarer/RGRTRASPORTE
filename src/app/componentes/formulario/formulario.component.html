@@ -9,16 +9,39 @@
               <span *ngIf="field.required" class="required-asterisk">*</span>
             </nz-form-label>
             <nz-form-control>
-              <ng-container *ngIf="field.type !== 'select'">
-                <input nz-input [id]="field.key" [formControlName]="field.key" [type]="field.type" />
+              <ng-container
+                *ngIf="field.type !== 'enum' && field.type !== 'entidade'"
+              >
+                <input
+                  nz-input
+                  [id]="field.key"
+                  [formControlName]="field.key"
+                  [type]="field.type"
+                />
               </ng-container>
-              <ng-container *ngIf="field.type === 'select'">
-                <nz-select [id]="field.key" [formControlName]="field.key" nzPlaceHolder="Selecione">
-                  <nz-option *ngFor="let option of field.options" 
-                             [nzValue]="option.value" 
-                             [nzLabel]="option.label">
+              <ng-container *ngIf="field.type === 'enum'">
+                <nz-select
+                  [id]="field.key"
+                  [formControlName]="field.key"
+                  nzPlaceHolder="Selecione"
+                >
+                  <nz-option
+                    *ngFor="let option of field.options"
+                    [nzValue]="option.value"
+                    [nzLabel]="option.label"
+                  >
                   </nz-option>
                 </nz-select>
+              </ng-container>
+              <ng-container *ngIf="field.type === 'entidade'">
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                  <input type="text" nz-input placeholder="input search text" />
+                </nz-input-group>
+                <ng-template #suffixIconButton>
+                  <button nz-button nzType="primary" nzSearch>
+                    <span nz-icon nzType="search"></span>
+                  </button>
+                </ng-template>
               </ng-container>
             </nz-form-control>
           </nz-form-item>
@@ -32,6 +55,12 @@
     <button nz-button nzType="primary" *ngIf="isEditMode">Salvar</button>
     <button nz-button nzType="primary" *ngIf="!isEditMode">Adicionar</button>
     <!-- Prevent Default para evitar a submissão -->
-    <button nz-button nzType="default" (click)="voltar(); $event.preventDefault()">Voltar</button>
+    <button
+      nz-button
+      nzType="default"
+      (click)="voltar(); $event.preventDefault()"
+    >
+      Voltar
+    </button>
   </div>
 </form>
