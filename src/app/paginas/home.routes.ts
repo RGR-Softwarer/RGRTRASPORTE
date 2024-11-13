@@ -39,6 +39,21 @@ export const routes: Routes = [
             path: 'veiculo/editar',
             loadChildren: () => import('./cadastros/veiculo/veiculo-formulario/veiculo-formulario.module').then(m => m.VeiculoFormularioModule),
             data: { breadcrumb: 'Editar', oculta: true }
+          },
+          {
+            path: 'modeloveicular',
+            loadChildren: () => import('./cadastros/veiculo/modelo-veicular/modelo-veicular.module').then(m => m.CadastroModeloVeicularModule),
+            data: { breadcrumb: 'Modelo Veícular', icon: 'car' }  // Icone de carro para Veículo
+          },
+          {
+            path: 'modeloveicular/adicionar',
+            loadChildren: () => import('./cadastros/veiculo/modelo-veicular/modelo-veicular-formulario/modelo-veicular-formulario.module').then(m => m.ModeloVeicularFormularioModule),
+            data: { breadcrumb: 'Adicionar', oculta: true }
+          },
+          {
+            path: 'modeloveicular/editar',
+            loadChildren: () => import('./cadastros/veiculo/modelo-veicular/modelo-veicular-formulario/modelo-veicular-formulario.module').then(m => m.ModeloVeicularFormularioModule),
+            data: { breadcrumb: 'Editar', oculta: true }
           }
         ]
       },      

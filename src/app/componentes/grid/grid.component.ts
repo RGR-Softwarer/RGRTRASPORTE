@@ -182,7 +182,7 @@ export class GridComponent implements OnInit {
   }
 
   editar(item: any): void {
-    this.router.navigate(['/frota/veiculo/editar'], { 
+    this.router.navigate([this.adicionarUrl+ 'editar'], { 
       state: { 
         isEditMode: true, 
         objeto: JSON.stringify(item) // Converte objeto para string JSON para evitar problemas de serialização
@@ -191,7 +191,7 @@ export class GridComponent implements OnInit {
   }  
 
   adicionar(): void {
-    this.router.navigate(['/frota/veiculo/adicionar'], { 
+    this.router.navigate([this.adicionarUrl+'adicionar'], { 
       queryParams: { 
         isEditMode: false // Define que não está no modo de edição
       }

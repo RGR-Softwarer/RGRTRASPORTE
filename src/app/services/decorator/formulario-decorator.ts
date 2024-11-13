@@ -20,7 +20,7 @@ export interface FormCampoConstrutor {
   formFields?: FormCamposMetadata[]; 
 }
 
-export function FormCampo(label: string, type: 'texto' | 'numero' | 'enum'| 'entidade', visible: boolean = true, required: boolean = false, enumType?: any, colSpan16: number = 4) {
+export function FormCampo(label: string, type: 'texto' | 'numero' | 'enum'| 'entidade'  | 'bool', visible: boolean = true, required: boolean = false, enumType?: any, colSpan16: number = 4) {
   return function(target: any, propertyName: string) {
     const nzSpan = colSpan16 / 16 * 24;
 
