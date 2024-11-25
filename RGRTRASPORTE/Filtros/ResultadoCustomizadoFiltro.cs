@@ -3,7 +3,7 @@ using Infra.CrossCutting.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
-
+//início da Função
 namespace RGRTRASPORTE.Filtros
 {
     public class ResultadoCustomizadoFiltro : IActionFilter, IExceptionFilter
