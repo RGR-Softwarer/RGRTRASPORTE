@@ -3,7 +3,7 @@ using Dominio.Interfaces.Infra.Data;
 using Dominio.Interfaces.Service;
 using Infra.CrossCutting.Handlers.Notifications;
 using Microsoft.AspNetCore.Mvc;
-
+//Início da Funcionalidade
 namespace RGRTRASPORTE.Controllers
 {
     [Route("api/[controller]")]
