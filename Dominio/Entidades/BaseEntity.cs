@@ -16,6 +16,16 @@ namespace Dominio.Entidades
 
         #endregion
 
+        #region Construtores
+
+        public BaseEntity()
+        {
+            CreatedAt = DateTime.Now;
+            UpdatedAt = DateTime.Now;
+        }
+
+        #endregion Construtores
+
         #region Propriedades
 
         public long Id { get; set; }
@@ -27,11 +37,14 @@ namespace Dominio.Entidades
             get { return DescricaoFormatada; }
         }
 
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
         #endregion
 
 
 
-            #region Métodos Globais
+        #region Métodos Globais
 
         public virtual T Clonar<T>()
         {

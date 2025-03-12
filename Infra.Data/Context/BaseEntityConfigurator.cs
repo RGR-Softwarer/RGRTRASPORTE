@@ -12,6 +12,10 @@ namespace Infra.Data.Context
 
             builder.Property(p => p.Id).IsRequired();
 
+            builder.Property(x => x.CreatedAt).IsRequired();
+
+            builder.Property(x => x.UpdatedAt).IsRequired();
+
             InternalConfigure(builder);
         }
 

@@ -33,5 +33,40 @@ namespace Infra.Data.Context
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(VeiculoConfigurator).Assembly);
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ModeloVeicularConfigurator).Assembly);
         }
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            OnBeforeSaving();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            OnBeforeSaving();
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void OnBeforeSaving()
+        {
+            var entries = ChangeTracker.Entries();
+            foreach (var entry in entries)
+            {
+                if (entry.Entity is BaseEntity trackable)
+                {
+                    var now = DateTime.UtcNow;
+                    switch (entry.State)
+                    {
+                        case EntityState.Modified:
+                            trackable.UpdatedAt = now;
+                            break;
+
+                        case EntityState.Added:
+                            trackable.CreatedAt = now;
+                            trackable.UpdatedAt = now;
+                            break;
+                    }
+                }
+            }
+        }
     }
 }

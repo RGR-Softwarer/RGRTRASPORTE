@@ -22,7 +22,7 @@ namespace Dominio.Entidades.Viagens.Gatilho
         public decimal Distancia { get; private set; }
         public string PolilinhaRota { get; private set; }
         public bool Ativo { get; private set; }
-        public virtual ICollection<Viagem> Viagem { get; private set; }
+        public virtual ICollection<Viagem> Viagens { get; private set; }
         public List<DiaSemanaEnum> DiasSemana { get; private set; }
 
         #region Propriedades Virtuais

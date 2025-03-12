@@ -5,8 +5,8 @@ using Infra.Data.Data;
 
 namespace Infra.Data.Repositories.Viagens.Gatilho
 {
-    public class GatinhoViagemRepository : GenericRepository<GatilhoViagem>, IGatilhoViagemRepository
+    public class GatilhoViagemRepository : GenericRepository<GatilhoViagem>, IGatilhoViagemRepository
     {
-        public GatinhoViagemRepository(RGRContext context) : base(context) { }
+        public GatilhoViagemRepository(RGRContext context) : base(context) { }
     }
 }

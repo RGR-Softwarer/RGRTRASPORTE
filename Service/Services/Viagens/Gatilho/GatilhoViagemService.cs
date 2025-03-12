@@ -8,13 +8,13 @@ using System.Net;
 
 namespace Service.Services.Viagens.Gatilho
 {
-    public class GatinhoViagemService : IGatilhoViagemService
+    public class GatilhoViagemService : IGatilhoViagemService
     {
         private readonly IGatilhoViagemRepository _gatilhoViagemRepository;
         private readonly IMapper _mapper;
         private readonly INotificationHandler _notificationHandler;
 
-        public GatinhoViagemService(IGatilhoViagemRepository gatinhoViagemRepository, IMapper mapper, INotificationHandler notificationHandler)
+        public GatilhoViagemService(IGatilhoViagemRepository gatinhoViagemRepository, IMapper mapper, INotificationHandler notificationHandler)
         {
             _gatilhoViagemRepository = gatinhoViagemRepository;
             _mapper = mapper;
