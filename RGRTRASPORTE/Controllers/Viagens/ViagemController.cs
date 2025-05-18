@@ -1,9 +1,11 @@
-﻿using AutoMapper;
+﻿using Application.Commands.ViagemPassageiro;
+using AutoMapper;
 using Dominio.Dtos.Viagens;
 using Dominio.Entidades.Viagens;
 using Dominio.Interfaces.Infra.Data;
 using Dominio.Interfaces.Service.Viagens;
 using Infra.CrossCutting.Handlers.Notifications;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RGRTRASPORTE.Controllers.Viagens
@@ -13,11 +15,13 @@ namespace RGRTRASPORTE.Controllers.Viagens
     public class ViagemController : AbstractControllerBase
     {
         private readonly IViagemService _viagemService;
+        private readonly IMediator _mediator;
 
-        public ViagemController(IViagemService viagemService, INotificationHandler notificationHandler, IUnitOfWork unitOfWork)
-            : base(notificationHandler, unitOfWork)
+        public ViagemController(IMediator mediator, IViagemService viagemService, INotificationHandler notificationHandler)
+            : base(notificationHandler)
         {
             _viagemService = viagemService;
+            _mediator = mediator;
         }
 
         [HttpGet]
@@ -83,6 +87,13 @@ namespace RGRTRASPORTE.Controllers.Viagens
         public async Task<IActionResult> PostAsync(ViagemDto dto)
         {
             await _viagemService.AdicionarAsync(dto);
+            return await RGRResult();
+        }
+
+        [HttpPost("Teste")]
+        public async Task<IActionResult> PostAsync(AdicionarViagemCommand command)
+        {
+            await _mediator.Send(command);
             return await RGRResult();
         }
 

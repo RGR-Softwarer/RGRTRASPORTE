@@ -12,8 +12,8 @@ namespace RGRTRASPORTE.Controllers.Localidades
     {
         private readonly ILocalidadeService _localidadeService;
 
-        public LocalidadeController(ILocalidadeService localidadeService, INotificationHandler notificationHandler, IUnitOfWork unitOfWork)
-            : base(notificationHandler, unitOfWork)
+        public LocalidadeController(ILocalidadeService localidadeService, INotificationHandler notificationHandler)
+            : base(notificationHandler)
         {
             _localidadeService = localidadeService;
         }

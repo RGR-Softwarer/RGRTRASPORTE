@@ -13,8 +13,8 @@ namespace RGRTRASPORTE.Controllers.Viagens
     {
         private readonly IViagemPosicaoService _viagemPosicaoService;
 
-        public ViagemPosicaoController(IViagemPosicaoService viagemPosicaoService, INotificationHandler notificationHandler, IUnitOfWork unitOfWork)
-            : base(notificationHandler, unitOfWork)
+        public ViagemPosicaoController(IViagemPosicaoService viagemPosicaoService, INotificationHandler notificationHandler)
+            : base(notificationHandler)
         {
             _viagemPosicaoService = viagemPosicaoService;
         }

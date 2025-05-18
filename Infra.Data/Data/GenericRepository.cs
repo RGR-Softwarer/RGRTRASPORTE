@@ -1,7 +1,6 @@
 ﻿using Dominio.Dtos.Auditoria;
 using Dominio.Entidades;
 using Dominio.Entidades.Auditoria;
-using Dominio.Enums;
 using Dominio.Enums.Auditoria;
 using Dominio.Interfaces.Infra.Data;
 using Infra.Data.Context;
@@ -25,9 +24,9 @@ namespace Infra.Data.Data
 
         #region Métodos Públicos
 
-        public async Task<List<T>> ObterTodosAsync()
+        public async Task<List<T>> ObterTodosAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.Set<T>().AsNoTracking().ToListAsync();
+            return await _context.Set<T>().AsNoTracking().ToListAsync(cancellationToken);
         }
 
         public async Task<List<T>> ObterTodosAsync(int inicioRegistros, int maximoRegistros, string propriedadeOrdenar, bool decrescente = false)
@@ -46,9 +45,25 @@ namespace Infra.Data.Data
             return await query.Skip(inicioRegistros).Take(maximoRegistros).ToListAsync();
         }
 
-        public async Task<T> ObterPorIdAsync(long id, bool auditado = false)
+        public async Task<List<T>> ObterTodosAsync(int inicioRegistros, int maximoRegistros, string propriedadeOrdenar, bool decrescente = false, CancellationToken cancellationToken = default)
         {
-            var registro = await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var query = _context.Set<T>().AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(propriedadeOrdenar))
+            {
+                var parameter = Expression.Parameter(typeof(T), "x");
+                var property = Expression.Property(parameter, propriedadeOrdenar);
+                var lambda = Expression.Lambda<Func<T, object>>(Expression.Convert(property, typeof(object)), parameter);
+
+                query = decrescente ? query.OrderByDescending(lambda) : query.OrderBy(lambda);
+            }
+
+            return await query.Skip(inicioRegistros).Take(maximoRegistros).ToListAsync(cancellationToken);
+        }
+
+        public async Task<T> ObterPorIdAsync(long id, bool auditado = false, CancellationToken cancellationToken = default)
+        {
+            var registro = await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
             if (auditado)
                 registro?.Initialize();
@@ -56,17 +71,17 @@ namespace Infra.Data.Data
             return registro;
         }
 
-        public async Task AdicionarAsync(T entidade, AuditadoDto auditado = null)
+        public async Task AdicionarAsync(T entidade, AuditadoDto auditado = null, CancellationToken cancellationToken = default)
         {
-            await AddAsync(entidade);
+            await AddAsync(entidade, cancellationToken);
 
             if (auditado != null)
                 AuditarAsync(auditado, entidade, null, AcaoBancoDadosEnum.Insert);
         }
 
-        public async Task AdicionarEmLoteAsync(List<T> listaEntidades)
+        public async Task AdicionarEmLoteAsync(List<T> listaEntidades, CancellationToken cancellationToken = default)
         {
-            await AddManyAsync(listaEntidades);
+            await AddManyAsync(listaEntidades, cancellationToken);
         }
 
         public async Task AtualizarAsync(T entidade, AuditadoDto auditado = null)
@@ -75,42 +90,47 @@ namespace Infra.Data.Data
 
             if (auditado != null)
                 AuditarAsync(auditado, entidade, entidade.GetChanges(), AcaoBancoDadosEnum.Update);
+
+            await Task.CompletedTask;
         }
 
         public async Task AtualizarEmLoteAsync(List<T> listaEntidades)
         {
             UpdateMany(listaEntidades);
+            await Task.CompletedTask;
         }
 
         public async Task RemoverAsync(T entidade)
         {
             Remove(entidade);
+            await Task.CompletedTask;
         }
 
         public async Task RemoverEmLoteAsync(List<T> listaEntidades)
         {
             RemoveLote(listaEntidades);
+            await Task.CompletedTask;
         }
 
         public IQueryable<T> Query() => _context.Set<T>().AsQueryable();
 
-        public async Task<int> ContarTodosAsync()
+        public async Task<int> ContarTodosAsync(CancellationToken cancellationToken = default)
         {
-            return await _context.Set<T>().CountAsync();
+            return await _context.Set<T>().CountAsync(cancellationToken);
         }
 
         #endregion Métodos Públicos
 
         #region Métodos Privados
 
-        private async Task AddAsync(T entity)
+        private async Task AddAsync(T entity, CancellationToken cancellationToken = default)
         {
-            await _context.Set<T>().AddAsync(entity);
+            await _context.Set<T>().AddAsync(entity, cancellationToken);
         }
 
-        private async Task AddManyAsync(List<T> entities)
+        private async Task AddManyAsync(List<T> entities, CancellationToken cancellationToken = default)
         {
-            await _context.Set<T>().AddRangeAsync(entities);
+            await _context.Set<T>().AddRangeAsync(entities, cancellationToken);
         }
 
         private void Update(T entity)

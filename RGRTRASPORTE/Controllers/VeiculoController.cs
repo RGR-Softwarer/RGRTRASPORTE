@@ -13,7 +13,7 @@ namespace RGRTRASPORTE.Controllers
         private readonly IVeiculoService _veiculoService;
         private readonly IModeloVeicularService _modeloVeicularService;
 
-        public VeiculoController(IVeiculoService veiculoService, IModeloVeicularService modeloVeicularService, INotificationHandler notificationHandler, IUnitOfWork unitOfWork) : base(notificationHandler, unitOfWork)
+        public VeiculoController(IVeiculoService veiculoService, IModeloVeicularService modeloVeicularService, INotificationHandler notificationHandler) : base(notificationHandler)
         {
             _veiculoService = veiculoService;
             _modeloVeicularService = modeloVeicularService;

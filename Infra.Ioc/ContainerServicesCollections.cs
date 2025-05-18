@@ -1,9 +1,9 @@
-﻿using Dominio.Interfaces.Infra.Data;
-using Dominio.Interfaces.Infra.Data.Veiculo;
+﻿using Application.Commands.ViagemPassageiro;
+using Dominio.Interfaces.Infra.Data;
 using Infra.CrossCutting.Handlers.Notifications;
 using Infra.Data.Context;
 using Infra.Data.Data;
-using Infra.Data.Repositories;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -62,6 +62,11 @@ namespace Infra.Ioc
                     services.AddScoped(interfaceType, implementationType);
                 }
             }
+
+            services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssembly(typeof(AdicionarViagemCommand).Assembly));
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Behaviors.UnitOfWorkBehavior<,>));
 
             return services;
         }

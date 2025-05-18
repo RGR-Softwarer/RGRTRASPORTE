@@ -13,8 +13,8 @@ namespace RGRTRASPORTE.Controllers.Viagens
     {
         private readonly IViagemPassageiroService _viagemPassageiroService;
 
-        public ViagemPassageiroController(IViagemPassageiroService viagemPassageiroService, INotificationHandler notificationHandler, IUnitOfWork unitOfWork)
-            : base(notificationHandler, unitOfWork)
+        public ViagemPassageiroController(IViagemPassageiroService viagemPassageiroService, INotificationHandler notificationHandler)
+            : base(notificationHandler)
         {
             _viagemPassageiroService = viagemPassageiroService;
         }

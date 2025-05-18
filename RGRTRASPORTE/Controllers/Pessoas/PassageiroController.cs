@@ -1,11 +1,7 @@
-﻿using AutoMapper;
-using Dominio.Dtos.Pessoas.Passageiros;
-using Dominio.Entidades.Pessoas.Passageiros;
-using Dominio.Interfaces.Infra.Data;
+﻿using Dominio.Dtos.Pessoas.Passageiros;
 using Dominio.Interfaces.Service.Passageiros;
 using Infra.CrossCutting.Handlers.Notifications;
 using Microsoft.AspNetCore.Mvc;
-using Service.Services.Pessoas.Passageiros;
 
 namespace RGRTRASPORTE.Controllers.Pessoas
 {
@@ -15,8 +11,8 @@ namespace RGRTRASPORTE.Controllers.Pessoas
     {
         private readonly IPassageiroService _passageiroService;
 
-        public PassageiroController(IPassageiroService passageiroService, INotificationHandler notificationHandler, IUnitOfWork unitOfWork)
-            : base(notificationHandler, unitOfWork)
+        public PassageiroController(IPassageiroService passageiroService, INotificationHandler notificationHandler)
+            : base(notificationHandler)
         {
             _passageiroService = passageiroService;
         }
