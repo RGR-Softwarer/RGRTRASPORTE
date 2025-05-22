@@ -10,6 +10,7 @@ COPY ./Infra.Ioc/ ./Infra.Ioc/
 COPY ./Infra.Data/ ./Infra.Data/
 COPY ./Infra.CrossCutting/ ./Infra.CrossCutting/
 COPY ./Dominio/ ./Dominio/
+COPY ./Application/ ./Application/
 
 WORKDIR /build/RGRTRASPORTE
 
