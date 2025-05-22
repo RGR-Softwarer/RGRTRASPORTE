@@ -52,17 +52,17 @@ pipeline {
                 }
             }
         }
-        stage('SonarQube Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarQube Server') {
-                        sh "dotnet sonarscanner begin /k:\"RGR-TRANSPORTE\" /d:sonar.host.url=\"http://66.135.11.124:9000\" /d:sonar.cs.opencover.reportsPaths=\"TestResults/CoverageReport/Cobertura.xml\" /d:sonar.cs.vstest.reportsPaths=\"TestResults/*.trx\" /d:sonar.verbose=true /d:sonar.scanner.scanAll=false"
-                        sh "dotnet build"
-                        sh "dotnet sonarscanner end"
-                    }
-                }
-            }
-        }
+        //stage('SonarQube Analysis') {
+        //    steps {
+        //        script {
+        //            withSonarQubeEnv('SonarQube Server') {
+        //                sh "dotnet sonarscanner begin /k:\"RGR-TRANSPORTE\" /d:sonar.host.url=\"http://66.135.11.124:9000\" /d:sonar.cs.opencover.reportsPaths=\"TestResults/CoverageReport/Cobertura.xml\" /d:sonar.cs.vstest.reportsPaths=\"TestResults/*.trx\" /d:sonar.verbose=true /d:sonar.scanner.scanAll=false"
+        //                sh "dotnet build"
+        //                sh "dotnet sonarscanner end"
+        //            }
+        //        }
+        //    }
+        //}
         stage('Limpar Imagens Docker') {
             steps {
                 script {

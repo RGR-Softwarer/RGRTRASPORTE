@@ -33,7 +33,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ServicosBackground", "ServicosBackground", "{B19544A9-DC90-4AD1-B7F4-06AB2FF25F5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hangfire.Worker", "Hangfire.Worker\Hangfire.Worker.csproj", "{BA11DC5A-AE1C-431C-8F8F-1B9275647DCC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hangfire.Worker", "Hangfire.Worker\Hangfire.Worker.csproj", "{BA11DC5A-AE1C-431C-8F8F-1B9275647DCC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0EC8D317-0F82-4F61-A0D8-1B3B2544EE7D}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		Jenkinsfile = Jenkinsfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
