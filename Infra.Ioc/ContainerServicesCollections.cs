@@ -63,8 +63,8 @@ namespace Infra.Ioc
                 }
             }
 
-            services.AddMediatR(cfg =>
-                cfg.RegisterServicesFromAssembly(typeof(AdicionarViagemCommand).Assembly));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AdicionarViagemCommand).Assembly));
+           // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ProcessarViagemCriadaCommandHandler).Assembly));
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Behaviors.UnitOfWorkBehavior<,>));
 

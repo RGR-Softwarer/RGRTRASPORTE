@@ -9,13 +9,25 @@ namespace Infra.Data.Configurators.Viagens
     {
         protected override void InternalConfigure(EntityTypeBuilder<ViagemPassageiro> builder)
         {
-            builder.Property(vp => vp.ViagemId).IsRequired();
-            builder.Property(vp => vp.PassageiroId).IsRequired();
+            prefixo = "VIP";
 
-            builder.HasOne(vp => vp.Viagem).WithMany().HasForeignKey(vp => vp.ViagemId);
-            builder.HasOne(vp => vp.Passageiro).WithMany().HasForeignKey(vp => vp.PassageiroId);
+            builder.ToTable("T_VIAGEM_PASSAGEIRO");
 
-            builder.ToTable(nameof(ViagemPassageiro));
+            builder.Property(vp => vp.ViagemId)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_VIAGEM_ID");
+
+            builder.Property(vp => vp.PassageiroId)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_PASSAGEIRO_ID");
+
+            builder.HasOne(vp => vp.Viagem)
+                .WithMany()
+                .HasForeignKey(vp => vp.ViagemId);
+
+            builder.HasOne(vp => vp.Passageiro)
+                .WithMany()
+                .HasForeignKey(vp => vp.PassageiroId);
         }
     }
 }

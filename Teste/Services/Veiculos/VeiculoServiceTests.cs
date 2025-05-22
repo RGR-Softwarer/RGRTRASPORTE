@@ -41,7 +41,7 @@ namespace Teste.Services.Veiculos
                 new VeiculoDto { Id = 2, Modelo = "Modelo2", Marca = "Marca2", Placa = "DEF-5678", PlacaFormatada = "DEF-5678" }
             };
 
-            _veiculoRepositoryMock.Setup(r => r.ObterTodosAsync()).ReturnsAsync(veiculos);
+            _veiculoRepositoryMock.Setup(r => r.ObterTodosAsync(default)).ReturnsAsync(veiculos);
             _mapperMock.Setup(m => m.Map<List<VeiculoDto>>(veiculos)).Returns(veiculosDto);
 
             // Act
@@ -61,7 +61,7 @@ namespace Teste.Services.Veiculos
             var veiculo = new Veiculo();
             var veiculoDto = new VeiculoDto { Id = 1, Modelo = "Modelo1", Marca = "Marca1", Placa = "ABC-1234", PlacaFormatada = "ABC-1234" };
 
-            _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync(veiculo);
+            _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false, default)).ReturnsAsync(veiculo);
             _mapperMock.Setup(m => m.Map<VeiculoDto>(veiculo)).Returns(veiculoDto);
 
             // Act
@@ -86,7 +86,7 @@ namespace Teste.Services.Veiculos
             await _veiculoService.AdicionarAsync(veiculoDto);
 
             // Assert
-            _veiculoRepositoryMock.Verify(r => r.AdicionarAsync(It.IsAny<Veiculo>(), It.IsAny<AuditadoDto>()), Times.Once);
+            _veiculoRepositoryMock.Verify(r => r.AdicionarAsync(It.IsAny<Veiculo>(), It.IsAny<AuditadoDto>(), default), Times.Once);
         }
 
         [Fact]
@@ -95,7 +95,7 @@ namespace Teste.Services.Veiculos
             // Arrange
             var veiculo = new Veiculo();
 
-            _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync(veiculo);
+            _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false, default)).ReturnsAsync(veiculo);
             _veiculoRepositoryMock.Setup(r => r.RemoverAsync(veiculo));
 
             // Act
@@ -109,7 +109,7 @@ namespace Teste.Services.Veiculos
         public async Task RemoverAsync_DeveNotificar_QuandoVeiculoNaoExistir()
         {
             // Arrange
-            _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync(null as Veiculo);
+            _veiculoRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false, default)).ReturnsAsync(null as Veiculo);
 
             // Act
             await _veiculoService.RemoverAsync(1);

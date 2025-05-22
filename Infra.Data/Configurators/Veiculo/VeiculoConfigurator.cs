@@ -8,22 +8,61 @@ namespace Infra.Data.Configurators.Veiculo
     {
         protected override void InternalConfigure(EntityTypeBuilder<Dominio.Entidades.Veiculos.Veiculo> builder)
         {
-            builder.Property(p => p.Placa).IsRequired();
-            builder.Property(p => p.Modelo).IsRequired();
-            builder.Property(p => p.Marca).IsRequired();
-            builder.Property(p => p.AnoFabricacao).IsRequired();
-            builder.Property(p => p.NumeroChassi).IsRequired();
-            builder.Property(p => p.AnoModelo).IsRequired();
-            builder.Property(p => p.Cor);
-            builder.Property(p => p.Renavam).IsRequired();
-            builder.Property(p => p.TipoCombustivel).IsRequired();
-            builder.Property(p => p.Status).IsRequired();
-            builder.Property(p => p.Observacao);
-            builder.Property(p => p.VencimentoLicenciamento);
-            builder.Property(p => p.ModeloVeiculoId);
-            builder.HasOne(h => h.ModeloVeiculo).WithMany(p => p.Veiculos).HasForeignKey(h => h.ModeloVeiculoId);
+            prefixo = "VEI";
 
-            builder.ToTable(nameof(Veiculo));
+            builder.ToTable("T_VEICULO");
+
+            builder.Property(p => p.Placa)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_PLACA");
+
+            builder.Property(p => p.Modelo)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_MODELO");
+
+            builder.Property(p => p.Marca)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_MARCA");
+
+            builder.Property(p => p.AnoFabricacao)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_ANO_FABRICACAO");
+
+            builder.Property(p => p.NumeroChassi)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_NUMERO_CHASSI");
+
+            builder.Property(p => p.AnoModelo)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_ANO_MODELO");
+
+            builder.Property(p => p.Cor)
+                .HasColumnName($"{prefixo}_COR");
+
+            builder.Property(p => p.Renavam)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_RENAVAM");
+
+            builder.Property(p => p.TipoCombustivel)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_TIPO_COMBUSTIVEL");
+
+            builder.Property(p => p.Status)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_STATUS");
+
+            builder.Property(p => p.Observacao)
+                .HasColumnName($"{prefixo}_OBSERVACAO");
+
+            builder.Property(p => p.VencimentoLicenciamento)
+                .HasColumnName($"{prefixo}_VENCIMENTO_LICENCIAMENTO");
+
+            builder.Property(p => p.ModeloVeiculoId)
+                .HasColumnName($"{prefixo}_MODELO_VEICULO_ID");
+
+            builder.HasOne(h => h.ModeloVeiculo)
+                .WithMany(p => p.Veiculos)
+                .HasForeignKey(h => h.ModeloVeiculoId);
         }
     }
 }

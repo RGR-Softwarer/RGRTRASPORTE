@@ -20,8 +20,8 @@ namespace Dominio.Entidades.Viagens
         public long OrigemId { get; private set; }
         public virtual Localidade Destino { get; private set; }
         public long DestinoId { get; private set; }
-        public virtual GatilhoViagem GatinhoViagem { get; private set; }
-        public long? GatinhoViagemId { get; private set; }
+        public virtual GatilhoViagem GatilhoViagem { get; private set; }
+        public long? GatilhoViagemId { get; private set; }
         public DateTime HorarioSaida { get; private set; }
         public DateTime HorarioChegada { get; private set; }
         public SituacaoViagemEnum Situacao { get; private set; }

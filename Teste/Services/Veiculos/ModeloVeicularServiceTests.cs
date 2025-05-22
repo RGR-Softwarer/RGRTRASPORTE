@@ -1,16 +1,12 @@
-﻿using Moq;
-using Xunit;
-using Service;
-using Dominio.Entidades.Veiculos;
-using Dominio.Dtos.Veiculo;
-using AutoMapper;
-using Infra.CrossCutting.Handlers.Notifications;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using AutoMapper;
 using Dominio.Dtos.Auditoria;
+using Dominio.Dtos.Veiculo;
+using Dominio.Entidades.Veiculos;
 using Dominio.Enums.Veiculo;
-using Service.Services;
 using Dominio.Interfaces.Infra.Data.Veiculo;
+using Infra.CrossCutting.Handlers.Notifications;
+using Moq;
+using Service.Services;
 
 namespace Teste.Services.Veiculos
 {
@@ -45,7 +41,7 @@ namespace Teste.Services.Veiculos
                 {
                     Id = 1,
                     Situacao = true,
-                    DescricaoModelo = true,
+                    DescricaoModelo = string.Empty,
                     Tipo = TipoModeloVeiculoEnum.Van,
                     QuantidadeAssento = 4,
                     QuantidadeEixo = 2,
@@ -58,7 +54,7 @@ namespace Teste.Services.Veiculos
                 {
                     Id = 2,
                     Situacao = false,
-                    DescricaoModelo = false,
+                    DescricaoModelo = string.Empty,
                     Tipo = TipoModeloVeiculoEnum.Van,
                     QuantidadeAssento = 2,
                     QuantidadeEixo = 4,
@@ -69,7 +65,7 @@ namespace Teste.Services.Veiculos
                 }
             };
 
-            _modeloVeicularRepositoryMock.Setup(r => r.ObterTodosAsync()).ReturnsAsync(modelos);
+            _modeloVeicularRepositoryMock.Setup(r => r.ObterTodosAsync(default)).ReturnsAsync(modelos);
             _mapperMock.Setup(m => m.Map<List<ModeloVeicularDto>>(modelos)).Returns(modelosDto);
 
             // Act
@@ -89,7 +85,7 @@ namespace Teste.Services.Veiculos
             {
                 Id = 1,
                 Situacao = true,
-                DescricaoModelo = true,
+                DescricaoModelo = string.Empty,
                 Tipo = TipoModeloVeiculoEnum.Van,
                 QuantidadeAssento = 4,
                 QuantidadeEixo = 2,
@@ -99,7 +95,7 @@ namespace Teste.Services.Veiculos
                 PossuiClimatizador = true,
             };
 
-            _modeloVeicularRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync(modelo);
+            _modeloVeicularRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false, default)).ReturnsAsync(modelo);
             _mapperMock.Setup(m => m.Map<ModeloVeicularDto>(modelo)).Returns(modeloDto);
 
             // Act
@@ -117,7 +113,7 @@ namespace Teste.Services.Veiculos
             var modeloDto = new ModeloVeicularDto
             {
                 Situacao = true,
-                DescricaoModelo = true,
+                DescricaoModelo = string.Empty,
                 Tipo = TipoModeloVeiculoEnum.Van,
                 QuantidadeAssento = 4,
                 QuantidadeEixo = 2,
@@ -134,7 +130,7 @@ namespace Teste.Services.Veiculos
             await _modeloVeicularService.AdicionarAsync(modeloDto);
 
             // Assert
-            _modeloVeicularRepositoryMock.Verify(r => r.AdicionarAsync(It.IsAny<ModeloVeicular>(), It.IsAny<AuditadoDto>()), Times.Once);
+            _modeloVeicularRepositoryMock.Verify(r => r.AdicionarAsync(It.IsAny<ModeloVeicular>(), It.IsAny<AuditadoDto>(), default), Times.Once);
         }
 
         [Fact]
@@ -143,7 +139,7 @@ namespace Teste.Services.Veiculos
             // Arrange
             var modelo = new ModeloVeicular();
 
-            _modeloVeicularRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync(modelo);
+            _modeloVeicularRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false, default)).ReturnsAsync(modelo);
             _modeloVeicularRepositoryMock.Setup(r => r.RemoverAsync(modelo));
 
             // Act
@@ -157,7 +153,7 @@ namespace Teste.Services.Veiculos
         public async Task RemoverAsync_DeveNotificar_QuandoModeloNaoExistir()
         {
             // Arrange
-            _modeloVeicularRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false)).ReturnsAsync(null as ModeloVeicular);
+            _modeloVeicularRepositoryMock.Setup(r => r.ObterPorIdAsync(1, false, default)).ReturnsAsync(null as ModeloVeicular);
 
             // Act
             await _modeloVeicularService.RemoverAsync(1);

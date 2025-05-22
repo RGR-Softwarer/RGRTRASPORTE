@@ -9,14 +9,31 @@ namespace Infra.Data.Configurators.Auditoria
     {
         protected override void InternalConfigure(EntityTypeBuilder<HistoricoPropriedade> builder)
         {
+            prefixo = "HPR";
 
-            builder.Property(h => h.Propriedade).IsRequired().HasMaxLength(255);
-            builder.Property(h => h.De).IsRequired(false).HasMaxLength(1000);
-            builder.Property(h => h.Para).IsRequired(false).HasMaxLength(1000);
-            builder.Property(h => h.HistoricoObjetoId).IsRequired();
-            builder.HasOne(h => h.HistoricoObjeto).WithMany(p => p.HistoricoPropriedade).HasForeignKey(h => h.HistoricoObjetoId).OnDelete(DeleteBehavior.Cascade);
+            builder.ToTable("T_HISTORICO_PROPRIEDADE");
 
-            builder.ToTable(nameof(HistoricoPropriedade));
+            builder.Property(h => h.Propriedade)
+                .IsRequired()
+                .HasMaxLength(255)
+                .HasColumnName($"{prefixo}_PROPRIEDADE");
+
+            builder.Property(h => h.De)
+                .HasMaxLength(1000)
+                .HasColumnName($"{prefixo}_DE");
+
+            builder.Property(h => h.Para)
+                .HasMaxLength(1000)
+                .HasColumnName($"{prefixo}_PARA");
+
+            builder.Property(h => h.HistoricoObjetoId)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_HISTORICO_OBJETO_ID");
+
+            builder.HasOne(h => h.HistoricoObjeto)
+                .WithMany(p => p.HistoricoPropriedade)
+                .HasForeignKey(h => h.HistoricoObjetoId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infra.Data.Migrations
 {
     [DbContext(typeof(RGRContext))]
-    [Migration("20241010012401_RGR000007")]
-    partial class RGR000007
+    [Migration("20250522002748_RGR000001")]
+    partial class RGR000001
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,184 +29,271 @@ namespace Infra.Data.Migrations
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("HOB_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<int>("Acao")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("HOB_ACAO");
 
                     b.Property<long>("CodigoObjeto")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("HOB_CODIGO_OBJETO");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("HOB_CREATED_AT");
 
                     b.Property<DateTime>("Data")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("HOB_DATA");
 
                     b.Property<string>("DescricaoAcao")
                         .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("HOB_DESCRICAO_ACAO");
 
                     b.Property<string>("DescricaoObjeto")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("HOB_DESCRICAO_OBJETO");
 
                     b.Property<string>("IP")
                         .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("HOB_IP");
 
                     b.Property<string>("Objeto")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("HOB_OBJETO");
 
                     b.Property<int>("OrigemAuditado")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("HOB_ORIGEM_AUDITADO");
 
                     b.Property<int>("TipoAuditado")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("HOB_TIPO_AUDITADO");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("HOB_UPDATED_AT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("HistoricoObjeto", (string)null);
+                    b.ToTable("T_HISTORICO_OBJETO", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Auditoria.HistoricoPropriedade", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("HPR_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("HPR_CREATED_AT");
+
                     b.Property<string>("De")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("HPR_DE");
 
                     b.Property<long>("HistoricoObjetoId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("HPR_HISTORICO_OBJETO_ID");
 
                     b.Property<string>("Para")
                         .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("HPR_PARA");
 
                     b.Property<string>("Propriedade")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("HPR_PROPRIEDADE");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("HPR_UPDATED_AT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("HistoricoObjetoId");
 
-                    b.ToTable("HistoricoPropriedade", (string)null);
+                    b.ToTable("T_HISTORICO_PROPRIEDADE", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Localidades.Localidade", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("LOC_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Bairro")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_BAIRRO");
 
                     b.Property<string>("Cep")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_CEP");
 
                     b.Property<string>("Cidade")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_CIDADE");
 
                     b.Property<string>("Complemento")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_COMPLEMENTO");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LOC_CREATED_AT");
 
                     b.Property<string>("Latitude")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_LATITUDE");
 
                     b.Property<string>("Logradouro")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_LOGRADOURO");
 
                     b.Property<string>("Longitude")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_LONGITUDE");
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_NOME");
 
                     b.Property<string>("Numero")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_NUMERO");
 
                     b.Property<string>("Uf")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_UF");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("LOC_UPDATED_AT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Localidade", (string)null);
+                    b.ToTable("T_LOCALIDADE", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Pessoas.Motorista", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("MOT_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("CNH")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("MOT_CNH");
 
                     b.Property<string>("CPF")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("MOT_CPF");
 
                     b.Property<int>("CategoriaCNH")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("MOT_CATEGORIA_CNH");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("MOT_CREATED_AT");
 
                     b.Property<string>("Email")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("MOT_EMAIL");
 
                     b.Property<string>("Nome")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("MOT_NOME");
 
                     b.Property<string>("Observacao")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("MOT_OBSERVACAO");
+
+                    b.Property<string>("RG")
+                        .HasColumnType("text")
+                        .HasColumnName("MOT_RG");
 
                     b.Property<bool>("Situacao")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("MOT_SITUACAO");
 
                     b.Property<string>("Telefone")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("MOT_TELEFONE");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("MOT_UPDATED_AT");
 
                     b.Property<DateTime>("ValidadeCNH")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("MOT_VALIDADE_CNH");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Motorista");
+                    b.ToTable("T_MOTORISTA", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Pessoas.Passageiros.Passageiro", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("PAS_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("CPF")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("PAS_CPF");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("PAS_CREATED_AT");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("PAS_EMAIL");
 
                     b.Property<long>("LocalidadeDesembarqueId")
                         .HasColumnType("bigint");
@@ -215,24 +302,33 @@ namespace Infra.Data.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<long>("LocalidadeId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("PAS_LOCALIDADE_ID");
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("PAS_NOME");
 
                     b.Property<string>("Observacao")
                         .HasColumnType("text");
 
                     b.Property<int>("Sexo")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("PAS_SEXO");
 
                     b.Property<bool>("Situacao")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("PAS_SITUACAO");
 
                     b.Property<string>("Telefone")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("PAS_TELEFONE");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("PAS_UPDATED_AT");
 
                     b.HasKey("Id");
 
@@ -242,152 +338,212 @@ namespace Infra.Data.Migrations
 
                     b.HasIndex("LocalidadeId");
 
-                    b.ToTable("Passageiro", (string)null);
+                    b.ToTable("T_PASSAGEIRO", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Veiculos.ModeloVeicular", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("MOV_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<int>("CapacidadeMaxima")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("MOV_CAPACIDADE_MAXIMA");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("MOV_CREATED_AT");
 
                     b.Property<bool>("DescricaoModelo")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("MOV_DESCRICAO_MODELO");
 
                     b.Property<int>("PassageirosEmPe")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("MOV_PASSAGEIROS_EM_PE");
 
                     b.Property<bool>("PossuiBanheiro")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("MOV_POSSUI_BANHEIRO");
 
                     b.Property<bool>("PossuiClimatizador")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("MOV_POSSUI_CLIMATIZADOR");
 
                     b.Property<int>("QuantidadeAssento")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("MOV_QUANTIDADE_ASSENTO");
 
                     b.Property<int>("QuantidadeEixo")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("MOV_QUANTIDADE_EIXO");
 
                     b.Property<bool>("Situacao")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("MOV_SITUACAO");
 
                     b.Property<int>("Tipo")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("MOV_TIPO");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("MOV_UPDATED_AT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ModeloVeicular", (string)null);
+                    b.ToTable("T_MODELO_VEICULAR", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Veiculos.Veiculo", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VEI_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<int>("AnoFabricacao")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("VEI_ANO_FABRICACAO");
 
                     b.Property<int>("AnoModelo")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("VEI_ANO_MODELO");
 
                     b.Property<string>("Cor")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("VEI_COR");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VEI_CREATED_AT");
 
                     b.Property<string>("Marca")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("VEI_MARCA");
 
                     b.Property<string>("Modelo")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("VEI_MODELO");
 
                     b.Property<long?>("ModeloVeiculoId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VEI_MODELO_VEICULO_ID");
 
                     b.Property<string>("NumeroChassi")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("VEI_NUMERO_CHASSI");
 
                     b.Property<string>("Observacao")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("VEI_OBSERVACAO");
 
                     b.Property<string>("Placa")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("VEI_PLACA");
 
                     b.Property<string>("Renavam")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("VEI_RENAVAM");
 
                     b.Property<int>("Status")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("VEI_STATUS");
 
                     b.Property<int>("TipoCombustivel")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("VEI_TIPO_COMBUSTIVEL");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VEI_UPDATED_AT");
 
                     b.Property<DateTime?>("VencimentoLicenciamento")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VEI_VENCIMENTO_LICENCIAMENTO");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ModeloVeiculoId");
 
-                    b.ToTable("Veiculo", (string)null);
+                    b.ToTable("T_VEICULO", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("GAV_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("GAV_ATIVO");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("GAV_CREATED_AT");
 
                     b.Property<string>("Descricao")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("GAV_DESCRICAO");
 
                     b.Property<string>("DescricaoViagem")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("GAV_DESCRICAO_VIAGEM");
 
                     b.Property<long>("DestinoId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("GAV_DESTINO_ID");
 
                     b.Property<int[]>("DiasSemana")
                         .HasColumnType("integer[]");
 
                     b.Property<decimal>("Distancia")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric")
+                        .HasColumnName("GAV_DISTANCIA");
 
                     b.Property<DateTime>("HorarioChegada")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("GAV_HORARIO_CHEGADA");
 
                     b.Property<DateTime>("HorarioSaida")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("GAV_HORARIO_SAIDA");
 
                     b.Property<long>("MotoristaId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("GAV_MOTORISTA_ID");
 
                     b.Property<long>("OrigemId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("GAV_ORIGEM_ID");
 
                     b.Property<string>("PolilinhaRota")
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("GAV_POLILHINA_ROTA");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("GAV_UPDATED_AT");
 
                     b.Property<long>("VeiculoId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("GAV_VEICULO_ID");
 
                     b.HasKey("Id");
 
@@ -399,20 +555,26 @@ namespace Infra.Data.Migrations
 
                     b.HasIndex("VeiculoId");
 
-                    b.ToTable("GatilhoViagem", (string)null);
+                    b.ToTable("T_GATILHO_VIAGEM", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Viagens.Viagem", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VIA_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("CodigoViagem")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("VIA_CODIGO_VIAGEM");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VIA_CREATED_AT");
 
                     b.Property<DateTime?>("DataFimViagem")
                         .HasColumnType("timestamp with time zone");
@@ -421,31 +583,37 @@ namespace Infra.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataViagem")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VIA_DATA_VIAGEM");
 
                     b.Property<string>("DescricaoViagem")
                         .HasColumnType("text");
 
                     b.Property<long>("DestinoId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VIA_DESTINO_ID");
 
                     b.Property<decimal>("Distancia")
-                        .HasColumnType("numeric");
+                        .HasColumnType("numeric")
+                        .HasColumnName("VIA_DISTANCIA");
 
                     b.Property<decimal?>("DistanciaRealizada")
                         .HasColumnType("numeric");
 
                     b.Property<bool>("Excesso")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("VIA_EXCESSO");
 
-                    b.Property<long?>("GatinhoViagemId")
+                    b.Property<long?>("GatilhoViagemId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("HorarioChegada")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VIA_HORARIO_CHEGADA");
 
                     b.Property<DateTime>("HorarioSaida")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VIA_HORARIO_SAIDA");
 
                     b.Property<decimal?>("LatitudeFimViagem")
                         .HasColumnType("numeric");
@@ -460,19 +628,23 @@ namespace Infra.Data.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<bool>("Lotado")
-                        .HasColumnType("boolean");
+                        .HasColumnType("boolean")
+                        .HasColumnName("VIA_LOTADO");
 
                     b.Property<string>("MotivoProblema")
                         .HasColumnType("text");
 
                     b.Property<long>("MotoristaId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VIA_MOTORISTA_ID");
 
                     b.Property<int>("NumeroPassageiros")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("VIA_NUMERO_PASSAGEIROS");
 
                     b.Property<long>("OrigemId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VIA_ORIGEM_ID");
 
                     b.Property<string>("PolilinhaRota")
                         .HasColumnType("text");
@@ -481,16 +653,22 @@ namespace Infra.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("Situacao")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("VIA_SITUACAO");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VIA_UPDATED_AT");
 
                     b.Property<long>("VeiculoId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VIA_VEICULO_ID");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DestinoId");
 
-                    b.HasIndex("GatinhoViagemId");
+                    b.HasIndex("GatilhoViagemId");
 
                     b.HasIndex("MotoristaId");
 
@@ -498,22 +676,33 @@ namespace Infra.Data.Migrations
 
                     b.HasIndex("VeiculoId");
 
-                    b.ToTable("Viagem", (string)null);
+                    b.ToTable("T_VIAGEM", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Viagens.ViagemPassageiro", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VIP_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VIP_CREATED_AT");
+
                     b.Property<long>("PassageiroId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VIP_PASSAGEIRO_ID");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VIP_UPDATED_AT");
 
                     b.Property<long>("ViagemId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VIP_VIAGEM_ID");
 
                     b.HasKey("Id");
 
@@ -521,36 +710,49 @@ namespace Infra.Data.Migrations
 
                     b.HasIndex("ViagemId");
 
-                    b.ToTable("ViagemPassageiro", (string)null);
+                    b.ToTable("T_VIAGEM_PASSAGEIRO", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Viagens.ViagemPosicao", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VPO_ID");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VPO_CREATED_AT");
+
                     b.Property<DateTime>("DataHora")
-                        .HasColumnType("timestamp with time zone");
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VPO_DATA_HORA");
 
                     b.Property<string>("Latitude")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("VPO_LATITUDE");
 
                     b.Property<string>("Longitude")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("VPO_LONGITUDE");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("VPO_UPDATED_AT");
 
                     b.Property<long>("ViagemId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("VIA_VIAGEM_ID");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ViagemId");
 
-                    b.ToTable("ViagemPosicao", (string)null);
+                    b.ToTable("T_VIAGEM_POSICAO", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Auditoria.HistoricoPropriedade", b =>
@@ -644,9 +846,9 @@ namespace Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", "GatinhoViagem")
-                        .WithMany("Viagem")
-                        .HasForeignKey("GatinhoViagemId");
+                    b.HasOne("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", "GatilhoViagem")
+                        .WithMany("Viagens")
+                        .HasForeignKey("GatilhoViagemId");
 
                     b.HasOne("Dominio.Entidades.Pessoas.Motorista", "Motorista")
                         .WithMany()
@@ -668,7 +870,7 @@ namespace Infra.Data.Migrations
 
                     b.Navigation("Destino");
 
-                    b.Navigation("GatinhoViagem");
+                    b.Navigation("GatilhoViagem");
 
                     b.Navigation("Motorista");
 
@@ -719,7 +921,7 @@ namespace Infra.Data.Migrations
 
             modelBuilder.Entity("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", b =>
                 {
-                    b.Navigation("Viagem");
+                    b.Navigation("Viagens");
                 });
 #pragma warning restore 612, 618
         }
