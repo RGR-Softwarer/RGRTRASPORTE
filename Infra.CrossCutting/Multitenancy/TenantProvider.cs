@@ -15,11 +15,11 @@ namespace Infra.CrossCutting.Multitenancy
         public string GetTenantId()
         {
 
-#if DEBUG
-            return string.Empty;
-#endif
+//#if DEBUG
+//            return string.Empty;
+//#endif
             // 1. Se estiver em HTTP, pega do header
-            var httpTenant = _httpContextAccessor.HttpContext?.Request.Headers["X-Tenant-Id"].ToString();
+            var httpTenant = _httpContextAccessor.HttpContext?.Request.Host.ToString();
             if (!string.IsNullOrWhiteSpace(httpTenant))
                 return httpTenant;
 
@@ -34,13 +34,10 @@ namespace Infra.CrossCutting.Multitenancy
         {
             var tenantId = GetTenantId();
 
-#if DEBUG
-            return "Server=66.135.11.124;Port=5432;Database=RGRTrasporte;User Id=postgres;Password=S3cureP@ssw0rd!2024;Pooling=true;MinPoolSize=1;MaxPoolSize=20;Timeout=30;CommandTimeout=60;SslMode=Prefer;";
-#endif
-
             return tenantId switch
             {
-                "cliente1" => "Host=localhost;Database=cliente1;Username=postgres;Password=123",
+                "localhost:5173" => "Server=66.135.11.124;Port=5432;Database=RGRTrasporte;User Id=postgres;Password=S3cureP@ssw0rd!2024;Pooling=true;MinPoolSize=1;MaxPoolSize=20;Timeout=30;CommandTimeout=60;SslMode=Prefer;",
+                "66.135.11.124:4000" => "Server=66.135.11.124;Port=5432;Database=RGRTrasporte;User Id=postgres;Password=S3cureP@ssw0rd!2024;Pooling=true;MinPoolSize=1;MaxPoolSize=20;Timeout=30;CommandTimeout=60;SslMode=Prefer;",
                 "cliente2" => "Host=localhost;Database=cliente2;Username=postgres;Password=123",
                 _ => throw new Exception($"Tenant '{tenantId}' não identificado.")
             };
