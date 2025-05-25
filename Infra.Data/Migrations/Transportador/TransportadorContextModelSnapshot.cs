@@ -3,20 +3,17 @@ using System;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infra.Data.Migrations
+namespace Infra.Data.Migrations.Transportador
 {
-    [DbContext(typeof(RGRContext))]
-    [Migration("20250522002748_RGR000001")]
-    partial class RGR000001
+    [DbContext(typeof(TransportadorContext))]
+    partial class TransportadorContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -109,7 +106,7 @@ namespace Infra.Data.Migrations
 
                     b.Property<long>("HistoricoObjetoId")
                         .HasColumnType("bigint")
-                        .HasColumnName("HPR_HISTORICO_OBJETO_ID");
+                        .HasColumnName("HOB_ID");
 
                     b.Property<string>("Para")
                         .HasMaxLength(1000)
@@ -131,214 +128,6 @@ namespace Infra.Data.Migrations
                     b.HasIndex("HistoricoObjetoId");
 
                     b.ToTable("T_HISTORICO_PROPRIEDADE", (string)null);
-                });
-
-            modelBuilder.Entity("Dominio.Entidades.Localidades.Localidade", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("LOC_ID");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("Bairro")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_BAIRRO");
-
-                    b.Property<string>("Cep")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_CEP");
-
-                    b.Property<string>("Cidade")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_CIDADE");
-
-                    b.Property<string>("Complemento")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_COMPLEMENTO");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LOC_CREATED_AT");
-
-                    b.Property<string>("Latitude")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_LATITUDE");
-
-                    b.Property<string>("Logradouro")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_LOGRADOURO");
-
-                    b.Property<string>("Longitude")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_LONGITUDE");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_NOME");
-
-                    b.Property<string>("Numero")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_NUMERO");
-
-                    b.Property<string>("Uf")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_UF");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("LOC_UPDATED_AT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("T_LOCALIDADE", (string)null);
-                });
-
-            modelBuilder.Entity("Dominio.Entidades.Pessoas.Motorista", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("MOT_ID");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("CNH")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("MOT_CNH");
-
-                    b.Property<string>("CPF")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("MOT_CPF");
-
-                    b.Property<int>("CategoriaCNH")
-                        .HasColumnType("integer")
-                        .HasColumnName("MOT_CATEGORIA_CNH");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("MOT_CREATED_AT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("MOT_EMAIL");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("MOT_NOME");
-
-                    b.Property<string>("Observacao")
-                        .HasColumnType("text")
-                        .HasColumnName("MOT_OBSERVACAO");
-
-                    b.Property<string>("RG")
-                        .HasColumnType("text")
-                        .HasColumnName("MOT_RG");
-
-                    b.Property<bool>("Situacao")
-                        .HasColumnType("boolean")
-                        .HasColumnName("MOT_SITUACAO");
-
-                    b.Property<string>("Telefone")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("MOT_TELEFONE");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("MOT_UPDATED_AT");
-
-                    b.Property<DateTime>("ValidadeCNH")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("MOT_VALIDADE_CNH");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("T_MOTORISTA", (string)null);
-                });
-
-            modelBuilder.Entity("Dominio.Entidades.Pessoas.Passageiros.Passageiro", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("PAS_ID");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<string>("CPF")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("PAS_CPF");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("PAS_CREATED_AT");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("PAS_EMAIL");
-
-                    b.Property<long>("LocalidadeDesembarqueId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("LocalidadeEmbarqueId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("LocalidadeId")
-                        .HasColumnType("bigint")
-                        .HasColumnName("PAS_LOCALIDADE_ID");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("PAS_NOME");
-
-                    b.Property<string>("Observacao")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Sexo")
-                        .HasColumnType("integer")
-                        .HasColumnName("PAS_SEXO");
-
-                    b.Property<bool>("Situacao")
-                        .HasColumnType("boolean")
-                        .HasColumnName("PAS_SITUACAO");
-
-                    b.Property<string>("Telefone")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("PAS_TELEFONE");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("PAS_UPDATED_AT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LocalidadeDesembarqueId");
-
-                    b.HasIndex("LocalidadeEmbarqueId");
-
-                    b.HasIndex("LocalidadeId");
-
-                    b.ToTable("T_PASSAGEIRO", (string)null);
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Veiculos.ModeloVeicular", b =>
@@ -436,7 +225,7 @@ namespace Infra.Data.Migrations
 
                     b.Property<long?>("ModeloVeiculoId")
                         .HasColumnType("bigint")
-                        .HasColumnName("VEI_MODELO_VEICULO_ID");
+                        .HasColumnName("MOV_ID");
 
                     b.Property<string>("NumeroChassi")
                         .IsRequired()
@@ -508,10 +297,11 @@ namespace Infra.Data.Migrations
 
                     b.Property<long>("DestinoId")
                         .HasColumnType("bigint")
-                        .HasColumnName("GAV_DESTINO_ID");
+                        .HasColumnName("LOC_DESTINO_ID");
 
-                    b.Property<int[]>("DiasSemana")
-                        .HasColumnType("integer[]");
+                    b.Property<string>("DiasSemana")
+                        .HasColumnType("text")
+                        .HasColumnName("GAV_DIAS_SEMANA");
 
                     b.Property<decimal>("Distancia")
                         .HasColumnType("numeric")
@@ -527,11 +317,11 @@ namespace Infra.Data.Migrations
 
                     b.Property<long>("MotoristaId")
                         .HasColumnType("bigint")
-                        .HasColumnName("GAV_MOTORISTA_ID");
+                        .HasColumnName("MOT_MOTORISTA_ID");
 
                     b.Property<long>("OrigemId")
                         .HasColumnType("bigint")
-                        .HasColumnName("GAV_ORIGEM_ID");
+                        .HasColumnName("LOC_ORIGEM_ID");
 
                     b.Property<string>("PolilinhaRota")
                         .HasColumnType("text")
@@ -543,15 +333,9 @@ namespace Infra.Data.Migrations
 
                     b.Property<long>("VeiculoId")
                         .HasColumnType("bigint")
-                        .HasColumnName("GAV_VEICULO_ID");
+                        .HasColumnName("VEI_ID");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DestinoId");
-
-                    b.HasIndex("MotoristaId");
-
-                    b.HasIndex("OrigemId");
 
                     b.HasIndex("VeiculoId");
 
@@ -587,25 +371,31 @@ namespace Infra.Data.Migrations
                         .HasColumnName("VIA_DATA_VIAGEM");
 
                     b.Property<string>("DescricaoViagem")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("VIA_DESCRICAO_VIAGEM");
 
                     b.Property<long>("DestinoId")
                         .HasColumnType("bigint")
-                        .HasColumnName("VIA_DESTINO_ID");
+                        .HasColumnName("LOC_DESTINO_ID");
 
                     b.Property<decimal>("Distancia")
                         .HasColumnType("numeric")
                         .HasColumnName("VIA_DISTANCIA");
 
                     b.Property<decimal?>("DistanciaRealizada")
-                        .HasColumnType("numeric");
+                        .IsRequired()
+                        .HasColumnType("numeric")
+                        .HasColumnName("VIA_DISTANCIA_REALIZADA");
 
                     b.Property<bool>("Excesso")
                         .HasColumnType("boolean")
                         .HasColumnName("VIA_EXCESSO");
 
                     b.Property<long?>("GatilhoViagemId")
-                        .HasColumnType("bigint");
+                        .IsRequired()
+                        .HasColumnType("bigint")
+                        .HasColumnName("GAV_ID");
 
                     b.Property<DateTime>("HorarioChegada")
                         .HasColumnType("timestamp with time zone")
@@ -616,10 +406,14 @@ namespace Infra.Data.Migrations
                         .HasColumnName("VIA_HORARIO_SAIDA");
 
                     b.Property<decimal?>("LatitudeFimViagem")
-                        .HasColumnType("numeric");
+                        .IsRequired()
+                        .HasColumnType("numeric")
+                        .HasColumnName("VIA_LATITUDE_FIM_VIAGEM");
 
                     b.Property<decimal?>("LatitudeInicioViagem")
-                        .HasColumnType("numeric");
+                        .IsRequired()
+                        .HasColumnType("numeric")
+                        .HasColumnName("VIA_LATITUDE_INICIO_VIAGEM");
 
                     b.Property<decimal?>("LongitudeFimViagem")
                         .HasColumnType("numeric");
@@ -632,11 +426,13 @@ namespace Infra.Data.Migrations
                         .HasColumnName("VIA_LOTADO");
 
                     b.Property<string>("MotivoProblema")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("VIA_MOTIVO_PROBLEMA");
 
                     b.Property<long>("MotoristaId")
                         .HasColumnType("bigint")
-                        .HasColumnName("VIA_MOTORISTA_ID");
+                        .HasColumnName("MOT_ID");
 
                     b.Property<int>("NumeroPassageiros")
                         .HasColumnType("integer")
@@ -644,13 +440,17 @@ namespace Infra.Data.Migrations
 
                     b.Property<long>("OrigemId")
                         .HasColumnType("bigint")
-                        .HasColumnName("VIA_ORIGEM_ID");
+                        .HasColumnName("LOC_ORIGEM_ID");
 
                     b.Property<string>("PolilinhaRota")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("VIA_POLILINHA_ROTA");
 
                     b.Property<string>("PolilinhaRotaRealizada")
-                        .HasColumnType("text");
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("VIA_POLILINHA_ROTA_REALIZADA");
 
                     b.Property<int>("Situacao")
                         .HasColumnType("integer")
@@ -662,17 +462,11 @@ namespace Infra.Data.Migrations
 
                     b.Property<long>("VeiculoId")
                         .HasColumnType("bigint")
-                        .HasColumnName("VIA_VEICULO_ID");
+                        .HasColumnName("VEI_ID");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DestinoId");
-
                     b.HasIndex("GatilhoViagemId");
-
-                    b.HasIndex("MotoristaId");
-
-                    b.HasIndex("OrigemId");
 
                     b.HasIndex("VeiculoId");
 
@@ -694,7 +488,7 @@ namespace Infra.Data.Migrations
 
                     b.Property<long>("PassageiroId")
                         .HasColumnType("bigint")
-                        .HasColumnName("VIP_PASSAGEIRO_ID");
+                        .HasColumnName("PAS_PASSAGEIRO_ID");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -702,11 +496,9 @@ namespace Infra.Data.Migrations
 
                     b.Property<long>("ViagemId")
                         .HasColumnType("bigint")
-                        .HasColumnName("VIP_VIAGEM_ID");
+                        .HasColumnName("VIA_VIAGEM_ID");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PassageiroId");
 
                     b.HasIndex("ViagemId");
 
@@ -746,7 +538,7 @@ namespace Infra.Data.Migrations
 
                     b.Property<long>("ViagemId")
                         .HasColumnType("bigint")
-                        .HasColumnName("VIA_VIAGEM_ID");
+                        .HasColumnName("VIA_ID");
 
                     b.HasKey("Id");
 
@@ -766,33 +558,6 @@ namespace Infra.Data.Migrations
                     b.Navigation("HistoricoObjeto");
                 });
 
-            modelBuilder.Entity("Dominio.Entidades.Pessoas.Passageiros.Passageiro", b =>
-                {
-                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "LocalidadeDesembarque")
-                        .WithMany()
-                        .HasForeignKey("LocalidadeDesembarqueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "LocalidadeEmbarque")
-                        .WithMany()
-                        .HasForeignKey("LocalidadeEmbarqueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "Localidade")
-                        .WithMany()
-                        .HasForeignKey("LocalidadeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Localidade");
-
-                    b.Navigation("LocalidadeDesembarque");
-
-                    b.Navigation("LocalidadeEmbarque");
-                });
-
             modelBuilder.Entity("Dominio.Entidades.Veiculos.Veiculo", b =>
                 {
                     b.HasOne("Dominio.Entidades.Veiculos.ModeloVeicular", "ModeloVeiculo")
@@ -805,60 +570,20 @@ namespace Infra.Data.Migrations
 
             modelBuilder.Entity("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", b =>
                 {
-                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "Destino")
-                        .WithMany()
-                        .HasForeignKey("DestinoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Dominio.Entidades.Pessoas.Motorista", "Motorista")
-                        .WithMany()
-                        .HasForeignKey("MotoristaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "Origem")
-                        .WithMany()
-                        .HasForeignKey("OrigemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Dominio.Entidades.Veiculos.Veiculo", "Veiculo")
                         .WithMany()
                         .HasForeignKey("VeiculoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Destino");
-
-                    b.Navigation("Motorista");
-
-                    b.Navigation("Origem");
 
                     b.Navigation("Veiculo");
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Viagens.Viagem", b =>
                 {
-                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "Destino")
-                        .WithMany()
-                        .HasForeignKey("DestinoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Dominio.Entidades.Viagens.Gatilho.GatilhoViagem", "GatilhoViagem")
                         .WithMany("Viagens")
-                        .HasForeignKey("GatilhoViagemId");
-
-                    b.HasOne("Dominio.Entidades.Pessoas.Motorista", "Motorista")
-                        .WithMany()
-                        .HasForeignKey("MotoristaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Dominio.Entidades.Localidades.Localidade", "Origem")
-                        .WithMany()
-                        .HasForeignKey("OrigemId")
+                        .HasForeignKey("GatilhoViagemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -868,32 +593,18 @@ namespace Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Destino");
-
                     b.Navigation("GatilhoViagem");
-
-                    b.Navigation("Motorista");
-
-                    b.Navigation("Origem");
 
                     b.Navigation("Veiculo");
                 });
 
             modelBuilder.Entity("Dominio.Entidades.Viagens.ViagemPassageiro", b =>
                 {
-                    b.HasOne("Dominio.Entidades.Pessoas.Passageiros.Passageiro", "Passageiro")
-                        .WithMany()
-                        .HasForeignKey("PassageiroId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Dominio.Entidades.Viagens.Viagem", "Viagem")
                         .WithMany()
                         .HasForeignKey("ViagemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Passageiro");
 
                     b.Navigation("Viagem");
                 });

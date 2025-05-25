@@ -58,7 +58,7 @@ namespace Infra.Data.Configurators.Veiculo
                 .HasColumnName($"{prefixo}_VENCIMENTO_LICENCIAMENTO");
 
             builder.Property(p => p.ModeloVeiculoId)
-                .HasColumnName($"{prefixo}_MODELO_VEICULO_ID");
+                .HasColumnName($"MOV_ID");
 
             builder.HasOne(h => h.ModeloVeiculo)
                 .WithMany(p => p.Veiculos)

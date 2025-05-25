@@ -1,12 +1,16 @@
-﻿using Infra.Ioc;
+﻿using Hangfire;
+using Hangfire.PostgreSql;
+using Infra.Ioc;
 
 namespace RGRTRASPORTE
 {
     public class Startup
     {
+        public IConfiguration _configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -17,9 +21,9 @@ namespace RGRTRASPORTE
 
             services.AddControllers();
 
-            services.AddSingleton(Configuration);
+            services.AddSingleton(_configuration);
 
-            services.AddContext(Configuration.GetValue<string>("ConnectionStrings:RGRTRASPORTE"));
+            services.AddContext();
 
             services.AddSwagger();
 
@@ -28,6 +32,20 @@ namespace RGRTRASPORTE
             services.AddServices();
 
             services.AddRepositorys();
+
+            var connectionString = _configuration.GetConnectionString("RGRTRASPORTE") ?? string.Empty;
+
+            services.AddHangfire(config =>
+            {
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                      .UseSimpleAssemblyNameTypeSerializer()
+                      .UseRecommendedSerializerSettings()
+                      .UsePostgreSqlStorage(options =>
+                      {
+                          options.UseNpgsqlConnection(connectionString);
+                      });
+            });
+
         }
 
 

@@ -1,15 +1,14 @@
 ﻿using Dominio.Entidades;
 using Dominio.Entidades.Auditoria;
 using Dominio.Interfaces.Infra.Data;
-using Infra.Data.Context;
 
 namespace Infra.Data.Data
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly RGRContext _dbContext;
+        private readonly IUnitOfWorkContext _dbContext;
 
-        public UnitOfWork(RGRContext dbContext)
+        public UnitOfWork(IUnitOfWorkContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -30,7 +29,7 @@ namespace Infra.Data.Data
 
         public async Task RollBack()
         {
-            var tasks = _dbContext.ChangeTracker.Entries()
+            var tasks = _dbContext.GetChangeTracker().Entries()
                     .Select(entry => entry.ReloadAsync()).ToList();
 
             await Task.WhenAll(tasks);

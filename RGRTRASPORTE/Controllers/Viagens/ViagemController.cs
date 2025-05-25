@@ -1,12 +1,13 @@
 ﻿using Application.Commands.ViagemPassageiro;
-using AutoMapper;
 using Dominio.Dtos.Viagens;
-using Dominio.Entidades.Viagens;
-using Dominio.Interfaces.Infra.Data;
+using Dominio.Interfaces.Hangfire;
 using Dominio.Interfaces.Service.Viagens;
+using Hangfire;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Text;
+using System.Text.Json;
 
 namespace RGRTRASPORTE.Controllers.Viagens
 {
@@ -16,12 +17,14 @@ namespace RGRTRASPORTE.Controllers.Viagens
     {
         private readonly IViagemService _viagemService;
         private readonly IMediator _mediator;
+        private readonly IBackgroundJobClient _backgroundJobClient;
 
-        public ViagemController(IMediator mediator, IViagemService viagemService, INotificationHandler notificationHandler)
+        public ViagemController(IMediator mediator, IViagemService viagemService, INotificationHandler notificationHandler, IBackgroundJobClient backgroundJobClient)
             : base(notificationHandler)
         {
             _viagemService = viagemService;
             _mediator = mediator;
+            _backgroundJobClient = backgroundJobClient;
         }
 
         [HttpGet]
@@ -30,6 +33,247 @@ namespace RGRTRASPORTE.Controllers.Viagens
             var viagens = await _viagemService.ObterTodosAsync();
             return await RGRResult(System.Net.HttpStatusCode.OK, viagens);
         }
+
+
+        public enum AuthType
+        {
+            None,
+            OAuth2,
+            Basic,
+            ApiKey
+        }
+        public class IntegrationConfig
+        {
+            public AuthConfig Auth { get; set; }
+            public IntegrationDetails Integration { get; set; }
+        }
+        public class AuthConfig
+        {
+            public AuthType Type { get; set; }
+            public string AuthUrl { get; set; }
+            public string AuthMethod { get; set; }
+            public Dictionary<string, string> Credentials { get; set; }
+            public string TokenResponseField { get; set; }
+            public string TokenHeaderName { get; set; }
+            public string TokenHeaderFormat { get; set; }
+            public string TokenHeaderNameToSend { get; set; }
+            public string TokenHeaderFormatToSend { get; set; }
+        }
+        public class IntegrationDetails
+        {
+            public string Url { get; set; }
+            public string Method { get; set; }
+            public Dictionary<string, string> Headers { get; set; }
+            public Dictionary<string, string> PayloadTemplate { get; set; }
+        }
+
+        private readonly HttpClient _httpClient = new HttpClient();
+
+        [HttpGet("TesteHangifire")]
+        public async Task<IActionResult> TesteDEV()
+        {
+            var jobData = new ViagemCriadaJobData
+            {
+                TenantId = "cliente1",
+                ViagemId = 123
+            };
+
+            _backgroundJobClient.Enqueue<IProcessadorDeEventoService>(x => x.ProcessarViagemCriada(jobData));
+
+            return await RGRResult(System.Net.HttpStatusCode.OK, new
+            {
+                Success = true,
+                Message = "Job agendado com sucesso"
+            });
+        }
+
+
+        [HttpGet("TesteSilvani")]
+        public async Task<IActionResult> Teste()
+        {
+            // 1. Configuração de exemplo
+            var config = ObterConfiguracaoExemplo();
+
+            // 2. Valores de entrada
+            var valoresDinamicos = ObterValoresDinamicos();
+
+            // 3. Token
+            string token = string.Empty;
+            if (config.Auth?.Type != AuthType.None)
+            {
+                token = await ObterTokenAsync(config.Auth);
+            }
+
+            // 4. Payload final
+            var payloadFinal = GerarPayload(config.Integration.PayloadTemplate, valoresDinamicos);
+
+            // 5. Montar request
+            var request = MontarRequest(config, payloadFinal, token);
+
+            // 6. Executar chamada
+            var response = await _httpClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+
+            return await RGRResult(System.Net.HttpStatusCode.OK, new
+            {
+                Success = response.IsSuccessStatusCode,
+                StatusCode = (int)response.StatusCode,
+                Message = response.IsSuccessStatusCode ? "Integração realizada com sucesso" : "Erro na integração",
+                Response = body
+            });
+        }
+
+        private IntegrationConfig ObterConfiguracaoExemplo()
+        {
+            return new IntegrationConfig
+            {
+                Auth = new AuthConfig
+                {
+                    Type = AuthType.Basic,
+                    Credentials = new Dictionary<string, string>
+            {
+                { "username", "multiwebhookqa" },
+                { "password", "Nz6ldbPMI0Rw4f95" }
+            },
+                    TokenHeaderNameToSend = "Authorization",
+                    TokenHeaderFormatToSend = "Basic {token}"
+                },
+                Integration = new IntegrationDetails
+                {
+                    Url = "https://m8px22ce74.execute-api.us-east-1.amazonaws.com/tcs/webhook-gerar-carregamento",
+                    Method = "POST",
+                    Headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            },
+                    PayloadTemplate = new Dictionary<string, string>
+            {
+                { "tarefa", "#tarefa" },
+                { "codigo", "#codigo" },
+                { "volumes", "#for:volumes" }
+            }
+                }
+            };
+        }
+
+        private Dictionary<string, object> ObterValoresDinamicos()
+        {
+            return new Dictionary<string, object>
+    {
+        { "tarefa", "carregamento123" },
+        { "codigo", "456789" },
+        { "volumes", new List<Dictionary<string, string>>
+            {
+                new() { { "codigo", "V001" }, { "quantidade", "10" } },
+                new() { { "codigo", "V002" }, { "quantidade", "5" } }
+            }
+        }
+    };
+        }
+
+        private Dictionary<string, object> GerarPayload(Dictionary<string, string> template, Dictionary<string, object> valores)
+        {
+            var payload = new Dictionary<string, object>();
+
+            foreach (var campo in template)
+            {
+                if (campo.Value.StartsWith("#for:"))
+                {
+                    var caminho = campo.Value.Substring(5); // Ex: volumes
+                    var nomeLista = caminho.Split('.')[0];
+
+                    if (valores.TryGetValue(nomeLista, out var listaObj) &&
+                        listaObj is List<Dictionary<string, string>> lista)
+                    {
+                        payload[campo.Key] = lista;
+                    }
+                }
+                else
+                {
+                    var chave = campo.Value.Trim('#');
+                    if (valores.TryGetValue(chave, out var valor))
+                        payload[campo.Key] = valor;
+                    else
+                        payload[campo.Key] = campo.Value;
+                }
+            }
+
+            return payload;
+        }
+        private HttpRequestMessage MontarRequest(IntegrationConfig config, Dictionary<string, object> payload, string token)
+        {
+            var jsonPayload = JsonSerializer.Serialize(payload);
+            var request = new HttpRequestMessage(new HttpMethod(config.Integration.Method), config.Integration.Url)
+            {
+                Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json")
+            };
+
+            foreach (var header in config.Integration.Headers)
+            {
+                request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+            }
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var headerName = config.Auth.TokenHeaderNameToSend ?? config.Auth.TokenHeaderName;
+                var headerFormat = config.Auth.TokenHeaderFormatToSend ?? config.Auth.TokenHeaderFormat;
+
+                var tokenHeader = headerFormat.Replace("{token}", token);
+                request.Headers.TryAddWithoutValidation(headerName, tokenHeader);
+            }
+
+            return request;
+        }
+
+        private async Task<string> ObterTokenAsync(AuthConfig auth)
+        {
+            if (auth == null || auth.Type == AuthType.None)
+                return string.Empty;
+
+            if (auth.Type == AuthType.ApiKey)
+            {
+                if (auth.Credentials != null && auth.Credentials.Any())
+                    return auth.Credentials.First().Value;
+
+                throw new Exception("Credencial de API Key não fornecida.");
+            }
+
+            if (auth.Type == AuthType.Basic)
+            {
+                if (!auth.Credentials.TryGetValue("username", out var user) ||
+                    !auth.Credentials.TryGetValue("password", out var pass))
+                {
+                    throw new Exception("Credenciais Basic incompletas.");
+                }
+
+                var bytes = Encoding.UTF8.GetBytes($"{user}:{pass}");
+                return Convert.ToBase64String(bytes);
+            }
+
+            // OAuth2 e outros tipos com chamada externa
+            var method = new HttpMethod(auth.AuthMethod.ToUpperInvariant());
+            var request = new HttpRequestMessage(method, auth.AuthUrl)
+            {
+                Content = new FormUrlEncodedContent(auth.Credentials)
+            };
+
+            var response = await _httpClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Erro ao obter token: {response.StatusCode} - {body}");
+
+            using var jsonDoc = JsonDocument.Parse(body);
+            var tokenField = auth.TokenResponseField.Split('.');
+            JsonElement current = jsonDoc.RootElement;
+
+            foreach (var field in tokenField)
+                current = current.GetProperty(field);
+
+            return current.GetString();
+        }
+
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterPorId(long id)
@@ -78,7 +322,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
                 {
                     Console.WriteLine($"Exceção: {e.Message}");
                 }
-            }       
+            }
 
             return await RGRResult(System.Net.HttpStatusCode.BadRequest, "Erro ao obter a rota da viagem");
         }

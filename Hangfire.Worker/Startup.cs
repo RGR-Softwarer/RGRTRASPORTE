@@ -19,7 +19,7 @@ namespace Hangfire.Worker
 
             var connectionString = _configuration.GetConnectionString("RGRTRASPORTE") ?? string.Empty;
 
-            services.AddContext(connectionString);
+            services.AddContext();
             services.AddServices();
             services.AddRepositorys();
 

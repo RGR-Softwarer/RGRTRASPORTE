@@ -7,7 +7,7 @@ namespace Infra.Data.Repositories
 {
     public class VeiculoRepository : GenericRepository<Veiculo>, IVeiculoRepository
     {
-        public VeiculoRepository(RGRContext context) : base(context) { }
+        public VeiculoRepository(TransportadorContext context) : base(context) { }
 
     }
 }

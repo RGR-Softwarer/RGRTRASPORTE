@@ -1,0 +1,8 @@
+Set-DefaultProject Infra.Data
+
+Add-Migration C000001  -Context CadastroContext -OutputDir Migrations/Cadastro
+
+Add-Migration T000001  -Context TransportadorContext -OutputDir Migrations/Transportador
+
+Update-Database -Context TransportadorContext
+Update-Database -Context CadastroContext

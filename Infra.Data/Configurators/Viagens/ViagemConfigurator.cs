@@ -23,19 +23,23 @@ namespace Infra.Data.Configurators.Viagens
 
             builder.Property(v => v.VeiculoId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_VEICULO_ID");
+                .HasColumnName($"VEI_ID");
 
             builder.Property(v => v.MotoristaId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_MOTORISTA_ID");
+                .HasColumnName($"MOT_ID");
+            
+            builder.Property(v => v.GatilhoViagemId)
+                .IsRequired()
+                .HasColumnName($"GAV_ID");
 
             builder.Property(v => v.OrigemId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_ORIGEM_ID");
+                .HasColumnName($"LOC_ORIGEM_ID");
 
             builder.Property(v => v.DestinoId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_DESTINO_ID");
+                .HasColumnName($"LOC_DESTINO_ID");
 
             builder.Property(v => v.HorarioSaida)
                 .IsRequired()
@@ -64,22 +68,50 @@ namespace Infra.Data.Configurators.Viagens
             builder.Property(v => v.Excesso)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_EXCESSO");
+            
+            builder.Property(v => v.MotivoProblema)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_MOTIVO_PROBLEMA"); 
+            
+            builder.Property(v => v.DescricaoViagem)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_DESCRICAO_VIAGEM");
+            
+            builder.Property(v => v.LatitudeFimViagem)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_LATITUDE_FIM_VIAGEM");
+            
+            builder.Property(v => v.LatitudeInicioViagem)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_LATITUDE_INICIO_VIAGEM");
+            
+            builder.Property(v => v.DistanciaRealizada)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_DISTANCIA_REALIZADA");
+            
+            builder.Property(v => v.PolilinhaRota)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_POLILINHA_ROTA");
+            
+            builder.Property(v => v.PolilinhaRotaRealizada)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_POLILINHA_ROTA_REALIZADA");
 
             builder.HasOne(v => v.Veiculo)
                 .WithMany()
                 .HasForeignKey(v => v.VeiculoId);
 
-            builder.HasOne(v => v.Motorista)
-                .WithMany()
-                .HasForeignKey(v => v.MotoristaId);
+            //builder.HasOne(v => v.Motorista)
+            //    .WithMany()
+            //    .HasForeignKey(v => v.MotoristaId);
 
-            builder.HasOne(v => v.Origem)
-                .WithMany()
-                .HasForeignKey(v => v.OrigemId);
+            //builder.HasOne(v => v.Origem)
+            //    .WithMany()
+            //    .HasForeignKey(v => v.OrigemId);
 
-            builder.HasOne(v => v.Destino)
-                .WithMany()
-                .HasForeignKey(v => v.DestinoId);
+            //builder.HasOne(v => v.Destino)
+            //    .WithMany()
+            //    .HasForeignKey(v => v.DestinoId);
         }
     }
 }

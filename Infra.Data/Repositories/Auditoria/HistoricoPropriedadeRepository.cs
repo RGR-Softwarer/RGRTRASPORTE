@@ -6,6 +6,6 @@ namespace Infra.Data.Repositories.Auditoria
 {
     public class HistoricoPropriedadeRepository : GenericRepository<HistoricoPropriedade>//, IVeiculoRepository
     {
-        public HistoricoPropriedadeRepository(RGRContext context) : base(context) { }
+        public HistoricoPropriedadeRepository(TransportadorContext context) : base(context) { }
     }
 }

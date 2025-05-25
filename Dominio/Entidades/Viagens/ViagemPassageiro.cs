@@ -6,7 +6,7 @@ namespace Dominio.Entidades.Viagens
     {
         public virtual Viagem Viagem { get; private set; }
         public long ViagemId { get; private set; }
-        public virtual Passageiro Passageiro { get; private set; }
+        //public virtual Passageiro Passageiro { get; private set; }
         public long PassageiroId { get; private set; }
     }
 }

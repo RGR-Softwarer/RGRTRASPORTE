@@ -13,11 +13,11 @@ namespace Infra.Data.Data
     {
         #region Atributos Privados
 
-        private readonly RGRContext _context;
+        private readonly IUnitOfWorkContext _context;
 
         #endregion
 
-        public GenericRepository(RGRContext context)
+        public GenericRepository(IUnitOfWorkContext context)
         {
             _context = context;
         }
@@ -136,13 +136,13 @@ namespace Infra.Data.Data
         private void Update(T entity)
         {
             _context.Set<T>().Attach(entity);
-            _context.Entry(entity).State = EntityState.Modified;
+            _context.GetEntry(entity).State = EntityState.Modified;
         }
 
         private void UpdateMany(List<T> entities)
         {
             _context.Set<T>().AttachRange(entities);
-            _context.Entry(entities).State = EntityState.Modified;
+            _context.GetEntry(entities).State = EntityState.Modified;
         }
 
         private void Remove(T entity)
@@ -159,8 +159,11 @@ namespace Infra.Data.Data
 
         #region Métodos Privados - Auditoria
 
-        private void AuditarAsync(AuditadoDto auditado, T entidade, List<Dominio.Entidades.Auditoria.HistoricoPropriedade> alteracoes, AcaoBancoDadosEnum acao, string descricaoAcao = "")
+        private void AuditarAsync(AuditadoDto auditado, T entidade, List<HistoricoPropriedade> alteracoes, AcaoBancoDadosEnum acao, string descricaoAcao = "")
         {
+            if (_context.PendingEntities == null)
+                return;
+
             var historico = new HistoricoObjeto
             {
                 CodigoObjeto = entidade.Id,

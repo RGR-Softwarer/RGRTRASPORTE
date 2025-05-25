@@ -15,19 +15,19 @@ namespace Infra.Data.Configurators.Viagens
 
             builder.Property(vp => vp.ViagemId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_VIAGEM_ID");
+                .HasColumnName($"VIA_VIAGEM_ID");
 
             builder.Property(vp => vp.PassageiroId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_PASSAGEIRO_ID");
+                .HasColumnName($"PAS_PASSAGEIRO_ID");
 
             builder.HasOne(vp => vp.Viagem)
                 .WithMany()
                 .HasForeignKey(vp => vp.ViagemId);
 
-            builder.HasOne(vp => vp.Passageiro)
-                .WithMany()
-                .HasForeignKey(vp => vp.PassageiroId);
+            //builder.HasOne(vp => vp.Passageiro)
+            //    .WithMany()
+            //    .HasForeignKey(vp => vp.PassageiroId);
         }
     }
 }

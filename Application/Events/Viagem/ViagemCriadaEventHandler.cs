@@ -10,7 +10,11 @@ namespace Application.Events.Viagem
         public Task Handle(ViagemCriadaEvent notification, CancellationToken cancellationToken)
         {
             BackgroundJob.Enqueue<IProcessadorDeEventoService>(job =>
-                job.ProcessarViagemCriada(notification.ViagemId));
+                job.ProcessarViagemCriada(new Dominio.Dtos.Viagens.ViagemCriadaJobData()
+                {
+                    TenantId = notification.TenantId,
+                    ViagemId = notification.ViagemId,
+                }));
 
             return Task.CompletedTask;
         }

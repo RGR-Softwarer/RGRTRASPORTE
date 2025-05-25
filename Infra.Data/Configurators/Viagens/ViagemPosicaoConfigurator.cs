@@ -15,7 +15,7 @@ namespace Infra.Data.Configurators.Viagens
 
             builder.Property(vp => vp.ViagemId)
                 .IsRequired()
-                .HasColumnName($"VIA_VIAGEM_ID");
+                .HasColumnName($"VIA_ID");
 
             builder.Property(vp => vp.DataHora)
                 .IsRequired()

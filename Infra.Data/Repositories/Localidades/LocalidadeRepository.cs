@@ -7,6 +7,6 @@ namespace Infra.Data.Repositories.Localidades
 {
     public class LocalidadeRepository : GenericRepository<Localidade>, ILocalidadeRepository
     {
-        public LocalidadeRepository(RGRContext context) : base(context) { }
+        public LocalidadeRepository(CadastroContext context) : base(context) { }
     }
 }

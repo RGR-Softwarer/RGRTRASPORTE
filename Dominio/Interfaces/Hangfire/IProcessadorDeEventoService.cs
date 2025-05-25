@@ -1,8 +1,10 @@
-﻿namespace Dominio.Interfaces.Hangfire
+﻿using Dominio.Dtos.Viagens;
+
+namespace Dominio.Interfaces.Hangfire
 {
     public interface IProcessadorDeEventoService
     {
-        Task ProcessarViagemCriada(long viagemId);
+        Task ProcessarViagemCriada(ViagemCriadaJobData data);
     }
 
 }

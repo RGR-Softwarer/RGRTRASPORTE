@@ -9,7 +9,7 @@ namespace Infra.Data.Repositories.Viagens
     {
         public class ViagemPosicaoRepository : GenericRepository<ViagemPosicao>, IViagemPosicaoRepository
         {
-            public ViagemPosicaoRepository(RGRContext context) : base(context) { }
+            public ViagemPosicaoRepository(TransportadorContext context) : base(context) { }
         }
     }
 }

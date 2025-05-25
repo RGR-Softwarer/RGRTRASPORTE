@@ -28,7 +28,7 @@ namespace Infra.Data.Configurators.Auditoria
 
             builder.Property(h => h.HistoricoObjetoId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_HISTORICO_OBJETO_ID");
+                .HasColumnName($"HOB_ID");
 
             builder.HasOne(h => h.HistoricoObjeto)
                 .WithMany(p => p.HistoricoPropriedade)

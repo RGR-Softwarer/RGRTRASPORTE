@@ -9,16 +9,14 @@ namespace Dominio.Entidades.Viagens
     public class Viagem : BaseEntity
     {
         public string CodigoViagem { get; private set; }
-        //public DateTime DataCriacao { get; set; }
         public DateTime DataViagem { get; private set; }
-        //public DateTime? DataAtualizacao { get; set; }
         public virtual Veiculo Veiculo { get; private set; }
         public long VeiculoId { get; private set; }
-        public virtual Motorista Motorista { get; private set; }
+        //public virtual Motorista Motorista { get; private set; }
         public long MotoristaId { get; private set; }
-        public virtual Localidade Origem { get; private set; }
+        //public virtual Localidade Origem { get; private set; }
         public long OrigemId { get; private set; }
-        public virtual Localidade Destino { get; private set; }
+        //public virtual Localidade Destino { get; private set; }
         public long DestinoId { get; private set; }
         public virtual GatilhoViagem GatilhoViagem { get; private set; }
         public long? GatilhoViagemId { get; private set; }

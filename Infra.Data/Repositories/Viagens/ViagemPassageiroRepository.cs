@@ -7,6 +7,6 @@ namespace Infra.Data.Repositories.Viagens
 {
     public class ViagemPassageiroRepository : GenericRepository<ViagemPassageiro>, IViagemPassageiroRepository
     {
-        public ViagemPassageiroRepository(RGRContext context) : base(context) { }
+        public ViagemPassageiroRepository(TransportadorContext context) : base(context) { }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Application.Commands.ViagemPassageiro;
+using Dominio.Interfaces.Hangfire;
 using Dominio.Interfaces.Infra.Data;
 using Infra.CrossCutting.Handlers.Notifications;
+using Infra.CrossCutting.Multitenancy;
 using Infra.Data.Context;
 using Infra.Data.Data;
 using MediatR;
@@ -35,9 +37,27 @@ namespace Infra.Ioc
             return services;
         }
 
-        public static IServiceCollection AddContext(this IServiceCollection services, string queryString)
+        public static IServiceCollection AddContext(this IServiceCollection services)
         {
-            services.AddDbContext<RGRContext>(options => options.UseNpgsql(queryString));
+            services.AddHttpContextAccessor();
+
+            services.AddHttpContextAccessor();
+            services.AddScoped<ITenantProvider, TenantProvider>();
+
+            services.AddDbContext<TransportadorContext>((provider, options) =>
+            {
+                var tenantProvider = provider.GetRequiredService<ITenantProvider>();
+                options.UseNpgsql(tenantProvider.GetTenantConnectionString());
+            });
+
+            services.AddDbContext<CadastroContext>((provider, options) =>
+            {
+                var tenantProvider = provider.GetRequiredService<ITenantProvider>();
+                options.UseNpgsql(tenantProvider.GetTenantConnectionString());
+            });
+
+            services.AddScoped<IUnitOfWorkContext>(provider => provider.GetRequiredService<TransportadorContext>());
+            services.AddScoped<IUnitOfWorkContext>(provider => provider.GetRequiredService<CadastroContext>());
 
             return services;
         }
@@ -64,7 +84,7 @@ namespace Infra.Ioc
             }
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AdicionarViagemCommand).Assembly));
-           // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ProcessarViagemCriadaCommandHandler).Assembly));
+            // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ProcessarViagemCriadaCommandHandler).Assembly));
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Behaviors.UnitOfWorkBehavior<,>));
 

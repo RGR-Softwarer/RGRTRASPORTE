@@ -1,7 +1,10 @@
 ﻿using Dominio.Entidades.Viagens.Gatilho;
+using Dominio.Enums.Data;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 
 namespace Infra.Data.Configurators.Viagens.Gatilho
 {
@@ -19,19 +22,19 @@ namespace Infra.Data.Configurators.Viagens.Gatilho
 
             builder.Property(g => g.VeiculoId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_VEICULO_ID");
+                .HasColumnName($"VEI_ID");
 
             builder.Property(g => g.MotoristaId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_MOTORISTA_ID");
+                .HasColumnName($"MOT_MOTORISTA_ID");
 
             builder.Property(g => g.OrigemId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_ORIGEM_ID");
+                .HasColumnName($"LOC_ORIGEM_ID");
 
             builder.Property(g => g.DestinoId)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_DESTINO_ID");
+                .HasColumnName($"LOC_DESTINO_ID");
 
             builder.Property(g => g.HorarioSaida)
                 .IsRequired()
@@ -55,25 +58,44 @@ namespace Infra.Data.Configurators.Viagens.Gatilho
             builder.Property(g => g.PolilinhaRota)
                 .HasColumnName($"{prefixo}_POLILHINA_ROTA");
 
+            PropertyBuilder<List<DiaSemanaEnum>> diasSemanaProperty = builder.Property(g => g.DiasSemana);
+
+            diasSemanaProperty.HasConversion(
+                v => string.Join(',', v.Select(i => ((int)i).ToString())),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                      .Select(s => (DiaSemanaEnum)int.Parse(s))
+                      .ToList()
+            );
+
+            diasSemanaProperty.Metadata.SetValueComparer(
+                new ValueComparer<List<DiaSemanaEnum>>(
+                    (c1, c2) => c1.SequenceEqual(c2),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, (int)v)),
+                    c => c.ToList()
+                )
+            );
+
+            diasSemanaProperty.HasColumnName($"{prefixo}_DIAS_SEMANA");
+
             builder.HasOne(g => g.Veiculo)
                 .WithMany()
                 .HasForeignKey(g => g.VeiculoId);
 
-            builder.HasOne(g => g.Motorista)
-                .WithMany()
-                .HasForeignKey(g => g.MotoristaId);
+            //builder.HasOne(g => g.Motorista)
+            //    .WithMany()
+            //    .HasForeignKey(g => g.MotoristaId);
 
-            builder.HasOne(g => g.Origem)
-                .WithMany()
-                .HasForeignKey(g => g.OrigemId);
+            //builder.HasOne(g => g.Origem)
+            //    .WithMany()
+            //    .HasForeignKey(g => g.OrigemId);
 
-            builder.HasOne(g => g.Destino)
-                .WithMany()
-                .HasForeignKey(g => g.DestinoId);
+            //builder.HasOne(g => g.Destino)
+            //    .WithMany()
+            //    .HasForeignKey(g => g.DestinoId);
 
-            builder.HasMany(g => g.Viagens)
-                .WithOne(v => v.GatilhoViagem)
-                .HasForeignKey(v => v.GatilhoViagemId);
+            //builder.HasMany(g => g.Viagens)
+            //    .WithOne(v => v.GatilhoViagem)
+            //    .HasForeignKey(v => v.GatilhoViagemId);
         }
     }
 }

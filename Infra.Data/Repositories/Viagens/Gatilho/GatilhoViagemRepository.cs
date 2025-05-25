@@ -7,6 +7,6 @@ namespace Infra.Data.Repositories.Viagens.Gatilho
 {
     public class GatilhoViagemRepository : GenericRepository<GatilhoViagem>, IGatilhoViagemRepository
     {
-        public GatilhoViagemRepository(RGRContext context) : base(context) { }
+        public GatilhoViagemRepository(TransportadorContext context) : base(context) { }
     }
 }
