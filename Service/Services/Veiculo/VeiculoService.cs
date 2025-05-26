@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Dominio.Dtos;
 using Dominio.Dtos.Veiculo;
 using Dominio.Entidades.Veiculos;
 using Dominio.Interfaces.Infra.Data.Veiculo;
 using Dominio.Interfaces.Service;
 using Dominio.Validators;
 using Infra.CrossCutting.Handlers.Notifications;
+using System.Linq.Expressions;
 using System.Net;
 
 namespace Service.Services
@@ -20,6 +22,75 @@ namespace Service.Services
             _veiculoRepository = veiculoRepository;
             _mapper = mapper;
             _notificationHandler = notificationHandler;
+        }
+
+        public async Task<ResponseGridDto<VeiculoDto>> ObterPaginadoAsync(
+        ParametrosBuscaDto parametros,
+        CancellationToken cancellationToken = default)
+        {
+            // Cria expressão de filtro baseada nos parâmetros
+            Expression<Func<Veiculo, bool>> filter = null;
+            if (parametros.Filtros?.Any() == true)
+            {
+                var parameter = Expression.Parameter(typeof(Veiculo), "x");
+                Expression filterExpression = null;
+
+                foreach (var filtro in parametros.Filtros)
+                {
+                    var property = Expression.Property(parameter, filtro.Campo);
+                    var value = Expression.Constant(filtro.Valor);
+                    var comparison = Expression.Call(
+                        property,
+                        "Contains",
+                        Type.EmptyTypes,
+                        value);
+
+                    filterExpression = filterExpression == null
+                        ? comparison
+                        : Expression.AndAlso(filterExpression, comparison);
+                }
+
+                if (filterExpression != null)
+                    filter = Expression.Lambda<Func<Veiculo, bool>>(filterExpression, parameter);
+            }
+
+            // Obtém dados paginados
+            var (items, total) = await _veiculoRepository.GetPaginatedAsync(
+                parametros.PaginaAtual,
+                parametros.TamanhoPagina,
+                parametros.CampoOrdenacao,
+                parametros.Descendente,
+                filter);
+
+            // Mapeia para DTOs
+            return new ResponseGridDto<VeiculoDto>
+            {
+                Items = _mapper.Map<List<VeiculoDto>>(items),
+                Total = total,
+                Pagina = parametros.PaginaAtual,
+                TamanhoPagina = parametros.TamanhoPagina
+            };
+        }
+
+        private IQueryable<Veiculo> AplicarFiltro(IQueryable<Veiculo> query, FiltroGridDto filtro)
+        {
+            var parameter = Expression.Parameter(typeof(Veiculo), "x");
+            var property = Expression.Property(parameter, filtro.Campo);
+            var value = Expression.Constant(filtro.Valor.ToLower());
+
+            // Converte propriedade para string e aplica ToLower
+            var toString = Expression.Call(property,
+                typeof(object).GetMethod("ToString"));
+            var toLower = Expression.Call(toString,
+                typeof(string).GetMethod("ToLower", Type.EmptyTypes));
+
+            // Cria expressão Contains
+            var contains = Expression.Call(toLower,
+                typeof(string).GetMethod("Contains", new[] { typeof(string) }),
+                value);
+
+            var lambda = Expression.Lambda<Func<Veiculo, bool>>(contains, parameter);
+            return query.Where(lambda);
         }
 
         public async Task<List<VeiculoDto>> ObterTodosAsync()
@@ -84,7 +155,7 @@ namespace Service.Services
                 return;
             }
 
-           await _veiculoRepository.RemoverAsync(veiculo);
+            await _veiculoRepository.RemoverAsync(veiculo);
         }
 
     }

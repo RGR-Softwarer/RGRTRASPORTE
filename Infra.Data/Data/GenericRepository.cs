@@ -3,7 +3,6 @@ using Dominio.Entidades;
 using Dominio.Entidades.Auditoria;
 using Dominio.Enums.Auditoria;
 using Dominio.Interfaces.Infra.Data;
-using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -27,6 +26,35 @@ namespace Infra.Data.Data
         public async Task<List<T>> ObterTodosAsync(CancellationToken cancellationToken = default)
         {
             return await _context.Set<T>().AsNoTracking().ToListAsync(cancellationToken);
+        }
+
+        public virtual async Task<(IEnumerable<T> Items, int Total)> GetPaginatedAsync(
+        int pageNumber,
+        int pageSize,
+        string orderByProperty = "",
+        bool isDescending = false,
+        Expression<Func<T, bool>> filter = null)
+        {
+            var query = Query();
+
+            // Aplica filtro se fornecido
+            if (filter != null)
+                query = query.Where(filter);
+
+            // Obtém o total antes da paginação
+            var total = await query.CountAsync();
+
+            // Aplica ordenação se propriedade fornecida
+            if (!string.IsNullOrWhiteSpace(orderByProperty))
+                query = query.OrderByDynamic(orderByProperty, isDescending);
+
+            // Aplica paginação
+            var items = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, total);
         }
 
         public async Task<List<T>> ObterTodosAsync(int inicioRegistros, int maximoRegistros, string propriedadeOrdenar, bool decrescente = false)
@@ -113,6 +141,8 @@ namespace Infra.Data.Data
         }
 
         public IQueryable<T> Query() => _context.Set<T>().AsQueryable();
+
+        public IQueryable<T> OrderByDynamic(string propertyName, bool descending) => _context.Set<T>().OrderByDynamic(propertyName, descending);
 
         public async Task<int> ContarTodosAsync(CancellationToken cancellationToken = default)
         {

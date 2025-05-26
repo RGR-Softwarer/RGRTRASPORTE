@@ -1,3 +1,4 @@
+using Dominio.Dtos;
 using Dominio.Dtos.Veiculo;
 using MediatR;
 
@@ -9,6 +10,16 @@ namespace Application.Commands.Veiculo
     {
         public long Id { get; set; }
         public ObterVeiculoPorIdQuery(long id) => Id = id;
+    }
+
+    public class ObterVeiculosPaginadoQuery : IRequest<ResponseGridDto<VeiculoDto>>
+    {
+        public ParametrosBuscaDto Parametros { get; set; }
+
+        public ObterVeiculosPaginadoQuery(ParametrosBuscaDto parametros)
+        {
+            Parametros = parametros;
+        }
     }
 
     public class AdicionarVeiculoCommand : IRequest<bool>

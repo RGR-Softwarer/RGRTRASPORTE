@@ -1,8 +1,10 @@
 ﻿using Application.Commands.Veiculo;
+using Dominio.Dtos;
 using Dominio.Dtos.Veiculo;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 //Início da Funcionalidade
 namespace RGRTRASPORTE.Controllers
 {
@@ -23,6 +25,13 @@ namespace RGRTRASPORTE.Controllers
         {
             var veiculos = await _mediator.Send(new ObterTodosVeiculosQuery());
             return await RGRResult(System.Net.HttpStatusCode.OK, veiculos);
+        }
+
+        [HttpPost("filtrar")]
+        public async Task<IActionResult> ObterPaginado([FromBody] ParametrosBuscaDto parametros)
+        {
+            var resultado = await _mediator.Send(new ObterVeiculosPaginadoQuery(parametros));
+            return await RGRResult(HttpStatusCode.OK, resultado);
         }
 
         [HttpGet("{id}")]

@@ -1,4 +1,5 @@
 using Application.Commands.Veiculo;
+using Dominio.Dtos;
 using Dominio.Dtos.Veiculo;
 using Dominio.Interfaces.Service;
 using MediatR;
@@ -94,6 +95,21 @@ namespace Application.Handlers
         {
             await _modeloVeicularService.RemoverAsync(request.Id);
             return true;
+        }
+    }
+
+    public class ObterVeiculosPaginadoQueryHandler : IRequestHandler<ObterVeiculosPaginadoQuery, ResponseGridDto<VeiculoDto>>
+    {
+        private readonly IVeiculoService _veiculoService;
+
+        public ObterVeiculosPaginadoQueryHandler(IVeiculoService veiculoService)
+        {
+            _veiculoService = veiculoService;
+        }
+
+        public async Task<ResponseGridDto<VeiculoDto>> Handle(ObterVeiculosPaginadoQuery request, CancellationToken cancellationToken)
+        {
+            return await _veiculoService.ObterPaginadoAsync(request.Parametros, cancellationToken);
         }
     }
 } 
