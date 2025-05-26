@@ -4,6 +4,89 @@
     background: #1890ff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
     box-shadow: 0 2px 0 rgba(0, 0, 0, .045);
-    float: right;
-    margin: 7px;
+}
+
+.grid-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 8px;
+    flex-wrap: wrap;
+
+    &-left, &-right {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    button {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        [nz-icon] {
+            font-size: 16px;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    }
+}
+
+.column-selector-content {
+    padding: 0 8px;
+
+    .select-all-checkbox {
+        display: flex;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    nz-divider {
+        margin: 8px 0;
+    }
+}
+
+:host ::ng-deep .ant-checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 0;
+    max-height: 300px;
+    overflow-y: auto;
+    
+    .ant-checkbox-wrapper {
+        margin-left: 0;
+        user-select: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: all 0.3s;
+
+        &:hover {
+            background-color: #f5f5f5;
+        }
+    }
+}
+
+// Responsividade
+@media (max-width: 576px) {
+    .grid-actions {
+        flex-direction: column;
+        align-items: stretch;
+
+        &-left, &-right {
+            flex-direction: column;
+            width: 100%;
+
+            button {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    }
 }

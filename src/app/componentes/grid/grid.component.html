@@ -1,6 +1,54 @@
 <div>
-  <!-- Botão para adicionar novo item -->
-  <button *ngIf="valorConfiguracao.adicionar" nz-button (click)="adicionar()" nzType="primary">Add</button>
+  <!-- Botões de ação -->
+  <div class="grid-actions">
+    <div class="grid-actions-left">
+      <button *ngIf="valorConfiguracao.adicionar" 
+              nz-button 
+              nzType="primary" 
+              (click)="adicionar()"
+              nz-tooltip="Adicionar novo registro">
+        <span nz-icon nzType="plus"></span>
+        Add
+      </button>
+    </div>
+    <div class="grid-actions-right">
+      <button nz-button 
+              (click)="exportToExcel()"
+              [disabled]="!listaDados.length"
+              nz-tooltip="Exportar dados visíveis">
+        <span nz-icon nzType="download"></span>
+        Exportar
+      </button>
+      <button nz-button 
+              (click)="showColumnSelector()"
+              nz-tooltip="Configurar colunas visíveis">
+        <span nz-icon nzType="setting"></span>
+        Colunas
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal de seleção de colunas -->
+  <nz-modal [(nzVisible)]="isColumnSelectorVisible" 
+            nzTitle="Selecionar Colunas" 
+            (nzOnCancel)="handleColumnSelectorCancel()"
+            (nzOnOk)="handleColumnSelectorOk()">
+    <ng-container *nzModalContent>
+      <div class="column-selector-content">
+        <label nz-checkbox 
+               [(ngModel)]="allChecked"
+               [nzIndeterminate]="indeterminado"
+               (ngModelChange)="onAllChecked($event)"
+               class="select-all-checkbox">
+          Selecionar Todas
+        </label>
+        <nz-divider></nz-divider>
+        <nz-checkbox-group [(ngModel)]="columnSelections"
+                          (ngModelChange)="onItemCheckedChange()">
+        </nz-checkbox-group>
+      </div>
+    </ng-container>
+  </nz-modal>
 
   <!-- Formulário para configurações adicionais da grid -->
   <form *ngIf="valorConfiguracao.mostrarOpcoes" nz-form nzLayout="inline" [formGroup]="formularioConfiguracao">

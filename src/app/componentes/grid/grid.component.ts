@@ -9,6 +9,7 @@ import { firstValueFrom } from 'rxjs';
 import { Veiculo } from '../../dominio/entidade/veiculo';
 import { FormCampoConstrutor, FormCamposMetadata } from '../../services/decorator/formulario-decorator';
 import { Action } from '../../dominio/interface/grid/action-grid';
+import { NzCheckBoxOptionInterface } from 'ng-zorro-antd/checkbox';
 
 @Component({
   selector: 'app-grid',
@@ -20,6 +21,8 @@ export class GridComponent implements OnInit {
   @Input() buscarTodosUrl: string = '';
   @Input() adicionarUrl: string = '';
   @Input() acoes?: Action[] = [{ label: 'Editar', acao: this.editar.bind(this) }];
+  @Input() entidade: any;
+  @Input() identificador: string = '';
 
   gridColumns: FormCamposMetadata[] = []; 
   listaDados: any[] = [];
@@ -96,11 +99,16 @@ export class GridComponent implements OnInit {
     }
   ];
 
+  isColumnSelectorVisible = false;
+  columnSelections: NzCheckBoxOptionInterface[] = [];
+  private originalColumns: FormCamposMetadata[] = [];
+  allChecked = false;
+
   constructor(
-    private formBuilder: NonNullableFormBuilder, 
-    private router: Router, 
-    private apiService: ApiService, 
-    private toastService: ToastService
+    private readonly formBuilder: NonNullableFormBuilder, 
+    private readonly router: Router, 
+    private readonly apiService: ApiService, 
+    private readonly toastService: ToastService
   ) {
     // Inicializa as configurações padrão da grid
     this.formularioConfiguracaoPadrao = this.formBuilder.group({
@@ -130,7 +138,11 @@ export class GridComponent implements OnInit {
     });
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
+    this.inicializarGrid();
+  }
+
+  private async inicializarGrid(): Promise<void> {
     // Usa as configurações padrão se nenhuma configuração for passada
     if (!this.formularioConfiguracao) {
       this.formularioConfiguracao = this.formularioConfiguracaoPadrao;
@@ -164,8 +176,32 @@ export class GridComponent implements OnInit {
     this.listaDados = this.dadosEntrada;
 
     // Gera colunas baseadas nos metadados da entidade
-    const objetoConstructor = new Veiculo().constructor as FormCampoConstrutor;
-    this.gridColumns = objetoConstructor.formFields ?? [];
+    const objetoConstructor = this.entidade?.constructor as FormCampoConstrutor;
+    if (objetoConstructor) {
+      // Mantém apenas colunas que devem ser visíveis por padrão
+      this.originalColumns = (objetoConstructor.formFields ?? [])
+        .filter(field => field.visible)
+        .map(field => ({
+          ...field,
+          sortable: true,
+          filterable: true,
+          visible: true
+        }));
+
+      // Carrega configurações salvas
+      if (this.identificador) {
+        const savedConfig = this.loadGridConfig();
+        if (savedConfig) {
+          this.originalColumns = this.originalColumns.map(col => ({
+            ...col,
+            visible: savedConfig[col.key] ?? col.visible
+          }));
+        }
+      }
+
+      this.gridColumns = [...this.originalColumns];
+      this.initializeColumnSelections();
+    }
   }
 
   mudancaDadosPaginaAtual($event: readonly any[]): void {
@@ -207,10 +243,113 @@ export class GridComponent implements OnInit {
         this.toastService.exibirMensagemErro('Erro', 'Erro ao obter dados');
         return [];
       }
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('Erro ao obter dados:', error);
       this.toastService.exibirMensagemErro('Erro', 'Erro ao obter dados');
       return [];
     }
   }
   
+  showColumnSelector(): void {
+    this.isColumnSelectorVisible = true;
+  }
+
+  handleColumnSelectorCancel(): void {
+    this.isColumnSelectorVisible = false;
+  }
+
+  handleColumnSelectorOk(): void {
+    this.updateColumnsVisibility();
+    this.isColumnSelectorVisible = false;
+  }
+
+  private initializeColumnSelections(): void {
+    this.columnSelections = this.originalColumns.map(col => ({
+      label: col.label,
+      value: col.key,
+      checked: col.visible
+    }));
+    this.updateAllChecked();
+  }
+
+  private updateColumnsVisibility(): void {
+    const selectedColumns = new Set(
+      this.columnSelections
+        .filter(option => option.checked)
+        .map(option => option.value)
+    );
+
+    this.gridColumns = this.originalColumns.map(col => ({
+      ...col,
+      visible: selectedColumns.has(col.key)
+    }));
+
+    // Salva configurações
+    if (this.identificador) {
+      const config = this.gridColumns.reduce((acc, col) => ({
+        ...acc,
+        [col.key]: col.visible
+      }), {});
+      this.saveGridConfig(config);
+    }
+  }
+
+  private loadGridConfig(): Record<string, boolean> | null {
+    try {
+      const key = `grid-config-${this.identificador}`;
+      const saved = localStorage.getItem(key);
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private saveGridConfig(config: Record<string, boolean>): void {
+    try {
+      const key = `grid-config-${this.identificador}`;
+      localStorage.setItem(key, JSON.stringify(config));
+    } catch {
+      console.warn('Não foi possível salvar a configuração do grid');
+    }
+  }
+
+  // Método para exportar dados para Excel
+  exportToExcel(): void {
+    if (!this.listaDados.length) return;
+
+    const visibleColumns = this.gridColumns.filter(col => col.visible);
+    const data = this.listaDados.map(row => {
+      const newRow: Record<string, any> = {};
+      visibleColumns.forEach(col => {
+        newRow[col.label] = row[col.key];
+      });
+      return newRow;
+    });
+
+    // TODO: Implementar exportação para Excel
+    console.log('Dados para exportar:', data);
+  }
+
+  updateAllChecked(): void {
+    if (this.columnSelections.length === 0) {
+      this.allChecked = false;
+      this.indeterminado = false;
+      return;
+    }
+
+    this.allChecked = this.columnSelections.every(item => item.checked);
+    this.indeterminado = !this.allChecked && this.columnSelections.some(item => item.checked);
+  }
+
+  onItemCheckedChange(): void {
+    this.updateAllChecked();
+  }
+
+  onAllChecked(checked: boolean): void {
+    this.columnSelections = this.columnSelections.map(item => ({
+      ...item,
+      checked
+    }));
+    this.updateAllChecked();
+  }
 }
