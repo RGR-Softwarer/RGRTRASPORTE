@@ -12,11 +12,18 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzGridModule } from 'ng-zorro-antd/grid';
+import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { RouterModule } from '@angular/router';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 @NgModule({
   declarations: [GridComponent],
   imports: [
     CommonModule,
+    RouterModule,
     NzTableModule,
     ReactiveFormsModule,
     FormsModule,
@@ -28,7 +35,12 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
     NzModalModule,
     NzCheckboxModule,
     NzIconModule,
-    NzToolTipModule
+    NzToolTipModule,
+    NzInputModule,
+    NzCardModule,
+    NzGridModule,
+    NzCollapseModule,
+    NzDropDownModule
   ],
   exports: [GridComponent]
 })

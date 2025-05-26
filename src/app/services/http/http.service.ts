@@ -15,24 +15,24 @@ export class HttpService {
     });
   }
  
-  public get(url: string, params?: HttpParams): Observable<any> {
-    return this.http.get(url, { headers: this.headers, params });
+  public get<T, R = T>(url: string, params?: HttpParams): Observable<R> {
+    return this.http.get<R>(url, { headers: this.headers, params });
   }
 
-  public post(url: string, data: any): Observable<any> {
-    return this.http.post(url, data, { headers: this.headers });
+  public post<T, R = T>(url: string, data: any): Observable<R> {
+    return this.http.post<R>(url, data, { headers: this.headers });
   }
 
-  public put(url: string, data: any): Observable<any> {
-    return this.http.put(url, data, { headers: this.headers });
+  public put<T, R = T>(url: string, data: any): Observable<R> {
+    return this.http.put<R>(url, data, { headers: this.headers });
   }
 
-  public delete(url: string): Observable<any> {
-    return this.http.delete(url, { headers: this.headers });
+  public delete<T, R = T>(url: string): Observable<R> {
+    return this.http.delete<R>(url, { headers: this.headers });
   }
 
-  public patch(url: string, data: any): Observable<any> {
-    return this.http.patch(url, data, { headers: this.headers });
+  public patch<T, R = T>(url: string, data: any): Observable<R> {
+    return this.http.patch<R>(url, data, { headers: this.headers });
   }
 
   public getHeaders(): HttpHeaders {

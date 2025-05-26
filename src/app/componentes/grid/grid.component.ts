@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
-import { NzTableSize, NzTablePaginationType, NzTableLayout, NzTablePaginationPosition } from 'ng-zorro-antd/table';
+import { NzTableSize, NzTablePaginationType, NzTableLayout, NzTablePaginationPosition, NzTableSortOrder } from 'ng-zorro-antd/table';
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/http/api.service';
 import { ToastService } from '../../services/utils/notificacao/toast.service';
@@ -10,6 +10,10 @@ import { Veiculo } from '../../dominio/entidade/veiculo';
 import { FormCampoConstrutor, FormCamposMetadata } from '../../services/decorator/formulario-decorator';
 import { Action } from '../../dominio/interface/grid/action-grid';
 import { NzCheckBoxOptionInterface } from 'ng-zorro-antd/checkbox';
+import { FiltroGrid, ParametrosBusca } from '../../dominio/interface/grid/filtros-grid';
+import { ResponseGrid } from '../../dominio/interface/grid/response-grid';
+import { Subject, debounceTime } from 'rxjs';
+import { ApiResponse } from '../../dominio/interface/grid/api-response';
 
 @Component({
   selector: 'app-grid',
@@ -32,8 +36,50 @@ export class GridComponent implements OnInit {
   colunaFixa = false;
   rolagemX: string | null = null;
   rolagemY: string | null = null;
-  valorConfiguracao!: ConfiguracaoGrid;
+  valorConfiguracao: ConfiguracaoGrid = {
+    comBorda: true,
+    carregando: false,
+    paginacao: true,
+    alteradorTamanho: true,
+    titulo: false,
+    cabecalho: true,
+    rodape: false,
+    expansivel: false,
+    caixaSelecao: false,
+    cabecalhoFixo: false,
+    semResultado: false,
+    elipse: false,
+    simples: false,
+    mostrarOpcoes: false,
+    tamanho: 'small',
+    tipoPaginacao: 'default',
+    rolagemTabela: 'unset',
+    layoutTabela: 'auto',
+    posicao: 'bottom',
+    tituloTabela: '',
+    rodapeTabela: '',
+    adicionar: true,
+    action: true
+  };
   dadosEntrada: any[] = [];
+  searchValue = '';
+  visible = false;
+  filteredData: any[] = [];
+  searchInputs: { [key: string]: string } = {};
+  
+  // Paginação
+  paginaAtual = 1;
+  tamanhoPagina = 10;
+  totalRegistros = 0;
+  carregando = false;
+
+  // Controle de expansão dos filtros
+  painelFiltrosExpandido = true;
+
+  // Controle de filtragem local
+  private filtroLocal$ = new Subject<void>();
+  dadosFiltradosLocalmente: any[] = [];
+  ultimaConsulta: ParametrosBusca | null = null;
 
   formularioConfiguracaoPadrao: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
 
@@ -104,6 +150,10 @@ export class GridComponent implements OnInit {
   private originalColumns: FormCamposMetadata[] = [];
   allChecked = false;
 
+  // Adicione estas propriedades à classe
+  sortField: string = '';
+  sortOrder: NzTableSortOrder = null;
+
   constructor(
     private readonly formBuilder: NonNullableFormBuilder, 
     private readonly router: Router, 
@@ -136,6 +186,11 @@ export class GridComponent implements OnInit {
       adicionar: [false],
       action: [true]
     });
+
+    // Configura debounce para filtragem local
+    this.filtroLocal$
+      .pipe(debounceTime(300))
+      .subscribe(() => this.aplicarFiltroLocal());
   }
 
   ngOnInit(): void {
@@ -153,7 +208,7 @@ export class GridComponent implements OnInit {
     }
 
     this.formularioConfiguracao.valueChanges.subscribe(valor => {
-      this.valorConfiguracao = valor as ConfiguracaoGrid;
+      this.valorConfiguracao = { ...this.valorConfiguracao, ...valor };
     });
 
     this.formularioConfiguracao.controls.rolagemTabela.valueChanges.subscribe(rolagem => {
@@ -171,9 +226,15 @@ export class GridComponent implements OnInit {
 
     this.valorConfiguracao = this.formularioConfiguracao.value as ConfiguracaoGrid;
 
+    // Inicializa os inputs de busca para cada coluna
+    this.gridColumns.forEach(column => {
+      this.searchInputs[column.key] = '';
+    });
+
     // Carrega dados da API
     this.dadosEntrada = await this.obterTodos();
     this.listaDados = this.dadosEntrada;
+    this.filteredData = [...this.listaDados];
 
     // Gera colunas baseadas nos metadados da entidade
     const objetoConstructor = this.entidade?.constructor as FormCampoConstrutor;
@@ -202,6 +263,17 @@ export class GridComponent implements OnInit {
       this.gridColumns = [...this.originalColumns];
       this.initializeColumnSelections();
     }
+
+    await this.buscarDados();
+  }
+
+  private initializeColumnSelections(): void {
+    this.columnSelections = this.originalColumns.map(col => ({
+      label: col.label,
+      value: col.key,
+      checked: col.visible
+    }));
+    this.updateAllChecked();
   }
 
   mudancaDadosPaginaAtual($event: readonly any[]): void {
@@ -236,9 +308,11 @@ export class GridComponent implements OnInit {
 
   async obterTodos(): Promise<any[]> {
     try {
-      const data = await firstValueFrom(this.apiService.get(this.buscarTodosUrl));
-      if (data.sucesso) {
-        return data.dados;
+      const response = await firstValueFrom(
+        this.apiService.get<any[]>(this.buscarTodosUrl)
+      );
+      if (response.sucesso) {
+        return response.dados;
       } else {
         this.toastService.exibirMensagemErro('Erro', 'Erro ao obter dados');
         return [];
@@ -261,15 +335,6 @@ export class GridComponent implements OnInit {
   handleColumnSelectorOk(): void {
     this.updateColumnsVisibility();
     this.isColumnSelectorVisible = false;
-  }
-
-  private initializeColumnSelections(): void {
-    this.columnSelections = this.originalColumns.map(col => ({
-      label: col.label,
-      value: col.key,
-      checked: col.visible
-    }));
-    this.updateAllChecked();
   }
 
   private updateColumnsVisibility(): void {
@@ -351,5 +416,123 @@ export class GridComponent implements OnInit {
       checked
     }));
     this.updateAllChecked();
+  }
+
+  // Método para buscar dados com filtros
+  async buscarDados(forcarConsulta: boolean = false): Promise<void> {
+    this.carregando = true;
+
+    try {
+      const parametros: ParametrosBusca = {
+        filtros: this.obterFiltrosAtivos(),
+        paginaAtual: this.paginaAtual,
+        tamanhoPagina: this.tamanhoPagina,
+        campoOrdenacao: this.sortField || this.gridColumns[0]?.key || '',
+        descendente: this.sortOrder === 'descend'
+      };
+
+      // Se não forçar consulta e os parâmetros são iguais aos últimos, aplica filtro local
+      if (!forcarConsulta && this.ultimaConsulta && this.parametrosIguais(parametros, this.ultimaConsulta)) {
+        this.aplicarFiltroLocal();
+        return;
+      }
+
+      const response = await firstValueFrom(
+        this.apiService.post<ResponseGrid<any>>(this.buscarTodosUrl + '/filtrar', parametros)
+      );
+
+      if (response.sucesso && response.dados) {
+        this.listaDados = response.dados.items ?? [];
+        this.dadosFiltradosLocalmente = [...this.listaDados];
+        this.totalRegistros = response.dados.total;
+        this.ultimaConsulta = parametros;
+      } else {
+        this.toastService.exibirMensagemErro('Erro', response.mensagem || 'Erro ao buscar dados');
+      }
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error);
+      this.toastService.exibirMensagemErro('Erro', 'Erro ao buscar dados');
+    } finally {
+      this.carregando = false;
+    }
+  }
+
+  // Compara se os parâmetros de busca são iguais
+  private parametrosIguais(params1: ParametrosBusca, params2: ParametrosBusca): boolean {
+    return params1.paginaAtual === params2.paginaAtual &&
+           params1.tamanhoPagina === params2.tamanhoPagina &&
+           params1.campoOrdenacao === params2.campoOrdenacao &&
+           params1.descendente === params2.descendente &&
+           JSON.stringify(params1.filtros) === JSON.stringify(params2.filtros);
+  }
+
+  // Aplica filtro local
+  private aplicarFiltroLocal(): void {
+    const filtrosAtivos = this.obterFiltrosAtivos();
+    
+    if (filtrosAtivos.length === 0) {
+      this.dadosFiltradosLocalmente = [...this.listaDados];
+    } else {
+      this.dadosFiltradosLocalmente = this.listaDados.filter(item => {
+        return filtrosAtivos.every(filtro => {
+          const valorItem = String(item[filtro.campo] || '').toLowerCase();
+          return valorItem.includes(filtro.valor.toLowerCase());
+        });
+      });
+    }
+  }
+
+  // Método para resetar filtros
+  reset(): void {
+    this.searchInputs = {};
+    this.gridColumns.forEach(column => {
+      this.searchInputs[column.key] = '';
+    });
+    this.paginaAtual = 1;
+    this.sortField = '';
+    this.sortOrder = null;
+    this.buscarDados(true);
+  }
+
+  // Método para limpar filtro específico
+  clearFilter(key: string): void {
+    this.searchInputs[key] = '';
+    this.onFilterChange();
+  }
+
+  // Handler para mudança de página
+  onPageIndexChange(page: number): void {
+    this.paginaAtual = page;
+    this.buscarDados(true);
+  }
+
+  // Handler para mudança de tamanho da página
+  onPageSizeChange(size: number): void {
+    this.tamanhoPagina = size;
+    this.paginaAtual = 1;
+    this.buscarDados(true);
+  }
+
+  // Handler para mudança nos filtros
+  onFilterChange(): void {
+    this.paginaAtual = 1; // Reset para primeira página ao filtrar
+    this.filtroLocal$.next();
+  }
+
+  // Obtém filtros ativos
+  private obterFiltrosAtivos(): FiltroGrid[] {
+    return Object.entries(this.searchInputs)
+      .filter(([_, value]) => value && value.trim() !== '')
+      .map(([campo, valor]) => ({
+        campo,
+        valor: valor.trim()
+      }));
+  }
+
+  // Adicione este método para lidar com a ordenação
+  onSort(sort: { key: string; value: NzTableSortOrder }): void {
+    this.sortField = sort.key;
+    this.sortOrder = sort.value;
+    this.buscarDados(true);
   }
 }

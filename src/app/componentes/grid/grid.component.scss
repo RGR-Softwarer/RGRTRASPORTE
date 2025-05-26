@@ -52,24 +52,77 @@
     }
 }
 
-:host ::ng-deep .ant-checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px 0;
-    max-height: 300px;
-    overflow-y: auto;
-    
-    .ant-checkbox-wrapper {
-        margin-left: 0;
-        user-select: none;
-        padding: 4px 8px;
-        border-radius: 4px;
-        transition: all 0.3s;
+:host ::ng-deep {
+    .ant-checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 0;
+        max-height: 300px;
+        overflow-y: auto;
+        
+        .ant-checkbox-wrapper {
+            margin-left: 0;
+            user-select: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.3s;
 
-        &:hover {
-            background-color: #f5f5f5;
+            &:hover {
+                background-color: #f5f5f5;
+            }
         }
+    }
+
+    // Estilos do collapse
+    .ant-collapse {
+        margin-bottom: 16px;
+        background: transparent;
+
+        .ant-collapse-item {
+            border: 1px solid #f0f0f0;
+            border-radius: 4px;
+            background: #fff;
+            
+            .ant-collapse-header {
+                padding: 12px 16px;
+                align-items: center;
+
+                .ant-collapse-header-text {
+                    font-weight: 500;
+                }
+
+                .collapse-icon {
+                    font-size: 12px;
+                    transition: transform 0.3s;
+                }
+            }
+
+            .ant-collapse-content {
+                border-top: 1px solid #f0f0f0;
+            }
+        }
+    }
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+nz-form-item {
+    margin-bottom: 0;
+}
+
+[nz-icon] {
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.45);
+    transition: color 0.3s;
+    
+    &:hover {
+        color: rgba(0, 0, 0, 0.85);
     }
 }
 
@@ -87,6 +140,14 @@
                 width: 100%;
                 justify-content: center;
             }
+        }
+    }
+
+    .filter-buttons {
+        flex-direction: column;
+        
+        button {
+            width: 100%;
         }
     }
 }
