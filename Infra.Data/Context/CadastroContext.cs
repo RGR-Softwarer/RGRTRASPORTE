@@ -15,7 +15,7 @@ namespace Infra.Data.Context
     public class CadastroContext : DbContext, IUnitOfWorkContext
     {
         public CadastroContext(DbContextOptions<CadastroContext> options) : base(options) { }
-        public List<(BaseEntity Entity, HistoricoObjeto HistoricoObjeto)>? PendingEntities => null;
+        public List<(BaseEntity Entity, HistoricoObjeto HistoricoObjeto)> PendingEntities { get; } = new();
 
         public DbSet<Motorista> Motoristas { get; set; }
         public DbSet<Passageiro> Passageiros { get; set; }

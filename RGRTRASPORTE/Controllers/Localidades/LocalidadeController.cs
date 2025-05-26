@@ -1,7 +1,7 @@
-﻿using Dominio.Dtos.Localidades;
-using Dominio.Interfaces.Infra.Data;
-using Dominio.Interfaces.Service.Localidades;
+﻿using Application.Commands.Localidade;
+using Dominio.Dtos.Localidades;
 using Infra.CrossCutting.Handlers.Notifications;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RGRTRASPORTE.Controllers.Localidades
@@ -10,25 +10,25 @@ namespace RGRTRASPORTE.Controllers.Localidades
     [ApiController]
     public class LocalidadeController : AbstractControllerBase
     {
-        private readonly ILocalidadeService _localidadeService;
+        private readonly IMediator _mediator;
 
-        public LocalidadeController(ILocalidadeService localidadeService, INotificationHandler notificationHandler)
+        public LocalidadeController(IMediator mediator, INotificationHandler notificationHandler)
             : base(notificationHandler)
         {
-            _localidadeService = localidadeService;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> ObterTodos()
         {
-            var localidades = await _localidadeService.ObterTodosAsync();
+            var localidades = await _mediator.Send(new ObterTodasLocalidadesQuery());
             return await RGRResult(System.Net.HttpStatusCode.OK, localidades);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterPorId(long id)
         {
-            var localidade = await _localidadeService.ObterPorIdAsync(id);
+            var localidade = await _mediator.Send(new ObterLocalidadePorIdQuery(id));
             if (localidade == null)
                 return NoContent();
 
@@ -38,21 +38,21 @@ namespace RGRTRASPORTE.Controllers.Localidades
         [HttpPost]
         public async Task<IActionResult> PostAsync(LocalidadeDto dto)
         {
-            await _localidadeService.AdicionarAsync(dto);
+            await _mediator.Send(new AdicionarLocalidadeCommand { LocalidadeDto = dto });
             return await RGRResult();
         }
 
         [HttpPut]
         public async Task<IActionResult> PutAsync(LocalidadeDto dto)
         {
-            await _localidadeService.EditarAsync(dto);
+            await _mediator.Send(new EditarLocalidadeCommand { LocalidadeDto = dto });
             return await RGRResult();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(long id)
         {
-            await _localidadeService.RemoverAsync(id);
+            await _mediator.Send(new RemoverLocalidadeCommand(id));
             return await RGRResult();
         }
     }

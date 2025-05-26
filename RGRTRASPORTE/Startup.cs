@@ -1,6 +1,7 @@
 ﻿using Hangfire;
 using Hangfire.PostgreSql;
 using Infra.Ioc;
+using System.Reflection;
 
 namespace RGRTRASPORTE
 {
@@ -33,6 +34,12 @@ namespace RGRTRASPORTE
 
             services.AddRepositorys();
 
+            // Configuração do MediatR
+            services.AddMediatR(cfg => {
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                cfg.RegisterServicesFromAssembly(typeof(Application.Commands.Viagem.AdicionarViagemCommand).Assembly);
+            });
+
             var connectionString = _configuration.GetConnectionString("RGRTRASPORTE") ?? string.Empty;
 
             services.AddHangfire(config =>
@@ -45,9 +52,7 @@ namespace RGRTRASPORTE
                           options.UseNpgsqlConnection(connectionString);
                       });
             });
-
         }
-
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

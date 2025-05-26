@@ -2,9 +2,9 @@
 {
     public enum SituacaoViagemEnum
     {
-        NaoIniciada = 1,
-        EmTransito = 2,
-        Finalizada = 3
+        NaoIniciada = 0,
+        EmTransito = 1,
+        Finalizada = 2
     }
 
     public static class SituacaoViagemEnumHelper

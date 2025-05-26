@@ -15,9 +15,6 @@ namespace Infra.CrossCutting.Multitenancy
         public string GetTenantId()
         {
 
-//#if DEBUG
-//            return string.Empty;
-//#endif
             // 1. Se estiver em HTTP, pega do header
             var httpTenant = _httpContextAccessor.HttpContext?.Request.Host.ToString();
             if (!string.IsNullOrWhiteSpace(httpTenant))

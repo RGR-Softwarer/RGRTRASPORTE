@@ -1,6 +1,4 @@
-﻿using Application.Commands.ViagemPassageiro;
-using Dominio.Interfaces.Hangfire;
-using Dominio.Interfaces.Infra.Data;
+﻿using Dominio.Interfaces.Infra.Data;
 using Infra.CrossCutting.Handlers.Notifications;
 using Infra.CrossCutting.Multitenancy;
 using Infra.Data.Context;
@@ -41,7 +39,6 @@ namespace Infra.Ioc
         {
             services.AddHttpContextAccessor();
 
-            services.AddHttpContextAccessor();
             services.AddScoped<ITenantProvider, TenantProvider>();
 
             services.AddDbContext<TransportadorContext>((provider, options) =>
@@ -56,16 +53,32 @@ namespace Infra.Ioc
                 options.UseNpgsql(tenantProvider.GetTenantConnectionString());
             });
 
+            // Registrando os contextos como IUnitOfWorkContext
             services.AddScoped<IUnitOfWorkContext>(provider => provider.GetRequiredService<TransportadorContext>());
             services.AddScoped<IUnitOfWorkContext>(provider => provider.GetRequiredService<CadastroContext>());
+
+            // Registrando o MultiContextUnitOfWork
+            services.AddScoped<IUnitOfWork, MultiContextUnitOfWork>(provider =>
+            {
+                var contexts = provider.GetServices<IUnitOfWorkContext>();
+                return new MultiContextUnitOfWork(contexts);
+            });
 
             return services;
         }
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<INotificationHandler, NotificationHandler>();
+
+            // Registrando o MediatR e seus handlers
+            services.AddMediatR(cfg => {
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                cfg.RegisterServicesFromAssembly(typeof(Application.Commands.Viagem.AdicionarViagemCommand).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(Application.Handlers.ViagemHandler).Assembly);
+            });
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Behaviors.UnitOfWorkBehavior<,>));
 
             var serviceAssembly = Assembly.GetAssembly(typeof(Service.Services.Localidades.LocalidadeService));
 
@@ -82,11 +95,6 @@ namespace Infra.Ioc
                     services.AddScoped(interfaceType, implementationType);
                 }
             }
-
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(AdicionarViagemCommand).Assembly));
-            // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ProcessarViagemCriadaCommandHandler).Assembly));
-
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(Application.Behaviors.UnitOfWorkBehavior<,>));
 
             return services;
         }
@@ -111,6 +119,5 @@ namespace Infra.Ioc
 
             return services;
         }
-
     }
 }

@@ -1,6 +1,7 @@
-﻿using Dominio.Dtos.Pessoas.Passageiros;
-using Dominio.Interfaces.Service.Passageiros;
+﻿using Application.Commands.Passageiro;
+using Dominio.Dtos.Pessoas.Passageiros;
 using Infra.CrossCutting.Handlers.Notifications;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RGRTRASPORTE.Controllers.Pessoas
@@ -9,25 +10,25 @@ namespace RGRTRASPORTE.Controllers.Pessoas
     [ApiController]
     public class PassageiroController : AbstractControllerBase
     {
-        private readonly IPassageiroService _passageiroService;
+        private readonly IMediator _mediator;
 
-        public PassageiroController(IPassageiroService passageiroService, INotificationHandler notificationHandler)
+        public PassageiroController(IMediator mediator, INotificationHandler notificationHandler)
             : base(notificationHandler)
         {
-            _passageiroService = passageiroService;
+            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> ObterTodos()
         {
-            var passageiros = await _passageiroService.ObterTodosAsync();
+            var passageiros = await _mediator.Send(new ObterTodosPassageirosQuery());
             return await RGRResult(System.Net.HttpStatusCode.OK, passageiros);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterPorId(long id)
         {
-            var passageiro = await _passageiroService.ObterPorIdAsync(id);
+            var passageiro = await _mediator.Send(new ObterPassageiroPorIdQuery(id));
             if (passageiro == null)
                 return NoContent();
 
@@ -37,21 +38,21 @@ namespace RGRTRASPORTE.Controllers.Pessoas
         [HttpPost]
         public async Task<IActionResult> PostAsync(PassageiroDto dto)
         {
-            await _passageiroService.AdicionarAsync(dto);
+            await _mediator.Send(new AdicionarPassageiroCommand { PassageiroDto = dto });
             return await RGRResult();
         }
 
         [HttpPut]
         public async Task<IActionResult> PutAsync(PassageiroDto dto)
         {
-            await _passageiroService.EditarAsync(dto);
+            await _mediator.Send(new EditarPassageiroCommand { PassageiroDto = dto });
             return await RGRResult();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(long id)
         {
-            await _passageiroService.RemoverAsync(id);
+            await _mediator.Send(new RemoverPassageiroCommand(id));
             return await RGRResult();
         }
     }

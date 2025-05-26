@@ -1,7 +1,6 @@
-﻿using Application.Commands.ViagemPassageiro;
+﻿using Application.Commands.Viagem;
 using Dominio.Dtos.Viagens;
 using Dominio.Interfaces.Hangfire;
-using Dominio.Interfaces.Service.Viagens;
 using Hangfire;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
@@ -15,14 +14,13 @@ namespace RGRTRASPORTE.Controllers.Viagens
     [ApiController]
     public class ViagemController : AbstractControllerBase
     {
-        private readonly IViagemService _viagemService;
         private readonly IMediator _mediator;
         private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly HttpClient _httpClient = new HttpClient();
 
-        public ViagemController(IMediator mediator, IViagemService viagemService, INotificationHandler notificationHandler, IBackgroundJobClient backgroundJobClient)
+        public ViagemController(IMediator mediator, INotificationHandler notificationHandler, IBackgroundJobClient backgroundJobClient)
             : base(notificationHandler)
         {
-            _viagemService = viagemService;
             _mediator = mediator;
             _backgroundJobClient = backgroundJobClient;
         }
@@ -30,10 +28,40 @@ namespace RGRTRASPORTE.Controllers.Viagens
         [HttpGet]
         public async Task<IActionResult> ObterTodos()
         {
-            var viagens = await _viagemService.ObterTodosAsync();
+            var viagens = await _mediator.Send(new ObterTodasViagensQuery());
             return await RGRResult(System.Net.HttpStatusCode.OK, viagens);
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ObterPorId(long id)
+        {
+            var viagem = await _mediator.Send(new ObterViagemPorIdQuery(id));
+            if (viagem == null)
+                return NoContent();
+
+            return await RGRResult(System.Net.HttpStatusCode.OK, viagem);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostAsync(ViagemDto dto)
+        {
+            await _mediator.Send(new AdicionarViagemCommand { ViagemDto = dto });
+            return await RGRResult();
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> PutAsync(ViagemDto dto)
+        {
+            await _mediator.Send(new EditarViagemCommand(dto));
+            return await RGRResult();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(long id)
+        {
+            await _mediator.Send(new RemoverViagemCommand(id));
+            return await RGRResult();
+        }
 
         public enum AuthType
         {
@@ -67,8 +95,6 @@ namespace RGRTRASPORTE.Controllers.Viagens
             public Dictionary<string, string> PayloadTemplate { get; set; }
         }
 
-        private readonly HttpClient _httpClient = new HttpClient();
-
         [HttpGet("TesteHangifire")]
         public async Task<IActionResult> TesteDEV()
         {
@@ -86,7 +112,6 @@ namespace RGRTRASPORTE.Controllers.Viagens
                 Message = "Job agendado com sucesso"
             });
         }
-
 
         [HttpGet("TesteSilvani")]
         public async Task<IActionResult> Teste()
@@ -273,18 +298,6 @@ namespace RGRTRASPORTE.Controllers.Viagens
             return current.GetString();
         }
 
-
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ObterPorId(long id)
-        {
-            var viagem = await _viagemService.ObterPorIdAsync(id);
-            if (viagem == null)
-                return NoContent();
-
-            return await RGRResult(System.Net.HttpStatusCode.OK, viagem);
-        }
-
         [HttpGet("ObterRotaViagem/{id}")]
         public async Task<IActionResult> ObterRotaViagem(long id)
         {
@@ -325,34 +338,6 @@ namespace RGRTRASPORTE.Controllers.Viagens
             }
 
             return await RGRResult(System.Net.HttpStatusCode.BadRequest, "Erro ao obter a rota da viagem");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> PostAsync(ViagemDto dto)
-        {
-            await _viagemService.AdicionarAsync(dto);
-            return await RGRResult();
-        }
-
-        [HttpPost("Teste")]
-        public async Task<IActionResult> PostAsync(AdicionarViagemCommand command)
-        {
-            await _mediator.Send(command);
-            return await RGRResult();
-        }
-
-        [HttpPut]
-        public async Task<IActionResult> PutAsync(ViagemDto dto)
-        {
-            await _viagemService.EditarAsync(dto);
-            return await RGRResult();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(long id)
-        {
-            await _viagemService.RemoverAsync(id);
-            return await RGRResult();
         }
     }
 }

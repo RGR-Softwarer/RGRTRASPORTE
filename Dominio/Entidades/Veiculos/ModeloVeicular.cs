@@ -5,7 +5,7 @@ namespace Dominio.Entidades.Veiculos
     public class ModeloVeicular : BaseEntity
     {
         public bool Situacao { get; private set; }
-        public bool DescricaoModelo { get; private set; }
+        public string DescricaoModelo { get; private set; }
         public TipoModeloVeiculoEnum Tipo { get; private set; }
         public int QuantidadeAssento { get; private set; }
         public int QuantidadeEixo { get; private set; }
