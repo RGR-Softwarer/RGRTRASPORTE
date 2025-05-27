@@ -13,6 +13,12 @@
     </div>
     <div class="grid-actions-right">
       <button nz-button 
+              (click)="exportToExcel()"
+              nz-tooltip="Exportar dados para Excel">
+        <span nz-icon nzType="download"></span>
+        Exportar
+      </button>
+      <button nz-button 
               (click)="showColumnSelector()"
               nz-tooltip="Configurar colunas visíveis">
         <span nz-icon nzType="setting"></span>

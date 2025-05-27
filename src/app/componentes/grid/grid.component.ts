@@ -14,6 +14,7 @@ import { FiltroGrid, ParametrosBusca } from '../../dominio/interface/grid/filtro
 import { ResponseGrid } from '../../dominio/interface/grid/response-grid';
 import { Subject, debounceTime } from 'rxjs';
 import { ApiResponse } from '../../dominio/interface/grid/api-response';
+import * as XLSX from 'xlsx';
 
 @Component({
   selector: 'app-grid',
@@ -380,19 +381,41 @@ export class GridComponent implements OnInit {
 
   // Método para exportar dados para Excel
   exportToExcel(): void {
-    if (!this.listaDados.length) return;
+    if (!this.listaDados.length) {
+      this.toastService.exibirMensagemErro('Erro', 'Não há dados para exportar');
+      return;
+    }
 
-    const visibleColumns = this.gridColumns.filter(col => col.visible);
-    const data = this.listaDados.map(row => {
-      const newRow: Record<string, any> = {};
-      visibleColumns.forEach(col => {
-        newRow[col.label] = row[col.key];
+    try {
+      // Filtra apenas as colunas visíveis
+      const visibleColumns = this.gridColumns.filter(col => col.visible);
+      
+      // Prepara os dados para exportação
+      const data = this.listaDados.map(row => {
+        const newRow: Record<string, any> = {};
+        visibleColumns.forEach(col => {
+          newRow[col.label] = row[col.key];
+        });
+        return newRow;
       });
-      return newRow;
-    });
 
-    // TODO: Implementar exportação para Excel
-    console.log('Dados para exportar:', data);
+      // Cria a planilha
+      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+      const wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Dados');
+
+      // Gera o nome do arquivo com data e hora
+      const now = new Date();
+      const fileName = `exportacao_${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}.xlsx`;
+
+      // Salva o arquivo
+      XLSX.writeFile(wb, fileName);
+      
+      this.toastService.exibirMensagemSucesso('Sucesso', 'Dados exportados com sucesso');
+    } catch (error) {
+      console.error('Erro ao exportar dados:', error);
+      this.toastService.exibirMensagemErro('Erro', 'Erro ao exportar dados');
+    }
   }
 
   updateAllChecked(): void {
