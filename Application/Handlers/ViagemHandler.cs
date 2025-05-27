@@ -31,7 +31,7 @@ namespace Application.Handlers
 
         public async Task<bool> Handle(AdicionarViagemCommand request, CancellationToken cancellationToken)
         {
-            await _viagemService.AdicionarAsync(request.ViagemDto);
+            await _viagemService.AdicionarAsync(new ViagemDto() { });//request.ViagemDto);
             return true;
         }
 

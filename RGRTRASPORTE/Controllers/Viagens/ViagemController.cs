@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace RGRTRASPORTE.Controllers.Viagens
 {
@@ -17,12 +18,15 @@ namespace RGRTRASPORTE.Controllers.Viagens
         private readonly IMediator _mediator;
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly HttpClient _httpClient = new HttpClient();
+        private readonly string _googleApiKey;
 
-        public ViagemController(IMediator mediator, INotificationHandler notificationHandler, IBackgroundJobClient backgroundJobClient)
+        public ViagemController(IMediator mediator, INotificationHandler notificationHandler, IBackgroundJobClient backgroundJobClient, IConfiguration configuration)
             : base(notificationHandler)
         {
             _mediator = mediator;
             _backgroundJobClient = backgroundJobClient;
+            _googleApiKey = configuration["GoogleMaps:ApiKey"] 
+                ?? throw new InvalidOperationException("Google Maps API Key não configurada");
         }
 
         [HttpGet]
@@ -45,7 +49,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
         [HttpPost]
         public async Task<IActionResult> PostAsync(ViagemDto dto)
         {
-            await _mediator.Send(new AdicionarViagemCommand { ViagemDto = dto });
+            await _mediator.Send(new AdicionarViagemCommand { });
             return await RGRResult();
         }
 
@@ -260,7 +264,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
                 if (auth.Credentials != null && auth.Credentials.Any())
                     return auth.Credentials.First().Value;
 
-                throw new Exception("Credencial de API Key não fornecida.");
+                throw new InvalidOperationException("Credencial de API Key não fornecida.");
             }
 
             if (auth.Type == AuthType.Basic)
@@ -268,7 +272,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
                 if (!auth.Credentials.TryGetValue("username", out var user) ||
                     !auth.Credentials.TryGetValue("password", out var pass))
                 {
-                    throw new Exception("Credenciais Basic incompletas.");
+                    throw new InvalidOperationException("Credenciais Basic incompletas.");
                 }
 
                 var bytes = Encoding.UTF8.GetBytes($"{user}:{pass}");
@@ -286,7 +290,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
             var body = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
-                throw new Exception($"Erro ao obter token: {response.StatusCode} - {body}");
+                throw new InvalidOperationException($"Erro ao obter token: {response.StatusCode} - {body}");
 
             using var jsonDoc = JsonDocument.Parse(body);
             var tokenField = auth.TokenResponseField.Split('.');
@@ -307,7 +311,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
             var logidetudaDestino = "-52.537"; // Longitude de Xaxim
             var latirudeParada = "-27.203"; // Latitude de Cordilheira Alta (parada)
             var logidetudaParada = "-52.605"; // Longitude de Cordilheira Alta (parada)
-            var apiKey = "AIzaSyA5KlWJ_Thsl-U6FN2TnLU8TvvHhCyPgwo"; // Substitua pela sua API Key
+            var apiKey = _googleApiKey;
 
             // Construindo a URL com parada (waypoint) em Cordilheira Alta
             var url = $"https://maps.googleapis.com/maps/api/directions/json?origin={latirudeOrigem},{logidetudaOrigem}&destination={latirudeDestino},{logidetudaDestino}&waypoints={latirudeParada},{logidetudaParada}&key={apiKey}";

@@ -2,6 +2,9 @@
 using Hangfire.PostgreSql;
 using Infra.Ioc;
 using System.Reflection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Infra.Ioc.HealthChecks;
+using Prometheus;
 
 namespace RGRTRASPORTE
 {
@@ -14,17 +17,16 @@ namespace RGRTRASPORTE
             _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(Startup));
 
+            services.AddRouting();
             services.AddControllers();
 
             services.AddSingleton(_configuration);
 
-            services.AddContext();
+            services.AddContext(_configuration);
 
             services.AddSwagger();
 
@@ -32,9 +34,8 @@ namespace RGRTRASPORTE
 
             services.AddServices();
 
-            services.AddRepositorys();
+            services.AddRepositories();
 
-            // Configuração do MediatR
             services.AddMediatR(cfg => {
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
                 cfg.RegisterServicesFromAssembly(typeof(Application.Commands.Viagem.AdicionarViagemCommand).Assembly);
@@ -56,15 +57,20 @@ namespace RGRTRASPORTE
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Painel.Api v1"));
+            app.UseHttpMetrics();
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RGR Transporte v1"));
+            }
 
             app.UseCors(builder =>
             {
-                builder.AllowAnyOrigin() // Permite todas as origens
-                .AllowAnyMethod()
-                .AllowAnyHeader();
+                builder.AllowAnyOrigin()
+                       .AllowAnyMethod()
+                       .AllowAnyHeader();
             });
 
             app.UseHttpsRedirection();
@@ -76,6 +82,25 @@ namespace RGRTRASPORTE
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                endpoints.MapMetrics();
+
+                endpoints.MapHealthChecks("/health", new HealthCheckOptions
+                {
+                    ResponseWriter = HealthCheckExtensions.WriteResponse
+                });
+
+                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions
+                {
+                    Predicate = (check) => check.Tags.Contains("ready"),
+                    ResponseWriter = HealthCheckExtensions.WriteResponse
+                });
+
+                endpoints.MapHealthChecks("/health/live", new HealthCheckOptions
+                {
+                    Predicate = (_) => false,
+                    ResponseWriter = HealthCheckExtensions.WriteResponse
+                });
             });
         }
     }

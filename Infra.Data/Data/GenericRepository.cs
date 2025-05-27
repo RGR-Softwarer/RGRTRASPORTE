@@ -23,7 +23,17 @@ namespace Infra.Data.Data
 
         #region Métodos Públicos
 
-        public async Task<List<T>> ObterTodosAsync(CancellationToken cancellationToken = default)
+        public virtual async Task<IEnumerable<T>> ObterTodosAsync()
+        {
+            return await _context.Set<T>().ToListAsync();
+        }
+
+        public virtual async Task<IEnumerable<T>> ObterTodosAsync(Expression<Func<T, bool>> predicate)
+        {
+            return await _context.Set<T>().Where(predicate).ToListAsync();
+        }
+
+        public virtual async Task<List<T>> ObterTodosAsync(CancellationToken cancellationToken = default)
         {
             return await _context.Set<T>().AsNoTracking().ToListAsync(cancellationToken);
         }

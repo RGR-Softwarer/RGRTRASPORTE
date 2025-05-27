@@ -27,5 +27,11 @@ namespace Service.Services.Hangifre
             //    ViagemId = data.ViagemId
             //});
         }
+
+        public async Task ProcessarEventoAsync()
+        {
+            // ... existing code ...
+            await Task.CompletedTask;
+        }
     }
 }

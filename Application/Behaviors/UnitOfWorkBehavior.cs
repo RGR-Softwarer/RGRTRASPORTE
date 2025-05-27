@@ -5,6 +5,8 @@ using MediatR;
 namespace Application.Behaviors
 {
     public class UnitOfWorkBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+        where TRequest : notnull
+        where TResponse : class
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly INotificationHandler _notificationHandler;

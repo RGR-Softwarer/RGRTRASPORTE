@@ -72,27 +72,6 @@ namespace Service.Services
             };
         }
 
-        private IQueryable<Veiculo> AplicarFiltro(IQueryable<Veiculo> query, FiltroGridDto filtro)
-        {
-            var parameter = Expression.Parameter(typeof(Veiculo), "x");
-            var property = Expression.Property(parameter, filtro.Campo);
-            var value = Expression.Constant(filtro.Valor.ToLower());
-
-            // Converte propriedade para string e aplica ToLower
-            var toString = Expression.Call(property,
-                typeof(object).GetMethod("ToString"));
-            var toLower = Expression.Call(toString,
-                typeof(string).GetMethod("ToLower", Type.EmptyTypes));
-
-            // Cria expressão Contains
-            var contains = Expression.Call(toLower,
-                typeof(string).GetMethod("Contains", new[] { typeof(string) }),
-                value);
-
-            var lambda = Expression.Lambda<Func<Veiculo, bool>>(contains, parameter);
-            return query.Where(lambda);
-        }
-
         public async Task<List<VeiculoDto>> ObterTodosAsync()
         {
             var veiculos = await _veiculoRepository.ObterTodosAsync();

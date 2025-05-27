@@ -27,6 +27,8 @@ namespace Infra.Data.Context
                 .IsRequired()
                 .HasColumnName($"{prefixo}_UPDATED_AT");
 
+            builder.HasIndex(x => x.CreatedAt);
+            builder.HasIndex(x => x.UpdatedAt);
         }
 
         protected abstract void InternalConfigure(EntityTypeBuilder<TEntity> builder);

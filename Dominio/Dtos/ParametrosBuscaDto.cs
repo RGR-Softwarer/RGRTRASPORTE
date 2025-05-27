@@ -1,4 +1,6 @@
-﻿namespace Dominio.Dtos
+﻿#nullable enable
+
+namespace Dominio.Dtos
 {
     public class ParametrosBuscaDto
     {

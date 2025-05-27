@@ -1,4 +1,6 @@
-﻿using Dominio.Entidades.Localidades;
+﻿#nullable enable
+
+using Dominio.Entidades.Localidades;
 using Dominio.Entidades.Pessoas;
 using Dominio.Entidades.Veiculos;
 using Dominio.Entidades.Viagens.Gatilho;

@@ -1,4 +1,6 @@
-﻿using Dominio.Enums.Viagens;
+﻿#nullable enable
+
+using Dominio.Enums.Viagens;
 
 namespace Dominio.Dtos.Viagens
 {
