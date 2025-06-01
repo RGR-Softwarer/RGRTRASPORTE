@@ -1,5 +1,5 @@
 ﻿using Application.Commands.Passageiro;
-using Dominio.Dtos.Pessoas.Passageiros;
+using Application.Queries.Passageiro;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,23 +12,25 @@ namespace RGRTRASPORTE.Controllers.Pessoas
     {
         private readonly IMediator _mediator;
 
-        public PassageiroController(IMediator mediator, INotificationHandler notificationHandler)
+        public PassageiroController(
+            IMediator mediator,
+            INotificationContext notificationHandler)
             : base(notificationHandler)
         {
             _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterTodos()
+        public async Task<IActionResult> ObterTodos([FromQuery] ObterPassageirosQuery query)
         {
-            var passageiros = await _mediator.Send(new ObterTodosPassageirosQuery());
+            var passageiros = await _mediator.Send(query);
             return await RGRResult(System.Net.HttpStatusCode.OK, passageiros);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> ObterPorId(long id)
+        public async Task<IActionResult> ObterPorId(long id, [FromQuery] bool auditado = false)
         {
-            var passageiro = await _mediator.Send(new ObterPassageiroPorIdQuery(id));
+            var passageiro = await _mediator.Send(new ObterPassageiroPorIdQuery(id, auditado));
             if (passageiro == null)
                 return NoContent();
 
@@ -36,24 +38,28 @@ namespace RGRTRASPORTE.Controllers.Pessoas
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync(PassageiroDto dto)
+        public async Task<IActionResult> Adicionar([FromBody] CriarPassageiroCommand command)
         {
-            await _mediator.Send(new AdicionarPassageiroCommand { PassageiroDto = dto });
-            return await RGRResult();
+            var id = await _mediator.Send(command);
+            return await RGRResult(System.Net.HttpStatusCode.Created, id);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync(PassageiroDto dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Editar(long id, [FromBody] EditarPassageiroCommand command)
         {
-            await _mediator.Send(new EditarPassageiroCommand { PassageiroDto = dto });
-            return await RGRResult();
+            if (id != command.Id)
+                return BadRequest("Id da rota diferente do Id do comando");
+
+            var result = await _mediator.Send(command);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(long id)
+        public async Task<IActionResult> Remover(long id)
         {
-            await _mediator.Send(new RemoverPassageiroCommand(id));
-            return await RGRResult();
+            var command = new RemoverPassageiroCommand(id, User.Identity.Name, User.Identity.Name);
+            var result = await _mediator.Send(command);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
     }
 }

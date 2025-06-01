@@ -1,22 +1,43 @@
 ﻿using Dominio.Entidades.Localidades;
 using Dominio.Enums.Pessoas;
 
-namespace Dominio.Entidades.Pessoas.Passageiros
+namespace Dominio.Entidades.Pessoas.Passageiros;
+
+public class Passageiro : Pessoa
 {
-    public class Passageiro : BaseEntity
+    protected Passageiro() { } // Construtor protegido para EF Core
+
+    public Passageiro(
+        string nome,
+        string cpf,
+        string telefone,
+        string email,
+        SexoEnum sexo,
+        long localidadeId,
+        long localidadeEmbarqueId,
+        long localidadeDesembarqueId,
+        string observacao,
+        bool situacao) : base(nome, cpf, telefone, email, sexo, observacao, situacao)
     {
-        public string Nome { get; private set; }
-        public bool Situacao { get; private set; }
-        public string CPF { get; private set; }
-        public string Telefone { get; private set; }
-        public string Email { get; private set; }
-        public SexoEnum Sexo { get; private set; }
-        public Localidade Localidade { get; private set; }
-        public long LocalidadeId { get; private set; }
-        public Localidade LocalidadeEmbarque { get; private set; }
-        public long LocalidadeEmbarqueId { get; private set; }
-        public Localidade LocalidadeDesembarque { get; private set; }
-        public long LocalidadeDesembarqueId { get; private set; }
-        public string Observacao { get; private set; }
+        LocalidadeId = localidadeId;
+        LocalidadeEmbarqueId = localidadeEmbarqueId;
+        LocalidadeDesembarqueId = localidadeDesembarqueId;
+    }
+
+    public Localidade Localidade { get; private set; }
+    public new long LocalidadeId { get; private set; }
+    public Localidade LocalidadeEmbarque { get; private set; }
+    public new long? LocalidadeEmbarqueId { get; private set; }
+    public Localidade LocalidadeDesembarque { get; private set; }
+    public new long? LocalidadeDesembarqueId { get; private set; }
+
+    public void AtualizarLocalidades(
+        long localidadeId,
+        long localidadeEmbarqueId,
+        long localidadeDesembarqueId)
+    {
+        LocalidadeId = localidadeId;
+        LocalidadeEmbarqueId = localidadeEmbarqueId;
+        LocalidadeDesembarqueId = localidadeDesembarqueId;
     }
 }

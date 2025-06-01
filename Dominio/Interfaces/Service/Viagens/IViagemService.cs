@@ -1,13 +1,14 @@
-﻿using Dominio.Dtos.Viagens;
+using Dominio.Dtos.Viagens;
 
-namespace Dominio.Interfaces.Service.Viagens
+namespace Dominio.Interfaces.Service.Viagens;
+
+public interface IViagemService
 {
-    public interface IViagemService
-    {
-        Task<IEnumerable<ViagemDto>> ObterTodosAsync();
-        Task<ViagemDto> ObterPorIdAsync(long id);
-        Task AdicionarAsync(ViagemDto dto);
-        Task EditarAsync(ViagemDto dto);
-        Task RemoverAsync(long id);
-    }
-}
+    Task<ViagemDto> ObterPorIdAsync(long id);
+    Task<IEnumerable<ViagemDto>> ObterTodosAsync();
+    Task<ViagemDto> CriarAsync(ViagemDto viagemDto);
+    Task<ViagemDto> AtualizarAsync(ViagemDto viagemDto);
+    Task<bool> RemoverAsync(long id);
+    Task<bool> IniciarViagemAsync(long id, string usuarioOperacao);
+    Task<bool> FinalizarViagemAsync(long id, string usuarioOperacao);
+} 

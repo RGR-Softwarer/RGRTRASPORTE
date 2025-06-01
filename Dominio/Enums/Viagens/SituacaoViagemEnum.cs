@@ -2,9 +2,10 @@
 {
     public enum SituacaoViagemEnum
     {
-        NaoIniciada = 0,
-        EmTransito = 1,
-        Finalizada = 2
+        Agendada = 1,
+        EmAndamento = 2,
+        Finalizada = 3,
+        Cancelada = 4
     }
 
     public static class SituacaoViagemEnumHelper
@@ -13,9 +14,10 @@
         {
             switch (situacao)
             {
-                case SituacaoViagemEnum.NaoIniciada: return "Não iniciada";
-                case SituacaoViagemEnum.EmTransito: return "Em trânsito";
+                case SituacaoViagemEnum.Agendada: return "Agendada";
+                case SituacaoViagemEnum.EmAndamento: return "Em andamento";
                 case SituacaoViagemEnum.Finalizada: return "Finalizada";
+                case SituacaoViagemEnum.Cancelada: return "Cancelada";
                 default: return string.Empty;
             }
         }

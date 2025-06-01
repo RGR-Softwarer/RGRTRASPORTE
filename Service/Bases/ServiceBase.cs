@@ -8,9 +8,9 @@ namespace Service
 {
     public class ServiceBase : NotificationBase
     {
-        private readonly INotificationHandler _notificacaoHandler;
+        private readonly INotificationContext _notificacaoHandler;
 
-        public ServiceBase(INotificationHandler notificationHandler)
+        public ServiceBase(INotificationContext notificationHandler)
         {
             _notificacaoHandler = notificationHandler;
         }

@@ -9,9 +9,9 @@ namespace Application.Behaviors
         where TResponse : class
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly INotificationHandler _notificationHandler;
+        private readonly INotificationContext _notificationHandler;
 
-        public UnitOfWorkBehavior(IUnitOfWork unitOfWork, INotificationHandler notificationHandler)
+        public UnitOfWorkBehavior(IUnitOfWork unitOfWork, INotificationContext notificationHandler)
         {
             _unitOfWork = unitOfWork;
             _notificationHandler = notificationHandler;
@@ -26,7 +26,7 @@ namespace Application.Behaviors
             {
                 var response = await next();
 
-                if (_notificationHandler.HasNotification())
+                if (_notificationHandler.HasNotifications())
                     await _unitOfWork.RollBack();
                 else
                     await _unitOfWork.Commit();

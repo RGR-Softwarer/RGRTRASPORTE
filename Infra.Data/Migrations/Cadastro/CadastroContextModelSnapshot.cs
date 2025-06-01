@@ -31,6 +31,10 @@ namespace Infra.Data.Migrations.Cadastro
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean")
+                        .HasColumnName("LOC_ATIVO");
+
                     b.Property<string>("Bairro")
                         .IsRequired()
                         .HasColumnType("text")
@@ -55,9 +59,13 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("LOC_CREATED_AT");
 
-                    b.Property<string>("Latitude")
+                    b.Property<string>("Estado")
                         .IsRequired()
                         .HasColumnType("text")
+                        .HasColumnName("LOC_UF");
+
+                    b.Property<decimal>("Latitude")
+                        .HasColumnType("numeric")
                         .HasColumnName("LOC_LATITUDE");
 
                     b.Property<string>("Logradouro")
@@ -65,9 +73,8 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("text")
                         .HasColumnName("LOC_LOGRADOURO");
 
-                    b.Property<string>("Longitude")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<decimal>("Longitude")
+                        .HasColumnType("numeric")
                         .HasColumnName("LOC_LONGITUDE");
 
                     b.Property<string>("Nome")
@@ -80,16 +87,15 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("text")
                         .HasColumnName("LOC_NUMERO");
 
-                    b.Property<string>("Uf")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_UF");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("LOC_UPDATED_AT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("UpdatedAt");
 
                     b.ToTable("T_LOCALIDADE", (string)null);
                 });
@@ -126,6 +132,15 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("text")
                         .HasColumnName("MOT_EMAIL");
 
+                    b.Property<long>("LocalidadeDesembarqueId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LocalidadeEmbarqueId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("LocalidadeId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("text")
@@ -138,6 +153,9 @@ namespace Infra.Data.Migrations.Cadastro
                     b.Property<string>("RG")
                         .HasColumnType("text")
                         .HasColumnName("MOT_RG");
+
+                    b.Property<int>("Sexo")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("Situacao")
                         .HasColumnType("boolean")
@@ -157,6 +175,10 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnName("MOT_VALIDADE_CNH");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("UpdatedAt");
 
                     b.ToTable("T_MOTORISTA", (string)null);
                 });
@@ -184,11 +206,13 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("text")
                         .HasColumnName("PAS_EMAIL");
 
-                    b.Property<long>("LocalidadeDesembarqueId")
+                    b.Property<long?>("LocalidadeDesembarqueId")
+                        .IsRequired()
                         .HasColumnType("bigint")
                         .HasColumnName("LOC_DESEMBARQUE_ID");
 
-                    b.Property<long>("LocalidadeEmbarqueId")
+                    b.Property<long?>("LocalidadeEmbarqueId")
+                        .IsRequired()
                         .HasColumnType("bigint")
                         .HasColumnName("LOC_EMBARQUE_ID");
 
@@ -225,11 +249,15 @@ namespace Infra.Data.Migrations.Cadastro
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("LocalidadeDesembarqueId");
 
                     b.HasIndex("LocalidadeEmbarqueId");
 
                     b.HasIndex("LocalidadeId");
+
+                    b.HasIndex("UpdatedAt");
 
                     b.ToTable("T_PASSAGEIRO", (string)null);
                 });

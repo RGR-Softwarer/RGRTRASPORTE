@@ -1,19 +1,18 @@
 using MediatR;
-using Serilog;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Text.Json;
 
 namespace Application.Behaviors
 {
     public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-        where TRequest : notnull
-        where TResponse : class
+        where TRequest : IRequest<TResponse>
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<LoggingBehavior<TRequest, TResponse>> _logger;
 
-        public LoggingBehavior()
+        public LoggingBehavior(ILogger<LoggingBehavior<TRequest, TResponse>> logger)
         {
-            _logger = Log.ForContext<LoggingBehavior<TRequest, TResponse>>();
+            _logger = logger;
         }
 
         public async Task<TResponse> Handle(
@@ -28,7 +27,7 @@ namespace Application.Behaviors
                 WriteIndented = true 
             });
 
-            _logger.Information(
+            _logger.LogInformation(
                 "Iniciando request {RequestName} [{UniqueId}] com dados: {RequestData}", 
                 requestName, 
                 uniqueId,
@@ -45,7 +44,7 @@ namespace Application.Behaviors
                     WriteIndented = true 
                 }) : "null";
 
-                _logger.Information(
+                _logger.LogInformation(
                     "Completado request {RequestName} [{UniqueId}] em {ElapsedMilliseconds}ms com resposta: {ResponseData}",
                     requestName,
                     uniqueId,
@@ -57,7 +56,7 @@ namespace Application.Behaviors
             catch (Exception ex)
             {
                 stopwatch.Stop();
-                _logger.Error(
+                _logger.LogError(
                     ex,
                     "Erro no request {RequestName} [{UniqueId}] em {ElapsedMilliseconds}ms com dados: {RequestData}",
                     requestName,

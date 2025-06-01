@@ -21,9 +21,11 @@ namespace Infra.Data.Configurators.Localidades
                 .IsRequired()
                 .HasColumnName($"{prefixo}_CEP");
 
-            builder.Property(l => l.Uf)
+            builder.Property(l => l.Estado)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_UF");
+
+            builder.Ignore(l => l.Uf);
 
             builder.Property(l => l.Cidade)
                 .IsRequired()
@@ -52,6 +54,10 @@ namespace Infra.Data.Configurators.Localidades
             builder.Property(l => l.Longitude)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_LONGITUDE");
+
+            builder.Property(l => l.Ativo)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_ATIVO");
         }
     }
 }

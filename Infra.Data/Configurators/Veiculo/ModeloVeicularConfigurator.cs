@@ -17,7 +17,7 @@ namespace Infra.Data.Configurators.Veiculo
                 .IsRequired()
                 .HasColumnName($"{prefixo}_SITUACAO");
 
-            builder.Property(p => p.DescricaoModelo)
+            builder.Property(p => p.Descricao)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_DESCRICAO_MODELO");
 

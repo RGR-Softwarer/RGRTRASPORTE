@@ -1,13 +1,19 @@
 ﻿using Application.Commands.Viagem;
-using Dominio.Dtos.Viagens;
+using Application.Queries.Viagem;
 using Dominio.Interfaces.Hangfire;
 using Hangfire;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Configuration;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Dominio.Models.Integration;
+using Dominio.Models.Hangfire;
+using Dominio.Dtos.Viagens;
 
 namespace RGRTRASPORTE.Controllers.Viagens
 {
@@ -17,27 +23,32 @@ namespace RGRTRASPORTE.Controllers.Viagens
     {
         private readonly IMediator _mediator;
         private readonly IBackgroundJobClient _backgroundJobClient;
-        private readonly HttpClient _httpClient = new HttpClient();
         private readonly string _googleApiKey;
+        private readonly HttpClient _httpClient;
 
-        public ViagemController(IMediator mediator, INotificationHandler notificationHandler, IBackgroundJobClient backgroundJobClient, IConfiguration configuration)
+        public ViagemController(
+            IMediator mediator,
+            INotificationContext notificationHandler,
+            IBackgroundJobClient backgroundJobClient,
+            IConfiguration configuration)
             : base(notificationHandler)
         {
             _mediator = mediator;
             _backgroundJobClient = backgroundJobClient;
-            _googleApiKey = configuration["GoogleMaps:ApiKey"] 
-                ?? throw new InvalidOperationException("Google Maps API Key não configurada");
+            _googleApiKey = configuration["GoogleMaps:ApiKey"]??
+                string.Empty; //?? throw new InvalidOperationException("Google Maps API Key não configurada");
+            _httpClient = new HttpClient();
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterTodos()
+        public async Task<IActionResult> ObterTodos([FromQuery] ObterViagensQuery query)
         {
-            var viagens = await _mediator.Send(new ObterTodasViagensQuery());
+            var viagens = await _mediator.Send(query);
             return await RGRResult(System.Net.HttpStatusCode.OK, viagens);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> ObterPorId(long id)
+        public async Task<IActionResult> ObterPorId(long id, [FromQuery] bool auditado = false)
         {
             var viagem = await _mediator.Send(new ObterViagemPorIdQuery(id));
             if (viagem == null)
@@ -47,64 +58,87 @@ namespace RGRTRASPORTE.Controllers.Viagens
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync(ViagemDto dto)
+        public async Task<IActionResult> Adicionar([FromBody] CriarViagemCommand command)
         {
-            await _mediator.Send(new AdicionarViagemCommand { });
-            return await RGRResult();
+            var id = await _mediator.Send(command);
+            return await RGRResult(System.Net.HttpStatusCode.Created, id);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> PutAsync(ViagemDto dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Editar(long id, [FromBody] EditarViagemCommand command)
         {
-            await _mediator.Send(new EditarViagemCommand(dto));
-            return await RGRResult();
+            if (id != command.Id)
+                return BadRequest("Id da rota diferente do Id do comando");
+
+            var result = await _mediator.Send(command);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(long id)
+        [HttpPut("{id}/cancelar")]
+        public async Task<IActionResult> Cancelar(long id, [FromBody] CancelarViagemCommand command)
         {
-            await _mediator.Send(new RemoverViagemCommand(id));
-            return await RGRResult();
+            if (id != command.Id)
+                return BadRequest("Id da rota diferente do Id do comando");
+
+            var result = await _mediator.Send(command);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
 
-        public enum AuthType
+        [HttpPut("{id}/iniciar")]
+        public async Task<IActionResult> Iniciar(long id, [FromBody] IniciarViagemCommand command)
         {
-            None,
-            OAuth2,
-            Basic,
-            ApiKey
+            if (id != command.Id)
+                return BadRequest("Id da rota diferente do Id do comando");
+
+            var result = await _mediator.Send(command);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
-        public class IntegrationConfig
+
+        [HttpPut("{id}/finalizar")]
+        public async Task<IActionResult> Finalizar(long id, [FromBody] FinalizarViagemCommand command)
         {
-            public AuthConfig Auth { get; set; }
-            public IntegrationDetails Integration { get; set; }
+            if (id != command.Id)
+                return BadRequest("Id da rota diferente do Id do comando");
+
+            var result = await _mediator.Send(command);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
-        public class AuthConfig
+
+        [HttpGet("ObterRotaViagem/{id}")]
+        public async Task<IActionResult> ObterRotaViagem(long id)
         {
-            public AuthType Type { get; set; }
-            public string AuthUrl { get; set; }
-            public string AuthMethod { get; set; }
-            public Dictionary<string, string> Credentials { get; set; }
-            public string TokenResponseField { get; set; }
-            public string TokenHeaderName { get; set; }
-            public string TokenHeaderFormat { get; set; }
-            public string TokenHeaderNameToSend { get; set; }
-            public string TokenHeaderFormatToSend { get; set; }
-        }
-        public class IntegrationDetails
-        {
-            public string Url { get; set; }
-            public string Method { get; set; }
-            public Dictionary<string, string> Headers { get; set; }
-            public Dictionary<string, string> PayloadTemplate { get; set; }
+            var latirudeOrigem = "-27.100"; // Latitude de Chapecó
+            var logidetudaOrigem = "-52.615"; // Longitude de Chapecó
+            var latirudeDestino = "-26.950"; // Latitude de Xaxim
+            var logidetudaDestino = "-52.537"; // Longitude de Xaxim
+            var latirudeParada = "-27.203"; // Latitude de Cordilheira Alta (parada)
+            var logidetudaParada = "-52.605"; // Longitude de Cordilheira Alta (parada)
+
+            // Construindo a URL com parada (waypoint) em Cordilheira Alta
+            var url = $"https://maps.googleapis.com/maps/api/directions/json?origin={latirudeOrigem},{logidetudaOrigem}&destination={latirudeDestino},{logidetudaDestino}&waypoints={latirudeParada},{logidetudaParada}&key={_googleApiKey}";
+
+            try
+            {
+                var response = await _httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseBody = await response.Content.ReadAsStringAsync();
+                    return await RGRResult(System.Net.HttpStatusCode.OK, responseBody);
+                }
+            }
+            catch (Exception ex)
+            {
+                return await RGRResult(System.Net.HttpStatusCode.BadRequest, $"Erro ao obter a rota da viagem: {ex.Message}");
+            }
+
+            return await RGRResult(System.Net.HttpStatusCode.BadRequest, "Erro ao obter a rota da viagem");
         }
 
         [HttpGet("TesteHangifire")]
-        public async Task<IActionResult> TesteDEV()
+        public async Task<IActionResult> TesteHangfire()
         {
-            var jobData = new ViagemCriadaJobData
+            var jobData = new Dominio.Dtos.Viagens.ViagemCriadaJobData
             {
-                TenantId = "cliente1",
                 ViagemId = 123
             };
 
@@ -300,48 +334,6 @@ namespace RGRTRASPORTE.Controllers.Viagens
                 current = current.GetProperty(field);
 
             return current.GetString();
-        }
-
-        [HttpGet("ObterRotaViagem/{id}")]
-        public async Task<IActionResult> ObterRotaViagem(long id)
-        {
-            var latirudeOrigem = "-27.100"; // Latitude de Chapecó
-            var logidetudaOrigem = "-52.615"; // Longitude de Chapecó
-            var latirudeDestino = "-26.950"; // Latitude de Xaxim
-            var logidetudaDestino = "-52.537"; // Longitude de Xaxim
-            var latirudeParada = "-27.203"; // Latitude de Cordilheira Alta (parada)
-            var logidetudaParada = "-52.605"; // Longitude de Cordilheira Alta (parada)
-            var apiKey = _googleApiKey;
-
-            // Construindo a URL com parada (waypoint) em Cordilheira Alta
-            var url = $"https://maps.googleapis.com/maps/api/directions/json?origin={latirudeOrigem},{logidetudaOrigem}&destination={latirudeDestino},{logidetudaDestino}&waypoints={latirudeParada},{logidetudaParada}&key={apiKey}";
-
-            using (HttpClient client = new HttpClient())
-            {
-                try
-                {
-                    // Fazendo a requisição GET
-                    HttpResponseMessage response = await client.GetAsync(url);
-
-                    // Verificando se a requisição foi bem-sucedida
-                    if (response.IsSuccessStatusCode)
-                    {
-                        // Lendo o conteúdo da resposta
-                        string responseBody = await response.Content.ReadAsStringAsync();
-                        return await RGRResult(System.Net.HttpStatusCode.OK, responseBody);
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Erro: {response.StatusCode}");
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"Exceção: {e.Message}");
-                }
-            }
-
-            return await RGRResult(System.Net.HttpStatusCode.BadRequest, "Erro ao obter a rota da viagem");
         }
     }
 }

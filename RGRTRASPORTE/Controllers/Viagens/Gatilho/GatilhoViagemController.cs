@@ -13,7 +13,7 @@ namespace RGRTRASPORTE.Controllers.Viagens.Gatilho
     {
         private readonly IGatilhoViagemService _gatinhoViagemService;
 
-        public GatilhoViagemController(IGatilhoViagemService gatinhoViagemService, INotificationHandler notificationHandler)
+        public GatilhoViagemController(IGatilhoViagemService gatinhoViagemService, INotificationContext notificationHandler)
             : base(notificationHandler)
         {
             _gatinhoViagemService = gatinhoViagemService;

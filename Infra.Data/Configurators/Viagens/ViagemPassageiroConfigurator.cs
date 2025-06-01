@@ -23,7 +23,8 @@ namespace Infra.Data.Configurators.Viagens
 
             builder.HasOne(vp => vp.Viagem)
                 .WithMany()
-                .HasForeignKey(vp => vp.ViagemId);
+                .HasForeignKey(vp => vp.ViagemId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             //builder.HasOne(vp => vp.Passageiro)
             //    .WithMany()

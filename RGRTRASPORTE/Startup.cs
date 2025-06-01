@@ -5,6 +5,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Infra.Ioc.HealthChecks;
 using Prometheus;
+using AutoMapper;
 
 namespace RGRTRASPORTE
 {
@@ -19,8 +20,6 @@ namespace RGRTRASPORTE
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(Startup));
-
             services.AddRouting();
             services.AddControllers();
 
@@ -32,14 +31,10 @@ namespace RGRTRASPORTE
 
             services.ConfigureApi();
 
-            services.AddServices();
+            services.AddInfrastructure(_configuration);
 
-            services.AddRepositories();
-
-            services.AddMediatR(cfg => {
-                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-                cfg.RegisterServicesFromAssembly(typeof(Application.Commands.Viagem.AdicionarViagemCommand).Assembly);
-            });
+            // AutoMapper
+            services.AddAutoMapper(typeof(Startup), typeof(Application.Commands.Viagem.IniciarViagemCommand));
 
             var connectionString = _configuration.GetConnectionString("RGRTRASPORTE") ?? string.Empty;
 

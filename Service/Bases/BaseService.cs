@@ -6,12 +6,12 @@ namespace Service.Bases
 {
     public abstract class BaseService
     {
-        protected readonly INotificationHandler NotificationHandler;
+        protected readonly INotificationContext NotificationHandler;
         protected readonly ILogger Logger;
         protected readonly IUnitOfWork UnitOfWork;
 
         protected BaseService(
-            INotificationHandler notificationHandler,
+            INotificationContext notificationHandler,
             ILogger logger,
             IUnitOfWork unitOfWork)
         {
@@ -35,7 +35,7 @@ namespace Service.Bases
 
         protected bool IsValid()
         {
-            return !NotificationHandler.HasNotification();
+            return !NotificationHandler.HasNotifications();
         }
 
         protected void LogInformation(string message, params object[] args)
@@ -51,28 +51,6 @@ namespace Service.Bases
         protected void LogError(Exception ex, string message, params object[] args)
         {
             Logger.LogError(ex, message, args);
-        }
-
-        protected async Task<bool> CommitAsync()
-        {
-            try
-            {
-                if (!IsValid())
-                {
-                    await UnitOfWork.RollBack();
-                    return false;
-                }
-
-                await UnitOfWork.Commit();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                LogError(ex, "Erro ao realizar commit das alterações");
-                await UnitOfWork.RollBack();
-                AddNotification("Erro ao salvar as alterações");
-                return false;
-            }
         }
     }
 } 

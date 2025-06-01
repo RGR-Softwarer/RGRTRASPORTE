@@ -1,5 +1,6 @@
 ﻿using Dominio.Dtos.Viagens;
 using Dominio.Interfaces.Hangfire;
+using Dominio.Interfaces.Infra.Data.Viagens;
 using Infra.CrossCutting.Multitenancy;
 //using MediatR;
 
@@ -9,23 +10,54 @@ namespace Service.Services.Hangifre
     {
         //private readonly IMediator _mediator;
         private readonly ITenantProvider _tenantProvider;
+        private readonly IViagemRepository _viagemRepository;
 
-        public ProcessadorDeEventoService( ITenantProvider tenantProvider)
+        public ProcessadorDeEventoService( ITenantProvider tenantProvider, IViagemRepository viagemRepository)
         {
             //_mediator = mediator;
             _tenantProvider = tenantProvider;
+            _viagemRepository = viagemRepository;
         }
 
         public async Task ProcessarViagemCriada(ViagemCriadaJobData data)
         {
-            _tenantProvider.SetTenantId(data.TenantId);
+            var viagem = await _viagemRepository.ObterViagemCompletaPorIdAsync(data.ViagemId);
+            Console.WriteLine($"Processando viagem criada: {data.ViagemId}");
+            await Task.CompletedTask;
+        }
 
-            Console.WriteLine("Processando");
+        public async Task ProcessarViagemAtualizada(ViagemJobDataBase data)
+        {
+            var viagem = await _viagemRepository.ObterViagemCompletaPorIdAsync(data.ViagemId);
+            Console.WriteLine($"Processando viagem atualizada: {data.ViagemId}");
+            await Task.CompletedTask;
+        }
 
-            //await _mediator.Send(new ProcessarViagemCriadaCommand
-            //{
-            //    ViagemId = data.ViagemId
-            //});
+        public async Task ProcessarViagemRemovida(ViagemJobDataBase data)
+        {
+            Console.WriteLine($"Processando viagem removida: {data.ViagemId}");
+            await Task.CompletedTask;
+        }
+
+        public async Task ProcessarViagemCancelada(ViagemJobDataBase data)
+        {
+            var viagem = await _viagemRepository.ObterViagemCompletaPorIdAsync(data.ViagemId);
+            Console.WriteLine($"Processando viagem cancelada: {data.ViagemId}");
+            await Task.CompletedTask;
+        }
+
+        public async Task ProcessarViagemIniciada(ViagemJobDataBase data)
+        {
+            var viagem = await _viagemRepository.ObterViagemCompletaPorIdAsync(data.ViagemId);
+            Console.WriteLine($"Processando viagem iniciada: {data.ViagemId}");
+            await Task.CompletedTask;
+        }
+
+        public async Task ProcessarViagemFinalizada(ViagemJobDataBase data)
+        {
+            var viagem = await _viagemRepository.ObterViagemCompletaPorIdAsync(data.ViagemId);
+            Console.WriteLine($"Processando viagem finalizada: {data.ViagemId}");
+            await Task.CompletedTask;
         }
 
         public async Task ProcessarEventoAsync()

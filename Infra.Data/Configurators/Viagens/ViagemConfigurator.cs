@@ -15,43 +15,75 @@ namespace Infra.Data.Configurators.Viagens
 
             builder.Property(v => v.CodigoViagem)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_CODIGO_VIAGEM");
+                .HasColumnName($"{prefixo}_CODIGO");
 
             builder.Property(v => v.DataViagem)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_DATA_VIAGEM");
+                .HasColumnName($"{prefixo}_DATA");
+
+            builder.Property(v => v.HorarioSaida)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_HORA_SAIDA");
+
+            builder.Property(v => v.HorarioChegada)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_HORA_CHEGADA");
 
             builder.Property(v => v.VeiculoId)
                 .IsRequired()
                 .HasColumnName($"VEI_ID");
 
+            builder.HasOne(v => v.Veiculo)
+                .WithMany()
+                .HasForeignKey(v => v.VeiculoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Property(v => v.MotoristaId)
                 .IsRequired()
                 .HasColumnName($"MOT_ID");
-            
-            builder.Property(v => v.GatilhoViagemId)
-                .IsRequired()
-                .HasColumnName($"GAV_ID");
 
-            builder.Property(v => v.OrigemId)
+            builder.HasOne(v => v.Motorista)
+                .WithMany()
+                .HasForeignKey(v => v.MotoristaId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(v => v.LocalidadeOrigemId)
                 .IsRequired()
                 .HasColumnName($"LOC_ORIGEM_ID");
 
-            builder.Property(v => v.DestinoId)
+            builder.HasOne(v => v.LocalidadeOrigem)
+                .WithMany()
+                .HasForeignKey(v => v.LocalidadeOrigemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(v => v.LocalidadeDestinoId)
                 .IsRequired()
                 .HasColumnName($"LOC_DESTINO_ID");
 
-            builder.Property(v => v.HorarioSaida)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_HORARIO_SAIDA");
+            builder.HasOne(v => v.LocalidadeDestino)
+                .WithMany()
+                .HasForeignKey(v => v.LocalidadeDestinoId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Property(v => v.HorarioChegada)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_HORARIO_CHEGADA");
+            builder.Property(v => v.GatilhoViagemId)
+                .HasColumnName($"GAT_ID");
 
-            builder.Property(v => v.Situacao)
+            builder.HasOne(v => v.GatilhoViagem)
+                .WithMany()
+                .HasForeignKey(v => v.GatilhoViagemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Property(v => v.ValorPassagem)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_SITUACAO");
+                .HasColumnName($"{prefixo}_VALOR_PASSAGEM");
+
+            builder.Property(v => v.QuantidadeVagas)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_QUANTIDADE_VAGAS");
+
+            builder.Property(v => v.VagasDisponiveis)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_VAGAS_DISPONIVEIS");
 
             builder.Property(v => v.Distancia)
                 .IsRequired()
@@ -68,50 +100,53 @@ namespace Infra.Data.Configurators.Viagens
             builder.Property(v => v.Excesso)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_EXCESSO");
-            
+
             builder.Property(v => v.MotivoProblema)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_MOTIVO_PROBLEMA"); 
-            
+                .HasColumnName($"{prefixo}_MOTIVO_PROBLEMA");
+
             builder.Property(v => v.DescricaoViagem)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_DESCRICAO_VIAGEM");
-            
+                .HasColumnName($"{prefixo}_DESCRICAO");
+
             builder.Property(v => v.LatitudeFimViagem)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_LATITUDE_FIM_VIAGEM");
-            
+                .HasColumnName($"{prefixo}_LATITUDE_FIM");
+
             builder.Property(v => v.LatitudeInicioViagem)
                 .IsRequired()
-                .HasColumnName($"{prefixo}_LATITUDE_INICIO_VIAGEM");
-            
+                .HasColumnName($"{prefixo}_LATITUDE_INICIO");
+
             builder.Property(v => v.DistanciaRealizada)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_DISTANCIA_REALIZADA");
-            
+
             builder.Property(v => v.PolilinhaRota)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_POLILINHA_ROTA");
-            
+
             builder.Property(v => v.PolilinhaRotaRealizada)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_POLILINHA_ROTA_REALIZADA");
 
-            builder.HasOne(v => v.Veiculo)
-                .WithMany()
-                .HasForeignKey(v => v.VeiculoId);
+            builder.Property(v => v.Situacao)
+                .IsRequired()
+                .HasConversion<int>()
+                .HasColumnName($"{prefixo}_SITUACAO");
 
-            //builder.HasOne(v => v.Motorista)
-            //    .WithMany()
-            //    .HasForeignKey(v => v.MotoristaId);
+            builder.Property(v => v.MotivoCancelamento)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_MOTIVO_CANCELAMENTO");
 
-            //builder.HasOne(v => v.Origem)
-            //    .WithMany()
-            //    .HasForeignKey(v => v.OrigemId);
+            builder.Property(v => v.Ativo)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_ATIVO");
 
-            //builder.HasOne(v => v.Destino)
-            //    .WithMany()
-            //    .HasForeignKey(v => v.DestinoId);
+            builder.Property(v => v.DataInicioViagem)
+                .HasColumnName($"{prefixo}_DATA_INICIO");
+
+            builder.Property(v => v.DataFimViagem)
+                .HasColumnName($"{prefixo}_DATA_FIM");
         }
     }
 }

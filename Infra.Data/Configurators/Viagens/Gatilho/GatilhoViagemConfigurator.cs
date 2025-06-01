@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-
 namespace Infra.Data.Configurators.Viagens.Gatilho
 {
     internal class GatilhoViagemConfigurator : BaseEntityConfigurator<GatilhoViagem>
@@ -28,11 +27,11 @@ namespace Infra.Data.Configurators.Viagens.Gatilho
                 .IsRequired()
                 .HasColumnName($"MOT_MOTORISTA_ID");
 
-            builder.Property(g => g.OrigemId)
+            builder.Property(g => g.LocalidadeOrigemId)
                 .IsRequired()
                 .HasColumnName($"LOC_ORIGEM_ID");
 
-            builder.Property(g => g.DestinoId)
+            builder.Property(g => g.LocalidadeDestinoId)
                 .IsRequired()
                 .HasColumnName($"LOC_DESTINO_ID");
 
@@ -56,7 +55,15 @@ namespace Infra.Data.Configurators.Viagens.Gatilho
                 .HasColumnName($"{prefixo}_DESCRICAO_VIAGEM");
 
             builder.Property(g => g.PolilinhaRota)
-                .HasColumnName($"{prefixo}_POLILHINA_ROTA");
+                .HasColumnName($"{prefixo}_POLILINHA_ROTA");
+
+            builder.Property(g => g.ValorPassagem)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_VALOR_PASSAGEM");
+
+            builder.Property(g => g.QuantidadeVagas)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_QUANTIDADE_VAGAS");
 
             PropertyBuilder<List<DiaSemanaEnum>> diasSemanaProperty = builder.Property(g => g.DiasSemana);
 
@@ -79,23 +86,13 @@ namespace Infra.Data.Configurators.Viagens.Gatilho
 
             builder.HasOne(g => g.Veiculo)
                 .WithMany()
-                .HasForeignKey(g => g.VeiculoId);
+                .HasForeignKey(g => g.VeiculoId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            //builder.HasOne(g => g.Motorista)
-            //    .WithMany()
-            //    .HasForeignKey(g => g.MotoristaId);
-
-            //builder.HasOne(g => g.Origem)
-            //    .WithMany()
-            //    .HasForeignKey(g => g.OrigemId);
-
-            //builder.HasOne(g => g.Destino)
-            //    .WithMany()
-            //    .HasForeignKey(g => g.DestinoId);
-
-            //builder.HasMany(g => g.Viagens)
-            //    .WithOne(v => v.GatilhoViagem)
-            //    .HasForeignKey(v => v.GatilhoViagemId);
+            builder.HasMany(g => g.Viagens)
+                .WithOne(v => v.GatilhoViagem)
+                .HasForeignKey(v => v.GatilhoViagemId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

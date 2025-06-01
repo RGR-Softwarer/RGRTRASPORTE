@@ -1,13 +1,12 @@
-﻿using Dominio.Dtos.Pessoas.Passageiros;
+﻿using Dominio.Entidades.Pessoas.Passageiros;
 
-namespace Dominio.Interfaces.Service.Passageiros
+namespace Dominio.Interfaces.Service.Passageiros;
+
+public interface IPassageiroService
 {
-    public interface IPassageiroService
-    {
-        Task<IEnumerable<PassageiroDto>> ObterTodosAsync();
-        Task<PassageiroDto> ObterPorIdAsync(long id, bool auditado = false);
-        Task AdicionarAsync(PassageiroDto dto);
-        Task EditarAsync(PassageiroDto dto);
-        Task RemoverAsync(long id);
-    }
+    Task<Passageiro> ObterPorIdAsync(long id);
+    Task<IEnumerable<Passageiro>> ObterTodosAsync();
+    Task<Passageiro> CriarAsync(Passageiro passageiro);
+    Task<Passageiro> AtualizarAsync(Passageiro passageiro);
+    Task<bool> RemoverAsync(long id);
 }

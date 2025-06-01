@@ -1,8 +1,11 @@
-﻿namespace Dominio.Dtos.Viagens
+﻿using System;
+
+namespace Dominio.Dtos.Viagens
 {
-    public class ViagemCriadaJobData
+    public class ViagemCriadaJobData : ViagemJobDataBase
     {
-        public string TenantId { get; set; }
-        public long ViagemId { get; set; }
+        public new long ViagemId { get; set; }
+        public DateTime DataCriacao { get; set; }
+        public string UsuarioCriacao { get; set; }
     }
 }

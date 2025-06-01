@@ -5,11 +5,8 @@ using Infra.Data.Data;
 
 namespace Infra.Data.Repositories.Viagens
 {
-    namespace Infra.Data.Repositories
+    public class ViagemPosicaoRepository : GenericRepository<ViagemPosicao>, IViagemPosicaoRepository
     {
-        public class ViagemPosicaoRepository : GenericRepository<ViagemPosicao>, IViagemPosicaoRepository
-        {
-            public ViagemPosicaoRepository(TransportadorContext context) : base(context) { }
-        }
+        public ViagemPosicaoRepository(TransportadorContext context) : base(context) { }
     }
 }

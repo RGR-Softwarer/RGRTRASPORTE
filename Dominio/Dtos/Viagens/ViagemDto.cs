@@ -7,7 +7,7 @@ namespace Dominio.Dtos.Viagens
     public class ViagemDto
     {
         public long Id { get; set; }
-        public string CodigoViagem { get; init; }
+        public string CodigoViagem { get; init; } = string.Empty;
         public DateTime DataViagem { get; init; }
         public long VeiculoId { get; init; }
         public long MotoristaId { get; init; }
@@ -17,8 +17,8 @@ namespace Dominio.Dtos.Viagens
         public DateTime HorarioSaida { get; init; }
         public DateTime HorarioChegada { get; init; }
         public SituacaoViagemEnum Situacao { get; init; }
-        public string MotivoProblema { get; init; }
-        public string DescricaoViagem { get; init; }
+        public string MotivoProblema { get; init; } = string.Empty;
+        public string DescricaoViagem { get; init; } = string.Empty;
         public DateTime? DataInicioViagem { get; init; }
         public decimal? LatitudeInicioViagem { get; init; }
         public decimal? LongitudeInicioViagem { get; init; }
@@ -27,7 +27,7 @@ namespace Dominio.Dtos.Viagens
         public decimal? LongitudeFimViagem { get; init; }
         public decimal Distancia { get; init; }
         public decimal? DistanciaRealizada { get; init; }
-        public string PolilinhaRota { get; init; }
+        public string PolilinhaRota { get; init; } = string.Empty;
         public string? PolilinhaRotaRealizada { get; init; }
         public int NumeroPassageiros { get; init; }
         public bool Lotado { get; init; }

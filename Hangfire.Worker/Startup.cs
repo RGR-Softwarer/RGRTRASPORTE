@@ -20,15 +20,13 @@ namespace Hangfire.Worker
             var connectionString = _configuration.GetConnectionString("RGRTRASPORTE") ?? string.Empty;
 
             services.AddContext(_configuration);
-            services.AddServices();
-            services.AddRepositories();
+            services.AddInfrastructure(_configuration);
 
             services.AddLogging(loggingBuilder =>
             {
                 loggingBuilder.ClearProviders();
                 loggingBuilder.AddConsole();
             });
-
 
             services.AddHangfire(config =>
             {
@@ -59,15 +57,18 @@ namespace Hangfire.Worker
                 {
                     new HangfireCustomBasicAuthenticationFilter
                     {
-                        User = _configuration["HangfireCredentials:UserName"],
-                        Pass = _configuration["HangfireCredentials:Password"]
+                        User = _configuration["HangfireCredentials:UserName"] ?? "",
+                        Pass = _configuration["HangfireCredentials:Password"] ?? ""
                     }
                 }
             });
 
             app.MapHangfireDashboard();
 
-            app.UseHangfireServer();
+            app.UseHangfireServer(new BackgroundJobServerOptions
+            {
+                ServerName = "Hangfire.Postgres"
+            });
 
             var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
 
