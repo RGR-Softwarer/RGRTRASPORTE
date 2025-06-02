@@ -21,7 +21,17 @@ namespace RGRTRASPORTE
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRouting();
-            services.AddControllers();
+            
+            // Configurar controladores para aceitar enums como strings
+            services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    // Configurar enums para serem serializados/deserializados como strings
+                    options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
+                    
+                    // Opcional: configurar para ser case-insensitive
+                    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
 
             services.AddSingleton(_configuration);
 

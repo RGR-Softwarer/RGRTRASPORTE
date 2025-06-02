@@ -27,6 +27,13 @@ namespace RGRTRASPORTE.Controllers.Veiculos
             return await RGRResult(System.Net.HttpStatusCode.OK, modelos);
         }
 
+        [HttpPost("filtrar")]
+        public async Task<IActionResult> ObterModelosVeicularesPaginados([FromBody] ObterModelosVeicularesPaginadosQuery query)
+        {
+            var resultado = await _mediator.Send(query);
+            return await RGRResult(System.Net.HttpStatusCode.OK, resultado);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterPorId(long id)
         {
@@ -58,6 +65,13 @@ namespace RGRTRASPORTE.Controllers.Veiculos
         public async Task<IActionResult> Remover(long id)
         {
             var command = new RemoverModeloVeicularCommand(id, User.Identity.Name, User.Identity.Name);
+            var result = await _mediator.Send(command);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
+        }
+
+        [HttpPost("seed")]
+        public async Task<IActionResult> PopularDadosTeste([FromBody] SeedModeloVeicularCommand command)
+        {
             var result = await _mediator.Send(command);
             return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }

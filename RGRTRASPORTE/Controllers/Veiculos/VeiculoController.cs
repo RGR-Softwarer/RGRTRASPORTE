@@ -27,6 +27,13 @@ namespace RGRTRASPORTE.Controllers.Veiculos
             return await RGRResult(System.Net.HttpStatusCode.OK, veiculos);
         }
 
+        [HttpPost("filtrar")]
+        public async Task<IActionResult> ObterVeiculosPaginados([FromBody] ObterVeiculosPaginadosQuery query)
+        {
+            var resultado = await _mediator.Send(query);
+            return await RGRResult(System.Net.HttpStatusCode.OK, resultado);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterPorId(long id)
         {

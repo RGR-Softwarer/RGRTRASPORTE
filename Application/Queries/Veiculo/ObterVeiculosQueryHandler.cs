@@ -47,16 +47,27 @@ namespace Application.Queries.Veiculo
 
                 var veiculosDto = veiculosFiltrados.Select(v => new VeiculoDto
                 {
-                    Id = v.Id, // Agora ambos são long
-                    Placa = v.Placa,
-                    Modelo = v.Modelo,
-                    Ano = v.AnoModelo,
-                    Capacidade = 0, // Não há propriedade equivalente na entidade, usando 0 como padrão
-                    Cor = v.Cor,
-                    Chassi = v.NumeroChassi,
-                    Renavam = v.Renavam,
-                    Ativo = v.Status != Dominio.Enums.Veiculo.StatusVeiculoEnum.Inativo,
-                    DataCadastro = v.CreatedAt
+                    Id = v.Id,
+                    Placa = v.Placa ?? "",
+                    PlacaFormatada = !string.IsNullOrEmpty(v.Placa) ? FormatarPlaca(v.Placa) : "",
+                    Modelo = v.Modelo ?? "",
+                    Marca = v.Marca ?? "",
+                    NumeroChassi = v.NumeroChassi ?? "",
+                    AnoModelo = v.AnoModelo,
+                    AnoFabricacao = v.AnoFabricacao,
+                    Cor = v.Cor ?? "",
+                    Renavam = v.Renavam ?? "",
+                    VencimentoLicenciamento = v.VencimentoLicenciamento,
+                    TipoCombustivel = v.TipoCombustivel,
+                    TipoCombustivelDescricao = ObterDescricaoEnum(v.TipoCombustivel.ToString()),
+                    Status = v.Status,
+                    StatusDescricao = ObterDescricaoEnum(v.Status.ToString()),
+                    Observacao = v.Observacao ?? "",
+                    ModeloVeiculoId = v.ModeloVeiculoId,
+                    CreatedAt = v.CreatedAt,
+                    UpdatedAt = v.UpdatedAt,
+                    Capacidade = 0,
+                    Ativo = v.Status != Dominio.Enums.Veiculo.StatusVeiculoEnum.Inativo
                 }).ToList();
 
                 _logger.LogInformation("Veículos encontrados com sucesso. Total: {Total}", veiculosDto.Count);
@@ -68,6 +79,45 @@ namespace Application.Queries.Veiculo
                 _logger.LogError(ex, "Erro ao buscar veículos");
                 return BaseResponse<IEnumerable<VeiculoDto>>.Erro("Erro ao buscar veículos", new List<string> { ex.Message });
             }
+        }
+
+        private string FormatarPlaca(string placa)
+        {
+            if (string.IsNullOrEmpty(placa))
+                return string.Empty;
+
+            // Remove qualquer formatação existente
+            var placaLimpa = placa.Replace("-", "").Replace(" ", "").ToUpper();
+
+            // Verifica se tem o tamanho correto (7 caracteres)
+            if (placaLimpa.Length != 7)
+                return placa; // Retorna original se não estiver no formato esperado
+
+            // Formato brasileiro: ABC-1234 ou ABC1D23 (Mercosul)
+            if (char.IsLetter(placaLimpa[4])) // Mercosul: ABC1D23
+                return $"{placaLimpa.Substring(0, 3)}{placaLimpa.Substring(3, 1)}{placaLimpa.Substring(4, 1)}{placaLimpa.Substring(5, 2)}";
+            else // Formato antigo: ABC-1234
+                return $"{placaLimpa.Substring(0, 3)}-{placaLimpa.Substring(3, 4)}";
+        }
+
+        private string ObterDescricaoEnum(string valor)
+        {
+            // Implemente a lógica para obter a descrição do enum com base no valor fornecido
+            return valor switch
+            {
+                "Disponivel" => "Disponível",
+                "Indisponivel" => "Indisponível",
+                "EmManutencao" => "Em Manutenção",
+                "Manutencao" => "Manutenção",
+                "EmUso" => "Em Uso",
+                "Inativo" => "Inativo",
+                "Gasolina" => "Gasolina",
+                "Etanol" => "Etanol",
+                "Diesel" => "Diesel",
+                "GNV" => "Gás Natural Veicular",
+                "Flex" => "Flex (Gasolina/Etanol)",
+                _ => valor
+            };
         }
     }
 } 

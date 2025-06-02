@@ -71,7 +71,7 @@ namespace Infra.Ioc
             services.AddHttpContextAccessor();
             services.AddScoped<ITenantProvider, TenantProvider>();
 
-            // Registra contextos para UnitOfWork - com resolução dinâmica baseada no tenant
+            // Registra o contexto principal para UnitOfWork
             services.AddScoped<IUnitOfWorkContext>(provider => 
             {
                 var tenantProvider = provider.GetRequiredService<ITenantProvider>();
@@ -84,7 +84,8 @@ namespace Infra.Ioc
                     return provider.GetRequiredService<CadastroContext>();
             });
 
-            services.AddScoped<IUnitOfWork, MultiContextUnitOfWork>();
+            // Registra UnitOfWork simples ao invés do MultiContext
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // === MEDIATOR E BEHAVIORS ===
             services.AddMediatR(cfg => {
@@ -109,6 +110,9 @@ namespace Infra.Ioc
             services.AddAllRepositories(infrastructureAssembly, domainAssembly);
 
             // === REGISTROS MANUAIS ESPECÍFICOS ===
+            // Registro do GenericRepository
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            
             // Garantindo que os repositórios principais estejam registrados
             services.AddScoped<Dominio.Interfaces.Infra.Data.Localidades.ILocalidadeRepository, Infra.Data.Repositories.Localidades.LocalidadeRepository>();
             services.AddScoped<Dominio.Interfaces.Infra.Data.Passageiros.IPassageiroRepository, Infra.Data.Repositories.Passageiros.PassageiroRepository>();
