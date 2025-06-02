@@ -1,4 +1,181 @@
-<div class="inner-content">
-  <h1>Dashboard</h1>
-  <p>Nome de usuário: {{ userContext?.username }}</p>
+<div class="dashboard-container">
+  <!-- Header do Dashboard -->
+  <div class="dashboard-header">
+    <div class="dashboard-header-content">
+      <div class="dashboard-title-section">
+        <h1 class="dashboard-title">
+          <span nz-icon nzType="dashboard" nzTheme="outline" class="title-icon"></span>
+          Dashboard
+        </h1>
+        <p class="dashboard-description">
+          Bem-vindo(a), {{ userContext?.username || 'Usuário' }}! Visão geral do sistema
+        </p>
+      </div>
+      
+      <div class="dashboard-actions">
+        <button 
+          nz-button 
+          nzType="primary" 
+          nzSize="large"
+          (click)="atualizarDados()"
+          [nzLoading]="loading"
+          nz-tooltip="Atualizar dados">
+          <span nz-icon nzType="reload"></span>
+          Atualizar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards de Estatísticas -->
+  <div class="dashboard-stats" *ngIf="!loading">
+    <div class="stats-grid">
+      <nz-card class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon">
+            <span nz-icon nzType="team" nzTheme="outline"></span>
+          </div>
+          <div class="stat-details">
+            <h3>{{ obterEstatisticas().total }}</h3>
+            <p>Total de Registros</p>
+          </div>
+        </div>
+      </nz-card>
+
+      <nz-card class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon success">
+            <span nz-icon nzType="check-circle" nzTheme="outline"></span>
+          </div>
+          <div class="stat-details">
+            <h3>{{ obterEstatisticas().marcados }}</h3>
+            <p>Registros Marcados</p>
+          </div>
+        </div>
+      </nz-card>
+
+      <nz-card class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon warning">
+            <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+          </div>
+          <div class="stat-details">
+            <h3>{{ obterEstatisticas().idades.media }}</h3>
+            <p>Idade Média</p>
+          </div>
+        </div>
+      </nz-card>
+
+      <nz-card class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon info">
+            <span nz-icon nzType="bar-chart" nzTheme="outline"></span>
+          </div>
+          <div class="stat-details">
+            <h3>{{ obterEstatisticas().idades.min }}-{{ obterEstatisticas().idades.max }}</h3>
+            <p>Faixa Etária</p>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+
+  <!-- Área de Conteúdo Principal -->
+  <div class="dashboard-content">
+    <!-- Configurações da Grid -->
+    <nz-card nzTitle="Configurações da Tabela" class="config-card">
+      <form nz-form [formGroup]="formularioConfiguracao" nzLayout="inline">
+        <div nz-row [nzGutter]="[16, 16]">
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label>Com Borda</nz-form-label>
+              <nz-form-control>
+                <nz-switch formControlName="comBorda"></nz-switch>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label>Paginação</nz-form-label>
+              <nz-form-control>
+                <nz-switch formControlName="paginacao"></nz-switch>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label>Cabeçalho Fixo</nz-form-label>
+              <nz-form-control>
+                <nz-switch formControlName="cabecalhoFixo"></nz-switch>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          
+          <div nz-col nzSpan="6">
+            <nz-form-item>
+              <nz-form-label>Tamanho</nz-form-label>
+              <nz-form-control>
+                <nz-select formControlName="tamanho" style="width: 100%">
+                  <nz-option nzValue="small" nzLabel="Pequeno"></nz-option>
+                  <nz-option nzValue="middle" nzLabel="Médio"></nz-option>
+                  <nz-option nzValue="default" nzLabel="Padrão"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+    </nz-card>
+
+    <!-- Tabela de Dados -->
+    <nz-card nzTitle="Dados do Sistema" class="data-card">
+      <nz-table 
+        #basicTable 
+        [nzData]="minhaListaDeObjetos"
+        [nzBordered]="formularioConfiguracao.value.comBorda"
+        [nzSize]="formularioConfiguracao.value.tamanho || 'small'"
+        [nzLoading]="loading">
+        
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Idade</th>
+            <th>Endereço</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <tr *ngFor="let data of minhaListaDeObjetos; trackBy: trackByFn">
+            <td>{{ data.nome }}</td>
+            <td>{{ data.idade }} anos</td>
+            <td>{{ data.endereco }}</td>
+            <td>
+              <nz-tag [nzColor]="data.marcado ? 'green' : 'default'">
+                {{ data.marcado ? 'Ativo' : 'Inativo' }}
+              </nz-tag>
+            </td>
+            <td>
+              <button nz-button nzType="link" nzSize="small">
+                <span nz-icon nzType="eye"></span>
+                Ver
+              </button>
+              <button nz-button nzType="link" nzSize="small">
+                <span nz-icon nzType="edit"></span>
+                Editar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-card>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div *ngIf="loading" class="dashboard-loading">
+    <nz-spin nzSize="large" nzTip="Carregando dados do dashboard..."></nz-spin>
+  </div>
 </div>

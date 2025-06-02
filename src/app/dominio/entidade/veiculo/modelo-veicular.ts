@@ -1,35 +1,55 @@
 import { FormCampo } from '../../../services/decorator/formulario-decorator';
-import { TipoVeiculoEnum } from '../../enum/veiculo/tipo-veiculo-enum';
+import { TipoModeloVeiculoEnum } from '../../enum/veiculo/tipo-modelo-veiculo-enum';
 
 export class ModeloVeicular {
     @FormCampo('ID', 'numero', false)
     public id?: number;
 
-    @FormCampo('Situacao', 'bool', true)
-    public situacao?: string;
+    @FormCampo('Situação', 'bool', true, true)
+    public situacao?: boolean;
 
-    @FormCampo('Descricao do Modelo', 'texto', true)
-    public modelo?: string;
+    @FormCampo('Situação Descrição', 'texto', false, true)
+    public situacaoDescricao?: string;
+
+    @FormCampo('Descrição', 'texto', true, true)
+    public descricao?: string;
+
+    @FormCampo('Descrição do Modelo', 'texto', false, true)
+    public descricaoModelo?: string;
+
+    @FormCampo('Tipo', 'enum', true, false, TipoModeloVeiculoEnum)
+    public tipo?: TipoModeloVeiculoEnum;
+
+    @FormCampo('Tipo Descrição', 'texto', false, true)
+    public tipoDescricao?: string;
 
     @FormCampo('Quantidade de Assentos', 'numero', true, false)
-    public Assento?: string;
+    public quantidadeAssento?: number;
 
     @FormCampo('Quantidade de Eixos', 'numero', true, false)
-    public Eixo?: string;
+    public quantidadeEixo?: number;
 
     @FormCampo('Capacidade Máxima', 'numero', true, false)
-    public Max?: string;
+    public capacidadeMaxima?: number;
 
     @FormCampo('Passageiros em Pé', 'numero', true, false)
-    public passageiros?: string;
+    public passageirosEmPe?: number;
 
-    @FormCampo('Possui Banheiro', 'bool', true)
-    public banheiro?: string;
+    @FormCampo('Possui Banheiro', 'bool', true, false)
+    public possuiBanheiro?: boolean;
 
-    @FormCampo('Possui Climatizador', 'bool', true)
-    public climatizador?: string;
+    @FormCampo('Possui Banheiro Descrição', 'texto', false, true)
+    public possuiBanheiroDescricao?: string;
 
-    @FormCampo('Tipo', 'enum', true, false, TipoVeiculoEnum)
-    public TipoVeiculoEnum?: TipoVeiculoEnum;
+    @FormCampo('Possui Climatizador', 'bool', true, false)
+    public possuiClimatizador?: boolean;
 
+    @FormCampo('Possui Climatizador Descrição', 'texto', false, true)
+    public possuiClimatizadorDescricao?: string;
+
+    @FormCampo('Data Criação', 'texto', false, true)
+    public createdAt?: Date;
+
+    @FormCampo('Data Atualização', 'texto', false, true)
+    public updatedAt?: Date;
 }

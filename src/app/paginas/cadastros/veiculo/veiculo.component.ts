@@ -13,5 +13,5 @@ export class CadastroVeiculoComponent {
   adicionarUrl: string = '/frota/veiculo/';
   buscarTodosUrl: string = TrasportadorUrls.ObterTodos + 'veiculo';  
   acoes: Action[] = [{ label: 'Editar', acao: () => {} }];
-  veiculo = new Veiculo();
+  veiculo = new Veiculo(); 
 }

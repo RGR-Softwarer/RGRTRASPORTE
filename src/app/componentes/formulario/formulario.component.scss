@@ -12,3 +12,217 @@
     margin-top: 16px; 
   }
   
+.formulario-container {
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.field-description {
+  margin-top: 4px;
+  color: #999;
+  font-size: 12px;
+  
+  small {
+    color: #999;
+  }
+}
+
+.field-warning {
+  color: #faad14;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.boolean-field-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .boolean-field-label {
+    font-size: 14px;
+    color: #666;
+  }
+}
+
+.button-group {
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 24px;
+
+  button {
+    min-width: 100px;
+    
+    &:not(:last-child) {
+      margin-right: 8px;
+    }
+  }
+}
+
+// Melhorar feedback visual de campos obrigatórios
+.ant-form-item-required {
+  &::before {
+    color: #ff4d4f;
+  }
+}
+
+// Destacar campos com erro
+.ant-form-item-has-error {
+  .ant-input,
+  .ant-select-selector,
+  .ant-picker,
+  textarea {
+    border-color: #ff4d4f !important;
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2) !important;
+  }
+  
+  .ant-form-item-explain-error {
+    font-size: 12px;
+    margin-top: 4px;
+    color: #ff4d4f;
+    font-weight: 500;
+  }
+}
+
+// Animação suave para campos com erro
+.ant-input,
+.ant-select-selector,
+.ant-picker {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+// Melhorar visual para campos numéricos
+input[type="number"] {
+  -moz-appearance: textfield;
+  
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+// Melhorar visual para campos de data
+input[type="date"] {
+  &::-webkit-calendar-picker-indicator {
+    color: #1890ff;
+    cursor: pointer;
+  }
+}
+
+// Estilos para diferentes tipos de campo
+.ant-form-item {
+  // Campo numérico
+  &.field-numero {
+    .ant-input {
+      text-align: right;
+    }
+  }
+
+  // Campo booleano
+  &.field-bool {
+    .ant-form-control {
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  // Campo enum
+  &.field-enum {
+    .ant-select {
+      width: 100%;
+    }
+  }
+}
+
+// Estados de loading
+.ant-btn-loading {
+  pointer-events: none;
+}
+
+// Melhorar visual dos switches
+.ant-switch {
+  margin: 4px 0;
+  
+  &.ant-switch-checked {
+    background-color: #52c41a;
+  }
+}
+
+// Estilo para campos de busca de entidade
+.ant-input-group-addon {
+  .ant-btn {
+    border: none;
+    box-shadow: none;
+  }
+}
+
+// Feedback de validação em tempo real
+.ant-form-item-explain {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+// Melhorar espaçamento dos labels
+.ant-form-item-label {
+  padding-bottom: 4px;
+  
+  > label {
+    font-weight: 500;
+  }
+}
+
+// Melhorar layout responsivo
+@media (max-width: 768px) {
+  .formulario-container {
+    padding: 16px;
+  }
+  
+  .button-group {
+    text-align: center;
+    
+    button {
+      width: 100%;
+      margin-bottom: 8px;
+      margin-right: 0 !important;
+    }
+  }
+
+  .boolean-field-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+
+// Estilos para campos readonly
+.readonly-indicator {
+  color: #999;
+  font-size: 11px;
+  font-style: italic;
+  margin-left: 4px;
+}
+
+// Campos readonly devem ter aparência diferenciada
+input[readonly],
+textarea[readonly] {
+  background-color: #f5f5f5 !important;
+  cursor: not-allowed;
+  color: #999;
+}
+
+.ant-select-disabled {
+  .ant-select-selector {
+    background-color: #f5f5f5 !important;
+    color: #999;
+  }
+}
+
+nz-switch[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}  

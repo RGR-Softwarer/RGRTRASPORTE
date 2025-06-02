@@ -1,21 +1,51 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 import { AppContext } from '../../dominio/entidade/app.context';
 import { AppContextService } from '../../services/context/app.context';
 import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
 import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
-import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+
+interface DashboardData {
+  nome: string;
+  idade: string;
+  endereco: string;
+  descricao: string;
+  marcado: boolean;
+  expandido: boolean;
+}
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  
   userContext: AppContext | null = null;
   formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
-  minhaListaDeObjetos: readonly any[] = [];
+  minhaListaDeObjetos: readonly DashboardData[] = [];
+  loading: boolean = false;
 
-  constructor(private appContextService: AppContextService, private formBuilder: NonNullableFormBuilder) {
+  constructor(
+    private appContextService: AppContextService, 
+    private formBuilder: NonNullableFormBuilder
+  ) {
+    this.inicializarFormulario();
+  }
+
+  ngOnInit(): void {
+    this.carregarDados();
+    this.observarMudancasFormulario();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private inicializarFormulario(): void {
     this.formularioConfiguracao = this.formBuilder.group({
       comBorda: [false],
       carregando: [false],
@@ -36,31 +66,96 @@ export class DashboardComponent implements OnInit {
       rolagemTabela: 'unset' as RolagemTabela,
       layoutTabela: 'auto' as NzTableLayout,
       posicao: 'bottom' as NzTablePaginationPosition,
-      tituloTabela: 'Título da Tabela',
-      rodapeTabela: 'Rodapé da Tabela',
+      tituloTabela: 'Dashboard - Dados do Sistema',
+      rodapeTabela: 'Total de registros carregados',
       adicionar: [false],
       action: [false]
     });
   }
 
-  ngOnInit() {
-    this.userContext = this.appContextService.obterUsuarioLogado();
-    console.log(this.userContext);
-    this.minhaListaDeObjetos = this.gerarDados();
+  private carregarDados(): void {
+    this.loading = true;
+    
+    try {
+      this.userContext = this.appContextService.obterUsuarioLogado();
+      console.log('Contexto do usuário:', this.userContext);
+      
+      // Simula carregamento assíncrono
+      setTimeout(() => {
+        this.minhaListaDeObjetos = this.gerarDados();
+        this.loading = false;
+      }, 1000);
+    } catch (error) {
+      console.error('Erro ao carregar dados do dashboard:', error);
+      this.loading = false;
+    }
   }
 
-  gerarDados(): readonly any[] {
-    const dados = [];
+  private observarMudancasFormulario(): void {
+    this.formularioConfiguracao.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(values => {
+        console.log('Configuração da grid alterada:', values);
+      });
+  }
+
+  private gerarDados(): readonly DashboardData[] {
+    const dados: DashboardData[] = [];
+    const nomes = ['João Silva', 'Maria Santos', 'Pedro Costa', 'Ana Oliveira', 'Carlos Ferreira'];
+    const enderecos = ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte', 'Porto Alegre', 'Salvador'];
+    
     for (let i = 1; i <= 100; i++) {
+      const nomeAleatorio = nomes[Math.floor(Math.random() * nomes.length)];
+      const enderecoAleatorio = enderecos[Math.floor(Math.random() * enderecos.length)];
+      const idade = 18 + Math.floor(Math.random() * 50);
+      
       dados.push({
-        nome: 'John Brown',
-        idade: `${i}2`,
-        endereco: `Nova York No. ${i} Lake Park`,
-        descricao: `Meu nome é John Brown, tenho ${i}2 anos, morando em Nova York No. ${i} Lake Park.`,
-        marcado: false,
+        nome: nomeAleatorio,
+        idade: idade.toString(),
+        endereco: `${enderecoAleatorio}, ${i}`,
+        descricao: `Meu nome é ${nomeAleatorio}, tenho ${idade} anos, morando em ${enderecoAleatorio}.`,
+        marcado: Math.random() > 0.7,
         expandido: false
       });
     }
+    
     return dados;
+  }
+
+  /**
+   * Atualiza os dados do dashboard
+   */
+  atualizarDados(): void {
+    this.carregarDados();
+  }
+
+  /**
+   * Obtém estatísticas dos dados
+   */
+  obterEstatisticas(): { total: number; marcados: number; idades: { min: number; max: number; media: number } } {
+    const total = this.minhaListaDeObjetos.length;
+    const marcados = this.minhaListaDeObjetos.filter(item => item.marcado).length;
+    
+    const idades = this.minhaListaDeObjetos.map(item => parseInt(item.idade));
+    const idadeMin = Math.min(...idades);
+    const idadeMax = Math.max(...idades);
+    const idadeMedia = idades.reduce((sum, idade) => sum + idade, 0) / idades.length;
+    
+    return {
+      total,
+      marcados,
+      idades: {
+        min: idadeMin,
+        max: idadeMax,
+        media: Math.round(idadeMedia)
+      }
+    };
+  }
+
+  /**
+   * TrackBy function para performance da tabela
+   */
+  trackByFn(index: number, item: DashboardData): string {
+    return `${item.nome}-${item.idade}-${index}`;
   }
 }

@@ -16,6 +16,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzCollapseModule } from 'ng-zorro-antd/collapse';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 import { RouterModule } from '@angular/router';
 import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
@@ -40,6 +41,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
     NzCardModule,
     NzGridModule,
     NzCollapseModule,
+    NzSelectModule,
     NzDropDownModule
   ],
   exports: [GridComponent]

@@ -1,29 +1,64 @@
-<form nz-form [formGroup]="form" (ngSubmit)="onSubmit()">
+<form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
   <div nz-row [nzGutter]="[16, 16]">
     <ng-container *ngFor="let field of formFields">
       <ng-container *ngIf="field.visible">
-        <div nz-col [nzSpan]="field.nzSpan">
+        <div nz-col [nzSpan]="field.nzSpan" 
+             [nzXs]="field.nzXs || null" [nzSm]="field.nzSm || null" 
+             [nzMd]="field.nzMd || null" [nzLg]="field.nzLg || null" 
+             [nzXl]="field.nzXl || null" [nzXXl]="field.nzXXl || null">
           <nz-form-item>
-            <nz-form-label [nzFor]="field.key">
+            <nz-form-label [nzFor]="field.key" [nzRequired]="field.required && !field.readonly">
               {{ field.label }}
-              <span *ngIf="field.required" class="required-asterisk">*</span>
+              <span *ngIf="field.readonly" class="readonly-indicator"> (Somente leitura)</span>
             </nz-form-label>
-            <nz-form-control>
-              <ng-container
-                *ngIf="field.type !== 'enum' && field.type !== 'entidade'"
-              >
+            <nz-form-control 
+              [nzErrorTip]="isFieldInvalid(field.key) ? getFieldErrorMessage(field.key) : ''"
+              [nzValidateStatus]="isFieldInvalid(field.key) ? 'error' : ''">
+              
+              <!-- Campo de texto -->
+              <ng-container *ngIf="field.type === 'texto'">
                 <input
                   nz-input
                   [id]="field.key"
                   [formControlName]="field.key"
-                  [type]="field.type"
+                  [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
+                  [maxlength]="field.maxLength || null"
+                  [readonly]="field.readonly"
+                  type="text"
+                  (focus)="onFieldFocus(field.key)"
+                  (blur)="onFieldBlur(field.key)"
                 />
               </ng-container>
+
+              <!-- Campo numérico -->
+              <ng-container *ngIf="field.type === 'numero'">
+                <input
+                  nz-input
+                  [id]="field.key"
+                  [formControlName]="field.key"
+                  [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
+                  [min]="field.min || null"
+                  [max]="field.max || null"
+                  [step]="field.step || 1"
+                  [readonly]="field.readonly"
+                  type="number"
+                  (focus)="onFieldFocus(field.key)"
+                  (blur)="onFieldBlur(field.key)"
+                />
+              </ng-container>
+
+              <!-- Campo de seleção (enum) -->
               <ng-container *ngIf="field.type === 'enum'">
                 <nz-select
                   [id]="field.key"
                   [formControlName]="field.key"
-                  nzPlaceHolder="Selecione"
+                  [nzPlaceHolder]="field.placeholder || 'Selecione ' + field.label.toLowerCase()"
+                  [nzDisabled]="!!field.readonly"
+                  nzAllowClear
+                  nzShowSearch
+                  style="width: 100%;"
+                  (nzFocus)="onFieldFocus(field.key)"
+                  (nzBlur)="onFieldBlur(field.key)"
                 >
                   <nz-option
                     *ngFor="let option of field.options"
@@ -33,16 +68,104 @@
                   </nz-option>
                 </nz-select>
               </ng-container>
+
+              <!-- Campo booleano -->
+              <ng-container *ngIf="field.type === 'bool'">
+                <div class="boolean-field-container">
+                  <nz-switch
+                    [id]="field.key"
+                    [formControlName]="field.key"
+                    [disabled]="!!field.readonly"
+                  >
+                  </nz-switch>
+                  <span class="boolean-field-label">
+                    {{ form.get(field.key)?.value ? 'Sim' : 'Não' }}
+                  </span>
+                </div>
+              </ng-container>
+
+              <!-- Campo de data -->
+              <ng-container *ngIf="field.type === 'data'">
+                <input
+                  nz-input
+                  [id]="field.key"
+                  [formControlName]="field.key"
+                  [placeholder]="field.placeholder || 'Selecione a data'"
+                  [readonly]="field.readonly"
+                  type="date"
+                />
+              </ng-container>
+
+              <!-- Campo de texto longo (textarea) -->
+              <ng-container *ngIf="field.type === 'textarea'">
+                <textarea
+                  nz-input
+                  [id]="field.key"
+                  [formControlName]="field.key"
+                  [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
+                  [rows]="field.rows || 4"
+                  [maxlength]="field.maxLength || null"
+                  [readonly]="field.readonly"
+                >
+                </textarea>
+              </ng-container>
+
+              <!-- Campo de entidade (com busca) -->
               <ng-container *ngIf="field.type === 'entidade'">
                 <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-                  <input type="text" nz-input placeholder="input search text" />
+                  <input 
+                    type="text" 
+                    nz-input 
+                    [placeholder]="field.placeholder || 'Buscar ' + field.label.toLowerCase()"
+                    [formControlName]="field.key"
+                    readonly
+                  />
                 </nz-input-group>
                 <ng-template #suffixIconButton>
-                  <button nz-button nzType="primary" nzSearch>
+                  <button nz-button nzType="primary" nzSearch type="button">
                     <span nz-icon nzType="search"></span>
                   </button>
                 </ng-template>
               </ng-container>
+
+              <!-- Campo de email -->
+              <ng-container *ngIf="field.type === 'email'">
+                <input
+                  nz-input
+                  [id]="field.key"
+                  [formControlName]="field.key"
+                  [placeholder]="field.placeholder || 'Digite o email'"
+                  type="email"
+                />
+              </ng-container>
+
+              <!-- Campo de telefone -->
+              <ng-container *ngIf="field.type === 'telefone'">
+                <input
+                  nz-input
+                  [id]="field.key"
+                  [formControlName]="field.key"
+                  [placeholder]="field.placeholder || '(00) 00000-0000'"
+                  type="tel"
+                />
+              </ng-container>
+
+              <!-- Campo genérico para tipos não reconhecidos -->
+              <ng-container *ngIf="!['texto', 'numero', 'enum', 'bool', 'data', 'textarea', 'entidade', 'email', 'telefone'].includes(field.type)">
+                <input
+                  nz-input
+                  [id]="field.key"
+                  [formControlName]="field.key"
+                  [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
+                  type="text"
+                />
+                <small class="field-warning">Tipo de campo não reconhecido: {{ field.type }}</small>
+              </ng-container>
+
+              <!-- Informação adicional do campo -->
+              <div *ngIf="field.description" class="field-description">
+                <small>{{ field.description }}</small>
+              </div>
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -51,16 +174,27 @@
   </div>
 
   <!-- Botões de Ação -->
-  <div class="button-group">
-    <button nz-button nzType="primary" *ngIf="isEditMode">Salvar</button>
-    <button nz-button nzType="primary" *ngIf="!isEditMode">Adicionar</button>
-    <!-- Prevent Default para evitar a submissão -->
+  <div class="button-group" style="margin-top: 24px; text-align: right;">
     <button
       nz-button
       nzType="default"
-      (click)="voltar(); $event.preventDefault()"
+      type="button"
+      (click)="voltar()"
+      style="margin-right: 8px;"
     >
+      <span nz-icon nzType="arrow-left"></span>
       Voltar
+    </button>
+    
+    <button 
+      nz-button 
+      nzType="primary" 
+      type="submit"
+      [nzLoading]="form.pending"
+      [disabled]="form.pending"
+    >
+      <span nz-icon [nzType]="isEditMode ? 'save' : 'plus'"></span>
+      {{ isEditMode ? 'Salvar' : 'Adicionar' }}
     </button>
   </div>
 </form>

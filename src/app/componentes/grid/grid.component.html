@@ -1,4 +1,4 @@
-<div>
+<div class="grid-container">
   <!-- Botões de ação -->
   <div class="grid-actions">
     <div class="grid-actions-left">
@@ -39,6 +39,8 @@
     nzTitle="Configurar Colunas"
     (nzOnCancel)="handleColumnSelectorCancel()"
     (nzOnOk)="handleColumnSelectorOk()"
+    nzOkText="Aplicar"
+    nzCancelText="Cancelar"
   >
     <div *nzModalContent class="column-selector-content">
       <label nz-checkbox 
@@ -49,48 +51,121 @@
         Selecionar Todas
       </label>
       <nz-divider></nz-divider>
-      <nz-checkbox-group [(ngModel)]="columnSelections" (ngModelChange)="onItemCheckedChange()">
-      </nz-checkbox-group>
+      
+      <!-- Lista de checkboxes das colunas -->
+      <div class="column-list">
+        <div *ngFor="let option of columnSelections" class="column-item">
+          <label nz-checkbox 
+                 [(ngModel)]="option.checked"
+                 (ngModelChange)="onItemCheckedChange()">
+            {{ option.label }}
+          </label>
+        </div>
+      </div>
     </div>
   </nz-modal>
 
   <!-- Área de Filtros -->
-  <nz-collapse [nzBordered]="false">
-    <nz-collapse-panel 
-      [nzHeader]="'Filtros'"
-      [(nzActive)]="painelFiltrosExpandido"
-      [nzExtra]="extraTemplate"
-    >
-      <div nz-row [nzGutter]="[16, 16]">
-        <ng-container *ngFor="let col of gridColumns">
-          <div *ngIf="col.visible" nz-col [nzXs]="24" [nzSm]="12" [nzMd]="8" [nzLg]="6">
-            <nz-form-item>
-              <nz-form-label>{{ col.label }}</nz-form-label>
-              <nz-form-control>
-                <nz-input-group [nzSuffix]="suffixTemplate">
-                  <input
-                    type="text"
-                    nz-input
-                    [placeholder]="'Filtrar por ' + col.label.toLowerCase()"
-                    [(ngModel)]="searchInputs[col.key]"
+  <div class="filters-section">
+    <nz-collapse [nzBordered]="false">
+      <nz-collapse-panel 
+        [nzHeader]="'Filtros'"
+        [(nzActive)]="painelFiltrosExpandido"
+        [nzExtra]="extraTemplate"
+      >
+        <div nz-row [nzGutter]="[16, 16]">
+          <ng-container *ngFor="let filter of filterColumns">
+            <div *ngIf="filter.visible" 
+                 nz-col 
+                 [nzXs]="24" 
+                 [nzSm]="12" 
+                 [nzMd]="8" 
+                 [nzLg]="6" 
+                 [nzXl]="6" 
+                 [nzXXl]="4"
+                 class="filter-column">
+              <nz-form-item>
+                <nz-form-label [nzFor]="'filter-' + filter.key">{{ filter.label }}</nz-form-label>
+                <nz-form-control>
+                  
+                  <!-- Filtro para campos Boolean -->
+                  <nz-select 
+                    *ngIf="filter.type === 'bool'"
+                    [id]="'filter-' + filter.key"
+                    nzMode="multiple"
+                    nzAllowClear
+                    [nzPlaceHolder]="filter.placeholder || 'Selecionar'"
+                    [(ngModel)]="searchInputs[filter.key]"
                     (ngModelChange)="onFilterChange()"
-                  />
-                </nz-input-group>
-                <ng-template #suffixTemplate>
-                  <span
-                    nz-icon
-                    nzType="close-circle"
-                    *ngIf="searchInputs[col.key]"
-                    (click)="clearFilter(col.key)"
-                  ></span>
-                </ng-template>
-              </nz-form-control>
-            </nz-form-item>
-          </div>
-        </ng-container>
-      </div>
-    </nz-collapse-panel>
-  </nz-collapse>
+                    class="filter-input">
+                    <nz-option nzValue="true" nzLabel="Sim"></nz-option>
+                    <nz-option nzValue="false" nzLabel="Não"></nz-option>
+                  </nz-select>
+
+                  <!-- Filtro para campos Enum -->
+                  <nz-select 
+                    *ngIf="filter.type === 'enum'"
+                    [id]="'filter-' + filter.key"
+                    nzMode="multiple"
+                    nzAllowClear
+                    [nzPlaceHolder]="filter.placeholder || 'Selecionar'"
+                    [(ngModel)]="searchInputs[filter.key]"
+                    (ngModelChange)="onFilterChange()"
+                    class="filter-input">
+                    <nz-option 
+                      *ngFor="let option of filter.options" 
+                      [nzValue]="option.value" 
+                      [nzLabel]="option.label">
+                    </nz-option>
+                  </nz-select>
+
+                  <!-- Filtro para campos de Texto e Número -->
+                  <nz-input-group 
+                    *ngIf="filter.type === 'texto' || filter.type === 'numero'"
+                    [nzSuffix]="suffixTemplate"
+                    class="filter-input-group">
+                    <input
+                      [type]="filter.type === 'numero' ? 'number' : 'text'"
+                      nz-input
+                      [id]="'filter-' + filter.key"
+                      [placeholder]="filter.placeholder || 'Filtrar por ' + filter.label.toLowerCase()"
+                      [(ngModel)]="searchInputs[filter.key]"
+                      (ngModelChange)="onFilterChange()"
+                      autocomplete="off"
+                      class="filter-input"
+                    />
+                  </nz-input-group>
+
+                  <!-- Filtro para campos de Data -->
+                  <nz-date-picker 
+                    *ngIf="filter.type === 'data'"
+                    [id]="'filter-' + filter.key"
+                    [(ngModel)]="searchInputs[filter.key]"
+                    (ngModelChange)="onFilterChange()"
+                    class="filter-input">
+                  </nz-date-picker>
+
+                  <!-- Template para o botão de limpar -->
+                  <ng-template #suffixTemplate>
+                    <span
+                      nz-icon
+                      nzType="close-circle"
+                      *ngIf="searchInputs[filter.key]"
+                      (click)="clearFilter(filter.key)"
+                      class="clear-filter-icon"
+                      tabindex="0"
+                      role="button"
+                      [attr.aria-label]="'Limpar filtro ' + filter.label"
+                    ></span>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </ng-container>
+        </div>
+      </nz-collapse-panel>
+    </nz-collapse>
+  </div>
 
   <ng-template #extraTemplate>
     <span nz-icon 
@@ -100,61 +175,70 @@
   </ng-template>
 
   <!-- Tabela -->
-  <nz-table
-    #basicTable
-    [nzData]="dadosFiltradosLocalmente"
-    [nzScroll]="{ x: rolagemX, y: rolagemY }"
-    [nzTableLayout]="valorConfiguracao.layoutTabela"
-    [nzBordered]="valorConfiguracao.comBorda"
-    [nzLoading]="carregando"
-    [nzTotal]="totalRegistros"
-    [nzPageSize]="tamanhoPagina"
-    [nzPageIndex]="paginaAtual"
-    (nzPageIndexChange)="onPageIndexChange($event)"
-    (nzPageSizeChange)="onPageSizeChange($event)"
-    [nzShowSizeChanger]="valorConfiguracao.alteradorTamanho"
-    [nzShowPagination]="valorConfiguracao.paginacao"
-    [nzFrontPagination]="false"
-    [nzShowTotal]="rangeTemplate"
-  >
-    <thead *ngIf="valorConfiguracao.cabecalho">
-      <tr>
-        <ng-container *ngFor="let col of gridColumns">
-          <th 
-            *ngIf="col.visible"
-            [nzSortFn]="true"
-            [nzSortOrder]="sortField === col.key ? sortOrder : null"
-            (nzSortOrderChange)="onSort({ key: col.key, value: $event })"
-          >
-            {{ col.label }}
-          </th>
-        </ng-container>
-        <th *ngIf="acoes && acoes.length > 0">Ações</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let data of basicTable.data">
-        <ng-container *ngFor="let col of gridColumns">
-          <td *ngIf="col.visible">{{ data[col.key] }}</td>
-        </ng-container>
-        <td *ngIf="acoes && acoes.length > 0">
-          <ng-container *ngFor="let acao of acoes">
-            <button 
-              nz-button 
-              nzType="link"
-              (click)="acao.acao(data)"
-              nz-tooltip
-              [nzTooltipTitle]="acao.label"
+  <div class="table-container">
+    <nz-table
+      #basicTable
+      [nzData]="dadosFiltradosLocalmente"
+      [nzBordered]="valorConfiguracao.comBorda"
+      [nzLoading]="carregando"
+      [nzTotal]="totalRegistros"
+      [nzPageSize]="tamanhoPagina"
+      [nzPageIndex]="paginaAtual"
+      (nzPageIndexChange)="onPageIndexChange($event)"
+      (nzPageSizeChange)="onPageSizeChange($event)"
+      [nzShowSizeChanger]="valorConfiguracao.alteradorTamanho"
+      [nzShowPagination]="valorConfiguracao.paginacao"
+      [nzFrontPagination]="false"
+      [nzShowTotal]="rangeTemplate"
+      [nzSize]="'small'"
+      [nzPageSizeOptions]="[10, 20, 50, 100]"
+    >
+      <thead *ngIf="valorConfiguracao.cabecalho">
+        <tr>
+          <ng-container *ngFor="let col of gridColumns">
+            <th 
+              *ngIf="col.visible"
+              [nzSortFn]="true"
+              [nzSortOrder]="sortField === col.key ? sortOrder : null"
+              (nzSortOrderChange)="onSort({ key: col.key, value: $event })"
             >
-              {{ acao.label }}
-            </button>
+              {{ col.label }}
+            </th>
           </ng-container>
-        </td>
-      </tr>
-    </tbody>
-  </nz-table>
+          <th *ngIf="acoes && acoes.length > 0" class="actions-header">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of basicTable.data; trackBy: trackByFn">
+          <ng-container *ngFor="let col of gridColumns">
+            <td *ngIf="col.visible" class="data-cell">
+              {{ formatCellValue(data[col.key], col.key) }}
+            </td>
+          </ng-container>
+          <td *ngIf="acoes && acoes.length > 0" class="actions-cell">
+            <ng-container *ngFor="let acao of acoes; let i = index">
+              <button 
+                nz-button 
+                nzType="link"
+                nzSize="small"
+                (click)="acao.acao(data)"
+                nz-tooltip
+                [nzTooltipTitle]="acao.label"
+                class="action-button"
+              >
+                {{ acao.label }}
+              </button>
+              <nz-divider *ngIf="i < acoes.length - 1" nzType="vertical"></nz-divider>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
 
   <ng-template #rangeTemplate let-range="range" let-total>
-    {{ range[0] }}-{{ range[1] }} de {{ total }} registros
+    <span class="pagination-info">
+      {{ range[0] }}-{{ range[1] }} de {{ total }} registros
+    </span>
   </ng-template>
 </div>

@@ -1,9 +1,62 @@
-<nz-breadcrumb>
-    <ng-container *ngFor="let breadcrumb of breadcrumbs$ | async; let last = last">
-      <nz-breadcrumb-item>
-        <a *ngIf="!last; else lastBreadcrumb" [routerLink]="breadcrumb.url">{{ breadcrumb.label }}</a>
-        <ng-template #lastBreadcrumb>{{ breadcrumb.label }}</ng-template>
+<div class="breadcrumb-container">
+  <!-- Breadcrumb Principal -->
+  <nz-breadcrumb class="breadcrumb-main">
+    <ng-container *ngFor="let breadcrumb of breadcrumbs$ | async; let isLast = last; let isFirst = first; trackBy: trackByBreadcrumb">
+      <nz-breadcrumb-item [class]="obterClasseBreadcrumb(breadcrumb)">
+        
+        <!-- Item clicável (não é o último) -->
+        <ng-container *ngIf="podeNavegar(breadcrumb)">
+          <a 
+            class="breadcrumb-link"
+            (click)="navegarPara(breadcrumb)"
+            [attr.aria-label]="'Navegar para ' + breadcrumb.label"
+            [title]="obterTooltip(breadcrumb)"
+            role="button"
+            tabindex="0"
+            (keydown.enter)="navegarPara(breadcrumb)"
+            (keydown.space)="navegarPara(breadcrumb)">
+            
+            <!-- Ícone -->
+            <span 
+              *ngIf="breadcrumb.icon" 
+              nz-icon 
+              [nzType]="breadcrumb.icon" 
+              nzTheme="outline"
+              class="breadcrumb-icon">
+            </span>
+            
+            <!-- Label -->
+            <span class="breadcrumb-label">{{ breadcrumb.label }}</span>
+          </a>
+        </ng-container>
+        
+        <!-- Item atual (não clicável) -->
+        <ng-container *ngIf="!podeNavegar(breadcrumb)">
+          <span 
+            class="breadcrumb-current" 
+            [title]="obterTooltip(breadcrumb)"
+            [attr.aria-current]="isAtivo(breadcrumb) ? 'page' : null">
+            
+            <!-- Ícone -->
+            <span 
+              *ngIf="breadcrumb.icon" 
+              nz-icon 
+              [nzType]="breadcrumb.icon" 
+              nzTheme="outline"
+              class="breadcrumb-icon">
+            </span>
+            
+            <!-- Label -->
+            <span class="breadcrumb-label">{{ breadcrumb.label }}</span>
+          </span>
+        </ng-container>
       </nz-breadcrumb-item>
     </ng-container>
   </nz-breadcrumb>
+
+  <!-- Indicador de loading simples -->
+  <div *ngIf="isLoading" class="breadcrumb-loading">
+    <span class="loading-text">Carregando...</span>
+  </div>
+</div>
   

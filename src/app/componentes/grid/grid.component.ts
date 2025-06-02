@@ -1,20 +1,23 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
-import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
-import { NzTableSize, NzTablePaginationType, NzTableLayout, NzTablePaginationPosition, NzTableSortOrder } from 'ng-zorro-antd/table';
 import { Router } from '@angular/router';
+import { Subject, debounceTime, firstValueFrom } from 'rxjs';
+import { NzTableSize, NzTablePaginationType, NzTableLayout, NzTablePaginationPosition, NzTableSortOrder } from 'ng-zorro-antd/table';
+import { NzCheckBoxOptionInterface } from 'ng-zorro-antd/checkbox';
 import { ApiService } from '../../services/http/api.service';
 import { ToastService } from '../../services/utils/notificacao/toast.service';
-import { firstValueFrom } from 'rxjs';
-import { Veiculo } from '../../dominio/entidade/veiculo';
-import { FormCampoConstrutor, FormCamposMetadata } from '../../services/decorator/formulario-decorator';
+import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
 import { Action } from '../../dominio/interface/grid/action-grid';
-import { NzCheckBoxOptionInterface } from 'ng-zorro-antd/checkbox';
+import { FormCampoConstrutor, FormCamposMetadata, FiltroConstrutor, FiltroMetadata } from '../../services/decorator/formulario-decorator';
 import { FiltroGrid, ParametrosBusca } from '../../dominio/interface/grid/filtros-grid';
 import { ResponseGrid } from '../../dominio/interface/grid/response-grid';
-import { Subject, debounceTime } from 'rxjs';
 import { ApiResponse } from '../../dominio/interface/grid/api-response';
+import { Veiculo } from '../../dominio/entidade/veiculo';
 import * as XLSX from 'xlsx';
+
+interface GridData {
+  [key: string]: any;
+}
 
 @Component({
   selector: 'app-grid',
@@ -30,6 +33,7 @@ export class GridComponent implements OnInit {
   @Input() identificador: string = '';
 
   gridColumns: FormCamposMetadata[] = []; 
+  filterColumns: FiltroMetadata[] = [];
   listaDados: any[] = [];
   dadosExibidos: readonly any[] = [];
   todosMarcados = false;
@@ -66,7 +70,7 @@ export class GridComponent implements OnInit {
   searchValue = '';
   visible = false;
   filteredData: any[] = [];
-  searchInputs: { [key: string]: string } = {};
+  searchInputs: { [key: string]: string | string[] } = {};
   
   // Paginação
   paginaAtual = 1;
@@ -199,6 +203,106 @@ export class GridComponent implements OnInit {
   }
 
   private async inicializarGrid(): Promise<void> {
+    this.configurarColunas();
+    this.configurarFiltros();
+    this.initializeColumnSelections();
+    this.initializeSearchInputs();
+    this.configurarDebounce();
+    this.configurarFormulario();
+    await this.buscarDados();
+  }
+
+  // Configurar colunas baseadas na entidade
+  private configurarColunas(): void {
+    if (!this.entidade) {
+      console.warn('Nenhuma entidade fornecida para o grid');
+      this.gridColumns = [];
+      this.originalColumns = [];
+      return;
+    }
+
+    const entidadeConstructor = this.entidade.constructor as FormCampoConstrutor;
+    if (!entidadeConstructor?.formFields) {
+      console.warn('Nenhum campo definido na entidade para o grid');
+      this.gridColumns = [];
+      this.originalColumns = [];
+      return;
+    }
+
+    // Filtrar apenas colunas visíveis por padrão na entidade
+    const colunasVisiveis = entidadeConstructor.formFields.filter(field => field.visible !== false);
+    
+    // Salvar colunas originais (apenas as visíveis)
+    this.originalColumns = [...colunasVisiveis];
+    
+    // Carregar configurações salvas se houver identificador
+    if (this.identificador) {
+      const savedConfig = this.loadGridConfig();
+      if (savedConfig) {
+        // Aplicar configurações salvas apenas para colunas originalmente visíveis
+        this.gridColumns = this.originalColumns.map(col => ({
+          ...col,
+          visible: savedConfig.hasOwnProperty(col.key) ? savedConfig[col.key] : col.visible
+        }));
+      } else {
+        // Usar configurações padrão
+        this.gridColumns = [...this.originalColumns];
+      }
+    } else {
+      // Usar configurações padrão se não houver identificador
+      this.gridColumns = [...this.originalColumns];
+    }
+    
+    console.log('Colunas visíveis por padrão:', this.originalColumns.map(c => c.key));
+    console.log('Colunas do grid configuradas:', this.gridColumns.map(c => `${c.key}:${c.visible}`));
+  }
+
+  // Configurar filtros baseados na entidade
+  private configurarFiltros(): void {
+    if (!this.entidade) {
+      console.warn('Nenhuma entidade fornecida para os filtros');
+      this.filterColumns = [];
+      return;
+    }
+
+    const entidadeConstructor = this.entidade.constructor as FiltroConstrutor;
+    if (!entidadeConstructor?.filterFields) {
+      console.warn('Nenhum filtro definido na entidade');
+      this.filterColumns = [];
+      return;
+    }
+
+    this.filterColumns = [...entidadeConstructor.filterFields];
+    console.log('Filtros definidos:', this.filterColumns.map(f => f.key));
+  }
+
+  // Inicializar inputs de busca
+  private initializeSearchInputs(): void {
+    this.filterColumns.forEach(filter => {
+      switch (filter.type) {
+        case 'bool':
+        case 'enum':
+          this.searchInputs[filter.key] = [];
+          break;
+        case 'texto':
+        case 'numero':
+        case 'data':
+        default:
+          this.searchInputs[filter.key] = '';
+          break;
+      }
+    });
+  }
+
+  // Configurar debounce para filtros
+  private configurarDebounce(): void {
+    this.filtroLocal$
+      .pipe(debounceTime(300))
+      .subscribe(() => this.aplicarFiltroLocal());
+  }
+
+  // Configurar configurações do formulário
+  private configurarFormulario(): void {
     // Usa as configurações padrão se nenhuma configuração for passada
     if (!this.formularioConfiguracao) {
       this.formularioConfiguracao = this.formularioConfiguracaoPadrao;
@@ -226,55 +330,28 @@ export class GridComponent implements OnInit {
     });
 
     this.valorConfiguracao = this.formularioConfiguracao.value as ConfiguracaoGrid;
-
-    // Inicializa os inputs de busca para cada coluna
-    this.gridColumns.forEach(column => {
-      this.searchInputs[column.key] = '';
-    });
-
-    // Carrega dados da API
-    this.dadosEntrada = await this.obterTodos();
-    this.listaDados = this.dadosEntrada;
-    this.filteredData = [...this.listaDados];
-
-    // Gera colunas baseadas nos metadados da entidade
-    const objetoConstructor = this.entidade?.constructor as FormCampoConstrutor;
-    if (objetoConstructor) {
-      // Mantém apenas colunas que devem ser visíveis por padrão
-      this.originalColumns = (objetoConstructor.formFields ?? [])
-        .filter(field => field.visible)
-        .map(field => ({
-          ...field,
-          sortable: true,
-          filterable: true,
-          visible: true
-        }));
-
-      // Carrega configurações salvas
-      if (this.identificador) {
-        const savedConfig = this.loadGridConfig();
-        if (savedConfig) {
-          this.originalColumns = this.originalColumns.map(col => ({
-            ...col,
-            visible: savedConfig[col.key] ?? col.visible
-          }));
-        }
-      }
-
-      this.gridColumns = [...this.originalColumns];
-      this.initializeColumnSelections();
-    }
-
-    await this.buscarDados();
   }
 
   private initializeColumnSelections(): void {
+    console.log('=== INICIALIZANDO SELEÇÕES DE COLUNAS ===');
+    console.log('originalColumns:', this.originalColumns);
+    console.log('gridColumns:', this.gridColumns);
+    
+    if (this.originalColumns.length === 0) {
+      console.warn('originalColumns está vazio. Não é possível criar seleções de colunas.');
+      this.columnSelections = [];
+      return;
+    }
+
     this.columnSelections = this.originalColumns.map(col => ({
       label: col.label,
       value: col.key,
       checked: col.visible
     }));
+    
+    console.log('columnSelections criadas:', this.columnSelections);
     this.updateAllChecked();
+    console.log('allChecked:', this.allChecked, 'indeterminado:', this.indeterminado);
   }
 
   mudancaDadosPaginaAtual($event: readonly any[]): void {
@@ -326,7 +403,18 @@ export class GridComponent implements OnInit {
   }
   
   showColumnSelector(): void {
+    console.log('=== ABRINDO SELETOR DE COLUNAS ===');
+    console.log('columnSelections antes de abrir:', this.columnSelections);
+    console.log('originalColumns:', this.originalColumns);
+    console.log('gridColumns:', this.gridColumns);
+    
+    if (this.columnSelections.length === 0) {
+      console.warn('columnSelections está vazio. Reinicializando...');
+      this.initializeColumnSelections();
+    }
+    
     this.isColumnSelectorVisible = true;
+    console.log('Modal de seleção de colunas aberto');
   }
 
   handleColumnSelectorCancel(): void {
@@ -450,7 +538,7 @@ export class GridComponent implements OnInit {
         filtros: this.obterFiltrosAtivos(),
         paginaAtual: this.paginaAtual,
         tamanhoPagina: this.tamanhoPagina,
-        campoOrdenacao: this.sortField || this.gridColumns[0]?.key || '',
+        campoOrdenacao: this.sortField || this.gridColumns[0]?.key || 'Id',
         descendente: this.sortOrder === 'descend'
       };
 
@@ -461,20 +549,35 @@ export class GridComponent implements OnInit {
       }
 
       const response = await firstValueFrom(
-        this.apiService.post<ResponseGrid<any>>(this.buscarTodosUrl + '/filtrar', parametros)
+        this.apiService.post<ApiResponse<any>>(this.buscarTodosUrl + '/filtrar', parametros)
       );
 
       if (response.sucesso && response.dados) {
-        this.listaDados = response.dados.items ?? [];
+        // Verifica se a resposta tem a estrutura esperada do grid paginado
+        if (response.dados.hasOwnProperty('items') && response.dados.hasOwnProperty('total')) {
+          const gridData = response.dados as any;
+          this.listaDados = gridData.items ?? [];
+          this.totalRegistros = gridData.total ?? 0;
+          this.paginaAtual = gridData.pagina || this.paginaAtual;
+          this.tamanhoPagina = gridData.tamanhoPagina || this.tamanhoPagina;
+        } else {
+          // Fallback para estrutura antiga
+          this.listaDados = Array.isArray(response.dados) ? response.dados : [];
+          this.totalRegistros = this.listaDados.length;
+        }
+        
         this.dadosFiltradosLocalmente = [...this.listaDados];
-        this.totalRegistros = response.dados.total;
         this.ultimaConsulta = parametros;
       } else {
         this.toastService.exibirMensagemErro('Erro', response.mensagem || 'Erro ao buscar dados');
+        this.listaDados = [];
+        this.totalRegistros = 0;
       }
     } catch (error) {
       console.error('Erro ao buscar dados:', error);
       this.toastService.exibirMensagemErro('Erro', 'Erro ao buscar dados');
+      this.listaDados = [];
+      this.totalRegistros = 0;
     } finally {
       this.carregando = false;
     }
@@ -508,8 +611,19 @@ export class GridComponent implements OnInit {
   // Método para resetar filtros
   reset(): void {
     this.searchInputs = {};
-    this.gridColumns.forEach(column => {
-      this.searchInputs[column.key] = '';
+    this.filterColumns.forEach(filter => {
+      switch (filter.type) {
+        case 'bool':
+        case 'enum':
+          this.searchInputs[filter.key] = [];
+          break;
+        case 'texto':
+        case 'numero':
+        case 'data':
+        default:
+          this.searchInputs[filter.key] = '';
+          break;
+      }
     });
     this.paginaAtual = 1;
     this.sortField = '';
@@ -519,7 +633,23 @@ export class GridComponent implements OnInit {
 
   // Método para limpar filtro específico
   clearFilter(key: string): void {
-    this.searchInputs[key] = '';
+    const filter = this.filterColumns.find(f => f.key === key);
+    if (filter) {
+      switch (filter.type) {
+        case 'bool':
+        case 'enum':
+          this.searchInputs[key] = [];
+          break;
+        case 'texto':
+        case 'numero':
+        case 'data':
+        default:
+          this.searchInputs[key] = '';
+          break;
+      }
+    } else {
+      this.searchInputs[key] = '';
+    }
     this.onFilterChange();
   }
 
@@ -545,11 +675,28 @@ export class GridComponent implements OnInit {
   // Obtém filtros ativos
   private obterFiltrosAtivos(): FiltroGrid[] {
     return Object.entries(this.searchInputs)
-      .filter(([_, value]) => value && value.trim() !== '')
-      .map(([campo, valor]) => ({
-        campo,
-        valor: valor.trim()
-      }));
+      .filter(([_, value]) => {
+        if (Array.isArray(value)) {
+          return value.length > 0;
+        }
+        return value && value.trim() !== '';
+      })
+      .flatMap(([campo, valor]) => {
+        if (Array.isArray(valor)) {
+          // Para filtros multi-seleção, criar um filtro para cada valor selecionado
+          return valor.map(v => ({
+            campo,
+            valor: String(v).trim(),
+            operador: 'contains' // ou 'equals' dependendo do tipo
+          }));
+        } else {
+          return [{
+            campo,
+            valor: String(valor).trim(),
+            operador: 'contains'
+          }];
+        }
+      });
   }
 
   // Adicione este método para lidar com a ordenação
@@ -557,5 +704,99 @@ export class GridComponent implements OnInit {
     this.sortField = sort.key;
     this.sortOrder = sort.value;
     this.buscarDados(true);
+  }
+
+  // Método para tracking do ngFor
+  trackByFn(index: number, item: any): any {
+    return item?.id || index;
+  }
+
+  // Método para formatar valores das células
+  formatCellValue(value: any, columnKey: string): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+
+    // Formatação específica por tipo de coluna
+    switch (columnKey) {
+      case 'situacao':
+      case 'possuiBanheiro':
+      case 'possuiClimatizador':
+        return value ? 'Sim' : 'Não';
+        
+      case 'situacaoDescricao':
+      case 'possuiBanheiroDescricao':
+      case 'possuiClimatizadorDescricao':
+        return String(value);
+        
+      case 'createdAt':
+      case 'updatedAt':
+        if (value) {
+          try {
+            const date = new Date(value);
+            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+          } catch {
+            return String(value);
+          }
+        }
+        return '';
+        
+      default:
+        return String(value);
+    }
+  }
+
+  // Verifica se um campo é boolean (Sim/Não)
+  isBooleanField(columnKey: string): boolean {
+    const booleanFields = [
+      'situacao', 
+      'situacaoDescricao',
+      'possuiBanheiro', 
+      'possuiBanheiroDescricao',
+      'possuiClimatizador', 
+      'possuiClimatizadorDescricao'
+    ];
+    return booleanFields.includes(columnKey.toLowerCase());
+  }
+
+  // Verifica se um campo é enum
+  isEnumField(columnKey: string): boolean {
+    const enumFields = [
+      'tipo', 
+      'tipoDescricao',
+      'status',
+      'statusDescricao'
+    ];
+    return enumFields.includes(columnKey.toLowerCase());
+  }
+
+  // Obtém as opções de um campo enum
+  getEnumOptions(columnKey: string): { value: string; label: string }[] {
+    const key = columnKey.toLowerCase();
+    
+    switch (key) {
+      case 'tipo':
+      case 'tipodescricao':
+        return [
+          { value: '0', label: 'Ônibus Urbano' },
+          { value: '1', label: 'Microônibus' },
+          { value: '2', label: 'Van' },
+          { value: '3', label: 'Carro' },
+          { value: '4', label: 'Ônibus Rodoviário' },
+          { value: '5', label: 'Ônibus Articulado' }
+        ];
+      
+      case 'status':
+      case 'statusdescricao':
+        return [
+          { value: 'Ativo', label: 'Ativo' },
+          { value: 'Inativo', label: 'Inativo' },
+          { value: 'Manutencao', label: 'Manutenção' },
+          { value: 'Disponivel', label: 'Disponível' }
+        ];
+        
+      default:
+        return [];
+    }
   }
 }

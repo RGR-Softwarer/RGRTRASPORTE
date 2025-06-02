@@ -8,11 +8,19 @@ export class ToastService {
 
   constructor(private notificationService: NzNotificationService) {}
 
-  exibirMensagemSucesso(titulo: string, conteudo: string) {
+  exibirMensagemSucesso(titulo: string, conteudo: string): void {
     this.notificationService.success(titulo, conteudo);
   }
 
-  exibirMensagemErro(titulo: string, conteudo: string) {
+  exibirMensagemErro(titulo: string, conteudo: string): void {
     this.notificationService.error(titulo, conteudo);
+  }
+
+  exibirMensagemInfo(titulo: string, conteudo: string): void {
+    this.notificationService.info(titulo, conteudo);
+  }
+
+  exibirMensagemAviso(titulo: string, conteudo: string): void {
+    this.notificationService.warning(titulo, conteudo);
   }
 }

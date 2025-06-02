@@ -14,7 +14,6 @@ import { NZ_I18N, pt_BR } from 'ng-zorro-antd/i18n';
 import { IconDefinition } from '@ant-design/icons-angular';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { HomeModule } from './paginas/home.module';
-import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -36,7 +35,6 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(key => antDesign
     NzNotificationModule,
     NzLayoutModule,
     HomeModule,
-    NzBreadCrumbModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule

@@ -6,110 +6,133 @@
     box-shadow: 0 2px 0 rgba(0, 0, 0, .045);
 }
 
-.grid-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-    padding: 8px;
-    flex-wrap: wrap;
+.grid-container {
+    width: 100%;
+    overflow: hidden;
 
-    &-left, &-right {
+    .grid-actions {
         display: flex;
-        gap: 8px;
+        justify-content: space-between;
         align-items: center;
-    }
-
-    button {
-        margin: 0;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-
-        [nz-icon] {
-            font-size: 16px;
-        }
-
-        &:disabled {
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-    }
-}
-
-.column-selector-content {
-    padding: 0 8px;
-
-    .select-all-checkbox {
-        display: flex;
-        margin-bottom: 8px;
-        font-weight: 500;
-    }
-
-    nz-divider {
-        margin: 8px 0;
-    }
-}
-
-:host ::ng-deep {
-    .ant-checkbox-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        padding: 8px 0;
-        max-height: 300px;
-        overflow-y: auto;
-        
-        .ant-checkbox-wrapper {
-            margin-left: 0;
-            user-select: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: all 0.3s;
-
-            &:hover {
-                background-color: #f5f5f5;
-            }
-        }
-    }
-
-    // Estilos do collapse
-    .ant-collapse {
         margin-bottom: 16px;
-        background: transparent;
+        padding: 8px 0;
 
-        .ant-collapse-item {
-            border: 1px solid #f0f0f0;
-            border-radius: 4px;
-            background: #fff;
-            
-            .ant-collapse-header {
-                padding: 12px 16px;
-                align-items: center;
+        .grid-actions-left,
+        .grid-actions-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
 
-                .ant-collapse-header-text {
-                    font-weight: 500;
-                }
-
-                .collapse-icon {
-                    font-size: 12px;
-                    transition: transform 0.3s;
-                }
-            }
-
-            .ant-collapse-content {
-                border-top: 1px solid #f0f0f0;
+        button {
+            span[nz-icon] {
+                margin-right: 4px;
             }
         }
     }
-}
 
-.filter-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 16px;
+    .filters-section {
+        margin-bottom: 16px;
+
+        .clear-filter-icon {
+            cursor: pointer;
+            color: #999;
+            
+            &:hover {
+                color: #f5222d;
+            }
+        }
+
+        nz-form-item {
+            margin-bottom: 12px;
+        }
+
+        nz-form-label {
+            font-weight: 500;
+        }
+    }
+
+    .table-container {
+        nz-table {
+            ::ng-deep {
+                .ant-table-thead > tr > th {
+                    background-color: #fafafa;
+                    font-weight: 600;
+                    white-space: nowrap;
+                }
+
+                .ant-table-tbody > tr > td {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .ant-table-tbody > tr:hover > td {
+                    background-color: #fafafa;
+                }
+            }
+
+            .actions-cell {
+                white-space: nowrap;
+                text-align: center;
+                
+                .action-button {
+                    padding: 4px 8px;
+                    font-size: 12px;
+                    margin: 0 2px;
+                }
+            }
+
+            .actions-header {
+                text-align: center;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .column-selector-content {
+        max-height: 400px;
+        overflow-y: auto;
+        padding: 8px 0;
+
+        .select-all-checkbox {
+            display: block;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .column-list {
+            max-height: 300px;
+            overflow-y: auto;
+
+            .column-item {
+                margin-bottom: 12px;
+                padding: 8px 12px;
+                border-radius: 4px;
+                transition: background-color 0.3s;
+
+                &:hover {
+                    background-color: #f5f5f5;
+                }
+
+                label {
+                    width: 100%;
+                    cursor: pointer;
+                    margin-bottom: 0;
+                    
+                    ::ng-deep {
+                        .ant-checkbox {
+                            margin-right: 8px;
+                        }
+                    }
+                }
+            }
+        }
+
+        nz-divider {
+            margin: 12px 0;
+        }
+    }
 }
 
 nz-form-item {
@@ -126,28 +149,250 @@ nz-form-item {
     }
 }
 
-// Responsividade
-@media (max-width: 576px) {
-    .grid-actions {
-        flex-direction: column;
-        align-items: stretch;
+// ================================
+// RESPONSIVIDADE AVANÇADA
+// ================================
 
-        &-left, &-right {
-            flex-direction: column;
-            width: 100%;
+// Tablets e telas médias (768px - 1024px)
+@media (max-width: 1024px) {
+    .grid-container {
+        padding: 0 12px;
+        height: calc(100vh - 180px);
+
+        .grid-actions {
+            padding: 8px 0;
+            gap: 8px;
 
             button {
-                width: 100%;
-                justify-content: center;
+                font-size: 13px;
+                min-height: 30px;
+                padding: 0 12px;
+            }
+        }
+
+        .filters-section {
+            nz-form-label {
+                font-size: 13px;
+            }
+
+            nz-form-control .ant-input {
+                height: 34px;
+                font-size: 13px;
+            }
+        }
+
+        .table-container {
+            nz-table ::ng-deep {
+                .ant-table-thead > tr > th {
+                    padding: 10px 12px;
+                    font-size: 13px;
+                    min-width: 80px;
+                }
+
+                .ant-table-tbody > tr > td {
+                    padding: 10px 12px;
+                    font-size: 12px;
+                    min-width: 80px;
+                }
+            }
+
+            .actions-cell {
+                min-width: 120px;
+                width: 120px;
+
+                .action-button {
+                    font-size: 11px;
+                    padding: 3px 6px;
+                }
             }
         }
     }
+}
 
-    .filter-buttons {
-        flex-direction: column;
+// Smartphones e telas pequenas (máximo 768px)
+@media (max-width: 768px) {
+    .grid-container {
+        padding: 0 8px;
+        height: calc(100vh - 160px);
+
+        .grid-actions {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+            padding: 12px 0;
+
+            .grid-actions-left,
+            .grid-actions-right {
+                justify-content: center;
+                width: 100%;
+                
+                button {
+                    flex: 1;
+                    max-width: 150px;
+                    font-size: 12px;
+                    min-height: 36px;
+                }
+            }
+        }
+
+        .filters-section {
+            margin-bottom: 12px;
+
+            nz-row [nz-col] {
+                margin-bottom: 12px;
+            }
+
+            nz-form-label {
+                font-size: 12px;
+                margin-bottom: 4px;
+            }
+
+            nz-form-control .ant-input {
+                height: 36px;
+                font-size: 14px;
+            }
+        }
+
+        .table-container {
+            border-radius: 6px;
+
+            nz-table ::ng-deep {
+                .ant-table {
+                    font-size: 12px;
+                }
+
+                .ant-table-thead > tr > th {
+                    padding: 8px 6px;
+                    font-size: 11px;
+                    min-width: 60px;
+                }
+
+                .ant-table-tbody > tr > td {
+                    padding: 8px 6px;
+                    font-size: 11px;
+                    min-width: 60px;
+                }
+            }
+
+            .actions-cell {
+                min-width: 100px;
+                width: 100px;
+
+                .action-button {
+                    font-size: 10px;
+                    padding: 2px 4px;
+                    margin: 0 1px;
+                }
+            }
+        }
+
+        .pagination-info {
+            font-size: 12px;
+            margin-top: 8px;
+        }
+    }
+}
+
+// Smartphones muito pequenos (máximo 480px)
+@media (max-width: 480px) {
+    .grid-container {
+        padding: 0 4px;
+        height: calc(100vh - 140px);
+
+        .grid-actions {
+            .grid-actions-left,
+            .grid-actions-right {
+                flex-direction: column;
+                gap: 8px;
+
+                button {
+                    max-width: none;
+                    width: 100%;
+                }
+            }
+        }
+
+        .filters-section {
+            nz-row [nz-col] {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+
+        .table-container {
+            nz-table ::ng-deep {
+                .ant-table-thead > tr > th {
+                    padding: 6px 4px;
+                    font-size: 10px;
+                    min-width: 50px;
+                }
+
+                .ant-table-tbody > tr > td {
+                    padding: 6px 4px;
+                    font-size: 10px;
+                    min-width: 50px;
+                }
+            }
+
+            .actions-cell {
+                min-width: 80px;
+                width: 80px;
+
+                .action-button {
+                    font-size: 9px;
+                    padding: 1px 3px;
+                    display: block;
+                    margin-bottom: 2px;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
+
+// Melhorias para scroll e overflow
+.ant-table-container {
+    .ant-table-body {
+        overflow-x: auto;
+        overflow-y: auto;
         
-        button {
-            width: 100%;
+        // Scroll suave em dispositivos touch
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+// Melhorias para tooltip em células cortadas
+[nz-tooltip] {
+    cursor: help;
+}
+
+// Estilo para células com ellipsis
+.ant-table-cell {
+    &[nzEllipsis] {
+        max-width: 0;
+        
+        span {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}
+
+// Melhorias para colapso dos filtros em mobile
+@media (max-width: 768px) {
+    nz-collapse {
+        ::ng-deep {
+            .ant-collapse-header {
+                padding: 12px 16px;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .ant-collapse-content-box {
+                padding: 16px;
+            }
         }
     }
 }

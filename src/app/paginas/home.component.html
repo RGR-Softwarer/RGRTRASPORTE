@@ -4,17 +4,17 @@
     <ul nz-menu nzTheme="dark" nzMode="inline">
       <ng-container *ngFor="let menu of menus">
         <!-- Verifica se há submenus -->
-        <li *ngIf="menu.submenu.length > 0" nz-submenu [nzTitle]="menu.breadcrumb" [nzIcon]="menu.icon">
+        <li *ngIf="menu.submenu.length > 0" nz-submenu [nzTitle]="menu.breadcrumb" [nzIcon]="menu.icon || 'menu'">
           <ul>
             <li *ngFor="let sub of menu.submenu" nz-menu-item [routerLink]="sub.path">
-              <span nz-icon [nzType]="sub.icon"></span> <!-- Ícone dinâmico -->
+              <span nz-icon [nzType]="sub.icon || 'file'"></span> <!-- Ícone dinâmico -->
               <span>{{ sub.breadcrumb }}</span>
             </li>
           </ul>
         </li>
         <!-- Caso contrário, exibe o item normal -->
         <li *ngIf="menu.submenu.length === 0" nz-menu-item [routerLink]="menu.path">
-          <span nz-icon [nzType]="menu.icon"></span> <!-- Ícone dinâmico -->
+          <span nz-icon [nzType]="menu.icon || 'file'"></span> <!-- Ícone dinâmico -->
           <span>{{ menu.breadcrumb }}</span>
         </li>
       </ng-container>
