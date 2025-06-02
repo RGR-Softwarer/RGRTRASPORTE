@@ -85,7 +85,8 @@ namespace Infra.Ioc
             });
 
             // Registra UnitOfWork simples ao invés do MultiContext
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork, MultiContextUnitOfWork>();
+            //services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // === MEDIATOR E BEHAVIORS ===
             services.AddMediatR(cfg => {
