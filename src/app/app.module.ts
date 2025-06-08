@@ -8,6 +8,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { ToastService } from './services/utils/notificacao/toast.service';
+import { LoggingService } from './services/utils/log/logging.service';
 import * as AllIcons from '@ant-design/icons-angular/icons';
 import { NZ_ICONS } from 'ng-zorro-antd/icon';
 import { NZ_I18N, pt_BR } from 'ng-zorro-antd/i18n';
@@ -41,6 +42,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(key => antDesign
   ],
   providers: [
     ToastService,
+    LoggingService,
     { provide: NZ_I18N, useValue: pt_BR },
     { provide: NZ_ICONS, useValue: icons },
     provideHttpClient(withInterceptorsFromDi())

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router'; // Importação do Rou
 import { Location } from '@angular/common'; // Importação do Location
 import { FormCampoConstrutor, FormCamposMetadata } from '../../services/decorator/formulario-decorator';
 import { ToastService } from '../../services/utils/notificacao/toast.service';
+import { LoggingService } from '../../services/utils/log/logging.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -42,12 +43,13 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
   private formConfig: FormularioConfig | null = null;
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private toastService: ToastService,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef,
     private router: Router, // Injeção do Router
-    private location: Location // Injeção do Location
+    private location: Location, // Injeção do Location
+    private loggingService: LoggingService
   ) {}
 
   ngOnInit(): void {
@@ -74,7 +76,7 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.formFields = [...objetoConstructor.formFields];
-    console.log('Campos definidos no formFields:', this.formFields.map(f => f.key));
+    this.loggingService.log('Campos definidos no formFields:', this.formFields.map(f => f.key));
   }
 
   private criarFormularioReativo(): void {
@@ -90,7 +92,7 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
       // Se temos dados e estamos em modo de edição, usar os dados reais
       if (this.dados && this.dados.hasOwnProperty(field.key)) {
         valorInicial = this.processarValorPorTipo(this.dados[field.key], field);
-        console.log(`Campo ${field.key} inicializado com valor:`, valorInicial);
+        this.loggingService.log(`Campo ${field.key} inicializado com valor:`, valorInicial);
       }
       
       acc[field.key] = [valorInicial, validators];
@@ -99,7 +101,7 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.form = this.fb.group(formControls);
     
-    console.log('FormGroup criado:', {
+    this.loggingService.log('FormGroup criado:', {
       enabled: this.form.enabled,
       value: this.form.value,
       controls: Object.keys(this.form.controls)
@@ -167,8 +169,8 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dados = this.processarDadosEntrada(state.objeto);
       this.isEditMode = this.verificarModoEdicao(this.dados);
       
-      console.log('Dados extraídos da navegação:', this.dados);
-      console.log('Modo de edição:', this.isEditMode);
+      this.loggingService.log('Dados extraídos da navegação:', this.dados);
+      this.loggingService.log('Modo de edição:', this.isEditMode);
     } catch (error) {
       console.error('Erro ao processar dados da navegação:', error);
       this.toastService.exibirMensagemErro('Erro', 'Dados inválidos recebidos');
@@ -209,7 +211,7 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
     this.cd.detectChanges();
     
     // Log para depuração
-    console.log('AfterViewInit - Estado do formulário:', {
+    this.loggingService.log('AfterViewInit - Estado do formulário:', {
       enabled: this.form.enabled,
       value: this.form.value,
       isEditMode: this.isEditMode,
@@ -224,12 +226,12 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private preencherFormulario(): void {
     if (!this.dados || !this.form) {
-      console.log('Preenchimento cancelado:', { dados: !!this.dados, form: !!this.form });
+      this.loggingService.log('Preenchimento cancelado:', { dados: !!this.dados, form: !!this.form });
       return;
     }
 
-    console.log('Preenchendo o formulário com:', this.dados);
-    console.log('Estado inicial do formulário:', {
+    this.loggingService.log('Preenchendo o formulário com:', this.dados);
+    this.loggingService.log('Estado inicial do formulário:', {
       enabled: this.form.enabled,
       disabled: this.form.disabled,
       controls: Object.keys(this.form.controls)
@@ -244,7 +246,7 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
         
         mappedData[field.key] = valorProcessado;
         
-        console.log(`Campo ${field.key} (${field.type}):`, {
+        this.loggingService.log(`Campo ${field.key} (${field.type}):`, {
           original: valorOriginal,
           processado: valorProcessado
         });
@@ -255,18 +257,18 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     });
 
-    console.log('Dados mapeados para patchValue:', mappedData);
+    this.loggingService.log('Dados mapeados para patchValue:', mappedData);
 
     // Garantir que o formulário esteja habilitado antes do patchValue
     if (this.form.disabled) {
       this.form.enable();
-      console.log('Formulário foi habilitado');
+      this.loggingService.log('Formulário foi habilitado');
     }
 
     this.form.patchValue(mappedData);
 
     // Verificar estado após patchValue
-    console.log('Estado do formulário após patchValue:', {
+    this.loggingService.log('Estado do formulário após patchValue:', {
       enabled: this.form.enabled,
       disabled: this.form.disabled,
       value: this.form.value
@@ -459,7 +461,7 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
   private prepararDadosSubmissao(): FormularioData {
     const formValue = { ...this.form.value };
     
-    console.log('Valores do formulário antes do processamento:', formValue);
+    this.loggingService.log('Valores do formulário antes do processamento:', formValue);
     
     // Se está em modo de edição, preservar o ID
     if (this.isEditMode && this.dados) {
@@ -472,14 +474,14 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
     // Log específico para campos de enum
     this.formFields.forEach(field => {
       if (field.type === 'enum' && formValue[field.key]) {
-        console.log(`Campo enum ${field.key}:`, {
+        this.loggingService.log(`Campo enum ${field.key}:`, {
           valorFormulario: formValue[field.key],
           opcoes: field.options
         });
       }
     });
 
-    console.log('Valores finais para submissão:', formValue);
+    this.loggingService.log('Valores finais para submissão:', formValue);
     return formValue;
   }
 
@@ -556,7 +558,7 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
         (firstErrorElement as HTMLElement).focus();
         
         // Log para depuração
-        console.log('Rolando para o primeiro campo com erro:', firstErrorElement);
+        this.loggingService.log('Rolando para o primeiro campo com erro:', firstErrorElement);
       } else {
         console.warn('Nenhum campo com erro foi encontrado para scroll');
       }
@@ -607,7 +609,7 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
   // Métodos de depuração para campos
   onFieldFocus(fieldKey: string): void {
     const control = this.form.get(fieldKey);
-    console.log(`Campo '${fieldKey}' recebeu foco:`, {
+    this.loggingService.log(`Campo '${fieldKey}' recebeu foco:`, {
       enabled: control?.enabled,
       disabled: control?.disabled,
       value: control?.value
@@ -616,7 +618,7 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onFieldBlur(fieldKey: string): void {
     const control = this.form.get(fieldKey);
-    console.log(`Campo '${fieldKey}' perdeu foco:`, {
+    this.loggingService.log(`Campo '${fieldKey}' perdeu foco:`, {
       enabled: control?.enabled,
       disabled: control?.disabled,
       value: control?.value,
