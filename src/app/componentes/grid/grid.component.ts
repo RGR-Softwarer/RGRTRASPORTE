@@ -6,6 +6,7 @@ import { NzTableSize, NzTablePaginationType, NzTableLayout, NzTablePaginationPos
 import { NzCheckBoxOptionInterface } from 'ng-zorro-antd/checkbox';
 import { ApiService } from '../../services/http/api.service';
 import { ToastService } from '../../services/utils/notificacao/toast.service';
+import { LoggingService } from '../../services/utils/log/logging.service';
 import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
 import { Action } from '../../dominio/interface/grid/action-grid';
 import { FormCampoConstrutor, FormCamposMetadata, FiltroConstrutor, FiltroMetadata } from '../../services/decorator/formulario-decorator';
@@ -160,10 +161,11 @@ export class GridComponent implements OnInit {
   sortOrder: NzTableSortOrder = null;
 
   constructor(
-    private readonly formBuilder: NonNullableFormBuilder, 
-    private readonly router: Router, 
-    private readonly apiService: ApiService, 
-    private readonly toastService: ToastService
+    private readonly formBuilder: NonNullableFormBuilder,
+    private readonly router: Router,
+    private readonly apiService: ApiService,
+    private readonly toastService: ToastService,
+    private readonly loggingService: LoggingService
   ) {
     // Inicializa as configurações padrão da grid
     this.formularioConfiguracaoPadrao = this.formBuilder.group({
@@ -253,8 +255,8 @@ export class GridComponent implements OnInit {
       this.gridColumns = [...this.originalColumns];
     }
     
-    console.log('Colunas visíveis por padrão:', this.originalColumns.map(c => c.key));
-    console.log('Colunas do grid configuradas:', this.gridColumns.map(c => `${c.key}:${c.visible}`));
+    this.loggingService.log('Colunas visíveis por padrão:', this.originalColumns.map(c => c.key));
+    this.loggingService.log('Colunas do grid configuradas:', this.gridColumns.map(c => `${c.key}:${c.visible}`));
   }
 
   // Configurar filtros baseados na entidade
@@ -273,7 +275,7 @@ export class GridComponent implements OnInit {
     }
 
     this.filterColumns = [...entidadeConstructor.filterFields];
-    console.log('Filtros definidos:', this.filterColumns.map(f => f.key));
+    this.loggingService.log('Filtros definidos:', this.filterColumns.map(f => f.key));
   }
 
   // Inicializar inputs de busca
@@ -333,9 +335,9 @@ export class GridComponent implements OnInit {
   }
 
   private initializeColumnSelections(): void {
-    console.log('=== INICIALIZANDO SELEÇÕES DE COLUNAS ===');
-    console.log('originalColumns:', this.originalColumns);
-    console.log('gridColumns:', this.gridColumns);
+    this.loggingService.log('=== INICIALIZANDO SELEÇÕES DE COLUNAS ===');
+    this.loggingService.log('originalColumns:', this.originalColumns);
+    this.loggingService.log('gridColumns:', this.gridColumns);
     
     if (this.originalColumns.length === 0) {
       console.warn('originalColumns está vazio. Não é possível criar seleções de colunas.');
@@ -349,9 +351,9 @@ export class GridComponent implements OnInit {
       checked: col.visible
     }));
     
-    console.log('columnSelections criadas:', this.columnSelections);
+    this.loggingService.log('columnSelections criadas:', this.columnSelections);
     this.updateAllChecked();
-    console.log('allChecked:', this.allChecked, 'indeterminado:', this.indeterminado);
+    this.loggingService.log('allChecked:', this.allChecked, 'indeterminado:', this.indeterminado);
   }
 
   mudancaDadosPaginaAtual($event: readonly any[]): void {
@@ -403,10 +405,10 @@ export class GridComponent implements OnInit {
   }
   
   showColumnSelector(): void {
-    console.log('=== ABRINDO SELETOR DE COLUNAS ===');
-    console.log('columnSelections antes de abrir:', this.columnSelections);
-    console.log('originalColumns:', this.originalColumns);
-    console.log('gridColumns:', this.gridColumns);
+    this.loggingService.log('=== ABRINDO SELETOR DE COLUNAS ===');
+    this.loggingService.log('columnSelections antes de abrir:', this.columnSelections);
+    this.loggingService.log('originalColumns:', this.originalColumns);
+    this.loggingService.log('gridColumns:', this.gridColumns);
     
     if (this.columnSelections.length === 0) {
       console.warn('columnSelections está vazio. Reinicializando...');
@@ -414,7 +416,7 @@ export class GridComponent implements OnInit {
     }
     
     this.isColumnSelectorVisible = true;
-    console.log('Modal de seleção de colunas aberto');
+    this.loggingService.log('Modal de seleção de colunas aberto');
   }
 
   handleColumnSelectorCancel(): void {
