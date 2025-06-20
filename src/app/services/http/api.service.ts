@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../dominio/interface/grid/api-response';
 
@@ -12,7 +11,6 @@ export class ApiService extends HttpService {
 
   constructor(http: HttpClient) {
     super(http);
-    this.addHeader('Authorization', environment.authToken);
   }
 
   override get<T, R = ApiResponse<T>>(url: string, params?: HttpParams): Observable<R> {

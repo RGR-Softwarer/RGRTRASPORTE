@@ -1,19 +1,18 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CadastroVeiculoComponent } from './veiculo.component';
+import { VeiculoComponent } from './veiculo.component';
+import { SharedModule } from '../../../shared/shared.module';
 import { RouterModule, Routes } from '@angular/router';
-import { GridModule } from '../../../componentes/grid/grid.module';
 
 const veiculoRoutes: Routes = [
-  { path: '', component: CadastroVeiculoComponent }
+  { path: '', component: VeiculoComponent }
 ];
 
 @NgModule({
-  declarations: [CadastroVeiculoComponent],
+  declarations: [VeiculoComponent],
   imports: [
-    CommonModule,
     RouterModule.forChild(veiculoRoutes),
-    GridModule,
-  ]
+    SharedModule
+  ],
+  exports: [VeiculoComponent]
 })
-export class CadastroVeiculoModule { }
+export class VeiculoModule { }

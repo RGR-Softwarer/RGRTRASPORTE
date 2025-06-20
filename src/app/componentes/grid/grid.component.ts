@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, debounceTime, firstValueFrom } from 'rxjs';
@@ -9,7 +9,7 @@ import { ToastService } from '../../services/utils/notificacao/toast.service';
 import { LoggingService } from '../../services/utils/log/logging.service';
 import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
 import { Action } from '../../dominio/interface/grid/action-grid';
-import { FormCampoConstrutor, FormCamposMetadata, FiltroConstrutor, FiltroMetadata } from '../../services/decorator/formulario-decorator';
+import { FormCampoConstrutor, FormCamposMetadata, FiltroConstrutor, FiltroMetadata, DecoratorUtils } from '../../services/decorator/formulario-decorator';
 import { FiltroGrid, ParametrosBusca } from '../../dominio/interface/grid/filtros-grid';
 import { ResponseGrid } from '../../dominio/interface/grid/response-grid';
 import { ApiResponse } from '../../dominio/interface/grid/api-response';
@@ -20,10 +20,16 @@ interface GridData {
   [key: string]: any;
 }
 
+interface GridItem {
+  id?: number | string;
+  [key: string]: any;
+}
+
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
-  styleUrls: ['./grid.component.scss']
+  styleUrls: ['./grid.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GridComponent implements OnInit {
   @Input() formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
@@ -35,8 +41,8 @@ export class GridComponent implements OnInit {
 
   gridColumns: FormCamposMetadata[] = []; 
   filterColumns: FiltroMetadata[] = [];
-  listaDados: any[] = [];
-  dadosExibidos: readonly any[] = [];
+  listaDados: GridItem[] = [];
+  dadosExibidos: readonly GridItem[] = [];
   todosMarcados = false;
   indeterminado = false;
   colunaFixa = false;
@@ -201,17 +207,32 @@ export class GridComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.validarInputs();
     this.inicializarGrid();
   }
 
+  private validarInputs(): void {
+    if (!this.buscarTodosUrl) {
+      console.warn('GridComponent: buscarTodosUrl é obrigatório');
+    }
+    if (!this.entidade) {
+      console.warn('GridComponent: entidade é obrigatória');
+    }
+  }
+
   private async inicializarGrid(): Promise<void> {
-    this.configurarColunas();
-    this.configurarFiltros();
-    this.initializeColumnSelections();
-    this.initializeSearchInputs();
-    this.configurarDebounce();
-    this.configurarFormulario();
-    await this.buscarDados();
+    try {
+      this.configurarColunas();
+      this.configurarFiltros();
+      this.initializeColumnSelections();
+      this.initializeSearchInputs();
+      this.configurarDebounce();
+      this.configurarFormulario();
+      await this.buscarDados();
+    } catch (error) {
+      console.error('Erro ao inicializar grid:', error);
+      this.toastService.exibirMensagemErro('Erro', 'Falha ao inicializar o grid');
+    }
   }
 
   // Configurar colunas baseadas na entidade
@@ -223,8 +244,8 @@ export class GridComponent implements OnInit {
       return;
     }
 
-    const entidadeConstructor = this.entidade.constructor as FormCampoConstrutor;
-    if (!entidadeConstructor?.formFields) {
+    const allColumns = DecoratorUtils.getFormFields(this.entidade);
+    if (allColumns.length === 0) {
       console.warn('Nenhum campo definido na entidade para o grid');
       this.gridColumns = [];
       this.originalColumns = [];
@@ -232,7 +253,7 @@ export class GridComponent implements OnInit {
     }
 
     // Filtrar apenas colunas visíveis por padrão na entidade
-    const colunasVisiveis = entidadeConstructor.formFields.filter(field => field.visible !== false);
+    const colunasVisiveis = allColumns.filter(field => field.visible);
     
     // Salvar colunas originais (apenas as visíveis)
     this.originalColumns = [...colunasVisiveis];
@@ -267,14 +288,12 @@ export class GridComponent implements OnInit {
       return;
     }
 
-    const entidadeConstructor = this.entidade.constructor as FiltroConstrutor;
-    if (!entidadeConstructor?.filterFields) {
+    this.filterColumns = DecoratorUtils.getFilterFields(this.entidade);
+    
+    if (this.filterColumns.length === 0) {
       console.warn('Nenhum filtro definido na entidade');
-      this.filterColumns = [];
-      return;
     }
 
-    this.filterColumns = [...entidadeConstructor.filterFields];
     this.loggingService.log('Filtros definidos:', this.filterColumns.map(f => f.key));
   }
 
@@ -356,21 +375,24 @@ export class GridComponent implements OnInit {
     this.loggingService.log('allChecked:', this.allChecked, 'indeterminado:', this.indeterminado);
   }
 
-  mudancaDadosPaginaAtual($event: readonly any[]): void {
+  mudancaDadosPaginaAtual($event: readonly GridItem[]): void {
     this.dadosExibidos = $event;
     this.atualizarStatus();
   }
 
   atualizarStatus(): void {
-    const dadosValidos = this.dadosExibidos.filter(valor => !valor.desativado);
-    const todosMarcados = dadosValidos.length > 0 && dadosValidos.every(valor => valor.marcado === true);
-    const todosDesmarcados = dadosValidos.every(valor => !valor.marcado);
+    const dadosValidos = this.dadosExibidos.filter(valor => !valor['desativado']);
+    const todosMarcados = dadosValidos.length > 0 && dadosValidos.every(valor => valor['marcado'] === true);
+    const todosDesmarcados = dadosValidos.every(valor => !valor['marcado']);
     this.todosMarcados = todosMarcados;
     this.indeterminado = !todosMarcados && !todosDesmarcados;
   }
 
   editar(item: any): void {
-    this.router.navigate([this.adicionarUrl+ 'editar'], { 
+    // Construir a URL de edição com o ID do item
+    const editarUrl = this.adicionarUrl.replace('/adicionar', `/editar/${item.id || item.Id || item.ID}`);
+    
+    this.router.navigate([editarUrl], { 
       state: { 
         isEditMode: true, 
         objeto: JSON.stringify(item) // Converte objeto para string JSON para evitar problemas de serialização
@@ -379,7 +401,7 @@ export class GridComponent implements OnInit {
   }  
 
   adicionar(): void {
-    this.router.navigate([this.adicionarUrl+'adicionar'], { 
+    this.router.navigate([this.adicionarUrl], { 
       queryParams: { 
         isEditMode: false // Define que não está no modo de edição
       }
@@ -533,11 +555,28 @@ export class GridComponent implements OnInit {
 
   // Método para buscar dados com filtros
   async buscarDados(forcarConsulta: boolean = false): Promise<void> {
+    if (!this.buscarTodosUrl) {
+      console.warn('URL de busca não definida');
+      return;
+    }
+
     this.carregando = true;
 
     try {
+      const filtrosAtivos = this.obterFiltrosAtivos();
+      
+      // Se não há filtros ativos, usa o método obterTodos
+      if (filtrosAtivos.length === 0) {
+        const dados = await this.obterTodos();
+        this.listaDados = Array.isArray(dados) ? dados : [];
+        this.totalRegistros = this.listaDados.length;
+        this.dadosFiltradosLocalmente = [...this.listaDados];
+        return;
+      }
+
+      // Se há filtros, tenta usar o endpoint /filtrar
       const parametros: ParametrosBusca = {
-        filtros: this.obterFiltrosAtivos(),
+        filtros: filtrosAtivos,
         paginaAtual: this.paginaAtual,
         tamanhoPagina: this.tamanhoPagina,
         campoOrdenacao: this.sortField || this.gridColumns[0]?.key || 'Id',
@@ -550,30 +589,39 @@ export class GridComponent implements OnInit {
         return;
       }
 
-      const response = await firstValueFrom(
-        this.apiService.post<ApiResponse<any>>(this.buscarTodosUrl + '/filtrar', parametros)
-      );
+      try {
+        const response = await firstValueFrom(
+          this.apiService.post<ApiResponse<any>>(this.buscarTodosUrl + '/filtrar', parametros)
+        );
 
-      if (response.sucesso && response.dados) {
-        // Verifica se a resposta tem a estrutura esperada do grid paginado
-        if (response.dados.hasOwnProperty('items') && response.dados.hasOwnProperty('total')) {
-          const gridData = response.dados as any;
-          this.listaDados = gridData.items ?? [];
-          this.totalRegistros = gridData.total ?? 0;
-          this.paginaAtual = gridData.pagina || this.paginaAtual;
-          this.tamanhoPagina = gridData.tamanhoPagina || this.tamanhoPagina;
+        if (response.sucesso && response.dados) {
+          // Verifica se a resposta tem a estrutura esperada do grid paginado
+          if (response.dados.hasOwnProperty('items') && response.dados.hasOwnProperty('total')) {
+            const gridData = response.dados as any;
+            this.listaDados = gridData.items ?? [];
+            this.totalRegistros = gridData.total ?? 0;
+            this.paginaAtual = gridData.pagina || this.paginaAtual;
+            this.tamanhoPagina = gridData.tamanhoPagina || this.tamanhoPagina;
+          } else {
+            // Fallback para estrutura antiga
+            this.listaDados = Array.isArray(response.dados) ? response.dados : [];
+            this.totalRegistros = this.listaDados.length;
+          }
+          
+          this.dadosFiltradosLocalmente = [...this.listaDados];
+          this.ultimaConsulta = parametros;
         } else {
-          // Fallback para estrutura antiga
-          this.listaDados = Array.isArray(response.dados) ? response.dados : [];
-          this.totalRegistros = this.listaDados.length;
+          this.toastService.exibirMensagemErro('Erro', response.mensagem || 'Erro ao buscar dados');
+          this.listaDados = [];
+          this.totalRegistros = 0;
         }
-        
-        this.dadosFiltradosLocalmente = [...this.listaDados];
-        this.ultimaConsulta = parametros;
-      } else {
-        this.toastService.exibirMensagemErro('Erro', response.mensagem || 'Erro ao buscar dados');
-        this.listaDados = [];
-        this.totalRegistros = 0;
+      } catch (error) {
+        // Se o endpoint /filtrar não existe, aplica filtro local
+        console.warn('Endpoint /filtrar não disponível, aplicando filtro local');
+        const dados = await this.obterTodos();
+        this.listaDados = Array.isArray(dados) ? dados : [];
+        this.totalRegistros = this.listaDados.length;
+        this.aplicarFiltroLocal();
       }
     } catch (error) {
       console.error('Erro ao buscar dados:', error);

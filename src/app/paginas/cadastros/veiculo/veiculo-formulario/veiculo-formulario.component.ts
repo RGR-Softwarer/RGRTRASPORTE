@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { Veiculo } from '../../../../dominio/entidade/veiculo';
 import { ApiService } from '../../../../services/http/api.service';
 import { TrasportadorUrls } from '../../../../dominio/enum/trasportador-url-enum';
@@ -12,7 +13,12 @@ import { Location } from '@angular/common';
 })
 export class VeiculoFormularioComponent implements OnInit {
 
-  constructor(private apiService: ApiService, private toastService: ToastService, private location: Location) { }
+  constructor(
+    private route: ActivatedRoute,
+    private apiService: ApiService, 
+    private toastService: ToastService, 
+    private location: Location
+  ) { }
 
   veiculo = new Veiculo();
   isEditMode = false;
@@ -22,35 +28,68 @@ export class VeiculoFormularioComponent implements OnInit {
   }
 
   private processarDadosNavegacao(): void {
-    const state = window.history.state;
+    // Primeiro, verificar se há parâmetro id na URL
+    const id = this.route.snapshot.paramMap.get('id');
     
-    if (state?.isEditMode && state?.objeto) {
+    if (id) {
+      // Modo edição via URL
       this.isEditMode = true;
-      try {
-        // Processar o objeto recebido
-        let dadosVeiculo = state.objeto;
-        
-        // Se for string, fazer parse
-        if (typeof dadosVeiculo === 'string') {
-          dadosVeiculo = JSON.parse(dadosVeiculo);
-        }
-        
-        // Carregar dados no objeto veiculo
-        Object.assign(this.veiculo, dadosVeiculo);
-        
-        console.log('=== DADOS CARREGADOS PARA EDIÇÃO ===');
-        console.log('Dados do veículo:', this.veiculo);
-        console.log('Modo de edição:', this.isEditMode);
-        
-      } catch (error) {
-        console.error('Erro ao processar dados da navegação:', error);
-        this.toastService.exibirMensagemErro('Erro', 'Erro ao carregar dados para edição');
-        this.isEditMode = false;
-      }
+      this.carregarVeiculoPorId(Number(id));
     } else {
-      this.isEditMode = false;
-      console.log('Modo de adição - novo veículo');
+      // Verificar se há dados no state (compatibilidade)
+      const state = window.history.state;
+      
+      if (state?.isEditMode && state?.objeto) {
+        this.isEditMode = true;
+        try {
+          // Processar o objeto recebido
+          let dadosVeiculo = state.objeto;
+          
+          // Se for string, fazer parse
+          if (typeof dadosVeiculo === 'string') {
+            dadosVeiculo = JSON.parse(dadosVeiculo);
+          }
+          
+          // Carregar dados no objeto veiculo
+          Object.assign(this.veiculo, dadosVeiculo);
+          
+          console.log('=== DADOS CARREGADOS PARA EDIÇÃO (STATE) ===');
+          console.log('Dados do veículo:', this.veiculo);
+          console.log('Modo de edição:', this.isEditMode);
+          
+        } catch (error) {
+          console.error('Erro ao processar dados da navegação:', error);
+          this.toastService.exibirMensagemErro('Erro', 'Erro ao carregar dados para edição');
+          this.isEditMode = false;
+        }
+      } else {
+        this.isEditMode = false;
+        console.log('Modo de adição - novo veículo');
+      }
     }
+  }
+
+  private carregarVeiculoPorId(id: number): void {
+    const url = `${TrasportadorUrls.ObterTodos}veiculo/${id}`;
+    
+    this.apiService.get(url).subscribe({
+      next: (response: any) => {
+        if (response.sucesso && response.dados) {
+          Object.assign(this.veiculo, response.dados);
+          console.log('=== DADOS CARREGADOS PARA EDIÇÃO (API) ===');
+          console.log('Dados do veículo:', this.veiculo);
+          console.log('Modo de edição:', this.isEditMode);
+        } else {
+          this.toastService.exibirMensagemErro('Erro', 'Veículo não encontrado');
+          this.location.back();
+        }
+      },
+      error: (error) => {
+        console.error('Erro ao carregar veículo:', error);
+        this.toastService.exibirMensagemErro('Erro', 'Erro ao carregar dados do veículo');
+        this.location.back();
+      }
+    });
   }
 
   salvar = (data: any) => {

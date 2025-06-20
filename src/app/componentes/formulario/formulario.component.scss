@@ -73,6 +73,7 @@
   .ant-input,
   .ant-select-selector,
   .ant-picker,
+  .ant-picker-input > input,
   textarea {
     border-color: #ff4d4f !important;
     box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2) !important;
@@ -89,7 +90,8 @@
 // Animação suave para campos com erro
 .ant-input,
 .ant-select-selector,
-.ant-picker {
+.ant-picker,
+.ant-picker-input > input {
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -225,4 +227,25 @@ textarea[readonly] {
 nz-switch[disabled] {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+// DatePicker readonly
+nz-date-picker[disabled] {
+  .ant-picker {
+    background-color: #f5f5f5 !important;
+    cursor: not-allowed;
+    
+    input {
+      color: #999;
+    }
+  }
+}
+
+// Estilos para DatePicker
+nz-date-picker {
+  width: 100%;
+  
+  .ant-picker {
+    width: 100%;
+  }
 }  

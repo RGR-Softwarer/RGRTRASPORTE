@@ -93,6 +93,8 @@
                   [placeholder]="field.placeholder || 'Selecione a data'"
                   [readonly]="field.readonly"
                   type="date"
+                  (focus)="onFieldFocus(field.key)"
+                  (blur)="onFieldBlur(field.key)"
                 />
               </ng-container>
 
@@ -117,12 +119,12 @@
                     type="text" 
                     nz-input 
                     [placeholder]="field.placeholder || 'Buscar ' + field.label.toLowerCase()"
-                    [formControlName]="field.key"
+                    [formControlName]="field.key.endsWith('Id') ? field.key.slice(0, -2) + 'Nome' : field.key + 'Nome'"
                     readonly
                   />
                 </nz-input-group>
                 <ng-template #suffixIconButton>
-                  <button nz-button nzType="primary" nzSearch type="button">
+                  <button nz-button nzType="primary" nzSearch type="button" (click)="abrirSelecaoEntidade(field)">
                     <span nz-icon nzType="search"></span>
                   </button>
                 </ng-template>
@@ -190,11 +192,11 @@
       nz-button 
       nzType="primary" 
       type="submit"
-      [nzLoading]="form.pending"
-      [disabled]="form.pending"
+      [nzLoading]="(estado$ | async)?.isLoading || form.pending"
+      [disabled]="(estado$ | async)?.isLoading || form.pending"
     >
-      <span nz-icon [nzType]="isEditMode ? 'save' : 'plus'"></span>
-      {{ isEditMode ? 'Salvar' : 'Adicionar' }}
+      <span nz-icon [nzType]="(estado$ | async)?.isEditMode ? 'save' : 'plus'"></span>
+      {{ (estado$ | async)?.isEditMode ? 'Salvar' : 'Adicionar' }}
     </button>
   </div>
 </form>

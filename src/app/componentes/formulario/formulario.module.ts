@@ -8,6 +8,9 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { RouterModule } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { EntidadeSelecaoModalModule } from './entidade-selecao-modal.module';
 
 @NgModule({
   declarations: [FormularioComponent],
@@ -20,7 +23,10 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
     ReactiveFormsModule,
     FormsModule,
     NzSelectModule,
-    NzIconModule
+    NzIconModule,
+    NzSwitchModule,
+    NzModalModule,
+    EntidadeSelecaoModalModule
   ],
   exports: [
     FormularioComponent

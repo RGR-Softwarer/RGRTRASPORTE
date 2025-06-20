@@ -17,6 +17,7 @@ import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { HomeModule } from './paginas/home.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { CoreModule } from './core/core.module';
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -38,7 +39,8 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(key => antDesign
     HomeModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    CoreModule
   ],
   providers: [
     ToastService,
