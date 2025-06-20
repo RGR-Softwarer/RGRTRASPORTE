@@ -7,6 +7,7 @@ import { VeiculoFacade } from './services/veiculo.facade';
 import { Observable } from 'rxjs';
 import { DecoratorUtils } from '../../../services/decorator/formulario-decorator';
 import { ToastService } from '../../../services/utils/notificacao/toast.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-veiculo',
@@ -16,7 +17,7 @@ import { ToastService } from '../../../services/utils/notificacao/toast.service'
 export class VeiculoComponent implements OnInit {
 
   // Propriedades para o GridComponent
-  buscarTodosUrl: string = '/api/Veiculo';
+  buscarTodosUrl: string = `${environment.apiBaseUrl}/Veiculo`;
   adicionarUrl: string = '/frota/veiculo/adicionar';
   entidade: any = new Veiculo();
   identificador: string = 'veiculo-grid';
