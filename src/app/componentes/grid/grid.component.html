@@ -84,82 +84,86 @@
                  [nzXl]="6" 
                  [nzXXl]="4"
                  class="filter-column">
-              <nz-form-item>
-                <nz-form-label [nzFor]="'filter-' + filter.key">{{ filter.label }}</nz-form-label>
-                <nz-form-control>
-                  
-                  <!-- Filtro para campos Boolean -->
-                  <nz-select 
-                    *ngIf="filter.type === 'bool'"
-                    [id]="'filter-' + filter.key"
-                    nzMode="multiple"
-                    nzAllowClear
-                    [nzPlaceHolder]="filter.placeholder || 'Selecionar'"
-                    [(ngModel)]="searchInputs[filter.key]"
-                    (ngModelChange)="onFilterChange()"
-                    class="filter-input">
-                    <nz-option nzValue="true" nzLabel="Sim"></nz-option>
-                    <nz-option nzValue="false" nzLabel="Não"></nz-option>
-                  </nz-select>
+              
+              <label class="filter-label" [for]="'filter-' + filter.key">{{ filter.label }}</label>
+              
+              <!-- Filtro para campos Boolean -->
+              <nz-select 
+                *ngIf="filter.type === 'bool'"
+                [id]="'filter-' + filter.key"
+                nzMode="multiple"
+                nzAllowClear
+                [nzPlaceHolder]="filter.placeholder || 'Selecionar'"
+                [(ngModel)]="searchInputs[filter.key]"
+                (ngModelChange)="onFilterChange()"
+                class="filter-input">
+                <nz-option nzValue="true" nzLabel="Sim"></nz-option>
+                <nz-option nzValue="false" nzLabel="Não"></nz-option>
+              </nz-select>
 
-                  <!-- Filtro para campos Enum -->
-                  <nz-select 
-                    *ngIf="filter.type === 'enum'"
-                    [id]="'filter-' + filter.key"
-                    nzMode="multiple"
-                    nzAllowClear
-                    [nzPlaceHolder]="filter.placeholder || 'Selecionar'"
-                    [(ngModel)]="searchInputs[filter.key]"
-                    (ngModelChange)="onFilterChange()"
-                    class="filter-input">
-                    <nz-option 
-                      *ngFor="let option of filter.options" 
-                      [nzValue]="option.value" 
-                      [nzLabel]="option.label">
-                    </nz-option>
-                  </nz-select>
+              <!-- Filtro para campos Enum -->
+              <nz-select 
+                *ngIf="filter.type === 'enum'"
+                [id]="'filter-' + filter.key"
+                nzMode="multiple"
+                nzAllowClear
+                [nzPlaceHolder]="filter.placeholder || 'Selecionar'"
+                [(ngModel)]="searchInputs[filter.key]"
+                (ngModelChange)="onFilterChange()"
+                class="filter-input">
+                <nz-option 
+                  *ngFor="let option of filter.options" 
+                  [nzValue]="option.value" 
+                  [nzLabel]="option.label">
+                </nz-option>
+              </nz-select>
 
-                  <!-- Filtro para campos de Texto e Número -->
-                  <nz-input-group 
-                    *ngIf="filter.type === 'texto' || filter.type === 'numero'"
-                    [nzSuffix]="suffixTemplate"
-                    class="filter-input-group">
-                    <input
-                      [type]="filter.type === 'numero' ? 'number' : 'text'"
-                      nz-input
-                      [id]="'filter-' + filter.key"
-                      [placeholder]="filter.placeholder || 'Filtrar por ' + filter.label.toLowerCase()"
-                      [(ngModel)]="searchInputs[filter.key]"
-                      (ngModelChange)="onFilterChange()"
-                      autocomplete="off"
-                      class="filter-input"
-                    />
-                  </nz-input-group>
+              <!-- Filtro para campos de Texto e Número -->
+              <nz-input-group 
+                *ngIf="filter.type === 'texto' || filter.type === 'numero'"
+                [nzSuffix]="suffixTemplate"
+                class="filter-input-group">
+                <input
+                  [type]="filter.type === 'numero' ? 'number' : 'text'"
+                  nz-input
+                  [id]="'filter-' + filter.key"
+                  [placeholder]="filter.placeholder || 'Filtrar por ' + filter.label.toLowerCase()"
+                  [(ngModel)]="searchInputs[filter.key]"
+                  (ngModelChange)="onFilterChange()"
+                  autocomplete="off"
+                  class="filter-input"
+                />
+              </nz-input-group>
 
-                  <!-- Filtro para campos de Data -->
-                  <nz-date-picker 
-                    *ngIf="filter.type === 'data'"
-                    [id]="'filter-' + filter.key"
-                    [(ngModel)]="searchInputs[filter.key]"
-                    (ngModelChange)="onFilterChange()"
-                    class="filter-input">
-                  </nz-date-picker>
+              <!-- Filtro para campos de Data -->
+              <nz-date-picker 
+                *ngIf="filter.type === 'data'"
+                [id]="'filter-' + filter.key"
+                [(ngModel)]="searchInputs[filter.key]"
+                (ngModelChange)="onFilterChange()"
+                nzFormat="dd/MM/yyyy"
+                [nzPlaceHolder]="filter.placeholder || 'Selecione a data'"
+                class="filter-input"
+                nzShowToday
+                nzAllowClear
+                [nzPopupStyle]="{ position: 'fixed' }"
+                nzPlacement="bottomLeft"
+              >
+              </nz-date-picker>
 
-                  <!-- Template para o botão de limpar -->
-                  <ng-template #suffixTemplate>
-                    <span
-                      nz-icon
-                      nzType="close-circle"
-                      *ngIf="searchInputs[filter.key]"
-                      (click)="clearFilter(filter.key)"
-                      class="clear-filter-icon"
-                      tabindex="0"
-                      role="button"
-                      [attr.aria-label]="'Limpar filtro ' + filter.label"
-                    ></span>
-                  </ng-template>
-                </nz-form-control>
-              </nz-form-item>
+              <!-- Template para o botão de limpar -->
+              <ng-template #suffixTemplate>
+                <span
+                  nz-icon
+                  nzType="close-circle"
+                  *ngIf="searchInputs[filter.key]"
+                  (click)="clearFilter(filter.key)"
+                  class="clear-filter-icon"
+                  tabindex="0"
+                  role="button"
+                  [attr.aria-label]="'Limpar filtro ' + filter.label"
+                ></span>
+              </ng-template>
             </div>
           </ng-container>
         </div>
@@ -190,8 +194,9 @@
       [nzShowPagination]="valorConfiguracao.paginacao"
       [nzFrontPagination]="false"
       [nzShowTotal]="rangeTemplate"
-      [nzSize]="'small'"
+      [nzSize]="valorConfiguracao.tamanho"
       [nzPageSizeOptions]="[10, 20, 50, 100]"
+      [nzScroll]="getScrollConfig()"
     >
       <thead *ngIf="valorConfiguracao.cabecalho">
         <tr>
@@ -212,7 +217,9 @@
         <tr *ngFor="let data of basicTable.data; trackBy: trackByFn">
           <ng-container *ngFor="let col of gridColumns">
             <td *ngIf="col.visible" class="data-cell">
-              {{ formatCellValue(data[col.key], col.key) }}
+              <span nz-tooltip [nzTooltipTitle]="formatCellValue(data[col.key], col.key)">
+                {{ formatCellValue(data[col.key], col.key) }}
+              </span>
             </td>
           </ng-container>
           <td *ngIf="acoes && acoes.length > 0" class="actions-cell">

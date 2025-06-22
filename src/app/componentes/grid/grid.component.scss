@@ -33,32 +33,81 @@
 
     .filters-section {
         margin-bottom: 16px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        .filter-column {
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            
+            &:hover {
+                .filter-label {
+                    color: var(--primary-color);
+                }
+            }
+            
+            .filter-label {
+                display: block;
+                font-weight: 500;
+                color: var(--text-primary);
+                margin-bottom: 8px;
+                font-size: 14px;
+                padding-bottom: 4px;
+                transition: color 0.3s ease;
+            }
+            
+            .filter-input {
+                width: 100%;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                
+                &:focus,
+                &:hover {
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+                }
+            }
+            
+            .filter-input-group {
+                width: 100%;
+                
+                .ant-input {
+                    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                    
+                    &:focus,
+                    &:hover {
+                        border-color: var(--primary-color);
+                        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+                    }
+                }
+            }
+        }
 
         .clear-filter-icon {
             cursor: pointer;
             color: #999;
+            transition: color 0.3s ease;
             
             &:hover {
                 color: #f5222d;
             }
         }
-
-        nz-form-item {
-            margin-bottom: 12px;
-        }
-
-        nz-form-label {
-            font-weight: 500;
-        }
     }
 
     .table-container {
+        overflow-x: auto;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
         nz-table {
             ::ng-deep {
                 .ant-table-thead > tr > th {
                     background-color: #fafafa;
                     font-weight: 600;
                     white-space: nowrap;
+                    position: sticky;
+                    top: 0;
+                    z-index: 1;
                 }
 
                 .ant-table-tbody > tr > td {
@@ -70,11 +119,52 @@
                 .ant-table-tbody > tr:hover > td {
                     background-color: #fafafa;
                 }
+
+                .ant-table-body {
+                    overflow-x: auto;
+                    overflow-y: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+
+                .ant-table-thead > tr > th,
+                .ant-table-tbody > tr > td {
+                    min-width: 120px;
+                    max-width: 300px;
+                }
+
+                .ant-table-pagination {
+                    position: sticky;
+                    bottom: 0;
+                    background: white;
+                    z-index: 10;
+                    border-top: 1px solid #f0f0f0;
+                    margin: 0;
+                    padding: 16px;
+                    
+                    .ant-pagination {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        flex-wrap: wrap;
+                        gap: 8px;
+                        
+                        .ant-pagination-item,
+                        .ant-pagination-prev,
+                        .ant-pagination-next,
+                        .ant-pagination-jump-prev,
+                        .ant-pagination-jump-next {
+                            position: relative;
+                            z-index: 1;
+                        }
+                    }
+                }
             }
 
             .actions-cell {
                 white-space: nowrap;
                 text-align: center;
+                min-width: 120px;
+                width: 120px;
                 
                 .action-button {
                     padding: 4px 8px;
@@ -86,6 +176,8 @@
             .actions-header {
                 text-align: center;
                 font-weight: 600;
+                min-width: 120px;
+                width: 120px;
             }
         }
     }
@@ -380,6 +472,31 @@ nz-form-item {
     }
 }
 
+// Melhorias para scroll horizontal responsivo
+@media (max-width: 1200px) {
+    .table-container {
+        nz-table {
+            // Usar configuração dinâmica em vez de largura fixa
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .table-container {
+        nz-table {
+            // Usar configuração dinâmica em vez de largura fixa
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .table-container {
+        nz-table {
+            // Usar configuração dinâmica em vez de largura fixa
+        }
+    }
+}
+
 // Melhorias para colapso dos filtros em mobile
 @media (max-width: 768px) {
     nz-collapse {
@@ -394,5 +511,53 @@ nz-form-item {
                 padding: 16px;
             }
         }
+    }
+}
+
+// Estilos para deixar os filtros iguais ao formulário
+.filters-section {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    .filter-column {
+        .filter-label {
+            padding-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+        
+        .filter-input {
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            
+            &:focus,
+            &:hover {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+            }
+        }
+        
+        .filter-input-group {
+            .ant-input {
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                
+                &:focus,
+                &:hover {
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+                }
+            }
+        }
+        
+        transition: all 0.3s ease;
+        
+        &:hover {
+            .filter-label {
+                color: var(--primary-color);
+            }
+        }
+    }
+    
+    .clear-filter-icon {
+        transition: color 0.3s ease;
     }
 }

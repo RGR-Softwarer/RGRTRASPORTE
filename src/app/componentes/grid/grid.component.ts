@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, debounceTime, firstValueFrom } from 'rxjs';
@@ -28,8 +28,7 @@ interface GridItem {
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
-  styleUrls: ['./grid.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./grid.component.scss']
 })
 export class GridComponent implements OnInit {
   @Input() formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
@@ -86,7 +85,7 @@ export class GridComponent implements OnInit {
   carregando = false;
 
   // Controle de expansão dos filtros
-  painelFiltrosExpandido = true;
+  painelFiltrosExpandido = false;
 
   // Controle de filtragem local
   private filtroLocal$ = new Subject<void>();
@@ -275,9 +274,6 @@ export class GridComponent implements OnInit {
       // Usar configurações padrão se não houver identificador
       this.gridColumns = [...this.originalColumns];
     }
-    
-    this.loggingService.log('Colunas visíveis por padrão:', this.originalColumns.map(c => c.key));
-    this.loggingService.log('Colunas do grid configuradas:', this.gridColumns.map(c => `${c.key}:${c.visible}`));
   }
 
   // Configurar filtros baseados na entidade
@@ -293,8 +289,6 @@ export class GridComponent implements OnInit {
     if (this.filterColumns.length === 0) {
       console.warn('Nenhum filtro definido na entidade');
     }
-
-    this.loggingService.log('Filtros definidos:', this.filterColumns.map(f => f.key));
   }
 
   // Inicializar inputs de busca
@@ -354,25 +348,32 @@ export class GridComponent implements OnInit {
   }
 
   private initializeColumnSelections(): void {
-    this.loggingService.log('=== INICIALIZANDO SELEÇÕES DE COLUNAS ===');
-    this.loggingService.log('originalColumns:', this.originalColumns);
-    this.loggingService.log('gridColumns:', this.gridColumns);
-    
     if (this.originalColumns.length === 0) {
       console.warn('originalColumns está vazio. Não é possível criar seleções de colunas.');
       this.columnSelections = [];
       return;
     }
 
-    this.columnSelections = this.originalColumns.map(col => ({
-      label: col.label,
-      value: col.key,
-      checked: col.visible
-    }));
+    // Carregar configurações salvas se houver identificador
+    let savedConfig: Record<string, boolean> | null = null;
+    if (this.identificador) {
+      savedConfig = this.loadGridConfig();
+    }
+
+    this.columnSelections = this.originalColumns.map(col => {
+      // Se há configuração salva, usar ela; senão usar o estado atual da coluna
+      const isVisible = savedConfig 
+        ? (savedConfig.hasOwnProperty(col.key) ? savedConfig[col.key] : col.visible)
+        : col.visible;
+      
+      return {
+        label: col.label,
+        value: col.key,
+        checked: isVisible
+      };
+    });
     
-    this.loggingService.log('columnSelections criadas:', this.columnSelections);
     this.updateAllChecked();
-    this.loggingService.log('allChecked:', this.allChecked, 'indeterminado:', this.indeterminado);
   }
 
   mudancaDadosPaginaAtual($event: readonly GridItem[]): void {
@@ -409,14 +410,24 @@ export class GridComponent implements OnInit {
   }
 
   async obterTodos(): Promise<any[]> {
+    const startTime = performance.now();
+    console.log('🚀 [PERFORMANCE] Iniciando obterTodos()...');
+    
     try {
       const response = await firstValueFrom(
         this.apiService.get<any[]>(this.buscarTodosUrl)
       );
-      if (response.sucesso) {
-        return response.dados;
+      
+      const apiTime = performance.now() - startTime;
+      console.log(`⚡ [PERFORMANCE] API respondeu em ${apiTime.toFixed(2)}ms`);
+      
+      if (response && response.sucesso && response.dados) {
+        const dados = Array.isArray(response.dados) ? response.dados : [];
+        const totalTime = performance.now() - startTime;
+        console.log(`✅ [PERFORMANCE] obterTodos() finalizado em ${totalTime.toFixed(2)}ms - ${dados.length} registros`);
+        return dados;
       } else {
-        this.toastService.exibirMensagemErro('Erro', 'Erro ao obter dados');
+        console.warn('Resposta da API não contém dados válidos:', response);
         return [];
       }
     } catch (error: unknown) {
@@ -431,6 +442,9 @@ export class GridComponent implements OnInit {
     this.loggingService.log('columnSelections antes de abrir:', this.columnSelections);
     this.loggingService.log('originalColumns:', this.originalColumns);
     this.loggingService.log('gridColumns:', this.gridColumns);
+    
+    // Debug do cache
+    this.debugGridConfig();
     
     if (this.columnSelections.length === 0) {
       console.warn('columnSelections está vazio. Reinicializando...');
@@ -468,6 +482,8 @@ export class GridComponent implements OnInit {
         ...acc,
         [col.key]: col.visible
       }), {});
+      
+      console.log('💾 Salvando configuração do grid:', config);
       this.saveGridConfig(config);
     }
   }
@@ -476,8 +492,16 @@ export class GridComponent implements OnInit {
     try {
       const key = `grid-config-${this.identificador}`;
       const saved = localStorage.getItem(key);
-      return saved ? JSON.parse(saved) : null;
-    } catch {
+      if (saved) {
+        const config = JSON.parse(saved);
+        console.log('📂 Configuração carregada do cache:', { key, config });
+        return config;
+      } else {
+        console.log('📂 Nenhuma configuração encontrada no cache para:', key);
+        return null;
+      }
+    } catch (error) {
+      console.warn('❌ Erro ao carregar configuração do cache:', error);
       return null;
     }
   }
@@ -486,8 +510,9 @@ export class GridComponent implements OnInit {
     try {
       const key = `grid-config-${this.identificador}`;
       localStorage.setItem(key, JSON.stringify(config));
-    } catch {
-      console.warn('Não foi possível salvar a configuração do grid');
+      console.log('💾 Configuração salva com sucesso:', { key, config });
+    } catch (error) {
+      console.warn('❌ Não foi possível salvar a configuração do grid:', error);
     }
   }
 
@@ -555,6 +580,9 @@ export class GridComponent implements OnInit {
 
   // Método para buscar dados com filtros
   async buscarDados(forcarConsulta: boolean = false): Promise<void> {
+    const startTime = performance.now();
+    console.log('🚀 [PERFORMANCE] Iniciando buscarDados()...');
+    
     if (!this.buscarTodosUrl) {
       console.warn('URL de busca não definida');
       return;
@@ -567,10 +595,18 @@ export class GridComponent implements OnInit {
       
       // Se não há filtros ativos, usa o método obterTodos
       if (filtrosAtivos.length === 0) {
+        console.log('📡 [PERFORMANCE] Sem filtros - chamando obterTodos()...');
         const dados = await this.obterTodos();
+        
+        const processStartTime = performance.now();
         this.listaDados = Array.isArray(dados) ? dados : [];
         this.totalRegistros = this.listaDados.length;
         this.dadosFiltradosLocalmente = [...this.listaDados];
+        const processTime = performance.now() - processStartTime;
+        console.log(`⚡ [PERFORMANCE] Processamento em ${processTime.toFixed(2)}ms`);
+        
+        const totalTime = performance.now() - startTime;
+        console.log(`✅ [PERFORMANCE] buscarDados() finalizado em ${totalTime.toFixed(2)}ms`);
         return;
       }
 
@@ -585,16 +621,19 @@ export class GridComponent implements OnInit {
 
       // Se não forçar consulta e os parâmetros são iguais aos últimos, aplica filtro local
       if (!forcarConsulta && this.ultimaConsulta && this.parametrosIguais(parametros, this.ultimaConsulta)) {
+        console.log('🔄 [PERFORMANCE] Aplicando filtro local...');
         this.aplicarFiltroLocal();
         return;
       }
 
       try {
+        console.log('📡 [PERFORMANCE] Chamando endpoint /filtrar...');
         const response = await firstValueFrom(
           this.apiService.post<ApiResponse<any>>(this.buscarTodosUrl + '/filtrar', parametros)
         );
 
         if (response.sucesso && response.dados) {
+          const processStartTime = performance.now();
           // Verifica se a resposta tem a estrutura esperada do grid paginado
           if (response.dados.hasOwnProperty('items') && response.dados.hasOwnProperty('total')) {
             const gridData = response.dados as any;
@@ -610,6 +649,8 @@ export class GridComponent implements OnInit {
           
           this.dadosFiltradosLocalmente = [...this.listaDados];
           this.ultimaConsulta = parametros;
+          const processTime = performance.now() - processStartTime;
+          console.log(`⚡ [PERFORMANCE] Processamento em ${processTime.toFixed(2)}ms`);
         } else {
           this.toastService.exibirMensagemErro('Erro', response.mensagem || 'Erro ao buscar dados');
           this.listaDados = [];
@@ -630,6 +671,8 @@ export class GridComponent implements OnInit {
       this.totalRegistros = 0;
     } finally {
       this.carregando = false;
+      const totalTime = performance.now() - startTime;
+      console.log(`✅ [PERFORMANCE] buscarDados() finalizado em ${totalTime.toFixed(2)}ms`);
     }
   }
 
@@ -848,5 +891,70 @@ export class GridComponent implements OnInit {
       default:
         return [];
     }
+  }
+
+  // Método para limpar o cache de configurações (útil para testes)
+  clearGridConfig(): void {
+    if (this.identificador) {
+      try {
+        const key = `grid-config-${this.identificador}`;
+        localStorage.removeItem(key);
+        console.log('🗑️ Cache de configuração limpo para:', key);
+        
+        // Reinicializar com configurações padrão
+        this.initializeColumnSelections();
+        this.updateColumnsVisibility();
+      } catch (error) {
+        console.warn('❌ Erro ao limpar cache:', error);
+      }
+    }
+  }
+
+  // Método para debug do cache
+  debugGridConfig(): void {
+    if (this.identificador) {
+      const key = `grid-config-${this.identificador}`;
+      const saved = localStorage.getItem(key);
+      console.log('🔍 [DEBUG] Configuração atual no localStorage:', {
+        key,
+        saved,
+        parsed: saved ? JSON.parse(saved) : null
+      });
+      console.log('🔍 [DEBUG] Estado atual do grid:', {
+        columnSelections: this.columnSelections,
+        gridColumns: this.gridColumns,
+        originalColumns: this.originalColumns
+      });
+    }
+  }
+
+  // Método para obter configuração de scroll baseada nas configurações
+  getScrollConfig(): { x?: string; y?: string } {
+    const config: { x?: string; y?: string } = {};
+    
+    // Configurar scroll horizontal baseado na configuração de rolagem
+    switch (this.valorConfiguracao.rolagemTabela) {
+      case 'scroll':
+        // Usar largura mínima para garantir scroll quando necessário
+        config.x = '1200px'; // Largura mínima que força scroll
+        break;
+      case 'fixed':
+        config.x = '100vw';
+        break;
+      case 'unset':
+      default:
+        // Calcular largura baseada no número de colunas visíveis
+        const colunasVisiveis = this.gridColumns.filter(col => col.visible).length;
+        const larguraMinima = Math.max(colunasVisiveis * 150, 800); // 150px por coluna, mínimo 800px
+        config.x = `${larguraMinima}px`;
+        break;
+    }
+    
+    // Configurar scroll vertical se cabeçalho fixo estiver ativado
+    if (this.valorConfiguracao.cabecalhoFixo) {
+      config.y = '400px'; // Altura fixa para scroll vertical
+    }
+    
+    return config;
   }
 }

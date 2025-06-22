@@ -1,6 +1,7 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
+import localePt from '@angular/common/locales/pt';
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
 import { routes } from './app.routes';
@@ -18,6 +19,9 @@ import { HomeModule } from './paginas/home.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { CoreModule } from './core/core.module';
+
+// Registrar dados de localização para português brasileiro
+registerLocaleData(localePt);
 
 const antDesignIcons = AllIcons as {
   [key: string]: IconDefinition;
@@ -47,6 +51,7 @@ const icons: IconDefinition[] = Object.keys(antDesignIcons).map(key => antDesign
     LoggingService,
     { provide: NZ_I18N, useValue: pt_BR },
     { provide: NZ_ICONS, useValue: icons },
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
     provideHttpClient(withInterceptorsFromDi())
   ],
   bootstrap: [AppComponent]

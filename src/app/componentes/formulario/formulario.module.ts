@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { EntidadeSelecaoModalModule } from './entidade-selecao-modal.module';
 
 @NgModule({
@@ -26,6 +27,7 @@ import { EntidadeSelecaoModalModule } from './entidade-selecao-modal.module';
     NzIconModule,
     NzSwitchModule,
     NzModalModule,
+    NzDatePickerModule,
     EntidadeSelecaoModalModule
   ],
   exports: [

@@ -1,4 +1,4 @@
-<nz-layout>
+<nz-layout class="main-layout">
   <nz-sider nzCollapsible [(nzCollapsed)]="menuAberto" [nzTrigger]="null">
     <div class="logo"></div>
     <ul nz-menu nzTheme="dark" nzMode="inline">
@@ -21,7 +21,7 @@
     </ul>
   </nz-sider>
 
-  <nz-layout>
+  <nz-layout class="content-layout">
     <nz-header>
       <span
         class="trigger"
@@ -31,8 +31,10 @@
       ></span>
     </nz-header>
     <nz-content>
-      <app-breadcrumb></app-breadcrumb>
-      <router-outlet></router-outlet>
+      <div class="content-scroll-area">
+        <app-breadcrumb></app-breadcrumb>
+        <router-outlet></router-outlet>
+      </div>
     </nz-content>
     <nz-footer>Copyright ©{{ anoAtual }} Todos os direitos reservados para RGR SISTEMAS</nz-footer>
   </nz-layout>

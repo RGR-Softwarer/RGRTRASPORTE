@@ -1,52 +1,92 @@
-.trigger {
-    font-size: 18px;
-    line-height: 64px;
-    padding: 0 24px;
-    cursor: pointer;
-    transition: color 0.3s;
-  }
+// Layout principal para altura máxima
+nz-layout {
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-  .trigger:hover {
-    color: #1890ff;
-  }
-
+// Sider (menu lateral) para altura máxima
+nz-sider {
+  height: 100vh;
+  
   .logo {
     height: 32px;
     background: rgba(255, 255, 255, 0.2);
     margin: 16px;
   }
+  
+  // Menu para ocupar toda a altura disponível
+  ul[nz-menu] {
+    height: calc(100vh - 64px); // 100vh - altura do logo
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+}
 
-  nz-header {
-    background: #fff;
-    padding: 0;
+// Header
+nz-header {
+  background: #fff;
+  padding: 0;
+  flex-shrink: 0;
+  
+  .trigger {
+    font-size: 18px;
+    line-height: 64px;
+    padding: 0 24px;
+    cursor: pointer;
+    transition: color 0.3s;
+    
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+}
+
+// Content para ocupar espaço restante
+nz-content {
+  flex: 1;
+  margin: 0 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  // Área de conteúdo com scroll
+  .content-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px 0;
+  }
+}
+
+// Footer
+nz-footer {
+  text-align: center;
+  padding: 8px 50px;
+  flex-shrink: 0;
+  background: #f0f2f5;
+  border-top: 1px solid #e8e8e8;
+}
+
+// Responsividade
+@media (max-width: 600px) {
+  .trigger {
+    font-size: 16px;
+    line-height: 48px;
+    padding: 0 16px;
+  }
+
+  .logo {
+    height: 24px;
+    margin: 8px;
   }
 
   nz-content {
-    margin: 0 16px;
+    margin: 0 8px;
   }
-
+  
   nz-footer {
-    text-align: center;
-    padding: 8px 50px;
+    padding: 8px 16px;
   }
-
-  nz-layout{
-    height: 100%;
-  }
-
-  @media (max-width: 600px) {
-    .trigger {
-      font-size: 16px;
-      line-height: 48px;
-      padding: 0 16px;
-    }
-  
-    .logo {
-      height: 24px;
-      margin: 8px;
-    }
-  
-    nz-content {
-      margin: 0 8px;
-    }
-  }
+}

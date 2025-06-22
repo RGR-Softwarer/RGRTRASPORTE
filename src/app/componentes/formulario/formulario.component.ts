@@ -170,14 +170,20 @@ export class FormularioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onFieldBlur(fieldKey: string): void {
-    const control = this.form.get(fieldKey);
-    this.loggingService.log(`Campo '${fieldKey}' perdeu foco:`, {
-      enabled: control?.enabled,
-      disabled: control?.disabled,
-      value: control?.value,
-      valid: control?.valid,
-      errors: control?.errors
-    });
+    console.log(`Campo ${fieldKey} perdeu o foco`);
+    // Aqui você pode adicionar lógica adicional quando o campo perde o foco
+  }
+
+  formatarTelefone(event: any): void {
+    let value = event.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+    
+    if (value.length <= 11) {
+      // Aplica máscara: (00) 00000-0000
+      value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
+      value = value.replace(/(\d)(\d{4})$/, '$1-$2');
+    }
+    
+    event.target.value = value;
   }
 
   abrirSelecaoEntidade(field: FormCamposMetadata): void {

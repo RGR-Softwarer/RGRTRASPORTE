@@ -47,13 +47,18 @@ export class BreadcrumbService {
     const breadcrumbs: ItemBreadcrumb[] = [];
     const segmentosUrl = this.extrairSegmentosUrl(url);
     
-    // Adicionar sempre o item Home
-    breadcrumbs.push({
-      label: 'Início',
-      url: '/inicio',
-      icon: 'home',
-      isHome: true
-    });
+    // Verificar se está dentro de um módulo
+    const estaEmModulo = this.estaDentroDeModulo(segmentosUrl);
+    
+    // Adicionar o item Home apenas se não estiver em um módulo
+    if (!estaEmModulo) {
+      breadcrumbs.push({
+        label: 'Início',
+        url: '/inicio',
+        icon: 'home',
+        isHome: true
+      });
+    }
 
     let urlAcumulada = '';
     
@@ -65,11 +70,6 @@ export class BreadcrumbService {
       
       // Pular se a rota está marcada como oculta
       if (dadosRota?.oculta) {
-        continue;
-      }
-
-      // Verificação adicional: ocultar rotas de formulário automaticamente
-      if (this.isRotaFormulario(segmento, urlAcumulada)) {
         continue;
       }
 
@@ -157,14 +157,26 @@ export class BreadcrumbService {
   private buscarDadosNaConfiguracaoRotas(url: string): any {
     // Mapear configurações conhecidas para casos onde a rota ativa não tem os dados
     const configuracaoRotas: { [key: string]: any } = {
-      '/frota/veiculo/adicionar': { breadcrumb: 'Adicionar Veículo', icon: 'plus', oculta: true },
-      '/frota/veiculo/editar': { breadcrumb: 'Editar Veículo', icon: 'edit', oculta: true },
-      '/frota/modeloveicular/adicionar': { breadcrumb: 'Adicionar Modelo', icon: 'plus', oculta: true },
-      '/frota/modeloveicular/editar': { breadcrumb: 'Editar Modelo', icon: 'edit', oculta: true },
+      // Rotas de formulário (visíveis no breadcrumb)
+      '/frota/veiculo/adicionar': { breadcrumb: 'Adicionar Veículo', icon: 'plus' },
+      '/frota/veiculo/editar': { breadcrumb: 'Editar Veículo', icon: 'edit' },
+      '/frota/modeloveicular/adicionar': { breadcrumb: 'Adicionar Modelo', icon: 'plus' },
+      '/frota/modeloveicular/editar': { breadcrumb: 'Editar Modelo', icon: 'edit' },
+      
+      // Módulos principais
       '/frota': { breadcrumb: 'Frota', icon: 'car' },
-      '/frota/veiculo': { breadcrumb: 'Veículo', icon: 'car' },
-      '/frota/modeloveicular': { breadcrumb: 'Modelo Veicular', icon: 'car' },
-      '/inicio': { breadcrumb: 'Início', icon: 'home' }
+      '/frota/veiculo': { breadcrumb: 'Veículos', icon: 'car' },
+      '/frota/modeloveicular': { breadcrumb: 'Modelos de Veículos', icon: 'car' },
+      
+      // Outros módulos
+      '/cadastros': { breadcrumb: 'Cadastros', icon: 'database' },
+      '/relatorios': { breadcrumb: 'Relatórios', icon: 'bar-chart' },
+      '/configuracoes': { breadcrumb: 'Configurações', icon: 'setting' },
+      '/usuarios': { breadcrumb: 'Usuários', icon: 'user' },
+      
+      // Páginas especiais
+      '/inicio': { breadcrumb: 'Início', icon: 'home' },
+      '/dashboard': { breadcrumb: 'Dashboard', icon: 'dashboard' }
     };
 
     return configuracaoRotas[url] || null;
@@ -190,11 +202,22 @@ export class BreadcrumbService {
 
     // Mapeamento de segmentos para labels mais amigáveis
     const mapeamentoLabels: { [key: string]: string } = {
+      // Módulos
       'frota': 'Frota',
-      'veiculo': 'Veículo',
-      'modeloveicular': 'Modelo Veicular',
+      'cadastros': 'Cadastros',
+      'relatorios': 'Relatórios',
+      'configuracoes': 'Configurações',
+      'usuarios': 'Usuários',
+      
+      // Submódulos da frota
+      'veiculo': 'Veículos',
+      'modeloveicular': 'Modelos de Veículos',
+      
+      // Ações
       'adicionar': 'Adicionar',
       'editar': 'Editar',
+      
+      // Páginas especiais
       'inicio': 'Início',
       'dashboard': 'Dashboard'
     };
@@ -222,11 +245,15 @@ export class BreadcrumbService {
       .trim();
   }
 
+  private estaDentroDeModulo(segmentosUrl: string[]): boolean {
+    if (segmentosUrl.length === 0) return false;
+    
+    const modulosConhecidos = ['frota', 'cadastros', 'relatorios', 'configuracoes', 'usuarios'];
+    return modulosConhecidos.includes(segmentosUrl[0]);
+  }
+
   private breadcrumbJaExiste(breadcrumbs: ItemBreadcrumb[], novoBreadcrumb: ItemBreadcrumb): boolean {
-    return breadcrumbs.some(b => 
-      b.label === novoBreadcrumb.label && 
-      b.url === novoBreadcrumb.url
-    );
+    return breadcrumbs.some(bc => bc.url === novoBreadcrumb.url);
   }
 
   private filtrarBreadcrumbsValidos(breadcrumbs: ItemBreadcrumb[]): ItemBreadcrumb[] {
@@ -247,10 +274,5 @@ export class BreadcrumbService {
   adicionarBreadcrumbCustomizado(item: ItemBreadcrumb): void {
     const breadcrumbsAtuais = this.breadcrumbs.value;
     this.breadcrumbs.next([...breadcrumbsAtuais, item]);
-  }
-
-  private isRotaFormulario(segmento: string, url: string): boolean {
-    const rotasFormulario = ['adicionar', 'editar'];
-    return rotasFormulario.includes(segmento.toLowerCase());
   }
 }

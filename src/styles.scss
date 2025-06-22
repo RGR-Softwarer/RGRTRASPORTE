@@ -1,4 +1,4 @@
-@import "ng-zorro-antd/ng-zorro-antd.css";
+@import "ng-zorro-antd/ng-zorro-antd.min.css";
 
 .inner-content {
     padding: 24px;
@@ -6,3 +6,559 @@
     min-height: 360px;
     width: 100%;
   }
+
+/* You can add global styles to this file, and also import other style files */
+
+// Variáveis de cores globais - Esquema Profissional Sólido
+:root {
+  // Cores primárias - Azul corporativo sólido
+  --primary-color: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --primary-hover: #1d4ed8;
+  
+  // Cores de estado
+  --success-color: #10b981;
+  --success-light: #34d399;
+  --success-dark: #059669;
+  --warning-color: #f59e0b;
+  --warning-light: #fbbf24;
+  --warning-dark: #d97706;
+  --error-color: #ef4444;
+  --error-light: #f87171;
+  --error-dark: #dc2626;
+  --info-color: #06b6d4;
+  --info-light: #22d3ee;
+  --info-dark: #0891b2;
+  
+  // Cores neutras
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --background-primary: #ffffff;
+  --background-secondary: #f9fafb;
+  --background-tertiary: #f3f4f6;
+  --border-color: #e5e7eb;
+  --border-light: #f3f4f6;
+  
+  // Sombras
+  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-heavy: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  
+  // Bordas
+  --border-radius: 6px;
+  --border-radius-medium: 8px;
+  --border-radius-large: 12px;
+  --border-radius-xl: 16px;
+  
+  // Transições
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Reset e estilos base
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+// Configuração para altura máxima
+#root, app-root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Layout principal para usar altura máxima
+.main-layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+// Container principal
+.main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; // Importante para flexbox
+}
+
+// Área de conteúdo principal
+.content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+// Área de conteúdo com scroll
+.scrollable-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+}
+
+// Configuração para páginas
+.page-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.page-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+}
+
+// Estilos para notificações personalizadas
+.custom-notification {
+  border-radius: var(--border-radius-large) !important;
+  box-shadow: var(--shadow-medium) !important;
+  backdrop-filter: blur(10px);
+  background: var(--background-primary) !important;
+  
+  &.custom-notification-success {
+    border-left: 4px solid var(--success-color) !important;
+    background: rgba(16, 185, 129, 0.02) !important;
+  }
+  
+  &.custom-notification-error {
+    border-left: 4px solid var(--error-color) !important;
+    background: rgba(239, 68, 68, 0.02) !important;
+  }
+  
+  &.custom-notification-warning {
+    border-left: 4px solid var(--warning-color) !important;
+    background: rgba(245, 158, 11, 0.02) !important;
+  }
+  
+  &.custom-notification-info {
+    border-left: 4px solid var(--info-color) !important;
+    background: rgba(6, 182, 212, 0.02) !important;
+  }
+}
+
+// Estilos para mensagens personalizadas
+.custom-message {
+  border-radius: 8px !important;
+  box-shadow: var(--shadow-light) !important;
+  
+  &.custom-message-success {
+    background: var(--success-color) !important;
+    color: white !important;
+  }
+  
+  &.custom-message-error {
+    background: var(--error-color) !important;
+    color: white !important;
+  }
+  
+  &.custom-message-warning {
+    background: var(--warning-color) !important;
+    color: white !important;
+  }
+  
+  &.custom-message-info {
+    background: var(--info-color) !important;
+    color: white !important;
+  }
+  
+  &.custom-message-loading {
+    background: var(--primary-color) !important;
+    color: white !important;
+  }
+}
+
+// Melhorias globais para componentes Ant Design
+.ant-btn {
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  font-weight: 500;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-light);
+  }
+  
+  &.ant-btn-primary {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    
+    &:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+    }
+  }
+}
+
+.ant-card {
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--shadow-light);
+  transition: var(--transition);
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  
+  &:hover {
+    box-shadow: var(--shadow-medium);
+  }
+}
+
+.ant-input,
+.ant-select-selector,
+.ant-picker {
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  border-color: var(--border-color);
+  
+  &:focus,
+  &:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  }
+}
+
+// Estilos específicos para DatePicker
+.ant-picker {
+  width: 100%;
+  
+  .ant-picker-input > input {
+    font-size: 14px;
+    color: var(--text-primary);
+  }
+  
+  &.ant-picker-focused {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  }
+  
+  &.ant-picker-disabled {
+    background-color: var(--background-tertiary);
+    cursor: not-allowed;
+    
+    .ant-picker-input > input {
+      color: var(--text-muted);
+    }
+  }
+}
+
+// Estilos para o dropdown do DatePicker
+.ant-picker-dropdown {
+  position: fixed !important;
+  z-index: 1050 !important;
+  
+  &.ant-picker-dropdown-placement-bottomLeft,
+  &.ant-picker-dropdown-placement-bottomRight,
+  &.ant-picker-dropdown-placement-topLeft,
+  &.ant-picker-dropdown-placement-topRight {
+    position: fixed !important;
+  }
+  
+  .ant-picker-panel-container {
+    border-radius: var(--border-radius-medium);
+    box-shadow: var(--shadow-medium);
+    background: var(--background-primary);
+    border: 1px solid var(--border-color);
+  }
+  
+  .ant-picker-header {
+    border-bottom: 1px solid var(--border-color);
+  }
+  
+  .ant-picker-content {
+    th, td {
+      border-radius: var(--border-radius);
+    }
+    
+    .ant-picker-cell-inner {
+      border-radius: var(--border-radius);
+    }
+    
+    .ant-picker-cell-selected .ant-picker-cell-inner {
+      background: var(--primary-color);
+      color: white;
+    }
+    
+    .ant-picker-cell-today .ant-picker-cell-inner {
+      border-color: var(--primary-color);
+    }
+  }
+}
+
+// Correção específica para posicionamento do DatePicker
+.ant-picker-dropdown.ant-picker-dropdown-placement-bottomLeft {
+  position: fixed !important;
+}
+
+// Garantir que o container do DatePicker tenha posição relativa
+.ant-form-item {
+  position: relative;
+  
+  .ant-picker {
+    position: relative;
+  }
+}
+
+.ant-table {
+  border-radius: var(--border-radius-large);
+  overflow: hidden;
+  background: var(--background-primary);
+  
+  .ant-table-thead > tr > th {
+    background: var(gray);
+    color: black;
+    font-weight: 600;
+    border: none;
+  }
+  
+  .ant-table-tbody > tr:hover > td {
+    background: rgba(37, 99, 235, 0.02);
+  }
+  
+  .ant-table-tbody > tr > td {
+    border-bottom: 1px solid var(--border-light);
+  }
+}
+
+// Animações globais
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// Classes utilitárias para animações
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-left {
+  animation: slideInLeft 0.6s ease-out;
+}
+
+.animate-slide-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+// Melhorias para responsividade
+@media (max-width: 768px) {
+  :root {
+    --border-radius: 6px;
+    --border-radius-large: 12px;
+  }
+  
+  .ant-btn {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+  
+  .ant-card {
+    margin: 8px;
+  }
+  
+  .ant-table {
+    font-size: 14px;
+  }
+}
+
+// Melhorias para acessibilidade
+.ant-btn:focus,
+.ant-input:focus,
+.ant-select:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+// Estilos para scrollbar personalizada
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
+  
+  &:hover {
+    background: #5a6fd8;
+  }
+}
+
+// Melhorias para formulários
+.ant-form-item-label > label {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.ant-form-item-explain-error {
+  font-size: 12px;
+  margin-top: 4px;
+  color: var(--error-color);
+}
+
+// Estilos para modais
+.ant-modal {
+  .ant-modal-content {
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-heavy);
+  }
+  
+  .ant-modal-header {
+    border-radius: var(--border-radius-large) var(--border-radius-large) 0 0;
+    background: var(--primary-gradient);
+    
+    .ant-modal-title {
+      color: white;
+      font-weight: 600;
+    }
+  }
+}
+
+// Melhorias para breadcrumb
+.ant-breadcrumb {
+  .ant-breadcrumb-link {
+    color: var(--text-secondary);
+    transition: var(--transition);
+    
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+  
+  .ant-breadcrumb-separator {
+    color: var(--text-secondary);
+  }
+}
+
+// Estilos para loading states
+.ant-spin {
+  .ant-spin-dot {
+    color: var(--primary-color);
+  }
+  
+  .ant-spin-text {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+}
+
+// Melhorias para paginação
+.ant-pagination {
+  .ant-pagination-item {
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    
+    &:hover {
+      border-color: var(--primary-color);
+    }
+    
+    &.ant-pagination-item-active {
+      background: var(--primary-gradient);
+      border-color: var(--primary-color);
+      
+      
+    }
+  }
+  
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+    
+    &:hover {
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+    }
+  }
+}
+
+// Correção específica para posicionamento do DatePicker
+.ant-picker-dropdown {
+  position: fixed !important;
+  z-index: 1050 !important;
+  
+  &.ant-picker-dropdown-placement-bottomLeft,
+  &.ant-picker-dropdown-placement-bottomRight,
+  &.ant-picker-dropdown-placement-topLeft,
+  &.ant-picker-dropdown-placement-topRight {
+    position: fixed !important;
+  }
+}
+
+// Garantir que containers tenham posição relativa
+.ant-form-item,
+.filter-column {
+  position: relative;
+}
