@@ -1,4 +1,5 @@
 @import "ng-zorro-antd/ng-zorro-antd.min.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 .inner-content {
     padding: 24px;
@@ -9,56 +10,71 @@
 
 /* You can add global styles to this file, and also import other style files */
 
-// Variáveis de cores globais - Esquema Profissional Sólido
+/* Variáveis CSS globais para o sistema de autenticação */
 :root {
-  // Cores primárias - Azul corporativo sólido
-  --primary-color: #2563eb;
-  --primary-light: #3b82f6;
-  --primary-dark: #1d4ed8;
-  --primary-hover: #1d4ed8;
+  /* Cores primárias */
+  --primary-color: #1890ff;
+  --primary-hover: #40a9ff;
+  --primary-light: #e6f7ff;
   
-  // Cores de estado
-  --success-color: #10b981;
-  --success-light: #34d399;
-  --success-dark: #059669;
-  --warning-color: #f59e0b;
-  --warning-light: #fbbf24;
-  --warning-dark: #d97706;
-  --error-color: #ef4444;
-  --error-light: #f87171;
-  --error-dark: #dc2626;
-  --info-color: #06b6d4;
-  --info-light: #22d3ee;
-  --info-dark: #0891b2;
+  /* Cores secundárias */
+  --secondary-color: #764ba2;
+  --secondary-light: #f5f5f5;
   
-  // Cores neutras
-  --text-primary: #111827;
-  --text-secondary: #6b7280;
-  --text-muted: #9ca3af;
-  --background-primary: #ffffff;
-  --background-secondary: #f9fafb;
-  --background-tertiary: #f3f4f6;
-  --border-color: #e5e7eb;
-  --border-light: #f3f4f6;
+  /* Cores de gradiente */
+  --gradient-start: #667eea;
+  --gradient-end: #764ba2;
   
-  // Sombras
-  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
-  --shadow-heavy: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.04);
+  /* Cores de texto */
+  --text-primary: #333;
+  --text-secondary: #666;
+  --text-light: #999;
   
-  // Bordas
-  --border-radius: 6px;
-  --border-radius-medium: 8px;
-  --border-radius-large: 12px;
-  --border-radius-xl: 16px;
+  /* Cores de estado */
+  --success-color: #52c41a;
+  --warning-color: #fa8c16;
+  --error-color: #ff4d4f;
+  --info-color: #1890ff;
   
-  // Transições
-  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Cores de borda */
+  --border-color: #e1e5e9;
+  --border-light: #d9d9d9;
+  
+  /* Cores de fundo */
+  --background-white: #ffffff;
+  --background-light: #f8f9fa;
+  
+  /* Sombras */
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  
+  /* Bordas */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  /* Transições */
+  --transition-fast: all 0.2s ease;
+  --transition-normal: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
+  
+  /* Espaçamentos */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  /* Tamanhos de fonte */
+  --font-size-xs: 0.8rem;
+  --font-size-sm: 0.9rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.1rem;
+  --font-size-xl: 1.8rem;
+  --font-size-2xl: 2.5rem;
 }
 
-// Reset e estilos base
+/* Reset básico */
 * {
   box-sizing: border-box;
 }
@@ -71,9 +87,7 @@ html, body {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background-secondary);
@@ -83,29 +97,29 @@ body {
   overflow-x: hidden;
 }
 
-// Configuração para altura máxima
+/* Configuração para altura máxima */
 #root, app-root {
   height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-// Layout principal para usar altura máxima
+/* Layout principal para usar altura máxima */
 .main-layout {
   height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-// Container principal
+/* Container principal */
 .main-container {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0; // Importante para flexbox
+  min-height: 0; /* Importante para flexbox */
 }
 
-// Área de conteúdo principal
+/* Área de conteúdo principal */
 .content-area {
   flex: 1;
   display: flex;
@@ -113,7 +127,7 @@ body {
   overflow: hidden;
 }
 
-// Área de conteúdo com scroll
+/* Área de conteúdo com scroll */
 .scrollable-content {
   flex: 1;
   overflow-y: auto;
@@ -121,7 +135,7 @@ body {
   padding: 24px;
 }
 
-// Configuração para páginas
+/* Configuração para páginas */
 .page-container {
   height: 100vh;
   display: flex;
@@ -136,7 +150,7 @@ body {
   padding: 24px;
 }
 
-// Estilos para notificações personalizadas
+/* Estilos para notificações personalizadas */
 .custom-notification {
   border-radius: var(--border-radius-large) !important;
   box-shadow: var(--shadow-medium) !important;
@@ -164,7 +178,7 @@ body {
   }
 }
 
-// Estilos para mensagens personalizadas
+/* Estilos para mensagens personalizadas */
 .custom-message {
   border-radius: 8px !important;
   box-shadow: var(--shadow-light) !important;
@@ -195,7 +209,7 @@ body {
   }
 }
 
-// Melhorias globais para componentes Ant Design
+/* Melhorias globais para componentes Ant Design */
 .ant-btn {
   border-radius: var(--border-radius);
   transition: var(--transition);
@@ -245,7 +259,7 @@ body {
   }
 }
 
-// Estilos específicos para DatePicker
+/* Estilos específicos para DatePicker */
 .ant-picker {
   width: 100%;
   
@@ -269,7 +283,7 @@ body {
   }
 }
 
-// Estilos para o dropdown do DatePicker
+/* Estilos para o dropdown do DatePicker */
 .ant-picker-dropdown {
   position: fixed !important;
   z-index: 1050 !important;
@@ -312,12 +326,12 @@ body {
   }
 }
 
-// Correção específica para posicionamento do DatePicker
+/* Correção específica para posicionamento do DatePicker */
 .ant-picker-dropdown.ant-picker-dropdown-placement-bottomLeft {
   position: fixed !important;
 }
 
-// Garantir que o container do DatePicker tenha posição relativa
+/* Garantir que o container do DatePicker tenha posição relativa */
 .ant-form-item {
   position: relative;
   
@@ -347,7 +361,7 @@ body {
   }
 }
 
-// Animações globais
+/* Animações globais */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -390,7 +404,7 @@ body {
   }
 }
 
-// Classes utilitárias para animações
+/* Classes utilitárias para animações */
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out;
 }
@@ -407,7 +421,7 @@ body {
   animation: pulse 2s infinite;
 }
 
-// Melhorias para responsividade
+/* Melhorias para responsividade */
 @media (max-width: 768px) {
   :root {
     --border-radius: 6px;
@@ -428,7 +442,7 @@ body {
   }
 }
 
-// Melhorias para acessibilidade
+/* Melhorias para acessibilidade */
 .ant-btn:focus,
 .ant-input:focus,
 .ant-select:focus {
@@ -436,7 +450,7 @@ body {
   outline-offset: 2px;
 }
 
-// Estilos para scrollbar personalizada
+/* Estilos para scrollbar personalizada */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -456,7 +470,7 @@ body {
   }
 }
 
-// Melhorias para formulários
+/* Melhorias para formulários */
 .ant-form-item-label > label {
   font-weight: 500;
   color: var(--text-primary);
@@ -468,7 +482,7 @@ body {
   color: var(--error-color);
 }
 
-// Estilos para modais
+/* Estilos para modais */
 .ant-modal {
   .ant-modal-content {
     border-radius: var(--border-radius-large);
@@ -486,7 +500,7 @@ body {
   }
 }
 
-// Melhorias para breadcrumb
+/* Melhorias para breadcrumb */
 .ant-breadcrumb {
   .ant-breadcrumb-link {
     color: var(--text-secondary);
@@ -502,7 +516,7 @@ body {
   }
 }
 
-// Estilos para loading states
+/* Estilos para loading states */
 .ant-spin {
   .ant-spin-dot {
     color: var(--primary-color);
@@ -514,7 +528,7 @@ body {
   }
 }
 
-// Melhorias para paginação
+/* Melhorias para paginação */
 .ant-pagination {
   .ant-pagination-item {
     border-radius: var(--border-radius);
@@ -544,7 +558,7 @@ body {
   }
 }
 
-// Correção específica para posicionamento do DatePicker
+/* Correção específica para posicionamento do DatePicker */
 .ant-picker-dropdown {
   position: fixed !important;
   z-index: 1050 !important;
@@ -557,8 +571,79 @@ body {
   }
 }
 
-// Garantir que containers tenham posição relativa
+/* Garantir que containers tenham posição relativa */
 .ant-form-item,
 .filter-column {
   position: relative;
+}
+
+/* Utilitários para botões */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-md);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    background: var(--primary-color);
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+  }
+
+  &.btn-secondary {
+    background: var(--secondary-light);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+
+    &:hover:not(:disabled) {
+      background: var(--primary-light);
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+  }
+}
+
+/* Utilitários para formulários */
+.form-control {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-md);
+  transition: var(--transition-normal);
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+  }
+
+  &.error {
+    border-color: var(--error-color);
+  }
+
+  &::placeholder {
+    color: var(--text-light);
+  }
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-xs);
 }

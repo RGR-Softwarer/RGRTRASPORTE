@@ -1,29 +1,69 @@
-<form nz-form [formGroup]="loginForm" class="login-form" (ngSubmit)="onSubmit()">
-  <nz-form-item>
-    <nz-form-control nzErrorTip="Digite seu email!">
-      <nz-input-group nzPrefixIcon="user">
-        <input type="text" nz-input formControlName="email" placeholder="Email" />
-      </nz-input-group>
-    </nz-form-control>
-  </nz-form-item>
-  <nz-form-item>
-    <nz-form-control nzErrorTip="{{ getSenhaErrorMessage() }}">
-      <nz-input-group nzPrefixIcon="lock">
-        <input type="password" nz-input formControlName="senha" placeholder="Senha" />
-      </nz-input-group>
-    </nz-form-control>
-  </nz-form-item>
-  <div nz-row class="login-form-margin">
-    <div nz-col [nzSpan]="12">
-      <label nz-checkbox formControlName="lembrar">
-        <span>Lembrar-me</span>
-      </label>
+<div class="login-container">
+  <div class="login-card">
+    <div class="card-header">
+      <h2>Login</h2>
+      <p>Faça login para acessar sua conta</p>
     </div>
-    <div nz-col [nzSpan]="12">
-      <a class="login-form-forgot">Esqueceu a senha</a>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          placeholder="Digite seu email"
+          class="form-control"
+          [class.error]="hasFieldError('email')"
+          #emailInput
+        />
+        <div class="error-message" *ngIf="hasFieldError('email')">
+          {{ getEmailErrorMessage() }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="senha">Senha</label>
+        <input 
+          type="password" 
+          id="senha" 
+          formControlName="senha" 
+          placeholder="Digite sua senha"
+          class="form-control"
+          [class.error]="hasFieldError('senha')"
+        />
+        <div class="error-message" *ngIf="hasFieldError('senha')">
+          {{ getSenhaErrorMessage() }}
+        </div>
+      </div>
+
+      <div class="form-options">
+        <label class="checkbox-wrapper">
+          <input type="checkbox" formControlName="lembrar" class="checkbox-input">
+          <span class="checkbox-custom"></span>
+          <span class="checkbox-label">Lembrar-me</span>
+        </label>
+        <a routerLink="/auth/forgot-password" class="forgot-link">Esqueceu a senha?</a>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="loading || loginForm.invalid"
+        >
+          <span *ngIf="loading">Entrando...</span>
+          <span *ngIf="!loading">Entrar</span>
+        </button>
+        
+        <div class="divider">
+          <span>ou</span>
+        </div>
+        
+        <a routerLink="/auth/register" class="btn btn-secondary">
+          Criar nova conta
+        </a>
     </div>
+    </form>
   </div>
-  <button nz-button class="login-form-button login-form-margin" [nzType]="'primary'">Entrar</button>
-  Ou
-  <a>Registrar agora!</a>
-</form>
+</div>

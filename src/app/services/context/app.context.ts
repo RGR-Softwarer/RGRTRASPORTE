@@ -18,6 +18,15 @@ export class AppContextService {
     this.appSubject.next(null);
   }
 
+  logout() {
+    localStorage.removeItem('appContext');
+    this.appSubject.next(null);
+  }
+
+  definirUsuarioLogado(usuario: AppContext) {
+    this.salvaAppContext(usuario);
+  }
+
   usuarioLogado(): boolean {
     this.obterUsuarioLogado();
     return this.appSubject.getValue() != null;

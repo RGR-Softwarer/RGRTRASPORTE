@@ -1,14 +1,9 @@
-import { NzInputModule } from 'ng-zorro-antd/input';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginRoutingModule } from './login-routing.module';
 import { LoginComponent } from './login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzFormModule } from 'ng-zorro-antd/form';
-import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-
+import { RouterModule } from '@angular/router';
 
 @NgModule({
     imports: [
@@ -16,13 +11,8 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
         LoginRoutingModule,
         FormsModule,
         ReactiveFormsModule,
-        NzButtonModule,
-        NzFormModule,
-        NzCheckboxModule,
-        NzInputModule,
-        NzIconModule
+        RouterModule
     ],
-    declarations: [LoginComponent],
-
+    declarations: [LoginComponent]
 })
 export class LoginModule { }
