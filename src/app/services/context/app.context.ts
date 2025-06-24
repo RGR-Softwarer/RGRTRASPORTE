@@ -44,7 +44,7 @@ export class AppContextService {
     let appContextData = localStorage.getItem('appContext');
     if (appContextData != null && appContextData.trim() !== '') {
       let objeto = JSON.parse(appContextData);
-      let appContext = new AppContext(objeto.username, objeto.token);
+      let appContext = new AppContext(objeto.username, objeto.token, objeto.nome);
       this.appSubject.next(appContext);
       return appContext;
     } else {

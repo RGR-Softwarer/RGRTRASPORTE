@@ -31,7 +31,7 @@ export class LoginService {
       map((response) => {
         if (response.sucesso) {
           this.toastService.exibirMensagemSucesso('Sucesso', 'Login bem-sucedido');
-          this.appContextService.salvaAppContext(new AppContext(email, response.dados.token));
+          this.appContextService.salvaAppContext(new AppContext(email, response.dados.token, ""));
           this.router.navigate(['']);
           return true;
         }

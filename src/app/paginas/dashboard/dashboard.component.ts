@@ -104,7 +104,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const nomes = ['João Silva', 'Maria Santos', 'Pedro Costa', 'Ana Oliveira', 'Carlos Ferreira'];
     const enderecos = ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte', 'Porto Alegre', 'Salvador'];
     
-    for (let i = 1; i <= 100; i++) {
+    for (let i = 1; i <= 1; i++) {
       const nomeAleatorio = nomes[Math.floor(Math.random() * nomes.length)];
       const enderecoAleatorio = enderecos[Math.floor(Math.random() * enderecos.length)];
       const idade = 18 + Math.floor(Math.random() * 50);

@@ -30,15 +30,93 @@ nz-header {
   padding: 0;
   flex-shrink: 0;
   
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    padding: 0 24px;
+  }
+  
   .trigger {
     font-size: 18px;
     line-height: 64px;
-    padding: 0 24px;
     cursor: pointer;
     transition: color 0.3s;
     
     &:hover {
       color: var(--primary-color);
+    }
+  }
+
+  .user-profile {
+    display: flex;
+    align-items: center;
+    
+    .dropdown-container {
+      position: relative;
+      
+      .user-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 40px;
+        padding: 0 16px;
+        border-radius: 6px;
+        transition: all 0.3s;
+        
+        &:hover {
+          background-color: #f5f5f5;
+        }
+        
+        .username {
+          font-weight: 500;
+          color: #333;
+        }
+      }
+      
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border: 1px solid #e8e8e8;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        min-width: 160px;
+        z-index: 1000;
+        margin-top: 4px;
+        
+        .menu-list {
+          list-style: none;
+          margin: 0;
+          padding: 8px 0;
+          
+          .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: #333;
+            
+            &:hover {
+              background-color: #f5f5f5;
+            }
+            
+            span:last-child {
+              font-size: 14px;
+            }
+          }
+          
+          .menu-divider {
+            height: 1px;
+            background-color: #e8e8e8;
+            margin: 4px 0;
+          }
+        }
+      }
     }
   }
 }
@@ -71,10 +149,27 @@ nz-footer {
 
 // Responsividade
 @media (max-width: 600px) {
-  .trigger {
-    font-size: 16px;
-    line-height: 48px;
-    padding: 0 16px;
+  nz-header {
+    .header-content {
+      padding: 0 16px;
+    }
+    
+    .trigger {
+      font-size: 16px;
+      line-height: 48px;
+    }
+
+    .user-profile {
+      .dropdown-container {
+        .user-button {
+          padding: 0 12px;
+          
+          .username {
+            display: none; // Oculta o nome do usuário em telas pequenas
+          }
+        }
+      }
+    }
   }
 
   .logo {

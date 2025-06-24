@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppContextService } from '../services/context/app.context';
+import { ToastService } from '../services/utils/notificacao/toast.service';
 
 @NgModule({
   imports: [
@@ -11,7 +13,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     BrowserAnimationsModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    AppContextService,
+    ToastService
   ]
 })
 export class CoreModule {

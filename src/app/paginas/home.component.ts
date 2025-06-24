@@ -1,6 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, Route, NavigationEnd } from '@angular/router';
 import { Subject, takeUntil, filter } from 'rxjs';
+import { AppContextService } from '../services/context/app.context';
+import { AppContext } from '../dominio/entidade/app.context';
+import { ToastService } from '../services/utils/notificacao/toast.service';
 
 interface MenuItem {
   path: string;
@@ -22,11 +25,20 @@ export class HomeComponent implements OnInit, OnDestroy {
   menus: MenuItem[] = [];
   rotaAtual: string = '';
   loading: boolean = false;
+  usuarioLogado: AppContext | null = null;
+  userMenuAberto: boolean = false;
+  temaEscuro: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private appContextService: AppContextService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.inicializarComponente();
+    this.carregarUsuarioLogado();
+    this.carregarTema();
   }
 
   ngOnDestroy(): void {
@@ -38,6 +50,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.generateMenuFromRoutes();
     this.observarMudancasRota();
     this.rotaAtual = this.router.url;
+  }
+
+  private carregarUsuarioLogado(): void {
+    this.usuarioLogado = this.appContextService.obterUsuarioLogado();
   }
 
   private observarMudancasRota(): void {
@@ -133,5 +149,59 @@ export class HomeComponent implements OnInit, OnDestroy {
    */
   getIcone(item: MenuItem): string {
     return item.icon || 'menu';
+  }
+
+  /**
+   * Listener para fechar o dropdown quando clicar fora
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.dropdown-container')) {
+      this.userMenuAberto = false;
+    }
+  }
+
+  /**
+   * Alterna o estado do menu do usuário
+   */
+  toggleUserMenu(): void {
+    this.userMenuAberto = !this.userMenuAberto;
+  }
+
+  /**
+   * Abre a página de perfil do usuário
+   */
+  abrirPerfil(): void {
+    this.router.navigate(['/auth/profile']);
+  }
+
+  /**
+   * Realiza o logout do usuário
+   */
+  fazerLogout(): void {
+    this.appContextService.logout();
+    this.toastService.exibirMensagemSucesso('Logout', 'Você foi desconectado com sucesso');
+    this.router.navigate(['/auth/login']);
+  }
+
+  carregarTema(): void {
+    const tema = localStorage.getItem('temaEscuro');
+    this.temaEscuro = tema === 'true';
+    this.aplicarTema();
+  }
+
+  alternarTema(): void {
+    this.temaEscuro = !this.temaEscuro;
+    localStorage.setItem('temaEscuro', this.temaEscuro.toString());
+    this.aplicarTema();
+  }
+
+  aplicarTema(): void {
+    if (this.temaEscuro) {
+      document.body.classList.add('dark-theme');
+    } else {
+      document.body.classList.remove('dark-theme');
+    }
   }
 }

@@ -9,6 +9,9 @@ import { BreadcrumbModule } from '../componentes/breadcrumb/breadcrumb.module';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 @NgModule({
     imports: [
@@ -21,7 +24,10 @@ import { NzMenuModule } from 'ng-zorro-antd/menu';
         BreadcrumbModule,
         NzLayoutModule,
         NzIconModule,
-        NzMenuModule
+        NzMenuModule,
+        NzDropDownModule,
+        NzButtonModule,
+        NzDividerModule
     ],
     declarations: [HomeComponent]
 })
