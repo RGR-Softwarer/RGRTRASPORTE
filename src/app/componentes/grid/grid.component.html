@@ -205,7 +205,7 @@
               *ngIf="col.visible"
               [nzSortFn]="true"
               [nzSortOrder]="sortField === col.key ? sortOrder : null"
-              (nzSortOrderChange)="onSort({ key: col.key, value: $event })"
+              (nzSortOrderChange)="onSortChange(col.key, $event)"
             >
               {{ col.label }}
             </th>

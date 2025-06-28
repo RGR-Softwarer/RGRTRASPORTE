@@ -7,6 +7,12 @@ import { RouterModule } from '@angular/router';
 import { BreadcrumbModule } from '../componentes/breadcrumb/breadcrumb.module';
 import { FormularioModule } from '../componentes/formulario/formulario.module';
 import { GridModule } from '../componentes/grid/grid.module';
+import { ButtonComponent } from './components/button/button.component';
+import { CardComponent } from './components/card/card.component';
+import { ModalComponent } from './components/modal/modal.component';
+import { TableComponent } from './components/table/table.component';
+import { FormComponent } from './components/form/form.component';
+import { NotificationComponent } from './components/notification/notification.component';
 
 // Módulos de UI de terceiros (ex: NG-ZORRO)
 // Adicionar aqui outros módulos do NG-ZORRO que são amplamente utilizados
@@ -34,8 +40,22 @@ const COMMON_MODULES = [
   imports: [
     ...COMMON_MODULES
   ],
+  declarations: [
+    ButtonComponent,
+    CardComponent,
+    ModalComponent,
+    TableComponent,
+    FormComponent,
+    NotificationComponent
+  ],
   exports: [
-    ...COMMON_MODULES
+    ...COMMON_MODULES,
+    ButtonComponent,
+    CardComponent,
+    ModalComponent,
+    TableComponent,
+    FormComponent,
+    NotificationComponent
   ]
 })
 export class SharedModule { } 

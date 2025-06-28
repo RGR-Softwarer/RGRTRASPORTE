@@ -1,0 +1,95 @@
+// Variáveis CSS customizadas para o sistema de design
+:root {
+  // Cores primárias
+  --primary-color: #1890ff;
+  --primary-hover: #40a9ff;
+  --primary-light: #e6f7ff;
+  
+  // Cores secundárias
+  --secondary-color: #764ba2;
+  --secondary-light: #f5f5f5;
+  
+  // Cores de gradiente
+  --gradient-start: #667eea;
+  --gradient-end: #764ba2;
+  
+  // Cores de texto
+  --text-primary: #333;
+  --text-secondary: #666;
+  --text-light: #999;
+  
+  // Cores de estado
+  --success-color: #52c41a;
+  --warning-color: #fa8c16;
+  --error-color: #ff4d4f;
+  --info-color: #1890ff;
+  
+  // Cores de borda
+  --border-color: #e1e5e9;
+  --border-light: #d9d9d9;
+  
+  // Cores de fundo
+  --background-white: #ffffff;
+  --background-light: #f8f9fa;
+  
+  // Sombras
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  
+  // Bordas
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  
+  // Transições
+  --transition-fast: all 0.2s ease;
+  --transition-normal: all 0.3s ease;
+  --transition-slow: all 0.5s ease;
+  
+  // Espaçamentos
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  
+  // Tamanhos de fonte
+  --font-size-xs: 0.8rem;
+  --font-size-sm: 0.9rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.1rem;
+  --font-size-xl: 1.8rem;
+  --font-size-2xl: 2.5rem;
+}
+
+// Tema escuro
+body.dark-theme {
+  --primary-color: #1890ff;
+  --primary-hover: #40a9ff;
+  --primary-light: #23272f;
+  --secondary-color: #764ba2;
+  --secondary-light: #23272f;
+  --gradient-start: #23272f;
+  --gradient-end: #764ba2;
+  --text-primary: #f5f5f5;
+  --text-secondary: #bdbdbd;
+  --text-light: #888;
+  --success-color: #52c41a;
+  --warning-color: #fa8c16;
+  --error-color: #ff4d4f;
+  --info-color: #1890ff;
+  --border-color: #333a45;
+  --border-light: #23272f;
+  --background-white: #181a1b;
+  --background-light: #23272f;
+  --shadow-light: rgba(0, 0, 0, 0.5);
+  --shadow-medium: rgba(0, 0, 0, 0.7);
+  background: var(--background-light) !important;
+  color: var(--text-primary) !important;
+}
+
+body.dark-theme, body.dark-theme * {
+  background-color: var(--background-light) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+} 

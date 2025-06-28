@@ -4,7 +4,7 @@
     <div class="dashboard-header-content">
       <div class="dashboard-title-section">
         <h1 class="dashboard-title">
-          <span nz-icon nzType="dashboard" nzTheme="outline" class="title-icon"></span>
+          <i class="fas fa-tachometer-alt title-icon"></i>
           Dashboard
         </h1>
         <p class="dashboard-description">
@@ -13,16 +13,13 @@
       </div>
       
       <div class="dashboard-actions">
-        <button 
-          nz-button 
-          nzType="primary" 
-          nzSize="large"
+        <app-button 
+          btnClass="btn-primary" 
           (click)="atualizarDados()"
-          [nzLoading]="loading"
-          nz-tooltip="Atualizar dados">
-          <span nz-icon nzType="reload"></span>
+          [disabled]="loading">
+          <i class="fas fa-sync-alt"></i>
           Atualizar
-        </button>
+        </app-button>
       </div>
     </div>
   </div>
@@ -30,152 +27,122 @@
   <!-- Cards de Estatísticas -->
   <div class="dashboard-stats" *ngIf="!loading">
     <div class="stats-grid">
-      <nz-card class="stat-card">
+      <app-card class="stat-card">
         <div class="stat-content">
           <div class="stat-icon">
-            <span nz-icon nzType="team" nzTheme="outline"></span>
+            <i class="fas fa-users"></i>
           </div>
           <div class="stat-details">
             <h3>{{ obterEstatisticas().total }}</h3>
             <p>Total de Registros</p>
           </div>
         </div>
-      </nz-card>
+      </app-card>
 
-      <nz-card class="stat-card">
+      <app-card class="stat-card">
         <div class="stat-content">
           <div class="stat-icon success">
-            <span nz-icon nzType="check-circle" nzTheme="outline"></span>
+            <i class="fas fa-check-circle"></i>
           </div>
           <div class="stat-details">
             <h3>{{ obterEstatisticas().marcados }}</h3>
             <p>Registros Marcados</p>
           </div>
         </div>
-      </nz-card>
+      </app-card>
 
-      <nz-card class="stat-card">
+      <app-card class="stat-card">
         <div class="stat-content">
           <div class="stat-icon warning">
-            <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+            <i class="fas fa-clock"></i>
           </div>
           <div class="stat-details">
             <h3>{{ obterEstatisticas().idades.media }}</h3>
             <p>Idade Média</p>
           </div>
         </div>
-      </nz-card>
+      </app-card>
 
-      <nz-card class="stat-card">
+      <app-card class="stat-card">
         <div class="stat-content">
           <div class="stat-icon info">
-            <span nz-icon nzType="bar-chart" nzTheme="outline"></span>
+            <i class="fas fa-chart-bar"></i>
           </div>
           <div class="stat-details">
             <h3>{{ obterEstatisticas().idades.min }}-{{ obterEstatisticas().idades.max }}</h3>
             <p>Faixa Etária</p>
           </div>
         </div>
-      </nz-card>
+      </app-card>
     </div>
   </div>
 
   <!-- Área de Conteúdo Principal -->
   <div class="dashboard-content">
     <!-- Configurações da Grid -->
-    <nz-card nzTitle="Configurações da Tabela" class="config-card">
-      <form nz-form [formGroup]="formularioConfiguracao" nzLayout="inline">
-        <div nz-row [nzGutter]="[16, 16]">
-          <div nz-col nzSpan="6">
-            <nz-form-item>
-              <nz-form-label>Com Borda</nz-form-label>
-              <nz-form-control>
-                <nz-switch formControlName="comBorda"></nz-switch>
-              </nz-form-control>
-            </nz-form-item>
+    <app-card title="Configurações da Tabela" class="config-card">
+      <form [formGroup]="formularioConfiguracao" class="config-form">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">Com Borda</label>
+              <div class="form-control">
+                <input type="checkbox" formControlName="comBorda" class="form-check-input">
+              </div>
+            </div>
           </div>
           
-          <div nz-col nzSpan="6">
-            <nz-form-item>
-              <nz-form-label>Paginação</nz-form-label>
-              <nz-form-control>
-                <nz-switch formControlName="paginacao"></nz-switch>
-              </nz-form-control>
-            </nz-form-item>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">Paginação</label>
+              <div class="form-control">
+                <input type="checkbox" formControlName="paginacao" class="form-check-input">
+              </div>
+            </div>
           </div>
           
-          <div nz-col nzSpan="6">
-            <nz-form-item>
-              <nz-form-label>Cabeçalho Fixo</nz-form-label>
-              <nz-form-control>
-                <nz-switch formControlName="cabecalhoFixo"></nz-switch>
-              </nz-form-control>
-            </nz-form-item>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">Cabeçalho Fixo</label>
+              <div class="form-control">
+                <input type="checkbox" formControlName="cabecalhoFixo" class="form-check-input">
+              </div>
+            </div>
           </div>
           
-          <div nz-col nzSpan="6">
-            <nz-form-item>
-              <nz-form-label>Tamanho</nz-form-label>
-              <nz-form-control>
-                <nz-select formControlName="tamanho" style="width: 100%">
-                  <nz-option nzValue="small" nzLabel="Pequeno"></nz-option>
-                  <nz-option nzValue="middle" nzLabel="Médio"></nz-option>
-                  <nz-option nzValue="default" nzLabel="Padrão"></nz-option>
-                </nz-select>
-              </nz-form-control>
-            </nz-form-item>
+          <div class="col-md-3">
+            <div class="form-group">
+              <label class="form-label">Tamanho</label>
+              <select class="form-control" formControlName="tamanho">
+                <option value="small">Pequeno</option>
+                <option value="middle">Médio</option>
+                <option value="default">Padrão</option>
+              </select>
+            </div>
           </div>
         </div>
       </form>
-    </nz-card>
+    </app-card>
 
     <!-- Tabela de Dados -->
-    <nz-card nzTitle="Dados do Sistema" class="data-card">
-      <nz-table 
-        #basicTable 
-        [nzData]="minhaListaDeObjetos"
-        [nzBordered]="formularioConfiguracao.value.comBorda"
-        [nzSize]="formularioConfiguracao.value.tamanho || 'small'"
-        [nzLoading]="loading">
-        
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Idade</th>
-            <th>Endereço</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        
-        <tbody>
-          <tr *ngFor="let data of minhaListaDeObjetos; trackBy: trackByFn">
-            <td>{{ data.nome }}</td>
-            <td>{{ data.idade }} anos</td>
-            <td>{{ data.endereco }}</td>
-            <td>
-              <nz-tag [nzColor]="data.marcado ? 'green' : 'default'">
-                {{ data.marcado ? 'Ativo' : 'Inativo' }}
-              </nz-tag>
-            </td>
-            <td>
-              <button nz-button nzType="link" nzSize="small">
-                <span nz-icon nzType="eye"></span>
-                Ver
-              </button>
-              <button nz-button nzType="link" nzSize="small">
-                <span nz-icon nzType="edit"></span>
-                Editar
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </nz-table>
-    </nz-card>
+    <app-card title="Dados do Sistema" class="data-card">
+      <app-table 
+        [columns]="tableColumns"
+        [data]="minhaListaDeObjetos"
+        [actions]="tableActions"
+        [loading]="loading"
+        [bordered]="formularioConfiguracao.value.comBorda ?? false"
+        [size]="formularioConfiguracao.value.tamanho ?? 'small'"
+        (actionClick)="onTableAction($event)">
+      </app-table>
+    </app-card>
   </div>
 
   <!-- Loading Overlay -->
   <div *ngIf="loading" class="dashboard-loading">
-    <nz-spin nzSize="large" nzTip="Carregando dados do dashboard..."></nz-spin>
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin fa-2x"></i>
+      <p>Carregando dados do dashboard...</p>
+    </div>
   </div>
 </div>

@@ -3,8 +3,8 @@ import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { AppContext } from '../../dominio/entidade/app.context';
 import { AppContextService } from '../../services/context/app.context';
-import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
-import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
+import { ConfiguracaoGrid, RolagemTabela, TamanhoTabela, LayoutTabela, PosicaoPaginacao, TipoPaginacao } from '../../dominio/interface/grid/configuracao-grid';
+import { TableColumn, TableAction } from '../../shared/components/table/table.component';
 
 interface DashboardData {
   nome: string;
@@ -25,8 +25,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
   
   userContext: AppContext | null = null;
   formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
-  minhaListaDeObjetos: readonly DashboardData[] = [];
+  minhaListaDeObjetos: DashboardData[] = [];
   loading: boolean = false;
+  
+  // Configuração das colunas da tabela
+  tableColumns: TableColumn[] = [
+    { key: 'nome', label: 'Nome' },
+    { key: 'idade', label: 'Idade', render: (value: string) => `${value} anos` },
+    { key: 'endereco', label: 'Endereço' },
+    { key: 'marcado', label: 'Status', type: 'status' },
+    { key: 'acoes', label: 'Ações', type: 'actions' }
+  ];
+
+  // Ações da tabela
+  tableActions: TableAction[] = [
+    {
+      label: 'Ver',
+      icon: 'fas fa-eye',
+      action: (row: DashboardData) => this.verRegistro(row),
+      class: 'btn-primary'
+    },
+    {
+      label: 'Editar',
+      icon: 'fas fa-edit',
+      action: (row: DashboardData) => this.editarRegistro(row),
+      class: 'btn-warning'
+    }
+  ];
 
   constructor(
     private appContextService: AppContextService, 
@@ -61,13 +86,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       elipse: [false],
       simples: [false],
       mostrarOpcoes: [false],
-      tamanho: 'small' as NzTableSize,
-      tipoPaginacao: 'default' as NzTablePaginationType,
-      rolagemTabela: 'unset' as RolagemTabela,
-      layoutTabela: 'auto' as NzTableLayout,
-      posicao: 'bottom' as NzTablePaginationPosition,
-      tituloTabela: 'Dashboard - Dados do Sistema',
-      rodapeTabela: 'Total de registros carregados',
+      tamanho: ['small' as TamanhoTabela],
+      tipoPaginacao: ['default' as TipoPaginacao],
+      rolagemTabela: ['unset' as RolagemTabela],
+      layoutTabela: ['auto' as LayoutTabela],
+      posicao: ['bottom' as PosicaoPaginacao],
+      tituloTabela: ['Dashboard - Dados do Sistema'],
+      rodapeTabela: ['Total de registros carregados'],
       adicionar: [false],
       action: [false]
     });
@@ -99,12 +124,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
   }
 
-  private gerarDados(): readonly DashboardData[] {
+  private gerarDados(): DashboardData[] {
     const dados: DashboardData[] = [];
     const nomes = ['João Silva', 'Maria Santos', 'Pedro Costa', 'Ana Oliveira', 'Carlos Ferreira'];
     const enderecos = ['São Paulo', 'Rio de Janeiro', 'Belo Horizonte', 'Porto Alegre', 'Salvador'];
     
-    for (let i = 1; i <= 1; i++) {
+    for (let i = 1; i <= 5; i++) {
       const nomeAleatorio = nomes[Math.floor(Math.random() * nomes.length)];
       const enderecoAleatorio = enderecos[Math.floor(Math.random() * enderecos.length)];
       const idade = 18 + Math.floor(Math.random() * 50);
@@ -157,5 +182,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
    */
   trackByFn(index: number, item: DashboardData): string {
     return `${item.nome}-${item.idade}-${index}`;
+  }
+
+  /**
+   * Ações da tabela
+   */
+  verRegistro(registro: DashboardData): void {
+    console.log('Visualizando registro:', registro);
+    // Implementar lógica de visualização
+  }
+
+  editarRegistro(registro: DashboardData): void {
+    console.log('Editando registro:', registro);
+    // Implementar lógica de edição
+  }
+
+  onTableAction(event: { action: string, row: any }): void {
+    console.log('Ação da tabela:', event.action, 'Registro:', event.row);
   }
 }

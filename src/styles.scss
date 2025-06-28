@@ -1,5 +1,19 @@
+/* Bootstrap CSS */
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* Font Awesome */
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+/* Ant Design (mantido temporariamente durante migração) */
 @import "ng-zorro-antd/ng-zorro-antd.min.css";
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Variáveis CSS customizadas */
+@import "./styles/_variables.scss";
+
+/* Utilitários CSS customizados */
+@import "./styles/_utilities.scss";
 
 .inner-content {
     padding: 24px;

@@ -1,6 +1,8 @@
-import { NzTableLayout, NzTablePaginationPosition, NzTablePaginationType, NzTableSize } from 'ng-zorro-antd/table';
-
 export type RolagemTabela = 'unset' | 'scroll' | 'fixed';
+export type TamanhoTabela = 'small' | 'middle' | 'default';
+export type LayoutTabela = 'auto' | 'fixed';
+export type PosicaoPaginacao = 'top' | 'bottom';
+export type TipoPaginacao = 'default' | 'simple';
 
 export interface ConfiguracaoGrid {
   comBorda: boolean;
@@ -17,11 +19,11 @@ export interface ConfiguracaoGrid {
   elipse: boolean;
   simples: boolean;
   mostrarOpcoes: boolean;
-  tamanho: NzTableSize;
+  tamanho: TamanhoTabela;
   rolagemTabela: RolagemTabela;
-  layoutTabela: NzTableLayout;
-  posicao: NzTablePaginationPosition;
-  tipoPaginacao: NzTablePaginationType;
+  layoutTabela: LayoutTabela;
+  posicao: PosicaoPaginacao;
+  tipoPaginacao: TipoPaginacao;
   tituloTabela: string;
   rodapeTabela: string;
   adicionar: boolean;

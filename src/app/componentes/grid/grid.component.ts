@@ -1,20 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, debounceTime, firstValueFrom } from 'rxjs';
-import { NzTableSize, NzTablePaginationType, NzTableLayout, NzTablePaginationPosition, NzTableSortOrder } from 'ng-zorro-antd/table';
-import { NzCheckBoxOptionInterface } from 'ng-zorro-antd/checkbox';
+import { Subject, debounceTime, firstValueFrom, takeUntil } from 'rxjs';
 import { ApiService } from '../../services/http/api.service';
 import { ToastService } from '../../services/utils/notificacao/toast.service';
 import { LoggingService } from '../../services/utils/log/logging.service';
-import { ConfiguracaoGrid, RolagemTabela } from '../../dominio/interface/grid/configuracao-grid';
+import { ConfiguracaoGrid, RolagemTabela, TamanhoTabela, LayoutTabela, PosicaoPaginacao, TipoPaginacao } from '../../dominio/interface/grid/configuracao-grid';
 import { Action } from '../../dominio/interface/grid/action-grid';
-import { FormCampoConstrutor, FormCamposMetadata, FiltroConstrutor, FiltroMetadata, DecoratorUtils } from '../../services/decorator/formulario-decorator';
-import { FiltroGrid, ParametrosBusca } from '../../dominio/interface/grid/filtros-grid';
-import { ResponseGrid } from '../../dominio/interface/grid/response-grid';
-import { ApiResponse } from '../../dominio/interface/grid/api-response';
-import { Veiculo } from '../../dominio/entidade/veiculo';
-import * as XLSX from 'xlsx';
+import { DecoratorUtils, FiltroMetadata } from '../../services/decorator/formulario-decorator';
 
 interface GridData {
   [key: string]: any;
@@ -25,12 +18,26 @@ interface GridItem {
   [key: string]: any;
 }
 
+interface FormCamposMetadata {
+  key: string;
+  label: string;
+  visible: boolean;
+  type?: string;
+}
+
+interface ParametrosBusca {
+  pagina?: number;
+  tamanhoPagina?: number;
+  filtros?: { [key: string]: any };
+  ordenacao?: { campo: string; direcao: 'asc' | 'desc' };
+}
+
 @Component({
   selector: 'app-grid',
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.scss']
 })
-export class GridComponent implements OnInit {
+export class GridComponent implements OnInit, OnDestroy {
   @Input() formularioConfiguracao!: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
   @Input() buscarTodosUrl: string = '';
   @Input() adicionarUrl: string = '';
@@ -51,7 +58,7 @@ export class GridComponent implements OnInit {
     comBorda: true,
     carregando: false,
     paginacao: true,
-    alteradorTamanho: true,
+    alteradorTamanho: false,
     titulo: false,
     cabecalho: true,
     rodape: false,
@@ -63,15 +70,16 @@ export class GridComponent implements OnInit {
     simples: false,
     mostrarOpcoes: false,
     tamanho: 'small',
-    tipoPaginacao: 'default',
     rolagemTabela: 'unset',
     layoutTabela: 'auto',
     posicao: 'bottom',
-    tituloTabela: '',
-    rodapeTabela: '',
-    adicionar: true,
+    tipoPaginacao: 'default',
+    tituloTabela: 'Título da Tabela',
+    rodapeTabela: 'Rodapé da Tabela',
+    adicionar: false,
     action: true
   };
+
   dadosEntrada: any[] = [];
   searchValue = '';
   visible = false;
@@ -88,6 +96,7 @@ export class GridComponent implements OnInit {
   painelFiltrosExpandido = false;
 
   // Controle de filtragem local
+  private destroy$ = new Subject<void>();
   private filtroLocal$ = new Subject<void>();
   dadosFiltradosLocalmente: any[] = [];
   ultimaConsulta: ParametrosBusca | null = null;
@@ -95,75 +104,59 @@ export class GridComponent implements OnInit {
   formularioConfiguracaoPadrao: FormGroup<{ [K in keyof ConfiguracaoGrid]: FormControl<ConfiguracaoGrid[K]> }>;
 
   listOfSwitch = [
-    { nome: 'Com Borda', formControlName: 'comBorda' },
-    { nome: 'Carregando', formControlName: 'carregando' },
-    { nome: 'Paginação', formControlName: 'paginacao' },
-    { nome: 'Alterador de Tamanho', formControlName: 'alteradorTamanho' },
-    { nome: 'Título', formControlName: 'titulo' },
-    { nome: 'Cabeçalho da Coluna', formControlName: 'cabecalho' },
-    { nome: 'Rodapé', formControlName: 'rodape' },
-    { nome: 'Expansível', formControlName: 'expansivel' },
-    { nome: 'Caixa de Seleção', formControlName: 'caixaSelecao' },
-    { nome: 'Cabeçalho Fixo', formControlName: 'cabecalhoFixo' },
-    { nome: 'Sem Resultado', formControlName: 'semResultado' },
-    { nome: 'Elipse', formControlName: 'elipse' },
-    { nome: 'Paginação Simples', formControlName: 'simples' }
+    { label: 'Com Borda', value: 'comBorda' },
+    { label: 'Carregando', value: 'carregando' },
+    { label: 'Paginação', value: 'paginacao' },
+    { label: 'Alterador de Tamanho', value: 'alteradorTamanho' },
+    { label: 'Título', value: 'titulo' },
+    { label: 'Cabeçalho', value: 'cabecalho' },
+    { label: 'Rodapé', value: 'rodape' },
+    { label: 'Expansível', value: 'expansivel' },
+    { label: 'Caixa de Seleção', value: 'caixaSelecao' },
+    { label: 'Cabeçalho Fixo', value: 'cabecalhoFixo' },
+    { label: 'Sem Resultado', value: 'semResultado' },
+    { label: 'Elipse', value: 'elipse' },
+    { label: 'Simples', value: 'simples' },
+    { label: 'Mostrar Opções', value: 'mostrarOpcoes' },
+    { label: 'Adicionar', value: 'adicionar' },
+    { label: 'Ação', value: 'action' }
   ];
 
   listOfRadio = [
-    {
-      nome: 'Tamanho',
-      formControlName: 'tamanho',
-      listOfOption: [
-        { valor: 'default', rotulo: 'Padrão' },
-        { valor: 'middle', rotulo: 'Médio' },
-        { valor: 'small', rotulo: 'Pequeno' }
-      ]
-    },
-    {
-      nome: 'Rolagem da Tabela',
-      formControlName: 'rolagemTabela',
-      listOfOption: [
-        { valor: 'unset', rotulo: 'Não definido' },
-        { valor: 'scroll', rotulo: 'Rolagem' },
-        { valor: 'fixed', rotulo: 'Fixo' }
-      ]
-    },
-    {
-      nome: 'Layout da Tabela',
-      formControlName: 'layoutTabela',
-      listOfOption: [
-        { valor: 'auto', rotulo: 'Automático' },
-        { valor: 'fixed', rotulo: 'Fixo' }
-      ]
-    },
-    {
-      nome: 'Posição da Paginação',
-      formControlName: 'posicao',
-      listOfOption: [
-        { valor: 'top', rotulo: 'Topo' },
-        { valor: 'bottom', rotulo: 'Inferior' },
-        { valor: 'both', rotulo: 'Ambos' }
-      ]
-    },
-    {
-      nome: 'Tipo de Paginação',
-      formControlName: 'tipoPaginacao',
-      listOfOption: [
-        { valor: 'default', rotulo: 'Padrão' },
-        { valor: 'small', rotulo: 'Pequeno' }
-      ]
-    }
+    { label: 'Pequeno', value: 'small' },
+    { label: 'Médio', value: 'middle' },
+    { label: 'Padrão', value: 'default' }
+  ];
+
+  listOfPaginationType = [
+    { label: 'Padrão', value: 'default' },
+    { label: 'Simples', value: 'simple' }
+  ];
+
+  listOfPaginationPosition = [
+    { label: 'Topo', value: 'top' },
+    { label: 'Rodapé', value: 'bottom' }
+  ];
+
+  listOfTableLayout = [
+    { label: 'Automático', value: 'auto' },
+    { label: 'Fixo', value: 'fixed' }
+  ];
+
+  listOfScroll = [
+    { label: 'Não Definido', value: 'unset' },
+    { label: 'Rolagem', value: 'scroll' },
+    { label: 'Fixo', value: 'fixed' }
   ];
 
   isColumnSelectorVisible = false;
-  columnSelections: NzCheckBoxOptionInterface[] = [];
+  columnSelections: any[] = [];
   private originalColumns: FormCamposMetadata[] = [];
   allChecked = false;
 
-  // Adicione estas propriedades à classe
+  // Ordenação
   sortField: string = '';
-  sortOrder: NzTableSortOrder = null;
+  sortOrder: 'ascend' | 'descend' | null = null;
 
   constructor(
     private readonly formBuilder: NonNullableFormBuilder,
@@ -188,26 +181,31 @@ export class GridComponent implements OnInit {
       elipse: [false],
       simples: [false],
       mostrarOpcoes: [false],
-      tamanho: 'small' as NzTableSize,
-      tipoPaginacao: 'default' as NzTablePaginationType,
-      rolagemTabela: 'unset' as RolagemTabela,
-      layoutTabela: 'auto' as NzTableLayout,
-      posicao: 'bottom' as NzTablePaginationPosition,
-      tituloTabela: 'Título da Tabela',
-      rodapeTabela: 'Rodapé da Tabela',
+      tamanho: ['small' as TamanhoTabela],
+      tipoPaginacao: ['default' as TipoPaginacao],
+      rolagemTabela: ['unset' as RolagemTabela],
+      layoutTabela: ['auto' as LayoutTabela],
+      posicao: ['bottom' as PosicaoPaginacao],
+      tituloTabela: ['Título da Tabela'],
+      rodapeTabela: ['Rodapé da Tabela'],
       adicionar: [false],
       action: [true]
     });
 
     // Configura debounce para filtragem local
     this.filtroLocal$
-      .pipe(debounceTime(300))
+      .pipe(takeUntil(this.destroy$), debounceTime(300))
       .subscribe(() => this.aplicarFiltroLocal());
   }
 
   ngOnInit(): void {
     this.validarInputs();
     this.inicializarGrid();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private validarInputs(): void {
@@ -228,6 +226,14 @@ export class GridComponent implements OnInit {
       this.configurarDebounce();
       this.configurarFormulario();
       await this.buscarDados();
+      
+      // Garantir que os dados filtrados estejam inicializados
+      if (this.dadosFiltradosLocalmente.length === 0 && this.listaDados.length > 0) {
+        this.dadosFiltradosLocalmente = [...this.listaDados];
+      }
+      
+      // Aplicar filtros iniciais
+      this.aplicarFiltroLocal();
     } catch (error) {
       console.error('Erro ao inicializar grid:', error);
       this.toastService.exibirMensagemErro('Erro', 'Falha ao inicializar o grid');
@@ -312,7 +318,7 @@ export class GridComponent implements OnInit {
   // Configurar debounce para filtros
   private configurarDebounce(): void {
     this.filtroLocal$
-      .pipe(debounceTime(300))
+      .pipe(takeUntil(this.destroy$), debounceTime(300))
       .subscribe(() => this.aplicarFiltroLocal());
   }
 
@@ -516,54 +522,10 @@ export class GridComponent implements OnInit {
     }
   }
 
-  // Método para exportar dados para Excel
-  exportToExcel(): void {
-    if (!this.listaDados.length) {
-      this.toastService.exibirMensagemErro('Erro', 'Não há dados para exportar');
-      return;
-    }
-
-    try {
-      // Filtra apenas as colunas visíveis
-      const visibleColumns = this.gridColumns.filter(col => col.visible);
-      
-      // Prepara os dados para exportação
-      const data = this.listaDados.map(row => {
-        const newRow: Record<string, any> = {};
-        visibleColumns.forEach(col => {
-          newRow[col.label] = row[col.key];
-        });
-        return newRow;
-      });
-
-      // Cria a planilha
-      const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-      const wb: XLSX.WorkBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Dados');
-
-      // Gera o nome do arquivo com data e hora
-      const now = new Date();
-      const fileName = `exportacao_${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}.xlsx`;
-
-      // Salva o arquivo
-      XLSX.writeFile(wb, fileName);
-      
-      this.toastService.exibirMensagemSucesso('Sucesso', 'Dados exportados com sucesso');
-    } catch (error) {
-      console.error('Erro ao exportar dados:', error);
-      this.toastService.exibirMensagemErro('Erro', 'Erro ao exportar dados');
-    }
-  }
-
   updateAllChecked(): void {
-    if (this.columnSelections.length === 0) {
-      this.allChecked = false;
-      this.indeterminado = false;
-      return;
-    }
-
-    this.allChecked = this.columnSelections.every(item => item.checked);
-    this.indeterminado = !this.allChecked && this.columnSelections.some(item => item.checked);
+    const validCount = this.columnSelections.filter(item => item.checked).length;
+    this.allChecked = validCount === this.columnSelections.length;
+    this.indeterminado = validCount > 0 && validCount < this.columnSelections.length;
   }
 
   onItemCheckedChange(): void {
@@ -571,139 +533,106 @@ export class GridComponent implements OnInit {
   }
 
   onAllChecked(checked: boolean): void {
-    this.columnSelections = this.columnSelections.map(item => ({
-      ...item,
-      checked
-    }));
+    this.columnSelections.forEach(item => item.checked = checked);
     this.updateAllChecked();
   }
 
-  // Método para buscar dados com filtros
   async buscarDados(forcarConsulta: boolean = false): Promise<void> {
-    const startTime = performance.now();
-    console.log('🚀 [PERFORMANCE] Iniciando buscarDados()...');
-    
-    if (!this.buscarTodosUrl) {
-      console.warn('URL de busca não definida');
-      return;
-    }
-
-    this.carregando = true;
-
     try {
-      const filtrosAtivos = this.obterFiltrosAtivos();
+      this.carregando = true;
       
-      // Se não há filtros ativos, usa o método obterTodos
-      if (filtrosAtivos.length === 0) {
-        console.log('📡 [PERFORMANCE] Sem filtros - chamando obterTodos()...');
-        const dados = await this.obterTodos();
-        
-        const processStartTime = performance.now();
-        this.listaDados = Array.isArray(dados) ? dados : [];
+      // Verificar se já temos dados e se não precisamos forçar consulta
+      if (!forcarConsulta && this.dadosEntrada.length > 0) {
+        console.log('📊 Usando dados em cache, não consultando API');
+        this.listaDados = [...this.dadosEntrada];
+        this.dadosFiltradosLocalmente = [...this.dadosEntrada];
         this.totalRegistros = this.listaDados.length;
-        this.dadosFiltradosLocalmente = [...this.listaDados];
-        const processTime = performance.now() - processStartTime;
-        console.log(`⚡ [PERFORMANCE] Processamento em ${processTime.toFixed(2)}ms`);
-        
-        const totalTime = performance.now() - startTime;
-        console.log(`✅ [PERFORMANCE] buscarDados() finalizado em ${totalTime.toFixed(2)}ms`);
-        return;
-      }
-
-      // Se há filtros, tenta usar o endpoint /filtrar
-      const parametros: ParametrosBusca = {
-        filtros: filtrosAtivos,
-        paginaAtual: this.paginaAtual,
-        tamanhoPagina: this.tamanhoPagina,
-        campoOrdenacao: this.sortField || this.gridColumns[0]?.key || 'Id',
-        descendente: this.sortOrder === 'descend'
-      };
-
-      // Se não forçar consulta e os parâmetros são iguais aos últimos, aplica filtro local
-      if (!forcarConsulta && this.ultimaConsulta && this.parametrosIguais(parametros, this.ultimaConsulta)) {
-        console.log('🔄 [PERFORMANCE] Aplicando filtro local...');
+        this.carregando = false;
         this.aplicarFiltroLocal();
         return;
       }
 
-      try {
-        console.log('📡 [PERFORMANCE] Chamando endpoint /filtrar...');
-        const response = await firstValueFrom(
-          this.apiService.post<ApiResponse<any>>(this.buscarTodosUrl + '/filtrar', parametros)
-        );
-
-        if (response.sucesso && response.dados) {
-          const processStartTime = performance.now();
-          // Verifica se a resposta tem a estrutura esperada do grid paginado
-          if (response.dados.hasOwnProperty('items') && response.dados.hasOwnProperty('total')) {
-            const gridData = response.dados as any;
-            this.listaDados = gridData.items ?? [];
-            this.totalRegistros = gridData.total ?? 0;
-            this.paginaAtual = gridData.pagina || this.paginaAtual;
-            this.tamanhoPagina = gridData.tamanhoPagina || this.tamanhoPagina;
-          } else {
-            // Fallback para estrutura antiga
-            this.listaDados = Array.isArray(response.dados) ? response.dados : [];
-            this.totalRegistros = this.listaDados.length;
-          }
-          
-          this.dadosFiltradosLocalmente = [...this.listaDados];
-          this.ultimaConsulta = parametros;
-          const processTime = performance.now() - processStartTime;
-          console.log(`⚡ [PERFORMANCE] Processamento em ${processTime.toFixed(2)}ms`);
-        } else {
-          this.toastService.exibirMensagemErro('Erro', response.mensagem || 'Erro ao buscar dados');
-          this.listaDados = [];
-          this.totalRegistros = 0;
-        }
-      } catch (error) {
-        // Se o endpoint /filtrar não existe, aplica filtro local
-        console.warn('Endpoint /filtrar não disponível, aplicando filtro local');
-        const dados = await this.obterTodos();
-        this.listaDados = Array.isArray(dados) ? dados : [];
-        this.totalRegistros = this.listaDados.length;
-        this.aplicarFiltroLocal();
-      }
+      console.log('🔄 Buscando dados da API...');
+      const dados = await this.obterTodos();
+      
+      this.dadosEntrada = dados;
+      this.listaDados = [...dados];
+      this.dadosFiltradosLocalmente = [...dados];
+      this.totalRegistros = dados.length;
+      
+      console.log(`✅ Dados carregados: ${dados.length} registros`);
+      
+      // Aplicar filtros após carregar dados
+      this.aplicarFiltroLocal();
+      
     } catch (error) {
-      console.error('Erro ao buscar dados:', error);
-      this.toastService.exibirMensagemErro('Erro', 'Erro ao buscar dados');
-      this.listaDados = [];
-      this.totalRegistros = 0;
+      console.error('❌ Erro ao buscar dados:', error);
+      this.toastService.exibirMensagemErro('Erro', 'Falha ao carregar dados');
     } finally {
       this.carregando = false;
-      const totalTime = performance.now() - startTime;
-      console.log(`✅ [PERFORMANCE] buscarDados() finalizado em ${totalTime.toFixed(2)}ms`);
     }
   }
 
-  // Compara se os parâmetros de busca são iguais
-  private parametrosIguais(params1: ParametrosBusca, params2: ParametrosBusca): boolean {
-    return params1.paginaAtual === params2.paginaAtual &&
-           params1.tamanhoPagina === params2.tamanhoPagina &&
-           params1.campoOrdenacao === params2.campoOrdenacao &&
-           params1.descendente === params2.descendente &&
-           JSON.stringify(params1.filtros) === JSON.stringify(params2.filtros);
-  }
-
-  // Aplica filtro local
   private aplicarFiltroLocal(): void {
-    const filtrosAtivos = this.obterFiltrosAtivos();
+    let dadosFiltrados = [...this.listaDados];
     
-    if (filtrosAtivos.length === 0) {
-      this.dadosFiltradosLocalmente = [...this.listaDados];
-    } else {
-      this.dadosFiltradosLocalmente = this.listaDados.filter(item => {
-        return filtrosAtivos.every(filtro => {
-          const valorItem = String(item[filtro.campo] || '').toLowerCase();
-          return valorItem.includes(filtro.valor.toLowerCase());
+    // Aplicar filtro de busca geral
+    if (this.searchValue.trim() !== '') {
+      dadosFiltrados = dadosFiltrados.filter(item =>
+        Object.values(item).some(value =>
+          String(value).toLowerCase().includes(this.searchValue.toLowerCase())
+        )
+      );
+    }
+    
+    // Aplicar filtros específicos
+    Object.keys(this.searchInputs).forEach(key => {
+      const valor = this.searchInputs[key];
+      if (valor && (Array.isArray(valor) ? valor.length > 0 : valor.toString().trim() !== '')) {
+        dadosFiltrados = dadosFiltrados.filter(item => {
+          const itemValue = item[key];
+          
+          if (Array.isArray(valor)) {
+            // Para filtros múltiplos (bool, enum)
+            return valor.some(v => {
+              if (typeof itemValue === 'boolean') {
+                return itemValue === (v === 'true');
+              }
+              return String(itemValue).toLowerCase() === String(v).toLowerCase();
+            });
+          } else {
+            // Para filtros de texto/número/data
+            return String(itemValue).toLowerCase().includes(String(valor).toLowerCase());
+          }
         });
+      }
+    });
+    
+    this.dadosFiltradosLocalmente = dadosFiltrados;
+    
+    // Aplicar ordenação se houver
+    if (this.sortField && this.sortOrder) {
+      this.dadosFiltradosLocalmente.sort((a, b) => {
+        const aValue = a[this.sortField];
+        const bValue = b[this.sortField];
+        
+        if (aValue === null || aValue === undefined) return 1;
+        if (bValue === null || bValue === undefined) return -1;
+        
+        const comparison = aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+        return this.sortOrder === 'descend' ? -comparison : comparison;
       });
     }
   }
 
-  // Método para resetar filtros
   reset(): void {
+    this.searchValue = '';
     this.searchInputs = {};
+    this.paginaAtual = 1;
+    this.sortField = '';
+    this.sortOrder = null;
+    
+    // Resetar filtros
     this.filterColumns.forEach(filter => {
       switch (filter.type) {
         case 'bool':
@@ -718,13 +647,11 @@ export class GridComponent implements OnInit {
           break;
       }
     });
-    this.paginaAtual = 1;
-    this.sortField = '';
-    this.sortOrder = null;
-    this.buscarDados(true);
+    
+    this.aplicarFiltroLocal();
+    this.toastService.exibirMensagemSucesso('Sucesso', 'Filtros resetados');
   }
 
-  // Método para limpar filtro específico
   clearFilter(key: string): void {
     const filter = this.filterColumns.find(f => f.key === key);
     if (filter) {
@@ -740,221 +667,173 @@ export class GridComponent implements OnInit {
           this.searchInputs[key] = '';
           break;
       }
-    } else {
-      this.searchInputs[key] = '';
+      
+      this.filtroLocal$.next();
+      console.log(`🧹 Filtro "${key}" limpo`);
     }
-    this.onFilterChange();
   }
 
-  // Handler para mudança de página
   onPageIndexChange(page: number): void {
     this.paginaAtual = page;
-    this.buscarDados(true);
+    console.log(`📄 Página alterada para: ${page}`);
   }
 
-  // Handler para mudança de tamanho da página
   onPageSizeChange(size: number): void {
     this.tamanhoPagina = size;
-    this.paginaAtual = 1;
-    this.buscarDados(true);
+    this.paginaAtual = 1; // Reset para primeira página
+    console.log(`📏 Tamanho da página alterado para: ${size}`);
   }
 
-  // Handler para mudança nos filtros
   onFilterChange(): void {
-    this.paginaAtual = 1; // Reset para primeira página ao filtrar
     this.filtroLocal$.next();
   }
 
-  // Obtém filtros ativos
-  private obterFiltrosAtivos(): FiltroGrid[] {
-    return Object.entries(this.searchInputs)
-      .filter(([_, value]) => {
-        if (Array.isArray(value)) {
-          return value.length > 0;
-        }
-        return value && value.trim() !== '';
-      })
-      .flatMap(([campo, valor]) => {
-        if (Array.isArray(valor)) {
-          // Para filtros multi-seleção, criar um filtro para cada valor selecionado
-          return valor.map(v => ({
-            campo,
-            valor: String(v).trim(),
-            operador: 'contains' // ou 'equals' dependendo do tipo
-          }));
-        } else {
-          return [{
-            campo,
-            valor: String(valor).trim(),
-            operador: 'contains'
-          }];
-        }
-      });
-  }
-
-  // Adicione este método para lidar com a ordenação
-  onSort(sort: { key: string; value: NzTableSortOrder }): void {
+  onSort(sort: { key: string; value: 'ascend' | 'descend' | null }): void {
     this.sortField = sort.key;
     this.sortOrder = sort.value;
-    this.buscarDados(true);
+    
+    // Aplicar ordenação local se necessário
+    if (this.sortOrder) {
+      this.dadosFiltradosLocalmente.sort((a, b) => {
+        const aValue = a[this.sortField];
+        const bValue = b[this.sortField];
+        
+        if (aValue === null || aValue === undefined) return 1;
+        if (bValue === null || bValue === undefined) return -1;
+        
+        const comparison = aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
+        return this.sortOrder === 'descend' ? -comparison : comparison;
+      });
+    }
   }
 
-  // Método para tracking do ngFor
+  onSortChange(key: string, value: string | null): void {
+    this.onSort({ key, value: value as 'ascend' | 'descend' | null });
+  }
+
   trackByFn(index: number, item: any): any {
-    return item?.id || index;
+    return item.id || index;
   }
 
-  // Método para formatar valores das células
   formatCellValue(value: any, columnKey: string): string {
     if (value === null || value === undefined) {
-      return '';
+      return '-';
     }
 
-    // Formatação específica por tipo de coluna
-    switch (columnKey) {
-      case 'situacao':
-      case 'possuiBanheiro':
-      case 'possuiClimatizador':
-        return value ? 'Sim' : 'Não';
-        
-      case 'situacaoDescricao':
-      case 'possuiBanheiroDescricao':
-      case 'possuiClimatizadorDescricao':
-        return String(value);
-        
-      case 'createdAt':
-      case 'updatedAt':
-        if (value) {
-          try {
-            const date = new Date(value);
-            return date.toLocaleDateString('pt-BR') + ' ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-          } catch {
-            return String(value);
-          }
-        }
-        return '';
-        
-      default:
-        return String(value);
+    if (typeof value === 'boolean') {
+      return value ? 'Sim' : 'Não';
     }
+
+    if (typeof value === 'object') {
+      return JSON.stringify(value);
+    }
+
+    return String(value);
   }
 
-  // Verifica se um campo é boolean (Sim/Não)
   isBooleanField(columnKey: string): boolean {
-    const booleanFields = [
-      'situacao', 
-      'situacaoDescricao',
-      'possuiBanheiro', 
-      'possuiBanheiroDescricao',
-      'possuiClimatizador', 
-      'possuiClimatizadorDescricao'
-    ];
-    return booleanFields.includes(columnKey.toLowerCase());
+    const column = this.gridColumns.find(col => col.key === columnKey);
+    return column?.type === 'boolean' || column?.type === 'bool';
   }
 
-  // Verifica se um campo é enum
   isEnumField(columnKey: string): boolean {
-    const enumFields = [
-      'tipo', 
-      'tipoDescricao',
-      'status',
-      'statusDescricao'
-    ];
-    return enumFields.includes(columnKey.toLowerCase());
+    const column = this.gridColumns.find(col => col.key === columnKey);
+    return column?.type === 'enum';
   }
 
-  // Obtém as opções de um campo enum
   getEnumOptions(columnKey: string): { value: string; label: string }[] {
-    const key = columnKey.toLowerCase();
-    
-    switch (key) {
-      case 'tipo':
-      case 'tipodescricao':
-        return [
-          { value: '0', label: 'Ônibus Urbano' },
-          { value: '1', label: 'Microônibus' },
-          { value: '2', label: 'Van' },
-          { value: '3', label: 'Carro' },
-          { value: '4', label: 'Ônibus Rodoviário' },
-          { value: '5', label: 'Ônibus Articulado' }
-        ];
-      
-      case 'status':
-      case 'statusdescricao':
-        return [
-          { value: 'Ativo', label: 'Ativo' },
-          { value: 'Inativo', label: 'Inativo' },
-          { value: 'Manutencao', label: 'Manutenção' },
-          { value: 'Disponivel', label: 'Disponível' }
-        ];
-        
-      default:
-        return [];
-    }
+    // Implementar lógica para obter opções de enum
+    return [];
   }
 
-  // Método para limpar o cache de configurações (útil para testes)
   clearGridConfig(): void {
     if (this.identificador) {
       try {
         const key = `grid-config-${this.identificador}`;
         localStorage.removeItem(key);
-        console.log('🗑️ Cache de configuração limpo para:', key);
+        console.log('🗑️ Configuração do grid removida:', key);
         
-        // Reinicializar com configurações padrão
+        // Recarregar configurações padrão
         this.initializeColumnSelections();
-        this.updateColumnsVisibility();
+        this.configurarColunas();
+        
+        this.toastService.exibirMensagemSucesso('Sucesso', 'Configuração do grid resetada');
       } catch (error) {
-        console.warn('❌ Erro ao limpar cache:', error);
+        console.warn('❌ Erro ao limpar configuração do grid:', error);
+        this.toastService.exibirMensagemErro('Erro', 'Falha ao limpar configuração');
       }
     }
   }
 
-  // Método para debug do cache
   debugGridConfig(): void {
     if (this.identificador) {
       const key = `grid-config-${this.identificador}`;
       const saved = localStorage.getItem(key);
-      console.log('🔍 [DEBUG] Configuração atual no localStorage:', {
+      console.log('🔍 [DEBUG] Configuração atual do grid:', {
         key,
-        saved,
-        parsed: saved ? JSON.parse(saved) : null
-      });
-      console.log('🔍 [DEBUG] Estado atual do grid:', {
+        saved: saved ? JSON.parse(saved) : null,
         columnSelections: this.columnSelections,
-        gridColumns: this.gridColumns,
-        originalColumns: this.originalColumns
+        gridColumns: this.gridColumns
       });
     }
   }
 
-  // Método para obter configuração de scroll baseada nas configurações
   getScrollConfig(): { x?: string; y?: string } {
     const config: { x?: string; y?: string } = {};
     
-    // Configurar scroll horizontal baseado na configuração de rolagem
-    switch (this.valorConfiguracao.rolagemTabela) {
-      case 'scroll':
-        // Usar largura mínima para garantir scroll quando necessário
-        config.x = '1200px'; // Largura mínima que força scroll
-        break;
-      case 'fixed':
-        config.x = '100vw';
-        break;
-      case 'unset':
-      default:
-        // Calcular largura baseada no número de colunas visíveis
-        const colunasVisiveis = this.gridColumns.filter(col => col.visible).length;
-        const larguraMinima = Math.max(colunasVisiveis * 150, 800); // 150px por coluna, mínimo 800px
-        config.x = `${larguraMinima}px`;
-        break;
+    if (this.rolagemX) {
+      config.x = this.rolagemX;
     }
     
-    // Configurar scroll vertical se cabeçalho fixo estiver ativado
-    if (this.valorConfiguracao.cabecalhoFixo) {
-      config.y = '400px'; // Altura fixa para scroll vertical
+    if (this.rolagemY) {
+      config.y = this.rolagemY;
     }
     
     return config;
   }
-}
+
+  exportToExcel(): void {
+    try {
+      // Implementação básica de exportação para Excel
+      const data = this.dadosFiltradosLocalmente.length > 0 ? this.dadosFiltradosLocalmente : this.listaDados;
+      
+      if (data.length === 0) {
+        this.toastService.exibirMensagemAviso('Aviso', 'Nenhum dado para exportar');
+        return;
+      }
+
+      // Criar cabeçalhos baseados nas colunas visíveis
+      const headers = this.gridColumns
+        .filter(col => col.visible)
+        .map(col => col.label);
+
+      // Criar linhas de dados
+      const rows = data.map(item => 
+        this.gridColumns
+          .filter(col => col.visible)
+          .map(col => this.formatCellValue(item[col.key], col.key))
+      );
+
+      // Combinar cabeçalhos e dados
+      const csvContent = [headers, ...rows]
+        .map(row => row.map(cell => `"${cell}"`).join(','))
+        .join('\n');
+
+      // Criar e baixar arquivo
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `export_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      this.toastService.exibirMensagemSucesso('Sucesso', 'Dados exportados com sucesso');
+    } catch (error) {
+      console.error('Erro ao exportar dados:', error);
+      this.toastService.exibirMensagemErro('Erro', 'Falha ao exportar dados');
+    }
+  }
+} 
