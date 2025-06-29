@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { FormCamposMetadata } from '../decorator/formulario-decorator';
-import { ToastService } from '../utils/notificacao/toast.service';
+import { NotificationService } from '../../shared/services/notification.service';
 import { LoggingService } from '../utils/log/logging.service';
 
 @Injectable({
@@ -10,7 +10,7 @@ import { LoggingService } from '../utils/log/logging.service';
 export class ValidacaoService {
 
   constructor(
-    private toastService: ToastService,
+    private notificationService: NotificationService,
     private loggingService: LoggingService
   ) {}
 
@@ -99,7 +99,7 @@ export class ValidacaoService {
     // Mensagem mais detalhada
     if (camposComErro.length > 0) {
       const mensagemDetalhada = `Os seguintes campos contêm erros:\n• ${errosDetalhados.join('\n• ')}`;
-      this.toastService.exibirMensagemErro('Formulário Inválido', mensagemDetalhada);
+      this.notificationService.error('Formulário Inválido', mensagemDetalhada);
       
       // Log detalhado para depuração
       this.loggingService.error('Campos com erro:', {
@@ -116,7 +116,7 @@ export class ValidacaoService {
         }))
       });
     } else {
-      this.toastService.exibirMensagemErro('Erro', 'Formulário inválido. Verifique os dados informados.');
+      this.notificationService.error('Erro', 'Formulário inválido. Verifique os dados informados.');
     }
   }
 

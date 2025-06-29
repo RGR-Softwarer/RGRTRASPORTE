@@ -61,24 +61,26 @@ export class BreadcrumbService {
     }
 
     let urlAcumulada = '';
-    
     for (let i = 0; i < segmentosUrl.length; i++) {
-      const segmento = segmentosUrl[i];
-      urlAcumulada += `/${segmento}`;
-      
+      urlAcumulada = '/' + segmentosUrl.slice(0, i + 1).join('/');
       const dadosRota = this.obterDadosRota(urlAcumulada);
-      
-      // Pular se a rota está marcada como oculta
       if (dadosRota?.oculta) {
         continue;
       }
-
-      const breadcrumb = this.criarItemBreadcrumb(segmento, urlAcumulada, dadosRota, i === segmentosUrl.length - 1);
-      
-      // Evitar duplicatas
+      const breadcrumb = this.criarItemBreadcrumb(segmentosUrl[i], urlAcumulada, dadosRota, i === segmentosUrl.length - 1);
       if (!this.breadcrumbJaExiste(breadcrumbs, breadcrumb)) {
         breadcrumbs.push(breadcrumb);
       }
+    }
+
+    // Forçar a adição do breadcrumb 'Adicionar' se a URL termina com /adicionar e não foi adicionado
+    if (url.endsWith('/adicionar') && !breadcrumbs.some(b => b.label === 'Adicionar')) {
+      breadcrumbs.push({
+        label: 'Adicionar',
+        url: '',
+        icon: 'plus',
+        isActive: true
+      });
     }
 
     return this.filtrarBreadcrumbsValidos(breadcrumbs);

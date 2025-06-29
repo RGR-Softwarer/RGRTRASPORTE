@@ -1,215 +1,184 @@
-<form nz-form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-  <div nz-row [nzGutter]="[16, 16]">
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="row g-3">
     <ng-container *ngFor="let field of formFields">
       <ng-container *ngIf="field.visible">
-        <div nz-col [nzSpan]="field.nzSpan" 
-             [nzXs]="field.nzXs || null" [nzSm]="field.nzSm || null" 
-             [nzMd]="field.nzMd || null" [nzLg]="field.nzLg || null" 
-             [nzXl]="field.nzXl || null" [nzXXl]="field.nzXXl || null">
-          <nz-form-item>
-            <nz-form-label [nzFor]="field.key" [nzRequired]="field.required && !field.readonly">
-              {{ field.label }}
-              <span *ngIf="field.readonly" class="readonly-indicator"> (Somente leitura)</span>
-            </nz-form-label>
-            <nz-form-control 
-              [nzErrorTip]="isFieldInvalid(field.key) ? getFieldErrorMessage(field.key) : ''"
-              [nzValidateStatus]="isFieldInvalid(field.key) ? 'error' : ''">
-              
-              <!-- Campo de texto -->
-              <ng-container *ngIf="field.type === 'texto'">
-                <input
-                  nz-input
-                  [id]="field.key"
-                  [formControlName]="field.key"
-                  [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
-                  [maxlength]="field.maxLength || null"
-                  [readonly]="field.readonly"
-                  type="text"
-                  (focus)="onFieldFocus(field.key)"
-                  (blur)="onFieldBlur(field.key)"
-                />
-              </ng-container>
-
-              <!-- Campo numérico -->
-              <ng-container *ngIf="field.type === 'numero'">
-                <input
-                  nz-input
-                  [id]="field.key"
-                  [formControlName]="field.key"
-                  [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
-                  [min]="field.min || null"
-                  [max]="field.max || null"
-                  [step]="field.step || 1"
-                  [readonly]="field.readonly"
-                  type="number"
-                  (focus)="onFieldFocus(field.key)"
-                  (blur)="onFieldBlur(field.key)"
-                />
-              </ng-container>
-
-              <!-- Campo de seleção (enum) -->
-              <ng-container *ngIf="field.type === 'enum'">
-                <nz-select
-                  [id]="field.key"
-                  [formControlName]="field.key"
-                  [nzPlaceHolder]="field.placeholder || 'Selecione ' + field.label.toLowerCase()"
-                  [nzDisabled]="!!field.readonly"
-                  nzAllowClear
-                  nzShowSearch
-                  style="width: 100%;"
-                  (nzFocus)="onFieldFocus(field.key)"
-                  (nzBlur)="onFieldBlur(field.key)"
-                >
-                  <nz-option
-                    *ngFor="let option of field.options"
-                    [nzValue]="option.value"
-                    [nzLabel]="option.label"
-                  >
-                  </nz-option>
-                </nz-select>
-              </ng-container>
-
-              <!-- Campo booleano -->
-              <ng-container *ngIf="field.type === 'bool'">
-                <div class="boolean-field-container">
-                  <nz-switch
-                    [id]="field.key"
-                    [formControlName]="field.key"
-                    [disabled]="!!field.readonly"
-                  >
-                  </nz-switch>
-                  <span class="boolean-field-label">
-                    {{ form.get(field.key)?.value ? 'Sim' : 'Não' }}
-                  </span>
-                </div>
-              </ng-container>
-
-              <!-- Campo de data -->
-              <ng-container *ngIf="field.type === 'data'">
-                <nz-date-picker
-                  [id]="field.key"
-                  [formControlName]="field.key"
-                  [nzPlaceHolder]="field.placeholder || 'Selecione a data'"
-                  [nzDisabled]="field.readonly"
-                  nzFormat="dd/MM/yyyy"
-                  style="width: 100%;"
-                  (nzFocus)="onFieldFocus(field.key)"
-                  (nzBlur)="onFieldBlur(field.key)"
-                  nzShowToday
-                  nzAllowClear
-                  [nzPopupStyle]="{ position: 'fixed' }"
-                  nzPlacement="bottomLeft"
-                >
-                </nz-date-picker>
-              </ng-container>
-
-              <!-- Campo de texto longo (textarea) -->
-              <ng-container *ngIf="field.type === 'textarea'">
-                <textarea
-                  nz-input
-                  [id]="field.key"
-                  [formControlName]="field.key"
-                  [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
-                  [rows]="field.rows || 4"
-                  [maxlength]="field.maxLength || null"
-                  [readonly]="field.readonly"
-                  (focus)="onFieldFocus(field.key)"
-                  (blur)="onFieldBlur(field.key)"
-                >
-                </textarea>
-              </ng-container>
-
-              <!-- Campo de entidade (com busca) -->
-              <ng-container *ngIf="field.type === 'entidade'">
-                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-                  <input 
-                    type="text" 
-                    nz-input 
-                    [placeholder]="field.placeholder || 'Buscar ' + field.label.toLowerCase()"
-                    [formControlName]="field.key.endsWith('Id') ? field.key.slice(0, -2) + 'Nome' : field.key + 'Nome'"
-                    readonly
-                  />
-                </nz-input-group>
-                <ng-template #suffixIconButton>
-                  <button nz-button nzType="primary" nzSearch type="button" (click)="abrirSelecaoEntidade(field)">
-                    <span nz-icon nzType="search"></span>
-                  </button>
-                </ng-template>
-              </ng-container>
-
-              <!-- Campo de email -->
-              <ng-container *ngIf="field.type === 'email'">
-                <input
-                  nz-input
-                  [id]="field.key"
-                  [formControlName]="field.key"
-                  [placeholder]="field.placeholder || 'Digite o email'"
-                  type="email"
-                  (focus)="onFieldFocus(field.key)"
-                  (blur)="onFieldBlur(field.key)"
-                />
-              </ng-container>
-
-              <!-- Campo de telefone -->
-              <ng-container *ngIf="field.type === 'telefone'">
-                <input
-                  nz-input
-                  [id]="field.key"
-                  [formControlName]="field.key"
-                  [placeholder]="field.placeholder || '(00) 00000-0000'"
-                  type="tel"
-                  maxlength="15"
-                  (input)="formatarTelefone($event)"
-                  (focus)="onFieldFocus(field.key)"
-                  (blur)="onFieldBlur(field.key)"
-                />
-              </ng-container>
-
-              <!-- Campo genérico para tipos não reconhecidos -->
-              <ng-container *ngIf="!['texto', 'numero', 'enum', 'bool', 'data', 'textarea', 'entidade', 'email', 'telefone'].includes(field.type)">
-                <input
-                  nz-input
-                  [id]="field.key"
-                  [formControlName]="field.key"
-                  [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
-                  type="text"
-                />
-                <small class="field-warning">Tipo de campo não reconhecido: {{ field.type }}</small>
-              </ng-container>
-
-              <!-- Informação adicional do campo -->
-              <div *ngIf="field.description" class="field-description">
-                <small>{{ field.description }}</small>
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+          <div class="filter-column">
+            <!-- Campo de texto -->
+            <app-input-field *ngIf="field.type === 'texto'"
+                            [id]="field.key"
+                            [label]="field.label"
+                            [type]="'text'"
+                            [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
+                            [readonly]="field.readonly || false"
+                            [hasError]="isFieldInvalid(field.key)"
+                            [errorMessage]="getFieldErrorMessage(field.key)"
+                            [formControlName]="field.key"
+                            (onFocusEvent)="onFieldFocus(field.key)"
+                            (onBlurEvent)="onFieldBlur(field.key)">
+            </app-input-field>
+            
+            <!-- Campo numérico -->
+            <app-input-field *ngIf="field.type === 'numero'"
+                            [id]="field.key"
+                            [label]="field.label"
+                            [type]="'number'"
+                            [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
+                            [readonly]="field.readonly || false"
+                            [hasError]="isFieldInvalid(field.key)"
+                            [errorMessage]="getFieldErrorMessage(field.key)"
+                            [formControlName]="field.key"
+                            (onFocusEvent)="onFieldFocus(field.key)"
+                            (onBlurEvent)="onFieldBlur(field.key)">
+            </app-input-field>
+            
+            <!-- Campo de seleção (enum) -->
+            <app-select-field *ngIf="field.type === 'enum'"
+                             [id]="field.key"
+                             [label]="field.label"
+                             [placeholder]="'Selecione ' + field.label.toLowerCase()"
+                             [options]="field.options || []"
+                             [disabled]="!!field.readonly"
+                             [hasError]="isFieldInvalid(field.key)"
+                             [errorMessage]="getFieldErrorMessage(field.key)"
+                             [formControlName]="field.key"
+                             (onFocusEvent)="onFieldFocus(field.key)"
+                             (onBlurEvent)="onFieldBlur(field.key)">
+            </app-select-field>
+            
+            <!-- Campo booleano -->
+            <app-select-field *ngIf="field.type === 'bool'"
+                             [id]="field.key"
+                             [label]="field.label"
+                             [placeholder]="'Selecione'"
+                             [options]="[
+                               { value: 'true', label: 'Sim' },
+                               { value: 'false', label: 'Não' }
+                             ]"
+                             [disabled]="!!field.readonly"
+                             [hasError]="isFieldInvalid(field.key)"
+                             [errorMessage]="getFieldErrorMessage(field.key)"
+                             [formControlName]="field.key">
+            </app-select-field>
+            
+            <!-- Campo de data -->
+            <app-input-field *ngIf="field.type === 'data'"
+                            [id]="field.key"
+                            [label]="field.label"
+                            [type]="'date'"
+                            [placeholder]="field.placeholder || 'Selecione a data'"
+                            [readonly]="field.readonly || false"
+                            [hasError]="isFieldInvalid(field.key)"
+                            [errorMessage]="getFieldErrorMessage(field.key)"
+                            [formControlName]="field.key"
+                            (onFocusEvent)="onFieldFocus(field.key)"
+                            (onBlurEvent)="onFieldBlur(field.key)">
+            </app-input-field>
+            
+            <!-- Campo de texto longo (textarea) -->
+            <div *ngIf="field.type === 'textarea'" class="form-group">
+              <label *ngIf="field.label" [for]="field.key" class="form-label">{{ field.label }}</label>
+              <textarea class="form-control"
+                        [id]="field.key"
+                        [formControlName]="field.key"
+                        [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
+                        [rows]="field.rows || 3"
+                        [maxlength]="field.maxLength || null"
+                        [readonly]="field.readonly || false"
+                        [class.is-invalid]="isFieldInvalid(field.key)"
+                        (focus)="onFieldFocus(field.key)"
+                        (blur)="onFieldBlur(field.key)"></textarea>
+              <div *ngIf="isFieldInvalid(field.key)" class="invalid-feedback d-block">
+                {{ getFieldErrorMessage(field.key) }}
               </div>
-            </nz-form-control>
-          </nz-form-item>
+            </div>
+            
+            <!-- Campo de entidade (com busca) -->
+            <div *ngIf="field.type === 'entidade'" class="form-group">
+              <label *ngIf="field.label" [for]="field.key" class="form-label">{{ field.label }}</label>
+              <div class="input-group">
+                <input type="text"
+                       class="form-control"
+                       [placeholder]="field.placeholder || 'Digite para buscar ' + field.label.toLowerCase()"
+                       [formControlName]="field.key.endsWith('Id') ? field.key.slice(0, -2) + 'Nome' : field.key + 'Nome'"
+                       [class.is-invalid]="isFieldInvalid(field.key)"
+                       (keydown)="onEntidadeKeyDown($event, field)"
+                       (blur)="onEntidadeBlur(field)">
+                <button class="btn btn-outline-secondary entidade-search-btn" type="button" (click)="abrirSelecaoEntidade(field)">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <div *ngIf="isFieldInvalid(field.key)" class="invalid-feedback d-block">
+                {{ getFieldErrorMessage(field.key) }}
+              </div>
+            </div>
+            
+            <!-- Campo de email -->
+            <app-input-field *ngIf="field.type === 'email'"
+                            [id]="field.key"
+                            [label]="field.label"
+                            [type]="'email'"
+                            [placeholder]="field.placeholder || 'Digite o email'"
+                            [hasError]="isFieldInvalid(field.key)"
+                            [errorMessage]="getFieldErrorMessage(field.key)"
+                            [formControlName]="field.key"
+                            (onFocusEvent)="onFieldFocus(field.key)"
+                            (onBlurEvent)="onFieldBlur(field.key)">
+            </app-input-field>
+            
+            <!-- Campo de telefone -->
+            <app-input-field *ngIf="field.type === 'telefone'"
+                            [id]="field.key"
+                            [label]="field.label"
+                            [type]="'tel'"
+                            [placeholder]="field.placeholder || '(00) 00000-0000'"
+                            [hasError]="isFieldInvalid(field.key)"
+                            [errorMessage]="getFieldErrorMessage(field.key)"
+                            [formControlName]="field.key"
+                            (onFocusEvent)="onFieldFocus(field.key)"
+                            (onBlurEvent)="onFieldBlur(field.key)"
+                            (valueChange)="formatarTelefone($event)">
+            </app-input-field>
+            
+            <!-- Campo genérico para tipos não reconhecidos -->
+            <div *ngIf="!['texto', 'numero', 'enum', 'bool', 'data', 'textarea', 'entidade', 'email', 'telefone'].includes(field.type)">
+              <app-input-field [id]="field.key"
+                              [label]="field.label"
+                              [type]="'text'"
+                              [placeholder]="field.placeholder || 'Digite ' + field.label.toLowerCase()"
+                              [hasError]="isFieldInvalid(field.key)"
+                              [errorMessage]="getFieldErrorMessage(field.key)"
+                              [formControlName]="field.key">
+              </app-input-field>
+              <small class="text-warning">Tipo de campo não reconhecido: {{ field.type }}</small>
+            </div>
+            
+            <!-- Informação adicional do campo -->
+            <div *ngIf="field.description" class="form-text small">
+              {{ field.description }}
+            </div>
+          </div>
         </div>
       </ng-container>
     </ng-container>
   </div>
 
   <!-- Botões de Ação -->
-  <div class="button-group" style="margin-top: 24px; text-align: right;">
-    <button
-      nz-button
-      nzType="default"
-      type="button"
-      (click)="voltar()"
-      style="margin-right: 8px;"
-    >
-      <span nz-icon nzType="arrow-left"></span>
-      Voltar
+  <div class="button-group mt-4 text-end">
+    <button type="button" class="btn btn-secondary me-2" (click)="voltar()">
+      <i class="fas fa-arrow-left me-1"></i> Voltar
     </button>
-    
-    <button 
-      nz-button 
-      nzType="primary" 
-      type="submit"
-      [nzLoading]="(estado$ | async)?.isLoading || form.pending"
-      [disabled]="(estado$ | async)?.isLoading || form.pending"
-    >
-      <span nz-icon [nzType]="(estado$ | async)?.isEditMode ? 'save' : 'plus'"></span>
-      {{ (estado$ | async)?.isEditMode ? 'Salvar' : 'Adicionar' }}
+    <button type="submit" class="btn btn-primary">
+      <i class="fas fa-save me-1"></i> Salvar
     </button>
   </div>
 </form>
+
+<!-- Modal de Seleção de Entidade -->
+<app-entidade-selecao-modal
+  *ngIf="showEntidadeModal"
+  [config]="entidadeModalConfig!"
+  [show]="showEntidadeModal"
+  (close)="fecharModalEntidade()"
+  (select)="onEntidadeSelecionada($event)">
+</app-entidade-selecao-modal>

@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { VeiculoFacade } from './services/veiculo.facade';
 import { Observable } from 'rxjs';
 import { DecoratorUtils } from '../../../services/decorator/formulario-decorator';
-import { ToastService } from '../../../services/utils/notificacao/toast.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 import { environment } from '../../../../environments/environment';
 
 @Component({
@@ -29,7 +29,7 @@ export class VeiculoComponent implements OnInit {
   constructor(
     private router: Router,
     private facade: VeiculoFacade,
-    private toast: ToastService
+    private notificationService: NotificationService
   ) {
     this.veiculos$ = this.facade.veiculos$;
     this.isLoading$ = this.facade.isLoading$;
@@ -70,6 +70,7 @@ export class VeiculoComponent implements OnInit {
    */
   recarregarDados(): void {
     this.facade.carregarVeiculos();
-    this.toast.exibirMensagemSucesso('Sucesso', 'Dados recarregados com sucesso!');
+    this.notificationService.success('Sucesso', 'Dados recarregados com sucesso!');
   }
+  
 }

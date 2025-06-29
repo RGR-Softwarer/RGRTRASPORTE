@@ -3,7 +3,7 @@ import { Router, Route, NavigationEnd } from '@angular/router';
 import { Subject, takeUntil, filter } from 'rxjs';
 import { AppContextService } from '../services/context/app.context';
 import { AppContext } from '../dominio/entidade/app.context';
-import { ToastService } from '../services/utils/notificacao/toast.service';
+import { NotificationService } from '../shared/services/notification.service';
 
 interface MenuItem {
   path: string;
@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private appContextService: AppContextService,
-    private toastService: ToastService
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -181,7 +181,7 @@ export class HomeComponent implements OnInit, OnDestroy {
    */
   fazerLogout(): void {
     this.appContextService.logout();
-    this.toastService.exibirMensagemSucesso('Logout', 'Você foi desconectado com sucesso');
+    this.notificationService.success('Logout', 'Você foi desconectado com sucesso');
     this.router.navigate(['/auth/login']);
   }
 

@@ -41,6 +41,7 @@ export interface FormCamposMetadata {
     searchFields: string[];
     modalTitle: string;
     modalWidth?: number;
+    entidade?: any;
   };
 }
 

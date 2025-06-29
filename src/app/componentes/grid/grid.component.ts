@@ -1,13 +1,19 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { Subject, debounceTime, firstValueFrom, takeUntil } from 'rxjs';
 import { ApiService } from '../../services/http/api.service';
-import { ToastService } from '../../services/utils/notificacao/toast.service';
 import { LoggingService } from '../../services/utils/log/logging.service';
 import { ConfiguracaoGrid, RolagemTabela, TamanhoTabela, LayoutTabela, PosicaoPaginacao, TipoPaginacao } from '../../dominio/interface/grid/configuracao-grid';
 import { Action } from '../../dominio/interface/grid/action-grid';
 import { DecoratorUtils, FiltroMetadata } from '../../services/decorator/formulario-decorator';
+import { InputFieldComponent } from '../../shared/components/form/input-field/input-field.component';
+import { SelectFieldComponent } from '../../shared/components/form/select-field/select-field.component';
+import { SharedModule } from '../../shared/shared.module';
+import { ButtonComponent } from '../../shared/components/button/button.component';
+import { ModalComponent } from '../../shared/components/modal/modal.component';
+import { NotificationService } from '../../shared/services/notification.service';
 
 interface GridData {
   [key: string]: any;
@@ -34,6 +40,17 @@ interface ParametrosBusca {
 
 @Component({
   selector: 'app-grid',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    InputFieldComponent,
+    SelectFieldComponent,
+    ButtonComponent,
+    ModalComponent,
+    SharedModule
+  ],
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.scss']
 })
@@ -44,6 +61,7 @@ export class GridComponent implements OnInit, OnDestroy {
   @Input() acoes?: Action[] = [{ label: 'Editar', acao: this.editar.bind(this) }];
   @Input() entidade: any;
   @Input() identificador: string = '';
+  @Input() filtroInicial?: string; // Filtro inicial para aplicar na grid
 
   gridColumns: FormCamposMetadata[] = []; 
   filterColumns: FiltroMetadata[] = [];
@@ -162,8 +180,9 @@ export class GridComponent implements OnInit, OnDestroy {
     private readonly formBuilder: NonNullableFormBuilder,
     private readonly router: Router,
     private readonly apiService: ApiService,
-    private readonly toastService: ToastService,
-    private readonly loggingService: LoggingService
+    private readonly loggingService: LoggingService,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private notificationService: NotificationService
   ) {
     // Inicializa as configurações padrão da grid
     this.formularioConfiguracaoPadrao = this.formBuilder.group({
@@ -196,11 +215,36 @@ export class GridComponent implements OnInit, OnDestroy {
     this.filtroLocal$
       .pipe(takeUntil(this.destroy$), debounceTime(300))
       .subscribe(() => this.aplicarFiltroLocal());
+
+    // Inicializa as configurações padrão da grid
+    this.valorConfiguracao = {
+      ...this.formularioConfiguracaoPadrao.value,
+      ...this.valorConfiguracao
+    };
+    if (this.valorConfiguracao.adicionar === undefined) {
+      this.valorConfiguracao.adicionar = true;
+    }
+    
+    // Inicializar arrays vazios
+    this.dadosFiltradosLocalmente = [];
+    this.listaDados = [];
+    this.dadosEntrada = [];
+    
+    // Garantir que o botão adicionar apareça se houver URL
+    if (this.adicionarUrl && this.adicionarUrl.trim() !== '') {
+      this.valorConfiguracao.adicionar = true;
+    }
   }
 
   ngOnInit(): void {
     this.validarInputs();
     this.inicializarGrid();
+    this.buscarDados();
+    
+    // Garantir que o botão adicionar apareça se houver URL
+    if (this.adicionarUrl && this.adicionarUrl.trim() !== '') {
+      this.valorConfiguracao.adicionar = true;
+    }
   }
 
   ngOnDestroy(): void {
@@ -218,40 +262,48 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   private async inicializarGrid(): Promise<void> {
-    try {
-      this.configurarColunas();
-      this.configurarFiltros();
-      this.initializeColumnSelections();
-      this.initializeSearchInputs();
-      this.configurarDebounce();
-      this.configurarFormulario();
-      await this.buscarDados();
-      
-      // Garantir que os dados filtrados estejam inicializados
-      if (this.dadosFiltradosLocalmente.length === 0 && this.listaDados.length > 0) {
-        this.dadosFiltradosLocalmente = [...this.listaDados];
-      }
-      
-      // Aplicar filtros iniciais
-      this.aplicarFiltroLocal();
-    } catch (error) {
-      console.error('Erro ao inicializar grid:', error);
-      this.toastService.exibirMensagemErro('Erro', 'Falha ao inicializar o grid');
-    }
+    // Configurar colunas da grid
+    this.configurarColunas();
+    
+    // Configurar filtros
+    this.configurarFiltros();
+    
+    // Inicializar inputs de busca
+    this.initializeSearchInputs();
+    
+    // Configurar debounce para filtros
+    this.configurarDebounce();
+    
+    // Configurar seleção de colunas
+    this.initializeColumnSelections();
   }
 
   // Configurar colunas baseadas na entidade
   private configurarColunas(): void {
     if (!this.entidade) {
-      console.warn('Nenhuma entidade fornecida para o grid');
+      console.warn('❌ Nenhuma entidade fornecida para o grid');
       this.gridColumns = [];
       this.originalColumns = [];
       return;
     }
 
-    const allColumns = DecoratorUtils.getFormFields(this.entidade);
+    // Sempre criar uma instância se a entidade for uma classe
+    let entidadeParaUsar = this.entidade;
+    if (typeof this.entidade === 'function') {
+      try {
+        entidadeParaUsar = new this.entidade();
+      } catch (error) {
+        console.error('❌ Erro ao criar instância da entidade:', error);
+        this.gridColumns = [];
+        this.originalColumns = [];
+        return;
+      }
+    }
+
+    const allColumns = DecoratorUtils.getFormFields(entidadeParaUsar);
+    
     if (allColumns.length === 0) {
-      console.warn('Nenhum campo definido na entidade para o grid');
+      console.warn('❌ Nenhum campo definido na entidade para o grid');
       this.gridColumns = [];
       this.originalColumns = [];
       return;
@@ -285,12 +337,24 @@ export class GridComponent implements OnInit, OnDestroy {
   // Configurar filtros baseados na entidade
   private configurarFiltros(): void {
     if (!this.entidade) {
-      console.warn('Nenhuma entidade fornecida para os filtros');
+      console.warn('❌ Nenhuma entidade fornecida para os filtros');
       this.filterColumns = [];
       return;
     }
 
-    this.filterColumns = DecoratorUtils.getFilterFields(this.entidade);
+    // Sempre criar uma instância se a entidade for uma classe
+    let entidadeParaUsar = this.entidade;
+    if (typeof this.entidade === 'function') {
+      try {
+        entidadeParaUsar = new this.entidade();
+      } catch (error) {
+        console.error('❌ Erro ao criar instância da entidade para filtros:', error);
+        this.filterColumns = [];
+        return;
+      }
+    }
+
+    this.filterColumns = DecoratorUtils.getFilterFields(entidadeParaUsar);
     
     if (this.filterColumns.length === 0) {
       console.warn('Nenhum filtro definido na entidade');
@@ -300,18 +364,7 @@ export class GridComponent implements OnInit, OnDestroy {
   // Inicializar inputs de busca
   private initializeSearchInputs(): void {
     this.filterColumns.forEach(filter => {
-      switch (filter.type) {
-        case 'bool':
-        case 'enum':
-          this.searchInputs[filter.key] = [];
-          break;
-        case 'texto':
-        case 'numero':
-        case 'data':
-        default:
-          this.searchInputs[filter.key] = '';
-          break;
-      }
+      this.searchInputs[filter.key] = '';
     });
   }
 
@@ -438,7 +491,7 @@ export class GridComponent implements OnInit, OnDestroy {
       }
     } catch (error: unknown) {
       console.error('Erro ao obter dados:', error);
-      this.toastService.exibirMensagemErro('Erro', 'Erro ao obter dados');
+      this.notificationService.error('Erro', 'Erro ao obter dados');
       return [];
     }
   }
@@ -549,6 +602,14 @@ export class GridComponent implements OnInit, OnDestroy {
         this.totalRegistros = this.listaDados.length;
         this.carregando = false;
         this.aplicarFiltroLocal();
+        
+        // Aplicar filtro inicial se fornecido
+        if (this.filtroInicial && this.filtroInicial.trim() !== '') {
+          this.aplicarFiltroInicial();
+        }
+        
+        // Forçar detecção de mudanças
+        this.changeDetectorRef.detectChanges();
         return;
       }
 
@@ -565,9 +626,16 @@ export class GridComponent implements OnInit, OnDestroy {
       // Aplicar filtros após carregar dados
       this.aplicarFiltroLocal();
       
+      // Aplicar filtro inicial se fornecido
+      if (this.filtroInicial && this.filtroInicial.trim() !== '') {
+        this.aplicarFiltroInicial();
+      }
+      
+      // Forçar detecção de mudanças
+      this.changeDetectorRef.detectChanges();
     } catch (error) {
       console.error('❌ Erro ao buscar dados:', error);
-      this.toastService.exibirMensagemErro('Erro', 'Falha ao carregar dados');
+      this.notificationService.error('Erro', 'Falha ao carregar dados');
     } finally {
       this.carregando = false;
     }
@@ -577,7 +645,7 @@ export class GridComponent implements OnInit, OnDestroy {
     let dadosFiltrados = [...this.listaDados];
     
     // Aplicar filtro de busca geral
-    if (this.searchValue.trim() !== '') {
+    if (this.searchValue && this.searchValue.trim() !== '') {
       dadosFiltrados = dadosFiltrados.filter(item =>
         Object.values(item).some(value =>
           String(value).toLowerCase().includes(this.searchValue.toLowerCase())
@@ -588,27 +656,26 @@ export class GridComponent implements OnInit, OnDestroy {
     // Aplicar filtros específicos
     Object.keys(this.searchInputs).forEach(key => {
       const valor = this.searchInputs[key];
-      if (valor && (Array.isArray(valor) ? valor.length > 0 : valor.toString().trim() !== '')) {
+      if (valor && valor.toString().trim() !== '') {
         dadosFiltrados = dadosFiltrados.filter(item => {
           const itemValue = item[key];
-          
-          if (Array.isArray(valor)) {
-            // Para filtros múltiplos (bool, enum)
-            return valor.some(v => {
-              if (typeof itemValue === 'boolean') {
-                return itemValue === (v === 'true');
-              }
-              return String(itemValue).toLowerCase() === String(v).toLowerCase();
-            });
-          } else {
-            // Para filtros de texto/número/data
-            return String(itemValue).toLowerCase().includes(String(valor).toLowerCase());
+          // Para campos boolean
+          if (typeof itemValue === 'boolean') {
+            return itemValue === (valor === 'true');
           }
+          // Para campos de texto
+          if (typeof itemValue === 'string') {
+            return itemValue.toLowerCase().includes(valor.toString().toLowerCase());
+          }
+          // Para campos enum e outros
+          return String(itemValue).toLowerCase() === String(valor).toLowerCase();
         });
       }
     });
     
     this.dadosFiltradosLocalmente = dadosFiltrados;
+    this.totalRegistros = this.dadosFiltradosLocalmente.length;
+    this.paginaAtual = 1;
     
     // Aplicar ordenação se houver
     if (this.sortField && this.sortOrder) {
@@ -623,6 +690,9 @@ export class GridComponent implements OnInit, OnDestroy {
         return this.sortOrder === 'descend' ? -comparison : comparison;
       });
     }
+    
+    // Forçar detecção de mudanças
+    this.changeDetectorRef.detectChanges();
   }
 
   reset(): void {
@@ -634,40 +704,17 @@ export class GridComponent implements OnInit, OnDestroy {
     
     // Resetar filtros
     this.filterColumns.forEach(filter => {
-      switch (filter.type) {
-        case 'bool':
-        case 'enum':
-          this.searchInputs[filter.key] = [];
-          break;
-        case 'texto':
-        case 'numero':
-        case 'data':
-        default:
-          this.searchInputs[filter.key] = '';
-          break;
-      }
+      this.searchInputs[filter.key] = '';
     });
     
     this.aplicarFiltroLocal();
-    this.toastService.exibirMensagemSucesso('Sucesso', 'Filtros resetados');
+    this.notificationService.success('Sucesso', 'Filtros resetados');
   }
 
   clearFilter(key: string): void {
     const filter = this.filterColumns.find(f => f.key === key);
     if (filter) {
-      switch (filter.type) {
-        case 'bool':
-        case 'enum':
-          this.searchInputs[key] = [];
-          break;
-        case 'texto':
-        case 'numero':
-        case 'data':
-        default:
-          this.searchInputs[key] = '';
-          break;
-      }
-      
+      this.searchInputs[key] = '';
       this.filtroLocal$.next();
       console.log(`🧹 Filtro "${key}" limpo`);
     }
@@ -757,10 +804,10 @@ export class GridComponent implements OnInit, OnDestroy {
         this.initializeColumnSelections();
         this.configurarColunas();
         
-        this.toastService.exibirMensagemSucesso('Sucesso', 'Configuração do grid resetada');
+        this.notificationService.success('Sucesso', 'Configuração do grid resetada');
       } catch (error) {
         console.warn('❌ Erro ao limpar configuração do grid:', error);
-        this.toastService.exibirMensagemErro('Erro', 'Falha ao limpar configuração');
+        this.notificationService.error('Erro', 'Falha ao limpar configuração');
       }
     }
   }
@@ -779,17 +826,8 @@ export class GridComponent implements OnInit, OnDestroy {
   }
 
   getScrollConfig(): { x?: string; y?: string } {
-    const config: { x?: string; y?: string } = {};
-    
-    if (this.rolagemX) {
-      config.x = this.rolagemX;
-    }
-    
-    if (this.rolagemY) {
-      config.y = this.rolagemY;
-    }
-    
-    return config;
+    // Sempre habilita scroll horizontal para muitas colunas
+    return { x: 'max-content', y: this.rolagemY || undefined };
   }
 
   exportToExcel(): void {
@@ -798,7 +836,7 @@ export class GridComponent implements OnInit, OnDestroy {
       const data = this.dadosFiltradosLocalmente.length > 0 ? this.dadosFiltradosLocalmente : this.listaDados;
       
       if (data.length === 0) {
-        this.toastService.exibirMensagemAviso('Aviso', 'Nenhum dado para exportar');
+        this.notificationService.warning('Aviso', 'Nenhum dado para exportar');
         return;
       }
 
@@ -830,10 +868,58 @@ export class GridComponent implements OnInit, OnDestroy {
       link.click();
       document.body.removeChild(link);
 
-      this.toastService.exibirMensagemSucesso('Sucesso', 'Dados exportados com sucesso');
+      this.notificationService.success('Sucesso', 'Dados exportados com sucesso');
     } catch (error) {
       console.error('Erro ao exportar dados:', error);
-      this.toastService.exibirMensagemErro('Erro', 'Falha ao exportar dados');
+      this.notificationService.error('Erro', 'Falha ao exportar dados');
     }
+  }
+
+  getPageNumbers(): number[] {
+    const totalPages = this.getTotalPages();
+    const currentPage = this.paginaAtual;
+    const pages: number[] = [];
+    
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, currentPage + 2);
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
+  }
+
+  getTotalPages(): number {
+    return Math.ceil(this.totalRegistros / this.tamanhoPagina);
+  }
+
+  getPaginationInfo(): string {
+    const start = (this.paginaAtual - 1) * this.tamanhoPagina + 1;
+    const end = Math.min(this.paginaAtual * this.tamanhoPagina, this.totalRegistros);
+    return `${start}-${end} de ${this.totalRegistros} registros`;
+  }
+
+  private aplicarFiltroInicial(): void {
+    if (!this.filtroInicial || this.filtroInicial.trim() === '') {
+      return;
+    }
+
+    // Aplicar o filtro inicial no campo de busca geral
+    this.searchValue = this.filtroInicial;
+    
+    // Aplicar o filtro nos campos específicos se houver correspondência
+    if (this.filterColumns.length > 0) {
+      // Tentar aplicar o filtro no primeiro campo de texto disponível
+      const primeiroCampoTexto = this.filterColumns.find(f => f.type === 'texto');
+      if (primeiroCampoTexto) {
+        this.searchInputs[primeiroCampoTexto.key] = this.filtroInicial;
+      }
+    }
+    
+    // Aplicar o filtro
+    this.aplicarFiltroLocal();
+    
+    console.log(`✅ Filtro inicial aplicado: "${this.filtroInicial}"`);
   }
 } 

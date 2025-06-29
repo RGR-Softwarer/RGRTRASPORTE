@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AppContextService } from '../../../services/context/app.context';
-import { ToastService } from '../../../services/utils/notificacao/toast.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-logout',
@@ -42,7 +42,7 @@ export class LogoutComponent implements OnInit {
   constructor(
     private appContextService: AppContextService,
     private router: Router,
-    private toastService: ToastService
+    private notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
@@ -54,7 +54,7 @@ export class LogoutComponent implements OnInit {
     this.appContextService.logout();
     
     // Exibir mensagem de sucesso
-    this.toastService.exibirMensagemSucesso('Logout', 'Você foi desconectado com sucesso');
+    this.notificationService.success('Logout', 'Você foi desconectado com sucesso');
     
     // Aguardar um momento e redirecionar
     setTimeout(() => {

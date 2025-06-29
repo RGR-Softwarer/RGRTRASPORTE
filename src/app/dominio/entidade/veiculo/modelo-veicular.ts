@@ -1,4 +1,4 @@
-import { FormCampo } from '../../../services/decorator/formulario-decorator';
+import { FormCampo, FiltroGrid } from '../../../services/decorator/formulario-decorator';
 import { TipoModeloVeiculoEnum } from '../../enum/veiculo/tipo-modelo-veiculo-enum';
 
 export class ModeloVeicular {
@@ -6,6 +6,7 @@ export class ModeloVeicular {
     public id?: number;
 
     @FormCampo('Situação', 'bool', true, true)
+    @FiltroGrid('Situação', 'bool', true)
     public situacao?: boolean;
 
     @FormCampo('Situação Descrição', 'texto', false, true)
@@ -14,10 +15,12 @@ export class ModeloVeicular {
     @FormCampo('Descrição', 'texto', true, true)
     public descricao?: string;
 
-    @FormCampo('Descrição do Modelo', 'texto', false, true)
+    @FormCampo('Descrição do Modelo', 'texto', true, true)
+    @FiltroGrid('Descrição do Modelo', 'texto', true)
     public descricaoModelo?: string;
 
     @FormCampo('Tipo', 'enum', true, false, TipoModeloVeiculoEnum)
+    @FiltroGrid('Tipo', 'enum', true, TipoModeloVeiculoEnum, 'equals')
     public tipo?: TipoModeloVeiculoEnum;
 
     @FormCampo('Tipo Descrição', 'texto', false, true)

@@ -4,7 +4,7 @@ import { VeiculoStateService } from './veiculo-state.service';
 import { Veiculo } from '../../../../dominio/entidade/veiculo';
 import { tap, catchError } from 'rxjs/operators';
 import { EMPTY, Observable } from 'rxjs';
-import { ToastService } from '../../../../services/utils/notificacao/toast.service';
+import { NotificationService } from '../../../../shared/services/notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class VeiculoFacade {
   constructor(
     private api: VeiculoApiService,
     private state: VeiculoStateService,
-    private toast: ToastService
+    private notificationService: NotificationService
   ) {}
 
   carregarVeiculos() {
@@ -26,7 +26,7 @@ export class VeiculoFacade {
       tap(veiculos => this.state.setVeiculos(veiculos)),
       catchError(err => {
         this.state.setError(err);
-        this.toast.exibirMensagemErro('Erro', 'Não foi possível carregar os veículos.');
+        this.notificationService.error('Erro', 'Não foi possível carregar os veículos.');
         return EMPTY;
       })
     ).subscribe();
@@ -38,16 +38,16 @@ export class VeiculoFacade {
       tap(veiculoSalvo => {
         if (veiculo.id) {
           this.state.updateVeiculo(veiculoSalvo);
-          this.toast.exibirMensagemSucesso('Sucesso', 'Veículo atualizado com sucesso!');
+          this.notificationService.success('Sucesso', 'Veículo atualizado com sucesso!');
         } else {
           this.state.addVeiculo(veiculoSalvo);
-          this.toast.exibirMensagemSucesso('Sucesso', 'Veículo adicionado com sucesso!');
+          this.notificationService.success('Sucesso', 'Veículo adicionado com sucesso!');
         }
         this.state.setLoading(false);
       }),
       catchError(err => {
         this.state.setError(err);
-        this.toast.exibirMensagemErro('Erro', 'Não foi possível salvar o veículo.');
+        this.notificationService.error('Erro', 'Não foi possível salvar o veículo.');
         return EMPTY;
       })
     );
@@ -58,12 +58,12 @@ export class VeiculoFacade {
     this.api.deletar(id).pipe(
       tap(() => {
         this.state.removeVeiculo(id);
-        this.toast.exibirMensagemSucesso('Sucesso', 'Veículo deletado com sucesso!');
+        this.notificationService.success('Sucesso', 'Veículo deletado com sucesso!');
         this.state.setLoading(false);
       }),
       catchError(err => {
         this.state.setError(err);
-        this.toast.exibirMensagemErro('Erro', 'Não foi possível deletar o veículo.');
+        this.notificationService.error('Erro', 'Não foi possível deletar o veículo.');
         return EMPTY;
       })
     ).subscribe();

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Veiculo } from '../../../../dominio/entidade/veiculo';
 import { ApiService } from '../../../../services/http/api.service';
 import { TrasportadorUrls } from '../../../../dominio/enum/trasportador-url-enum';
-import { ToastService } from '../../../../services/utils/notificacao/toast.service';
 import { Location } from '@angular/common';
+import { BreadcrumbService } from '../../../../services/breadcrumb/breadcrumb.service';
+import { NotificationService } from '../../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-veiculo-formulario',
@@ -15,15 +16,20 @@ export class VeiculoFormularioComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private apiService: ApiService, 
-    private toastService: ToastService, 
-    private location: Location
+    private location: Location,
+    private breadcrumbService: BreadcrumbService,
+    private notificationService: NotificationService
   ) { }
 
   veiculo = new Veiculo();
   isEditMode = false;
 
   ngOnInit(): void {
+    // Forçar atualização dos breadcrumbs ao entrar na tela
+    this.breadcrumbService.limparCache();
+    this.breadcrumbService["atualizarBreadcrumbs"](this.router.url);
     this.processarDadosNavegacao();
   }
 
@@ -59,7 +65,7 @@ export class VeiculoFormularioComponent implements OnInit {
           
         } catch (error) {
           console.error('Erro ao processar dados da navegação:', error);
-          this.toastService.exibirMensagemErro('Erro', 'Erro ao carregar dados para edição');
+          this.notificationService.error('Erro', 'Erro ao carregar dados para edição');
           this.isEditMode = false;
         }
       } else {
@@ -80,13 +86,13 @@ export class VeiculoFormularioComponent implements OnInit {
           console.log('Dados do veículo:', this.veiculo);
           console.log('Modo de edição:', this.isEditMode);
         } else {
-          this.toastService.exibirMensagemErro('Erro', 'Veículo não encontrado');
+          this.notificationService.error('Erro', 'Veículo não encontrado');
           this.location.back();
         }
       },
       error: (error) => {
         console.error('Erro ao carregar veículo:', error);
-        this.toastService.exibirMensagemErro('Erro', 'Erro ao carregar dados do veículo');
+        this.notificationService.error('Erro', 'Erro ao carregar dados do veículo');
         this.location.back();
       }
     });
@@ -140,17 +146,17 @@ export class VeiculoFormularioComponent implements OnInit {
         console.log('Resposta do servidor:', response);
         if (response.sucesso) {
           const mensagem = this.isEditMode ? 'Veículo atualizado com sucesso' : 'Veículo salvo com sucesso';
-          this.toastService.exibirMensagemSucesso('Sucesso', mensagem);
+          this.notificationService.success('Sucesso', mensagem);
           this.location.back();
         } else {
-          this.toastService.exibirMensagemErro('Erro', 'Erro ao salvar veículo');
+          this.notificationService.error('Erro', 'Erro ao salvar veículo');
         }
       },
       error: (error) => {
         console.error('Erro completo:', error);
         console.error('Status:', error.status);
         console.error('Mensagem:', error.error);
-        this.toastService.exibirMensagemErro('Erro', 'Erro ao salvar veículo: ' + (error.error?.title || error.message));
+        this.notificationService.error('Erro', 'Erro ao salvar veículo: ' + (error.error?.title || error.message));
       }
     });
   }

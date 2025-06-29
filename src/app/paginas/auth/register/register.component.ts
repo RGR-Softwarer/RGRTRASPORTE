@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastService } from '../../../services/utils/notificacao/toast.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-register',
@@ -15,7 +15,7 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private toastService: ToastService
+    private notificationService: NotificationService
   ) {
     this.registerForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
@@ -46,14 +46,11 @@ export class RegisterComponent {
       // Simular registro
       setTimeout(() => {
         this.isLoading = false;
-        this.toastService.exibirMensagemSucesso(
-          'Registro', 
-          'Conta criada com sucesso! Você pode fazer login agora.'
-        );
+        this.notificationService.success('Sucesso', 'Cadastro realizado com sucesso!');
         this.router.navigate(['/auth/login']);
       }, 2000);
     } else {
-      this.toastService.exibirMensagemErro('Erro', 'Por favor, preencha todos os campos corretamente');
+      this.notificationService.error('Erro', 'Por favor, preencha todos os campos corretamente');
     }
   }
 

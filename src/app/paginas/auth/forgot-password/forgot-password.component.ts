@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastService } from '../../../services/utils/notificacao/toast.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -15,7 +15,7 @@ export class ForgotPasswordComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private toastService: ToastService
+    private notificationService: NotificationService
   ) {
     this.forgotPasswordForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
@@ -29,14 +29,11 @@ export class ForgotPasswordComponent {
       // Simular envio de email de recuperação
       setTimeout(() => {
         this.isLoading = false;
-        this.toastService.exibirMensagemSucesso(
-          'Recuperação de Senha', 
-          'Se o email existir em nossa base, você receberá as instruções para redefinir sua senha.'
-        );
+        this.notificationService.success('Sucesso', 'Solicitação enviada com sucesso!');
         this.router.navigate(['/auth/login']);
       }, 2000);
     } else {
-      this.toastService.exibirMensagemErro('Erro', 'Por favor, preencha um email válido');
+      this.notificationService.error('Erro', 'Por favor, preencha um email válido');
     }
   }
 

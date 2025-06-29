@@ -69,16 +69,12 @@
             }
             
             .filter-input-group {
-                width: 100%;
-                
-                .ant-input {
-                    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-                    
-                    &:focus,
-                    &:hover {
-                        border-color: var(--primary-color);
-                        box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-                    }
+                position: relative;
+                .form-control {
+                    padding-right: 12px;
+                }
+                .btn {
+                    display: none;
                 }
             }
         }
@@ -188,9 +184,15 @@
         padding: 8px 0;
 
         .select-all-checkbox {
-            display: block;
-            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
             font-weight: 500;
+            margin-bottom: 8px;
+            padding: 4px 0;
+            
+            input[type="checkbox"] {
+                margin-right: 8px;
+            }
         }
 
         .column-list {
@@ -198,8 +200,8 @@
             overflow-y: auto;
 
             .column-item {
-                margin-bottom: 12px;
-                padding: 8px 12px;
+                margin-bottom: 2px;
+                padding: 2px 6px;
                 border-radius: 4px;
                 transition: background-color 0.3s;
 
@@ -208,14 +210,15 @@
                 }
 
                 label {
-                    width: 100%;
+                    display: flex;
+                    align-items: center;
                     cursor: pointer;
                     margin-bottom: 0;
+                    font-size: 14px;
                     
-                    ::ng-deep {
-                        .ant-checkbox {
-                            margin-right: 8px;
-                        }
+                    input[type="checkbox"] {
+                        margin-right: 6px;
+                        margin-bottom: 0;
                     }
                 }
             }
@@ -560,4 +563,205 @@ nz-form-item {
     .clear-filter-icon {
         transition: color 0.3s ease;
     }
+}
+
+// Estilos para os filtros
+.filters-header {
+  background: #f8f9fa;
+  padding: 12px 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  
+  &:hover {
+    background: #e9ecef;
+  }
+  
+  i {
+    transition: transform 0.3s ease;
+  }
+}
+
+.filters-content {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  padding: 16px;
+}
+
+.filter-column {
+  margin-bottom: 16px;
+  
+  .filter-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #495057;
+    font-size: 14px;
+  }
+  
+  .filter-input {
+    width: 100%;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    
+    &:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      outline: none;
+    }
+  }
+  
+  .filter-input-group {
+    position: relative;
+    
+    .form-control {
+      padding-right: 40px; // Espaço para o botão de limpar
+    }
+    
+    .btn {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      border: none;
+      background: transparent;
+      color: #6c757d;
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      
+      &:hover {
+        background: #f8f9fa;
+        color: #dc3545;
+      }
+    }
+  }
+}
+
+// Estilos para a tabela
+.sortable-header {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px 8px;
+  background: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  &:hover {
+    background-color: #e9ecef;
+  }
+  
+  i {
+    margin-left: 4px;
+    font-size: 12px;
+  }
+}
+
+.actions-header {
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px 8px;
+  background: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.data-cell {
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px;
+}
+
+.actions-cell {
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px;
+  
+  .action-button {
+    margin: 0 2px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}
+
+.pagination-container {
+  margin-top: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.pagination-info {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+// Estilos para checkboxes customizados
+.select-all-checkbox {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  margin-bottom: 8px;
+  padding: 4px 0;
+  
+  input[type="checkbox"] {
+    margin-right: 8px;
+  }
+}
+
+.column-item {
+  margin-bottom: 2px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  
+  &:hover {
+    background-color: #f5f5f5;
+  }
+  
+  label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 0;
+    font-size: 14px;
+    
+    input[type="checkbox"] {
+      margin-right: 6px;
+    }
+  }
+}
+
+// Melhorias para responsividade
+@media (max-width: 768px) {
+  .filter-column {
+    .col-12 {
+      margin-bottom: 12px;
+    }
+  }
+  
+  .pagination-container {
+    .d-flex {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
 }

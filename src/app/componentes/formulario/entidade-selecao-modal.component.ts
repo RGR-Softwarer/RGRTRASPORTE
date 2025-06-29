@@ -1,7 +1,10 @@
-import { Component, Input, OnInit, Inject } from '@angular/core';
-import { NzModalRef, NZ_MODAL_DATA } from 'ng-zorro-antd/modal';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { GridService } from '../../services/grid/grid.service';
-import { FormCamposMetadata } from '../../services/decorator/formulario-decorator';
+import { FormCamposMetadata, DecoratorUtils } from '../../services/decorator/formulario-decorator';
+import { ConfiguracaoGrid } from '../../dominio/interface/grid/configuracao-grid';
+import { NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { GridComponent } from '../grid/grid.component';
 
 export interface EntidadeSelecaoConfig {
   url: string;
@@ -10,161 +13,147 @@ export interface EntidadeSelecaoConfig {
   searchFields: string[];
   modalTitle: string;
   modalWidth?: number;
+  entidade?: any; // Entidade para configurar a grid
+  filtroInicial?: string; // Filtro inicial para aplicar na grid
 }
 
 @Component({
   selector: 'app-entidade-selecao-modal',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    GridComponent
+  ],
   template: `
-    <div class="entidade-selecao-container">
-      <!-- Campo de busca -->
-      <div class="search-container" style="margin-bottom: 16px;">
-        <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
-          <input 
-            type="text" 
-            nz-input 
-            placeholder="Buscar..."
-            [(ngModel)]="searchTerm"
-            (input)="onSearchChange($event)"
-          />
-        </nz-input-group>
-        <ng-template #suffixIconButton>
-          <button nz-button nzType="primary" nzSearch type="button" (click)="buscarDados()">
-            <span nz-icon nzType="search"></span>
-          </button>
-        </ng-template>
-      </div>
-
-      <!-- Tabela de dados -->
-      <nz-table
-        #entidadeTable
-        [nzData]="dadosFiltrados"
-        [nzLoading]="carregando"
-        nzSize="small"
-        [nzFrontPagination]="false"
-        [nzShowPagination]="false"
-        [nzScroll]="{ y: '400px' }"
-      >
-        <thead>
-          <tr>
-            <th>{{ config.valueField | uppercase }}</th>
-            <th>{{ config.displayField | uppercase }}</th>
-            <th *ngFor="let field of filteredSearchFields">{{ field | uppercase }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr 
-            *ngFor="let item of dadosFiltrados" 
-            (click)="onSelect(item)" 
-            [class.selected-row]="selectedItem?.[config.valueField] === item[config.valueField]"
-            style="cursor: pointer;"
-          >
-            <td>{{ item[config.valueField] }}</td>
-            <td>{{ item[config.displayField] }}</td>
-            <td *ngFor="let field of filteredSearchFields">{{ item[field] }}</td>
-          </tr>
-        </tbody>
-      </nz-table>
-
-      <!-- Botões de ação -->
-      <div style="text-align: right; margin-top: 16px;">
-        <button nz-button nzType="default" (click)="fechar()">Cancelar</button>
-        <button nz-button nzType="primary" [disabled]="!selectedItem" (click)="confirmarSelecao()">
-          Selecionar
-        </button>
+    <div class="modal-backdrop" (click)="fechar()"></div>
+    <div class="modal show d-block" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ getModalTitle() }}</h5>
+            <button type="button" class="btn-close" aria-label="Fechar" (click)="fechar()"></button>
+          </div>
+          <div class="modal-body">
+            <!-- Componente Grid -->
+            <app-grid 
+              [buscarTodosUrl]="config.url"
+              [entidade]="config.entidade"
+              [identificador]="'entidade-selecao-grid'"
+              [acoes]="gridActions"
+              [formularioConfiguracao]="gridConfig"
+              [filtroInicial]="config.filtroInicial">
+            </app-grid>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="fechar()">Cancelar</button>
+          </div>
+        </div>
       </div>
     </div>
   `,
   styles: [`
-    .entidade-selecao-container {
-      padding: 16px;
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1040;
     }
-    
-    .search-container {
+    .modal {
+      z-index: 1050;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
       display: flex;
-      gap: 8px;
+      align-items: center;
+      justify-content: center;
     }
-    
-    .selected-row {
-      background: #e6f7ff;
+    .modal-content {
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      max-height: 90vh;
+      width: 95vw;
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 16px 24px;
+      background: #fff;
     }
-    
-    .selected-row:hover {
-      background: #bae7ff !important;
+    .modal-body {
+      max-height: calc(90vh - 120px);
+      overflow: auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 8px;
     }
-
-    ::ng-deep .ant-table-placeholder {
-        text-align: center;
+    .modal-body app-grid {
+      height: 100%;
     }
   `]
 })
 export class EntidadeSelecaoModalComponent implements OnInit {
-  config!: EntidadeSelecaoConfig;
-  
-  dados: any[] = [];
-  dadosFiltrados: any[] = [];
-  carregando = false;
-  selectedItem: any = null;
-  searchTerm = '';
+  @Input() config!: EntidadeSelecaoConfig;
+  @Input() show = false;
+  @Output() close = new EventEmitter<void>();
+  @Output() select = new EventEmitter<any>();
 
-  get filteredSearchFields(): string[] {
-    if (!this.config || !this.config.searchFields) {
-        return [];
-    }
-    // Remove o displayField da lista de busca para não repetir a coluna
-    return this.config.searchFields.filter(field => field !== this.config.displayField);
-  }
+  gridActions: any[] = [];
+  gridConfig: any;
 
   constructor(
     private gridService: GridService,
-    private modalRef: NzModalRef,
-    @Inject(NZ_MODAL_DATA) private modalData: any
-  ) {
-    this.config = modalData.config;
-  }
+    private formBuilder: NonNullableFormBuilder
+  ) {}
 
   ngOnInit(): void {
-    this.buscarDados();
+    this.configurarGrid();
   }
 
-  buscarDados(): void {
-    this.carregando = true;
-    this.gridService.buscarDados(this.config.url).then(dados => {
-      this.dados = dados;
-      this.dadosFiltrados = dados;
-      this.carregando = false;
-    }).catch(() => {
-      this.carregando = false;
+  configurarGrid(): void {
+    // Configurar ações da grid (apenas selecionar)
+    this.gridActions = [
+      {
+        label: 'Selecionar',
+        acao: (item: any) => this.selecionarItem(item)
+      }
+    ];
+
+    // Configurar a grid para seleção de entidade
+    this.gridConfig = this.formBuilder.group({
+      comBorda: [true],
+      carregando: [false],
+      paginacao: [true],
+      alteradorTamanho: [false],
+      titulo: [false],
+      cabecalho: [true],
+      rodape: [false],
+      expansivel: [false],
+      caixaSelecao: [false],
+      cabecalhoFixo: [false],
+      semResultado: [false],
+      elipse: [false],
+      simples: [false],
+      mostrarOpcoes: [false],
+      tamanho: ['small'],
+      tipoPaginacao: ['default'],
+      rolagemTabela: ['scroll'],
+      layoutTabela: ['auto'],
+      posicao: ['bottom'],
+      tituloTabela: [''],
+      rodapeTabela: [''],
+      adicionar: [false],
+      action: [true]
     });
   }
 
-  onSearchChange(event: any): void {
-    const term = event.target.value;
-    this.searchTerm = term;
-    if (!term.trim()) {
-      this.dadosFiltrados = this.dados;
-      return;
-    }
-
-    this.dadosFiltrados = this.dados.filter(item => {
-      const searchFields = [this.config.displayField, ...this.config.searchFields];
-      return searchFields.some(field => {
-        const value = item[field];
-        return value && value.toString().toLowerCase().includes(term.toLowerCase());
-      });
-    });
+  getModalTitle(): string {
+    return this.config && this.config.modalTitle ? this.config.modalTitle : 'Selecionar Entidade';
   }
 
-  onSelect(item: any): void {
-    this.selectedItem = item;
-  }
-
-  confirmarSelecao(): void {
-    if (this.selectedItem) {
-      this.modalRef.close(this.selectedItem);
-    }
+  selecionarItem(item: any): void {
+    this.select.emit(item);
+    this.fechar();
   }
 
   fechar(): void {
-    this.modalRef.close();
+    this.close.emit();
   }
 } 

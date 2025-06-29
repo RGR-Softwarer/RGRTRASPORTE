@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NotificationService, Notification } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-notification',
@@ -19,7 +20,25 @@ import { Subscription } from 'rxjs';
       </div>
     </div>
   `,
-  styleUrls: ['./notification.component.scss']
+  styleUrls: ['./notification.component.scss'],
+  animations: [
+    trigger('slideIn', [
+      state('void', style({
+        transform: 'translateX(100%)',
+        opacity: 0
+      })),
+      state('*', style({
+        transform: 'translateX(0)',
+        opacity: 1
+      })),
+      transition('void => *', [
+        animate('300ms ease-out')
+      ]),
+      transition('* => void', [
+        animate('200ms ease-in')
+      ])
+    ])
+  ]
 })
 export class NotificationComponent implements OnInit, OnDestroy {
   notifications: Notification[] = [];

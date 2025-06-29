@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { PasswordValidator } from '../../../services/validators/password.validator';
 import { LoginService } from '../../../services/login/login.service';
-import { ToastService } from '../../../services/utils/notificacao/toast.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 
 interface LoginForm {
   email: string | null;
@@ -42,7 +42,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private loginService: LoginService,
-    private toastService: ToastService
+    private notificationService: NotificationService
   ) {}
 
   ngAfterViewInit(): void {
@@ -66,7 +66,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
 
     if (!this.loginForm.valid) {
       this.marcarCamposInvalidos();
-      this.toastService.exibirMensagemErro('Erro', 'Por favor, corrija os erros do formulário');
+      this.notificationService.error('Erro', 'Por favor, corrija os erros do formulário');
       return;
     }
 
@@ -80,11 +80,11 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
       }
 
       await this.loginService.authenticate(formValue.email, formValue.senha);
-      this.toastService.exibirMensagemSucesso('Sucesso', 'Login realizado com sucesso!');
+      this.notificationService.success('Sucesso', 'Login realizado com sucesso!');
       
     } catch (error) {
       console.error('Erro no login:', error);
-      this.toastService.exibirMensagemErro('Erro', 'Credenciais inválidas ou erro no servidor');
+      this.notificationService.error('Erro', 'Credenciais inválidas ou erro no servidor');
     } finally {
       this.loading = false;
     }

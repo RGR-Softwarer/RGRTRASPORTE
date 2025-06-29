@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastService } from '../../../services/utils/notificacao/toast.service';
+import { NotificationService } from '../../../shared/services/notification.service';
 import { AppContextService } from '../../../services/context/app.context';
 
 @Component({
@@ -17,7 +17,7 @@ export class ProfileComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private toastService: ToastService,
+    private notificationService: NotificationService,
     private appContextService: AppContextService
   ) {
     this.profileForm = this.fb.group({
@@ -67,10 +67,7 @@ export class ProfileComponent implements OnInit {
       // Simular atualização
       setTimeout(() => {
         this.isLoading = false;
-        this.toastService.exibirMensagemSucesso(
-          'Perfil', 
-          'Dados atualizados com sucesso!'
-        );
+        this.notificationService.success('Sucesso', 'Perfil atualizado com sucesso!');
         
         // Atualizar dados no contexto
         if (this.user) {
@@ -84,7 +81,7 @@ export class ProfileComponent implements OnInit {
         }
       }, 2000);
     } else {
-      this.toastService.exibirMensagemErro('Erro', 'Por favor, preencha todos os campos corretamente');
+      this.notificationService.error('Erro', 'Por favor, preencha todos os campos corretamente');
     }
   }
 
