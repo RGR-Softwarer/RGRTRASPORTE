@@ -4,9 +4,6 @@
 /* Font Awesome */
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
-/* Ant Design (mantido temporariamente durante migração) */
-@import "ng-zorro-antd/ng-zorro-antd.min.css";
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 /* Variáveis CSS customizadas */
@@ -118,12 +115,7 @@ body {
   flex-direction: column;
 }
 
-/* Layout principal para usar altura máxima */
-.main-layout {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
+/* Layout principal definido no home.component.scss */
 
 /* Container principal */
 .main-container {
@@ -166,10 +158,10 @@ body {
 
 /* Estilos para notificações personalizadas */
 .custom-notification {
-  border-radius: var(--border-radius-large) !important;
+  border-radius: var(--border-radius-lg) !important;
   box-shadow: var(--shadow-medium) !important;
   backdrop-filter: blur(10px);
-  background: var(--background-primary) !important;
+  background: var(--background-white) !important;
   
   &.custom-notification-success {
     border-left: 4px solid var(--success-color) !important;
@@ -223,10 +215,10 @@ body {
   }
 }
 
-/* Melhorias globais para componentes Ant Design */
-.ant-btn {
-  border-radius: var(--border-radius);
-  transition: var(--transition);
+/* Melhorias globais para componentes Bootstrap */
+.btn {
+  border-radius: var(--border-radius-md);
+  transition: var(--transition-fast);
   font-weight: 500;
   
   &:hover {
@@ -234,7 +226,7 @@ body {
     box-shadow: var(--shadow-light);
   }
   
-  &.ant-btn-primary {
+  &.btn-primary {
     background: var(--primary-color);
     color: white;
     border: none;
@@ -247,11 +239,11 @@ body {
   }
 }
 
-.ant-card {
-  border-radius: var(--border-radius-large);
+.card {
+  border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-light);
-  transition: var(--transition);
-  background: var(--background-primary);
+  transition: var(--transition-fast);
+  background: var(--background-white);
   border: 1px solid var(--border-color);
   
   &:hover {
@@ -259,436 +251,123 @@ body {
   }
 }
 
-.ant-input,
-.ant-select-selector,
-.ant-picker {
-  border-radius: var(--border-radius);
-  transition: var(--transition);
+.form-control,
+.form-select {
+  border-radius: var(--border-radius-md);
+  transition: var(--transition-fast);
   border-color: var(--border-color);
   
-  &:focus,
-  &:hover {
+  &:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
   }
 }
 
-/* Estilos específicos para DatePicker */
-.ant-picker {
-  width: 100%;
-  
-  .ant-picker-input > input {
-    font-size: 14px;
-    color: var(--text-primary);
-  }
-  
-  &.ant-picker-focused {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-  }
-  
-  &.ant-picker-disabled {
-    background-color: var(--background-tertiary);
-    cursor: not-allowed;
-    
-    .ant-picker-input > input {
-      color: var(--text-muted);
-    }
-  }
-}
-
-/* Estilos para o dropdown do DatePicker */
-.ant-picker-dropdown {
-  position: fixed !important;
-  z-index: 1050 !important;
-  
-  &.ant-picker-dropdown-placement-bottomLeft,
-  &.ant-picker-dropdown-placement-bottomRight,
-  &.ant-picker-dropdown-placement-topLeft,
-  &.ant-picker-dropdown-placement-topRight {
-    position: fixed !important;
-  }
-  
-  .ant-picker-panel-container {
-    border-radius: var(--border-radius-medium);
-    box-shadow: var(--shadow-medium);
-    background: var(--background-primary);
-    border: 1px solid var(--border-color);
-  }
-  
-  .ant-picker-header {
-    border-bottom: 1px solid var(--border-color);
-  }
-  
-  .ant-picker-content {
-    th, td {
-      border-radius: var(--border-radius);
-    }
-    
-    .ant-picker-cell-inner {
-      border-radius: var(--border-radius);
-    }
-    
-    .ant-picker-cell-selected .ant-picker-cell-inner {
-      background: var(--primary-color);
-      color: white;
-    }
-    
-    .ant-picker-cell-today .ant-picker-cell-inner {
-      border-color: var(--primary-color);
-    }
-  }
-}
-
-/* Correção específica para posicionamento do DatePicker */
-.ant-picker-dropdown.ant-picker-dropdown-placement-bottomLeft {
-  position: fixed !important;
-}
-
-/* Garantir que o container do DatePicker tenha posição relativa */
-.ant-form-item {
-  position: relative;
-  
-  .ant-picker {
-    position: relative;
-  }
-}
-
-.ant-table {
-  border-radius: var(--border-radius-large);
+.table {
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
-  background: var(--background-primary);
+  background: var(--background-white);
   
-  .ant-table-thead > tr > th {
-    background: var(gray);
-    color: black;
+  thead th {
+    background: var(--background-light);
+    color: var(--text-primary);
     font-weight: 600;
     border: none;
   }
   
-  .ant-table-tbody > tr:hover > td {
+  tbody tr:hover td {
     background: rgba(37, 99, 235, 0.02);
   }
   
-  .ant-table-tbody > tr > td {
-    border-bottom: 1px solid var(--border-light);
+  tbody tr td {
+    border: none;
+    padding: 16px;
   }
 }
 
-/* Animações globais */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Estilos para modais customizados */
+.modal-content {
+  border-radius: var(--border-radius-lg);
+  border: none;
+  box-shadow: var(--shadow-medium);
 }
 
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.modal-header {
+  border-bottom: 1px solid var(--border-color);
+  background: var(--background-light);
 }
 
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-/* Classes utilitárias para animações */
-.animate-fade-in {
-  animation: fadeIn 0.6s ease-out;
-}
-
-.animate-slide-left {
-  animation: slideInLeft 0.6s ease-out;
-}
-
-.animate-slide-right {
-  animation: slideInRight 0.6s ease-out;
-}
-
-.animate-pulse {
-  animation: pulse 2s infinite;
-}
-
-/* Melhorias para responsividade */
-@media (max-width: 768px) {
-  :root {
-    --border-radius: 6px;
-    --border-radius-large: 12px;
-  }
-  
-  .ant-btn {
-    font-size: 14px;
-    padding: 8px 16px;
-  }
-  
-  .ant-card {
-    margin: 8px;
-  }
-  
-  .ant-table {
-    font-size: 14px;
-  }
-}
-
-/* Melhorias para acessibilidade */
-.ant-btn:focus,
-.ant-input:focus,
-.ant-select:focus {
-  outline: 2px solid var(--primary-color);
-  outline-offset: 2px;
-}
-
-/* Estilos para scrollbar personalizada */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 4px;
-  
-  &:hover {
-    background: #5a6fd8;
-  }
-}
-
-/* Melhorias para formulários */
-.ant-form-item-label > label {
-  font-weight: 500;
+.modal-title {
+  font-weight: 600;
   color: var(--text-primary);
 }
 
-.ant-form-item-explain-error {
-  font-size: 12px;
-  margin-top: 4px;
-  color: var(--error-color);
-}
-
-/* Estilos para modais */
-.ant-modal {
-  .ant-modal-content {
-    border-radius: var(--border-radius-large);
-    box-shadow: var(--shadow-heavy);
-  }
+/* Breadcrumb customizado */
+.breadcrumb {
+  background: transparent;
+  padding: 0;
+  margin: 0;
   
-  .ant-modal-header {
-    border-radius: var(--border-radius-large) var(--border-radius-large) 0 0;
-    background: var(--primary-gradient);
-    
-    .ant-modal-title {
-      color: white;
-      font-weight: 600;
-    }
-  }
-}
-
-/* Melhorias para breadcrumb */
-.ant-breadcrumb {
-  .ant-breadcrumb-link {
+  .breadcrumb-item {
     color: var(--text-secondary);
-    transition: var(--transition);
     
-    &:hover {
+    &.active {
+      color: var(--text-primary);
+    }
+    
+    a {
       color: var(--primary-color);
-    }
-  }
-  
-  .ant-breadcrumb-separator {
-    color: var(--text-secondary);
-  }
-}
-
-/* Estilos para loading states */
-.ant-spin {
-  .ant-spin-dot {
-    color: var(--primary-color);
-  }
-  
-  .ant-spin-text {
-    color: var(--text-secondary);
-    font-weight: 500;
-  }
-}
-
-/* Melhorias para paginação */
-.ant-pagination {
-  .ant-pagination-item {
-    border-radius: var(--border-radius);
-    transition: var(--transition);
-    
-    &:hover {
-      border-color: var(--primary-color);
-    }
-    
-    &.ant-pagination-item-active {
-      background: var(--primary-gradient);
-      border-color: var(--primary-color);
+      text-decoration: none;
       
-      
+      &:hover {
+        color: var(--primary-hover);
+      }
     }
+  }
+}
+
+/* Spinner customizado */
+.spinner-border {
+  color: var(--primary-color);
+}
+
+/* Tema escuro */
+[data-theme="dark"] {
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-light: #999999;
+  
+  --background-white: #1f1f1f;
+  --background-light: #2d2d2d;
+  --background-secondary: #121212;
+  
+  --border-color: #404040;
+  --border-light: #333333;
+  
+  .btn:focus,
+  .form-control:focus,
+  .form-select:focus {
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .scrollable-content,
+  .page-content {
+    padding: 16px;
   }
   
-  .ant-pagination-prev,
-  .ant-pagination-next {
-    border-radius: var(--border-radius);
-    transition: var(--transition);
-    
-    &:hover {
-      border-color: var(--primary-color);
-      color: var(--primary-color);
-    }
+  .card {
+    margin-bottom: 16px;
   }
-}
-
-/* Correção específica para posicionamento do DatePicker */
-.ant-picker-dropdown {
-  position: fixed !important;
-  z-index: 1050 !important;
   
-  &.ant-picker-dropdown-placement-bottomLeft,
-  &.ant-picker-dropdown-placement-bottomRight,
-  &.ant-picker-dropdown-placement-topLeft,
-  &.ant-picker-dropdown-placement-topRight {
-    position: fixed !important;
+  .btn {
+    width: 100%;
+    margin-bottom: 8px;
   }
-}
-
-/* Garantir que containers tenham posição relativa */
-.ant-form-item,
-.filter-column {
-  position: relative;
-}
-
-/* Utilitários para botões */
-.btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition-normal);
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+  
+  .table-responsive {
+    font-size: 14px;
   }
-
-  &.btn-primary {
-    background: var(--primary-color);
-    color: white;
-
-    &:hover:not(:disabled) {
-      background: var(--primary-hover);
-      transform: translateY(-1px);
-    }
-  }
-
-  &.btn-secondary {
-    background: var(--secondary-light);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-light);
-
-    &:hover:not(:disabled) {
-      background: var(--primary-light);
-      color: var(--primary-color);
-      border-color: var(--primary-color);
-    }
-  }
-}
-
-/* Utilitários para formulários */
-.form-control {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-md);
-  transition: var(--transition-normal);
-
-  &:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
-  }
-
-  &.error {
-    border-color: var(--error-color);
-  }
-
-  &::placeholder {
-    color: var(--text-light);
-  }
-}
-
-.error-message {
-  color: var(--error-color);
-  font-size: var(--font-size-xs);
-  margin-top: var(--spacing-xs);
-}
-
-body.dark-theme {
-  --primary-color: #1890ff;
-  --primary-hover: #40a9ff;
-  --primary-light: #23272f;
-  --secondary-color: #764ba2;
-  --secondary-light: #23272f;
-  --gradient-start: #23272f;
-  --gradient-end: #764ba2;
-  --text-primary: #f5f5f5;
-  --text-secondary: #bdbdbd;
-  --text-light: #888;
-  --success-color: #52c41a;
-  --warning-color: #fa8c16;
-  --error-color: #ff4d4f;
-  --info-color: #1890ff;
-  --border-color: #333a45;
-  --border-light: #23272f;
-  --background-white: #181a1b;
-  --background-light: #23272f;
-  --shadow-light: rgba(0, 0, 0, 0.5);
-  --shadow-medium: rgba(0, 0, 0, 0.7);
-  background: var(--background-light) !important;
-  color: var(--text-primary) !important;
-}
-
-body.dark-theme, body.dark-theme * {
-  background-color: var(--background-light) !important;
-  color: var(--text-primary) !important;
-  border-color: var(--border-color) !important;
 }

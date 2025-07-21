@@ -1,21 +1,5 @@
-import { Injectable, ComponentRef, Type, Injector } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
-
-export interface ModalConfig {
-  title?: string;
-  width?: string | number;
-  height?: string | number;
-  closable?: boolean;
-  maskClosable?: boolean;
-  data?: any;
-  footer?: boolean;
-  confirmText?: string;
-  cancelText?: string;
-  centered?: boolean;
-  zIndex?: number;
-  className?: string;
-  style?: { [key: string]: string };
-}
 
 export interface ConfirmConfig {
   title?: string;
@@ -28,41 +12,24 @@ export interface ConfirmConfig {
   centered?: boolean;
   closable?: boolean;
   maskClosable?: boolean;
+  icon?: string;
 }
 
-export interface ModalRef {
-  close: (result?: any) => void;
-  afterClose: () => Observable<any>;
-  afterOpen: () => Observable<void>;
-  getContentComponent: () => any;
+export interface ConfirmResult {
+  confirmed: boolean;
+  data?: any;
 }
 
 @Injectable({
   providedIn: 'root'
 })
-export class ModalService {
-  private modalSubject = new Subject<{ component: Type<any>, config: ModalConfig, injector?: Injector }>();
-  private modalRefs: ModalRef[] = [];
+export class ConfirmService {
   private confirmSubject = new Subject<ConfirmConfig>();
+  private resultSubject = new Subject<ConfirmResult>();
 
   constructor() {}
 
-  // Abrir modal com componente
-  open<T>(component: Type<T>, config: ModalConfig = {}, injector?: Injector): ModalRef {
-    const modalRef: ModalRef = {
-      close: (result?: any) => this.closeModal(modalRef, result),
-      afterClose: () => new Subject<any>().asObservable(),
-      afterOpen: () => new Subject<void>().asObservable(),
-      getContentComponent: () => null
-    };
-
-    this.modalRefs.push(modalRef);
-    this.modalSubject.next({ component, config, injector });
-
-    return modalRef;
-  }
-
-  // Abrir modal de confirmação
+  // Abrir confirmação
   confirm(config: ConfirmConfig): Observable<boolean> {
     const resultSubject = new Subject<boolean>();
     
@@ -76,7 +43,8 @@ export class ModalService {
       width: config.width || 416,
       centered: config.centered ?? true,
       closable: config.closable ?? true,
-      maskClosable: config.maskClosable ?? true
+      maskClosable: config.maskClosable ?? true,
+      icon: config.icon || 'question-circle'
     });
 
     return resultSubject.asObservable();
@@ -89,7 +57,8 @@ export class ModalService {
       content,
       okText: 'Excluir',
       cancelText: 'Cancelar',
-      okType: 'danger'
+      okType: 'danger',
+      icon: 'exclamation-triangle'
     });
   }
 
@@ -99,7 +68,8 @@ export class ModalService {
       content,
       okText: 'Salvar',
       cancelText: 'Cancelar',
-      okType: 'primary'
+      okType: 'primary',
+      icon: 'save'
     });
   }
 
@@ -109,7 +79,8 @@ export class ModalService {
       content,
       okText: 'Confirmar',
       cancelText: 'Cancelar',
-      okType: 'primary'
+      okType: 'primary',
+      icon: 'question-circle'
     });
   }
 
@@ -120,7 +91,8 @@ export class ModalService {
       content,
       okText: 'OK',
       cancelText: undefined,
-      okType: 'primary'
+      okType: 'primary',
+      icon: 'info-circle'
     });
   }
 
@@ -131,7 +103,8 @@ export class ModalService {
       content,
       okText: 'OK',
       cancelText: undefined,
-      okType: 'primary'
+      okType: 'primary',
+      icon: 'check-circle'
     });
   }
 
@@ -142,7 +115,8 @@ export class ModalService {
       content,
       okText: 'OK',
       cancelText: undefined,
-      okType: 'primary'
+      okType: 'primary',
+      icon: 'exclamation-circle'
     });
   }
 
@@ -153,37 +127,23 @@ export class ModalService {
       content,
       okText: 'OK',
       cancelText: undefined,
-      okType: 'primary'
+      okType: 'primary',
+      icon: 'exclamation-triangle'
     });
   }
 
-  // Streams para componentes
-  getModalStream(): Observable<{ component: Type<any>, config: ModalConfig, injector?: Injector }> {
-    return this.modalSubject.asObservable();
-  }
-
+  // Stream para componente de confirmação
   getConfirmStream(): Observable<ConfirmConfig> {
     return this.confirmSubject.asObservable();
   }
 
-  private closeModal(modalRef: ModalRef, result?: any) {
-    const index = this.modalRefs.indexOf(modalRef);
-    if (index > -1) {
-      this.modalRefs.splice(index, 1);
-    }
+  // Método para responder à confirmação
+  respond(confirmed: boolean, data?: any) {
+    this.resultSubject.next({ confirmed, data });
   }
 
-  closeAll() {
-    this.modalRefs.forEach(ref => ref.close());
-  }
-
-  // Método para obter modal ativo
-  getActiveModal(): ModalRef | null {
-    return this.modalRefs.length > 0 ? this.modalRefs[this.modalRefs.length - 1] : null;
-  }
-
-  // Método para verificar se há modais abertos
-  hasOpenModals(): boolean {
-    return this.modalRefs.length > 0;
+  // Stream para resultados
+  getResultStream(): Observable<ConfirmResult> {
+    return this.resultSubject.asObservable();
   }
 } 

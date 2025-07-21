@@ -10,7 +10,7 @@ import { Action } from '../../dominio/interface/grid/action-grid';
 import { DecoratorUtils, FiltroMetadata } from '../../services/decorator/formulario-decorator';
 import { InputFieldComponent } from '../../shared/components/form/input-field/input-field.component';
 import { SelectFieldComponent } from '../../shared/components/form/select-field/select-field.component';
-import { SharedModule } from '../../shared/shared.module';
+
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { NotificationService } from '../../shared/services/notification.service';
@@ -48,8 +48,7 @@ interface ParametrosBusca {
     InputFieldComponent,
     SelectFieldComponent,
     ButtonComponent,
-    ModalComponent,
-    SharedModule
+    ModalComponent
   ],
   templateUrl: './grid.component.html',
   styleUrls: ['./grid.component.scss']
@@ -656,7 +655,8 @@ export class GridComponent implements OnInit, OnDestroy {
     // Aplicar filtros específicos
     Object.keys(this.searchInputs).forEach(key => {
       const valor = this.searchInputs[key];
-      if (valor && valor.toString().trim() !== '') {
+      // Só aplicar filtro se há um valor definido e não é string vazia
+      if (valor !== null && valor !== undefined && valor.toString().trim() !== '') {
         dadosFiltrados = dadosFiltrados.filter(item => {
           const itemValue = item[key];
           // Para campos boolean

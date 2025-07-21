@@ -5,10 +5,7 @@ import { RouterModule } from '@angular/router';
 
 // Módulos de componentes reutilizáveis
 import { BreadcrumbModule } from '../componentes/breadcrumb/breadcrumb.module';
-import { CardComponent } from './components/card/card.component';
-import { TableComponent } from './components/table/table.component';
-import { FormComponent } from './components/form/form.component';
-import { NotificationComponent } from './components/notification/notification.component';
+
 
 const COMMON_MODULES = [
   CommonModule,
@@ -22,18 +19,9 @@ const COMMON_MODULES = [
   imports: [
     ...COMMON_MODULES
   ],
-  declarations: [
-    CardComponent,
-    TableComponent,
-    FormComponent,
-    NotificationComponent
-  ],
+  declarations: [],
   exports: [
-    ...COMMON_MODULES,
-    CardComponent,
-    TableComponent,
-    FormComponent,
-    NotificationComponent
+    ...COMMON_MODULES
   ]
 })
 export class SharedModule { } 

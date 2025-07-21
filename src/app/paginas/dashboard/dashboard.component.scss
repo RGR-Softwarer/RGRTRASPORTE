@@ -1,4 +1,4 @@
-// Dashboard Moderno com Cards Interativos
+// Dashboard Simplificado
 .dashboard-container {
   padding: 24px;
   background: var(--background-light);
@@ -7,206 +7,69 @@
 
 .dashboard-header {
   margin-bottom: 32px;
+  text-align: center;
 }
 
-.dashboard-header-content {
+.welcome-section {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.dashboard-title-section {
-  flex: 1;
+  gap: 8px;
 }
 
 .dashboard-title {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 0 0 8px 0;
-  font-size: 2rem;
+  margin: 0;
+  font-size: 2.5rem;
   font-weight: 600;
   color: var(--text-primary);
+  justify-content: center;
 }
 
-.title-icon {
-  color: var(--primary-color);
-  font-size: 1.5rem;
-}
-
-.dashboard-description {
+.user-email {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 1rem;
-}
-
-.dashboard-actions {
-  display: flex;
-  gap: 12px;
-}
-
-// Cards de Estatísticas Modernos
-.dashboard-stats {
-  margin-bottom: 32px;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 24px;
-}
-
-.stat-card {
-  .stat-content {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-
-  .stat-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60px;
-    height: 60px;
-    border-radius: 12px;
-    background: var(--primary-light);
-    color: var(--primary-color);
-    font-size: 1.5rem;
-
-    &.success {
-      background: rgba(82, 196, 26, 0.1);
-      color: var(--success-color);
-    }
-
-    &.warning {
-      background: rgba(250, 140, 22, 0.1);
-      color: var(--warning-color);
-    }
-
-    &.info {
-      background: rgba(24, 144, 255, 0.1);
-      color: var(--info-color);
-    }
-  }
-
-  .stat-details {
-    flex: 1;
-
-    h3 {
-      margin: 0 0 4px 0;
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    p {
-      margin: 0;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-    }
-  }
-}
-
-// Área de Conteúdo
-.dashboard-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.config-card {
-  .config-form {
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      margin: 0 -8px;
-    }
-
-    .col-md-3 {
-      flex: 0 0 25%;
-      padding: 0 8px;
-      margin-bottom: 16px;
-
-      @media (max-width: 768px) {
-        flex: 0 0 50%;
-      }
-
-      @media (max-width: 576px) {
-        flex: 0 0 100%;
-      }
-    }
-
-    .form-group {
-      margin-bottom: 0;
-    }
-
-    .form-label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--text-primary);
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      font-size: 0.9rem;
-      background: white;
-      color: var(--text-primary);
-
-      &:focus {
-        outline: none;
-        border-color: var(--primary-color);
-        box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
-      }
-    }
-
-    .form-check-input {
-      width: auto;
-      margin-right: 8px;
-    }
-  }
-}
-
-.data-card {
-  .table {
-    width: 100%;
-    margin-bottom: 0;
-  }
-}
-
-// Loading Overlay Moderno
-.dashboard-loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(255, 255, 255, 0.8);
+  font-size: 1.1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  gap: 8px;
 }
 
-.loading-spinner {
-  text-align: center;
-  color: var(--primary-color);
+// Card de Boas-vindas
+.welcome-card {
+  max-width: 600px;
+  margin: 0 auto;
+}
 
-  i {
-    margin-bottom: 16px;
-  }
+.welcome-icon {
+  margin-bottom: 20px;
+}
 
-  p {
-    margin: 0;
-    font-size: 1rem;
-    color: var(--text-secondary);
-  }
+.card {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  padding: 40px;
+}
+
+.user-info {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
 }
 
 // Responsividade
@@ -214,53 +77,14 @@
   .dashboard-container {
     padding: 16px;
   }
-
-  .dashboard-header-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .dashboard-title {
-    font-size: 1.5rem;
-  }
-
-  .stats-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .stat-card .stat-content {
-    gap: 12px;
-  }
-
-  .stat-card .stat-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 1.2rem;
-  }
-
-  .stat-card .stat-details h3 {
-    font-size: 1.5rem;
-  }
-}
-
-// Animações
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.stat-card {
-  animation: fadeInUp 0.6s ease-out;
   
-  &:nth-child(1) { animation-delay: 0.1s; }
-  &:nth-child(2) { animation-delay: 0.2s; }
-  &:nth-child(3) { animation-delay: 0.3s; }
-  &:nth-child(4) { animation-delay: 0.4s; }
+  .dashboard-title {
+    font-size: 2rem;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .card-body {
+    padding: 24px;
+  }
 }

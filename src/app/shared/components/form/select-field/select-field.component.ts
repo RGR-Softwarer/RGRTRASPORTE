@@ -25,7 +25,7 @@ export interface SelectOption {
           (blur)="onBlur()"
           (focus)="onFocus()"
         >
-          <option *ngIf="placeholder" value="" disabled selected>{{ placeholder }}</option>
+          <option *ngIf="placeholder" value="">{{ placeholder }}</option>
           <option 
             *ngFor="let option of options" 
             [value]="option.value"

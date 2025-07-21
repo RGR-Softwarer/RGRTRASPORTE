@@ -1,10 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { NotificationService, Notification } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-notification',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <div class="notification-container">
       <div

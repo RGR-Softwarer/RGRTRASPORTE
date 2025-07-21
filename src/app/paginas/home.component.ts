@@ -1,9 +1,11 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { Router, Route, NavigationEnd } from '@angular/router';
+import { Router, Route, NavigationEnd, RouterOutlet, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, filter } from 'rxjs';
 import { AppContextService } from '../services/context/app.context';
 import { AppContext } from '../dominio/entidade/app.context';
-import { NotificationService } from '../shared/services/notification.service';
+import { NotificationService, ConfirmService } from '../shared/services';
+import { BreadcrumbComponent } from '../componentes/breadcrumb/breadcrumb.component';
 
 interface MenuItem {
   path: string;
@@ -15,14 +17,49 @@ interface MenuItem {
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  standalone: true,
+  imports: [CommonModule, RouterModule, RouterOutlet, BreadcrumbComponent]
 })
 export class HomeComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  private openSubmenus: Set<string> = new Set();
   
   menuAberto: boolean = false;
   anoAtual: number = new Date().getFullYear();
-  menus: MenuItem[] = [];
+  menus: MenuItem[] = [
+    {
+      path: 'inicio',
+      breadcrumb: 'Início',
+      icon: 'home',
+      submenu: []
+    },
+    {
+      path: 'frota',
+      breadcrumb: 'Frota',
+      icon: 'car',
+      submenu: [
+        {
+          path: 'frota/veiculo',
+          breadcrumb: 'Veículos',
+          icon: 'car',
+          submenu: []
+        }
+      ]
+    },
+    {
+      path: 'cadastros',
+      breadcrumb: 'Cadastros',
+      icon: 'database',
+      submenu: []
+    },
+    {
+      path: 'relatorios',
+      breadcrumb: 'Relatórios',
+      icon: 'chart-bar',
+      submenu: []
+    }
+  ];
   rotaAtual: string = '';
   loading: boolean = false;
   usuarioLogado: AppContext | null = null;
@@ -32,7 +69,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private appContextService: AppContextService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private confirmService: ConfirmService
   ) {}
 
   ngOnInit(): void {
@@ -47,7 +85,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   private inicializarComponente(): void {
-    this.generateMenuFromRoutes();
     this.observarMudancasRota();
     this.rotaAtual = this.router.url;
   }
@@ -68,54 +105,33 @@ export class HomeComponent implements OnInit, OnDestroy {
       });
   }
 
-  /**
-   * Gera os menus a partir das rotas configuradas
-   */
-  private generateMenuFromRoutes(): void {
-    const homeRoute = this.router.config.find((route: Route) => route.component === HomeComponent);
-    const childRoutes = homeRoute?.children || [];
 
-    this.menus = childRoutes
-      .filter(this.isValidMenuItem)
-      .map(this.mapRouteToMenuItem.bind(this));
-  }
 
-  private isValidMenuItem(route: Route): boolean {
-    return !!(route.data?.['breadcrumb'] && !route.data?.['oculta']);
-  }
 
-  private mapRouteToMenuItem(route: Route): MenuItem {
-    return {
-      path: route.path || '',
-      breadcrumb: route.data?.['breadcrumb'] || '',
-      icon: route.data?.['icon'],
-      submenu: this.getSubRoutes(route)
-    };
-  }
-
-  /**
-   * Obtém sub-rotas para criar submenus
-   */
-  private getSubRoutes(route: Route): MenuItem[] {
-    if (!route.children?.length) {
-      return [];
-    }
-
-    return route.children
-      .filter(this.isValidMenuItem)
-      .map(subRoute => ({
-        path: `${route.path}/${subRoute.path}`,
-        breadcrumb: subRoute.data?.['breadcrumb'] || '',
-        icon: subRoute.data?.['icon'],
-        submenu: []
-      }));
-  }
 
   /**
    * Alterna o estado do menu mobile
    */
   toggleMenu(): void {
     this.menuAberto = !this.menuAberto;
+  }
+
+  /**
+   * Alterna o estado de um submenu
+   */
+  toggleSubmenu(item: MenuItem): void {
+    if (this.openSubmenus.has(item.path)) {
+      this.openSubmenus.delete(item.path);
+    } else {
+      this.openSubmenus.add(item.path);
+    }
+  }
+
+  /**
+   * Verifica se um submenu está aberto
+   */
+  isSubmenuOpen(item: MenuItem): boolean {
+    return this.openSubmenus.has(item.path);
   }
 
   /**
@@ -152,12 +168,99 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Mapeia ícones ng-zorro para Font Awesome
+   */
+  getIconClass(icon?: string): string {
+    if (!icon) return 'fas fa-circle';
+    
+    // Mapeamento de ícones ng-zorro para Font Awesome
+    const iconMap: { [key: string]: string } = {
+      'menu': 'fas fa-bars',
+      'file': 'fas fa-file',
+      'user': 'fas fa-user',
+      'dashboard': 'fas fa-tachometer-alt',
+      'car': 'fas fa-car',
+      'truck': 'fas fa-truck',
+      'users': 'fas fa-users',
+      'settings': 'fas fa-cog',
+      'logout': 'fas fa-sign-out-alt',
+      'profile': 'fas fa-user-circle',
+      'home': 'fas fa-home',
+      'search': 'fas fa-search',
+      'plus': 'fas fa-plus',
+      'edit': 'fas fa-edit',
+      'delete': 'fas fa-trash',
+      'eye': 'fas fa-eye',
+      'download': 'fas fa-download',
+      'upload': 'fas fa-upload',
+      'calendar': 'fas fa-calendar',
+      'clock': 'fas fa-clock',
+      'location': 'fas fa-map-marker-alt',
+      'phone': 'fas fa-phone',
+      'envelope': 'fas fa-envelope',
+      'lock': 'fas fa-lock',
+      'unlock': 'fas fa-unlock',
+      'check': 'fas fa-check',
+      'times': 'fas fa-times',
+      'warning': 'fas fa-exclamation-triangle',
+      'info': 'fas fa-info-circle',
+      'question': 'fas fa-question-circle',
+      'star': 'fas fa-star',
+      'heart': 'fas fa-heart',
+      'bookmark': 'fas fa-bookmark',
+      'share': 'fas fa-share',
+      'print': 'fas fa-print',
+      'save': 'fas fa-save',
+      'refresh': 'fas fa-sync',
+      'filter': 'fas fa-filter',
+      'sort': 'fas fa-sort',
+      'list': 'fas fa-list',
+      'grid': 'fas fa-th',
+      'table': 'fas fa-table',
+      'chart': 'fas fa-chart-bar',
+      'pie-chart': 'fas fa-chart-pie',
+      'line-chart': 'fas fa-chart-line',
+      'area-chart': 'fas fa-chart-area',
+      'database': 'fas fa-database',
+      'server': 'fas fa-server',
+      'cloud': 'fas fa-cloud',
+      'wifi': 'fas fa-wifi',
+      'bluetooth': 'fas fa-bluetooth',
+      'mobile': 'fas fa-mobile-alt',
+      'desktop': 'fas fa-desktop',
+      'laptop': 'fas fa-laptop',
+      'tablet': 'fas fa-tablet-alt',
+      'keyboard': 'fas fa-keyboard',
+      'mouse': 'fas fa-mouse',
+      'headphones': 'fas fa-headphones',
+      'speaker': 'fas fa-volume-up',
+      'microphone': 'fas fa-microphone',
+      'camera': 'fas fa-camera',
+      'video': 'fas fa-video',
+      'image': 'fas fa-image',
+      'folder': 'fas fa-folder',
+      'file-alt': 'fas fa-file-alt',
+      'file-pdf': 'fas fa-file-pdf',
+      'file-word': 'fas fa-file-word',
+      'file-excel': 'fas fa-file-excel',
+      'file-powerpoint': 'fas fa-file-powerpoint',
+      'file-archive': 'fas fa-file-archive',
+      'file-code': 'fas fa-file-code',
+      'file-image': 'fas fa-file-image',
+      'file-video': 'fas fa-file-video',
+      'file-audio': 'fas fa-file-audio'
+    };
+    
+    return iconMap[icon] || `fas fa-${icon}`;
+  }
+
+  /**
    * Listener para fechar o dropdown quando clicar fora
    */
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event): void {
     const target = event.target as HTMLElement;
-    if (!target.closest('.dropdown-container')) {
+    if (!target.closest('.user-profile')) {
       this.userMenuAberto = false;
     }
   }
@@ -166,7 +269,11 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Alterna o estado do menu do usuário
    */
   toggleUserMenu(): void {
+    console.log('toggleUserMenu chamado, userMenuAberto atual:', this.userMenuAberto);
     this.userMenuAberto = !this.userMenuAberto;
+    console.log('toggleUserMenu novo valor:', this.userMenuAberto);
+    // Impedir propagação do evento
+    event?.stopPropagation();
   }
 
   /**
@@ -180,9 +287,14 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Realiza o logout do usuário
    */
   fazerLogout(): void {
+    this.confirmService.confirmAction('Sair', 'Tem certeza que deseja sair do sistema?')
+      .subscribe(confirmed => {
+        if (confirmed) {
     this.appContextService.logout();
     this.notificationService.success('Logout', 'Você foi desconectado com sucesso');
     this.router.navigate(['/auth/login']);
+        }
+      });
   }
 
   carregarTema(): void {

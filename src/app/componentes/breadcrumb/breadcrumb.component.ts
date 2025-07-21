@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { BreadcrumbService } from '../../services/breadcrumb/breadcrumb.service';
 import { Subject, takeUntil, filter, map } from 'rxjs';
 import { ItemBreadcrumb } from '../../dominio/interface/ItemBreadcrumb';
@@ -8,7 +9,9 @@ import { ItemBreadcrumb } from '../../dominio/interface/ItemBreadcrumb';
   selector: 'app-breadcrumb',
   templateUrl: './breadcrumb.component.html',
   styleUrl: './breadcrumb.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CommonModule, RouterModule]
 })
 export class BreadcrumbComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();

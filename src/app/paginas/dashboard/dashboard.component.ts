@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormControl, FormGroup, NonNullableFormBuilder } from '@angular/forms';
+import { FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { AppContext } from '../../dominio/entidade/app.context';
 import { AppContextService } from '../../services/context/app.context';
 import { ConfiguracaoGrid, RolagemTabela, TamanhoTabela, LayoutTabela, PosicaoPaginacao, TipoPaginacao } from '../../dominio/interface/grid/configuracao-grid';
-import { TableColumn, TableAction } from '../../shared/components/table/table.component';
 
 interface DashboardData {
   nome: string;
@@ -18,7 +18,9 @@ interface DashboardData {
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrl: './dashboard.component.scss',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -28,30 +30,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   minhaListaDeObjetos: DashboardData[] = [];
   loading: boolean = false;
   
-  // Configuração das colunas da tabela
-  tableColumns: TableColumn[] = [
-    { key: 'nome', label: 'Nome' },
-    { key: 'idade', label: 'Idade', render: (value: string) => `${value} anos` },
-    { key: 'endereco', label: 'Endereço' },
-    { key: 'marcado', label: 'Status', type: 'status' },
-    { key: 'acoes', label: 'Ações', type: 'actions' }
-  ];
-
-  // Ações da tabela
-  tableActions: TableAction[] = [
-    {
-      label: 'Ver',
-      icon: 'fas fa-eye',
-      action: (row: DashboardData) => this.verRegistro(row),
-      class: 'btn-primary'
-    },
-    {
-      label: 'Editar',
-      icon: 'fas fa-edit',
-      action: (row: DashboardData) => this.editarRegistro(row),
-      class: 'btn-warning'
-    }
-  ];
+  // Dados da tabela (simplificado sem TableColumn/TableAction)
 
   constructor(
     private appContextService: AppContextService, 

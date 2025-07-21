@@ -11,17 +11,8 @@ export interface FormCamposMetadata {
   type: FormFieldType;
   required: boolean;
   readonly?: boolean;
-  nzSpan: number;
   visible: boolean;
   options: FormCampoOption[];
-  
-  // Propriedades de responsividade
-  nzXs?: number;
-  nzSm?: number;
-  nzMd?: number;
-  nzLg?: number;
-  nzXl?: number;
-  nzXXl?: number;
   
   // Propriedades de validação e UX
   description?: string;
@@ -85,7 +76,7 @@ export function FormCampo(
   enumType?: any, 
   colSpan16: number = 4,
   readonly: boolean = false,
-  options?: Partial<Pick<FormCamposMetadata, 'description' | 'placeholder' | 'maxLength' | 'minLength' | 'min' | 'max' | 'step' | 'rows' | 'nzXs' | 'nzSm' | 'nzMd' | 'nzLg' | 'nzXl' | 'nzXXl' | 'entidadeConfig'>>
+  options?: Partial<Pick<FormCamposMetadata, 'description' | 'placeholder' | 'maxLength' | 'minLength' | 'min' | 'max' | 'step' | 'rows' | 'entidadeConfig'>>
 ) {
   return function(target: any, propertyName: string) {
     // Validações
@@ -93,28 +84,21 @@ export function FormCampo(
       console.warn(`FormCampo: Label é obrigatório para a propriedade ${propertyName}`);
       return;
     }
-
     if (colSpan16 < 1 || colSpan16 > 16) {
       console.warn(`FormCampo: colSpan16 deve estar entre 1 e 16 para ${propertyName}, usando valor padrão 4`);
       colSpan16 = 4;
     }
-
-    const nzSpan = Math.round((colSpan16 / 16) * 24);
-
     let fieldOptions: FormCampoOption[] = [];
-
     if(type === 'enum' && enumType) {
       fieldOptions = Object.entries(enumType).map(([key, label]) => ({ 
         label: label as string, 
         value: label 
       })) as FormCampoOption[];
     }
-
     const constructor = target.constructor as FormCampoConstrutor;
     if (!constructor.formFields) {
       constructor.formFields = [];
     }
-
     // Verificar se o campo já existe
     const existingFieldIndex = constructor.formFields.findIndex(field => field.key === propertyName);
     const fieldMetadata: FormCamposMetadata = { 
@@ -123,12 +107,10 @@ export function FormCampo(
       type, 
       required, 
       readonly,
-      nzSpan, 
       visible, 
       options: fieldOptions,
       ...options // Spread das opções adicionais
     };
-
     if (existingFieldIndex >= 0) {
       // Atualizar campo existente
       constructor.formFields[existingFieldIndex] = fieldMetadata;
@@ -146,7 +128,7 @@ export function FormCampoEntidade(
   colSpan16: number = 8,
   readonly: boolean = false,
   visible: boolean = true,
-  options?: Partial<Omit<FormCamposMetadata, 'key' | 'label' | 'type' | 'required' | 'entidadeConfig' | 'nzSpan' | 'visible'>>
+  options?: Partial<Omit<FormCamposMetadata, 'key' | 'label' | 'type' | 'required' | 'entidadeConfig' | 'visible'>>
 ) {
   return FormCampo(
     label,
@@ -209,7 +191,7 @@ export function FiltroGrid(
     } else {
       // Adicionar novo filtro
       constructor.filterFields.push(filterMetadata);
-}
+    }
   };
 }
 
@@ -287,8 +269,8 @@ public nome?: string;
   placeholder: 'Digite seu email',
   maxLength: 100,
   description: 'Email será usado para login',
-  nzMd: 12,
-  nzLg: 8
+  colMd: 12,
+  colLg: 8
 })
 public email?: string;
 

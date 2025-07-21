@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 export interface TableColumn {
   key: string;
@@ -17,7 +18,9 @@ export interface TableAction {
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
-  styleUrls: ['./table.component.scss']
+  styleUrls: ['./table.component.scss'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class TableComponent {
   @Input() columns: TableColumn[] = [];

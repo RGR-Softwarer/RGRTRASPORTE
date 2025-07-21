@@ -1,4 +1,4 @@
-.ant-btn-primary {
+.btn-primary {
     color: #fff;
     border-color: #1890ff;
     background: #1890ff;
@@ -14,8 +14,8 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 16px;
-        padding: 8px 0;
+        margin: 16px 0 24px 0;
+        padding: 12px 0;
 
         .grid-actions-left,
         .grid-actions-right {
@@ -25,743 +25,444 @@
         }
 
         button {
-            span[nz-icon] {
+            i {
                 margin-right: 4px;
             }
         }
     }
 
     .filters-section {
-        margin-bottom: 16px;
+        margin-bottom: 24px;
         background: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e8e8e8;
+        overflow: hidden;
+
+        .filters-header {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 14px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #e9ecef;
+
+            &:hover {
+                background: #e9ecef;
+                transform: translateY(-1px);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            i {
+                transition: transform 0.3s ease;
+                font-size: 14px;
+                opacity: 0.9;
+                
+                &.fa-chevron-up {
+                    transform: rotate(180deg);
+                }
+                
+                &.fa-chevron-down {
+                    transform: rotate(0deg);
+                }
+            }
+
+            span {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                &::before {
+                    content: '\f0b0';
+                    font-family: 'Font Awesome 5 Free';
+                    font-weight: 900;
+                    font-size: 14px;
+                    opacity: 0.8;
+                }
+            }
+        }
+
+        .filters-content {
+            padding: 20px;
+            background: #fafafa;
+            border-top: 1px solid #f0f0f0;
+            animation: slideDown 0.3s ease-out;
+            transform-origin: top;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                max-height: 500px;
+            }
+        }
 
         .filter-column {
             margin-bottom: 16px;
             transition: all 0.3s ease;
             
             &:hover {
+                transform: translateY(-1px);
+                
                 .filter-label {
                     color: var(--primary-color);
                 }
             }
             
             .filter-label {
-                display: block;
-                font-weight: 500;
-                color: var(--text-primary);
-                margin-bottom: 8px;
-                font-size: 14px;
-                padding-bottom: 4px;
-                transition: color 0.3s ease;
-            }
-            
-            .filter-input {
-                width: 100%;
-                transition: border-color 0.3s ease, box-shadow 0.3s ease;
-                
-                &:focus,
-                &:hover {
-                    border-color: var(--primary-color);
-                    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-                }
-            }
-            
-            .filter-input-group {
-                position: relative;
-                .form-control {
-                    padding-right: 12px;
-                }
-                .btn {
-                    display: none;
-                }
-            }
-        }
-
-        .clear-filter-icon {
-            cursor: pointer;
-            color: #999;
-            transition: color 0.3s ease;
-            
-            &:hover {
-                color: #f5222d;
-            }
-        }
-    }
-
-    .table-container {
-        overflow-x: auto;
-        border-radius: 6px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-
-        nz-table {
-            ::ng-deep {
-                .ant-table-thead > tr > th {
-                    background-color: #fafafa;
-                    font-weight: 600;
-                    white-space: nowrap;
-                    position: sticky;
-                    top: 0;
-                    z-index: 1;
-                }
-
-                .ant-table-tbody > tr > td {
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-
-                .ant-table-tbody > tr:hover > td {
-                    background-color: #fafafa;
-                }
-
-                .ant-table-body {
-                    overflow-x: auto;
-                    overflow-y: auto;
-                    -webkit-overflow-scrolling: touch;
-                }
-
-                .ant-table-thead > tr > th,
-                .ant-table-tbody > tr > td {
-                    min-width: 120px;
-                    max-width: 300px;
-                }
-
-                .ant-table-pagination {
-                    position: sticky;
-                    bottom: 0;
-                    background: white;
-                    z-index: 10;
-                    border-top: 1px solid #f0f0f0;
-                    margin: 0;
-                    padding: 16px;
-                    
-                    .ant-pagination {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        flex-wrap: wrap;
-                        gap: 8px;
-                        
-                        .ant-pagination-item,
-                        .ant-pagination-prev,
-                        .ant-pagination-next,
-                        .ant-pagination-jump-prev,
-                        .ant-pagination-jump-next {
-                            position: relative;
-                            z-index: 1;
-                        }
-                    }
-                }
-            }
-
-            .actions-cell {
-                white-space: nowrap;
-                text-align: center;
-                min-width: 120px;
-                width: 120px;
-                
-                .action-button {
-                    padding: 4px 8px;
-                    font-size: 12px;
-                    margin: 0 2px;
-                }
-            }
-
-            .actions-header {
-                text-align: center;
                 font-weight: 600;
-                min-width: 120px;
-                width: 120px;
+                margin-bottom: 6px;
+                color: #434343;
+                transition: color 0.3s ease;
+                font-size: 13px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
             }
-        }
-    }
-
-    .column-selector-content {
-        max-height: 400px;
-        overflow-y: auto;
-        padding: 8px 0;
-
-        .select-all-checkbox {
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-            margin-bottom: 8px;
-            padding: 4px 0;
             
-            input[type="checkbox"] {
-                margin-right: 8px;
-            }
-        }
-
-        .column-list {
-            max-height: 300px;
-            overflow-y: auto;
-
-            .column-item {
-                margin-bottom: 2px;
-                padding: 2px 6px;
-                border-radius: 4px;
-                transition: background-color 0.3s;
-
-                &:hover {
-                    background-color: #f5f5f5;
-                }
-
-                label {
-                    display: flex;
-                    align-items: center;
-                    cursor: pointer;
-                    margin-bottom: 0;
-                    font-size: 14px;
-                    
-                    input[type="checkbox"] {
-                        margin-right: 6px;
-                        margin-bottom: 0;
-                    }
-                }
-            }
-        }
-
-        nz-divider {
-            margin: 12px 0;
-        }
-    }
-}
-
-nz-form-item {
-    margin-bottom: 0;
-}
-
-[nz-icon] {
-    cursor: pointer;
-    color: rgba(0, 0, 0, 0.45);
-    transition: color 0.3s;
-    
-    &:hover {
-        color: rgba(0, 0, 0, 0.85);
-    }
-}
-
-// ================================
-// RESPONSIVIDADE AVANÇADA
-// ================================
-
-// Tablets e telas médias (768px - 1024px)
-@media (max-width: 1024px) {
-    .grid-container {
-        padding: 0 12px;
-        height: calc(100vh - 180px);
-
-        .grid-actions {
-            padding: 8px 0;
-            gap: 8px;
-
-            button {
-                font-size: 13px;
-                min-height: 30px;
-                padding: 0 12px;
-            }
-        }
-
-        .filters-section {
-            nz-form-label {
-                font-size: 13px;
-            }
-
-            nz-form-control .ant-input {
-                height: 34px;
-                font-size: 13px;
-            }
-        }
-
-        .table-container {
-            nz-table ::ng-deep {
-                .ant-table-thead > tr > th {
-                    padding: 10px 12px;
-                    font-size: 13px;
-                    min-width: 80px;
-                }
-
-                .ant-table-tbody > tr > td {
-                    padding: 10px 12px;
-                    font-size: 12px;
-                    min-width: 80px;
-                }
-            }
-
-            .actions-cell {
-                min-width: 120px;
-                width: 120px;
-
-                .action-button {
-                    font-size: 11px;
-                    padding: 3px 6px;
-                }
-            }
-        }
-    }
-}
-
-// Smartphones e telas pequenas (máximo 768px)
-@media (max-width: 768px) {
-    .grid-container {
-        padding: 0 8px;
-        height: calc(100vh - 160px);
-
-        .grid-actions {
-            flex-direction: column;
-            align-items: stretch;
-            gap: 12px;
-            padding: 12px 0;
-
-            .grid-actions-left,
-            .grid-actions-right {
-                justify-content: center;
-                width: 100%;
-                
-                button {
-                    flex: 1;
-                    max-width: 150px;
-                    font-size: 12px;
-                    min-height: 36px;
-                }
-            }
-        }
-
-        .filters-section {
-            margin-bottom: 12px;
-
-            nz-row [nz-col] {
-                margin-bottom: 12px;
-            }
-
-            nz-form-label {
-                font-size: 12px;
-                margin-bottom: 4px;
-            }
-
-            nz-form-control .ant-input {
-                height: 36px;
+            .form-control, 
+            .form-select {
+                border-radius: 6px;
+                border: 1px solid #d9d9d9;
+                transition: all 0.3s ease;
+                background: white;
                 font-size: 14px;
-            }
-        }
-
-        .table-container {
-            border-radius: 6px;
-
-            nz-table ::ng-deep {
-                .ant-table {
-                    font-size: 12px;
+                padding: 8px 12px;
+                
+                &:focus {
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+                    outline: none;
                 }
-
-                .ant-table-thead > tr > th {
-                    padding: 8px 6px;
-                    font-size: 11px;
-                    min-width: 60px;
-                }
-
-                .ant-table-tbody > tr > td {
-                    padding: 8px 6px;
-                    font-size: 11px;
-                    min-width: 60px;
-                }
-            }
-
-            .actions-cell {
-                min-width: 100px;
-                width: 100px;
-
-                .action-button {
-                    font-size: 10px;
-                    padding: 2px 4px;
-                    margin: 0 1px;
+                
+                &:hover {
+                    border-color: #40a9ff;
                 }
             }
         }
+    }
+
+    .table-responsive {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        overflow-x: auto;
+        overflow-y: visible;
+
+        .table {
+            margin-bottom: 0;
+            min-width: 800px;
+            
+            thead th {
+                background: #fafafa;
+                color: var(--text-primary);
+                    font-weight: 600;
+                border-bottom: 1px solid var(--border-color);
+                padding: 12px 16px;
+                    white-space: nowrap;
+                }
+
+            tbody td {
+                padding: 12px 16px;
+                border-bottom: 1px solid var(--border-color);
+                vertical-align: middle;
+                    white-space: nowrap;
+            }
+            
+            tbody tr:hover td {
+                background: rgba(24, 144, 255, 0.02);
+            }
+        }
+    }
+
+    .grid-pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 16px;
+        padding: 12px 0;
 
         .pagination-info {
-            font-size: 12px;
-            margin-top: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .pagination {
+                    margin: 0;
+            
+            .page-item {
+                .page-link {
+                    border: 1px solid var(--border-color);
+                    color: var(--text-primary);
+                    padding: 8px 12px;
+                    
+                    &:hover {
+                        background: var(--primary-light);
+                        border-color: var(--primary-color);
+                        color: var(--primary-color);
+                    }
+                }
+                
+                &.active .page-link {
+                    background: var(--primary-color);
+                    border-color: var(--primary-color);
+                    color: white;
+                }
+                
+                &.disabled .page-link {
+                    color: var(--text-muted);
+                    background: var(--background-light);
+                }
+            }
         }
     }
-}
 
-// Smartphones muito pequenos (máximo 480px)
-@media (max-width: 480px) {
-    .grid-container {
-        padding: 0 4px;
-        height: calc(100vh - 140px);
+    .loading-overlay {
+        position: relative;
+        
+        &.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 48px 24px;
+        color: var(--text-secondary);
+        
+        .empty-icon {
+            font-size: 48px;
+            color: var(--border-color);
+            margin-bottom: 16px;
+        }
+        
+        .empty-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .empty-description {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+    }
+
+    .grid-toolbar {
+                    display: flex;
+        justify-content: space-between;
+                    align-items: center;
+        margin-bottom: 16px;
+        padding: 12px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+
+        .toolbar-left {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .toolbar-right {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+    
+    &:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            }
+        }
+    }
+
+    .filter-row {
+        background: #fafafa;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+
+        .row {
+            margin: -8px;
+        }
+
+        .col {
+            padding: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+
+            label {
+                font-weight: 500;
+                margin-bottom: 4px;
+                color: var(--text-primary);
+                font-size: 13px;
+            }
+
+            .form-control {
+                font-size: 14px;
+                border-radius: 6px;
+                border: 1px solid var(--border-color);
+                
+                &:focus {
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+                }
+            }
+        }
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+
+        .btn {
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 4px;
+            min-width: auto;
+            
+            &.btn-edit {
+                background: #1890ff;
+                border-color: #1890ff;
+                color: white;
+                
+                &:hover {
+                    background: #40a9ff;
+                    border-color: #40a9ff;
+                }
+            }
+            
+            &.btn-delete {
+                background: #ff4d4f;
+                border-color: #ff4d4f;
+                color: white;
+                
+                &:hover {
+                    background: #ff7875;
+                    border-color: #ff7875;
+                }
+            }
+            
+            &.btn-view {
+                background: #52c41a;
+                border-color: #52c41a;
+                color: white;
+                
+                &:hover {
+                    background: #73d13d;
+                    border-color: #73d13d;
+                }
+            }
+        }
+    }
+
+    .responsive-grid {
+        @media (max-width: 768px) {
+            .table-responsive {
+                font-size: 14px;
+                
+                .table {
+                    thead th,
+                    tbody td {
+                        padding: 8px 12px;
+                    }
+                }
+            }
 
         .grid-actions {
-            .grid-actions-left,
-            .grid-actions-right {
                 flex-direction: column;
-                gap: 8px;
+                gap: 12px;
 
-                button {
-                    max-width: none;
+                .grid-actions-left,
+                .grid-actions-right {
                     width: 100%;
+                    justify-content: center;
                 }
             }
-        }
-
-        .filters-section {
-            nz-row [nz-col] {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
-        }
-
-        .table-container {
-            nz-table ::ng-deep {
-                .ant-table-thead > tr > th {
-                    padding: 6px 4px;
-                    font-size: 10px;
-                    min-width: 50px;
-                }
-
-                .ant-table-tbody > tr > td {
-                    padding: 6px 4px;
-                    font-size: 10px;
-                    min-width: 50px;
-                }
-            }
-
-            .actions-cell {
-                min-width: 80px;
-                width: 80px;
-
-                .action-button {
-                    font-size: 9px;
-                    padding: 1px 3px;
-                    display: block;
-                    margin-bottom: 2px;
-                    width: 100%;
-                }
-            }
-        }
-    }
-}
-
-// Melhorias para scroll e overflow
-.ant-table-container {
-    .ant-table-body {
-        overflow-x: auto;
-        overflow-y: auto;
-        
-        // Scroll suave em dispositivos touch
-        -webkit-overflow-scrolling: touch;
-    }
-}
-
-// Melhorias para tooltip em células cortadas
-[nz-tooltip] {
-    cursor: help;
-}
-
-// Estilo para células com ellipsis
-.ant-table-cell {
-    &[nzEllipsis] {
-        max-width: 0;
-        
-        span {
-            display: block;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    }
-}
-
-// Melhorias para scroll horizontal responsivo
-@media (max-width: 1200px) {
-    .table-container {
-        nz-table {
-            // Usar configuração dinâmica em vez de largura fixa
-        }
-    }
-}
-
-@media (max-width: 768px) {
-    .table-container {
-        nz-table {
-            // Usar configuração dinâmica em vez de largura fixa
-        }
-    }
-}
-
-@media (max-width: 480px) {
-    .table-container {
-        nz-table {
-            // Usar configuração dinâmica em vez de largura fixa
-        }
-    }
-}
-
-// Melhorias para colapso dos filtros em mobile
-@media (max-width: 768px) {
-    nz-collapse {
-        ::ng-deep {
-            .ant-collapse-header {
-                padding: 12px 16px;
-                font-size: 14px;
-                font-weight: 500;
-            }
-
-            .ant-collapse-content-box {
-                padding: 16px;
-            }
-        }
-    }
-}
-
-// Estilos para deixar os filtros iguais ao formulário
-.filters-section {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    
-    .filter-column {
-        .filter-label {
-            padding-bottom: 4px;
-            transition: color 0.3s ease;
-        }
-        
-        .filter-input {
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
             
-            &:focus,
-            &:hover {
-                border-color: var(--primary-color);
-                box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-            }
-        }
-        
-        .filter-input-group {
-            .ant-input {
-                transition: border-color 0.3s ease, box-shadow 0.3s ease;
-                
-                &:focus,
-                &:hover {
-                    border-color: var(--primary-color);
-                    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-                }
-            }
-        }
-        
-        transition: all 0.3s ease;
-        
-        &:hover {
-            .filter-label {
-                color: var(--primary-color);
+            .grid-pagination {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
             }
         }
     }
-    
-    .clear-filter-icon {
-        transition: color 0.3s ease;
-    }
 }
 
-// Estilos para os filtros
-.filters-header {
-  background: #f8f9fa;
-  padding: 12px 16px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px 8px 0 0;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 500;
-  
-  &:hover {
-    background: #e9ecef;
-  }
-  
-  i {
-    transition: transform 0.3s ease;
-  }
-}
-
-.filters-content {
-  background: white;
-  border: 1px solid #dee2e6;
-  border-top: none;
-  border-radius: 0 0 8px 8px;
-  padding: 16px;
-}
-
-.filter-column {
-  margin-bottom: 16px;
-  
-  .filter-label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 500;
-    color: #495057;
-    font-size: 14px;
-  }
-  
-  .filter-input {
-    width: 100%;
-    border: 1px solid #ced4da;
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-size: 14px;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    
-    &:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-      outline: none;
-    }
-  }
-  
-  .filter-input-group {
-    position: relative;
-    
-    .form-control {
-      padding-right: 40px; // Espaço para o botão de limpar
+/* Estilos globais para componentes de grid customizados */
+.custom-grid {
+    .table-hover tbody tr:hover {
+        background-color: rgba(24, 144, 255, 0.04);
     }
     
-    .btn {
-      position: absolute;
-      right: 0;
-      top: 0;
-      height: 100%;
-      border: none;
-      background: transparent;
-      color: #6c757d;
-      padding: 8px 12px;
-      border-radius: 0 6px 6px 0;
-      
-      &:hover {
-        background: #f8f9fa;
-        color: #dc3545;
-      }
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.02);
     }
-  }
-}
-
-// Estilos para a tabela
-.sortable-header {
-  cursor: pointer;
-  user-select: none;
-  position: relative;
-  text-align: center;
-  vertical-align: middle;
-  padding: 12px 8px;
-  background: #f8f9fa;
-  border-bottom: 2px solid #dee2e6;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  
-  &:hover {
-    background-color: #e9ecef;
-  }
-  
-  i {
-    margin-left: 4px;
-    font-size: 12px;
-  }
-}
-
-.actions-header {
-  text-align: center;
-  vertical-align: middle;
-  padding: 12px 8px;
-  background: #f8f9fa;
-  border-bottom: 2px solid #dee2e6;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.data-cell {
-  text-align: center;
-  vertical-align: middle;
-  padding: 8px;
-}
-
-.actions-cell {
-  text-align: center;
-  vertical-align: middle;
-  padding: 8px;
-  
-  .action-button {
-    margin: 0 2px;
-    padding: 4px 8px;
-    font-size: 12px;
-  }
-}
-
-.pagination-container {
-  margin-top: 16px;
-  padding: 16px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.pagination-info {
-  color: #6c757d;
-  font-size: 14px;
-}
-
-// Estilos para checkboxes customizados
-.select-all-checkbox {
-  display: flex;
-  align-items: center;
-  font-weight: 500;
-  margin-bottom: 8px;
-  padding: 4px 0;
-  
-  input[type="checkbox"] {
-    margin-right: 8px;
-  }
-}
-
-.column-item {
-  margin-bottom: 2px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  transition: background-color 0.3s;
-  
-  &:hover {
-    background-color: #f5f5f5;
-  }
-  
-  label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    margin-bottom: 0;
-    font-size: 14px;
     
-    input[type="checkbox"] {
-      margin-right: 6px;
+    .table-bordered {
+        border: 1px solid var(--border-color);
+        
+        th,
+        td {
+            border: 1px solid var(--border-color);
+        }
     }
-  }
 }
 
-// Melhorias para responsividade
-@media (max-width: 768px) {
-  .filter-column {
-    .col-12 {
-      margin-bottom: 12px;
-    }
-  }
-  
-  .pagination-container {
-    .d-flex {
-      flex-direction: column;
-      gap: 12px;
+/* Tema escuro para grid */
+[data-theme="dark"] {
+    .grid-container {
+        .filters-section,
+        .table-responsive,
+        .grid-toolbar,
+        .filter-row {
+            background: var(--background-white);
+            border-color: var(--border-color);
+        }
+        
+        .table {
+            thead th {
+                background: var(--background-light);
+                color: var(--text-primary);
+            }
+            
+            tbody tr:hover td {
+                background: rgba(24, 144, 255, 0.1);
+            }
     }
   }
 }

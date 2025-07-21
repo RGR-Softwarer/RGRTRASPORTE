@@ -1,73 +1,133 @@
-<nz-layout class="main-layout">
-  <nz-sider nzCollapsible [(nzCollapsed)]="menuAberto" [nzTrigger]="null">
-    <div class="logo"></div>
-    <ul nz-menu nzTheme="dark" nzMode="inline">
-      <ng-container *ngFor="let menu of menus">
-        <!-- Verifica se há submenus -->
-        <li *ngIf="menu.submenu.length > 0" nz-submenu [nzTitle]="menu.breadcrumb" [nzIcon]="menu.icon || 'menu'">
-          <ul>
-            <li *ngFor="let sub of menu.submenu" nz-menu-item [routerLink]="sub.path">
-              <span nz-icon [nzType]="sub.icon || 'file'"></span> <!-- Ícone dinâmico -->
-              <span>{{ sub.breadcrumb }}</span>
-            </li>
-          </ul>
-        </li>
-        <!-- Caso contrário, exibe o item normal -->
-        <li *ngIf="menu.submenu.length === 0" nz-menu-item [routerLink]="menu.path">
-          <span nz-icon [nzType]="menu.icon || 'file'"></span> <!-- Ícone dinâmico -->
-          <span>{{ menu.breadcrumb }}</span>
-        </li>
-      </ng-container>
-    </ul>
-  </nz-sider>
-
-  <nz-layout class="content-layout">
-    <nz-header>
-      <div class="header-content">
-        <span
-          class="trigger"
-          nz-icon
-          [nzType]="menuAberto ? 'menu-unfold' : 'menu-fold'"
-          (click)="menuAberto = !menuAberto"
-        ></span>
-        
-        <!-- Botão de perfil do usuário com dropdown customizado -->
-        <div class="user-profile">
-          <div class="dropdown-container">
-            <button nz-button nzType="text" class="user-button" (click)="toggleUserMenu()">
-              <span nz-icon nzType="user" nzTheme="outline"></span>
-              <span class="username">{{ usuarioLogado?.username || 'Usuário' }}</span>
-              <span nz-icon [nzType]="userMenuAberto ? 'up' : 'down'"></span>
-            </button>
-            
-            <div class="dropdown-menu" *ngIf="userMenuAberto">
-              <ul class="menu-list">
-                <li class="menu-item" (click)="abrirPerfil(); userMenuAberto = false;">
-                  <span nz-icon nzType="user" nzTheme="outline"></span>
-                  <span>Meu Perfil</span>
-                </li>
-                <li class="menu-divider"></li>
-                <li class="menu-item" (click)="alternarTema(); userMenuAberto = false;">
-                  <span nz-icon [nzType]="temaEscuro ? 'bulb' : 'bulb'" nzTheme="outline"></span>
-                  <span>{{ temaEscuro ? 'Tema claro' : 'Tema escuro' }}</span>
-                </li>
-                <li class="menu-divider"></li>
-                <li class="menu-item" (click)="fazerLogout(); userMenuAberto = false;">
-                  <span nz-icon nzType="logout" nzTheme="outline"></span>
-                  <span>Sair</span>
-                </li>
-              </ul>
+<div class="main-layout">
+  <!-- Sidebar customizado -->
+  <aside class="sidebar" [class.collapsed]="menuAberto">
+    <div class="sidebar-header">
+      <div class="logo" *ngIf="!menuAberto">
+        <img src="assets/layout/images/logo.png" alt="Logo" class="logo-img">
+        <span class="logo-text">RGR SISTEMAS</span>
+      </div>
+      <div class="logo-collapsed" *ngIf="menuAberto">
+        <img src="assets/layout/images/logo.png" alt="Logo" class="logo-img-small">
+      </div>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <ul class="nav-menu">
+        <ng-container *ngFor="let menu of menus">
+          <!-- Item com submenu -->
+          <li *ngIf="menu.submenu.length > 0" class="nav-item has-submenu">
+            <div class="nav-link" 
+                 [class.active]="isRotaAtiva(menu.path)"
+                 (click)="toggleSubmenu(menu)"
+                 [title]="menuAberto ? '' : menu.breadcrumb">
+              <i class="nav-icon" [class]="getIconClass(menu.icon)"></i>
+              <span class="nav-text" *ngIf="!menuAberto">{{ menu.breadcrumb }}</span>
+              <i class="submenu-arrow fas fa-chevron-down" 
+                 *ngIf="!menuAberto"
+                 [class.rotated]="isSubmenuOpen(menu)"></i>
             </div>
+            <ul class="submenu" [class.open]="isSubmenuOpen(menu)">
+              <li *ngFor="let sub of menu.submenu" class="submenu-item">
+                <a class="submenu-link" 
+                   [routerLink]="sub.path"
+                   routerLinkActive="active"
+                   [class.active]="isRotaAtiva(sub.path)"
+                   [title]="menuAberto ? '' : sub.breadcrumb">
+                  <i class="submenu-icon" [class]="getIconClass(sub.icon)"></i>
+                  <span class="submenu-text">{{ sub.breadcrumb }}</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          
+          <!-- Item simples -->
+          <li *ngIf="menu.submenu.length === 0" class="nav-item">
+            <a class="nav-link" 
+               [routerLink]="menu.path"
+               routerLinkActive="active"
+               [class.active]="isRotaAtiva(menu.path)"
+               [title]="menuAberto ? '' : menu.breadcrumb">
+              <i class="nav-icon" [class]="getIconClass(menu.icon)"></i>
+              <span class="nav-text" *ngIf="!menuAberto">{{ menu.breadcrumb }}</span>
+            </a>
+          </li>
+        </ng-container>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Conteúdo principal -->
+  <div class="content-layout" [class.sidebar-collapsed]="menuAberto">
+    <!-- Header customizado -->
+    <header class="header">
+      <div class="header-left">
+        <button class="menu-toggle" (click)="menuAberto = !menuAberto">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      
+      <div class="header-right">
+        <div class="user-profile">
+          <button class="user-button" (click)="toggleUserMenu(); $event.stopPropagation()">
+            <div class="user-avatar">
+              <img *ngIf="usuarioLogado?.avatar" [src]="usuarioLogado?.avatar" [alt]="usuarioLogado?.username ?? 'Usuário'">
+              <i *ngIf="!usuarioLogado?.avatar" class="fas fa-user"></i>
+            </div>           
+          </button>
+          
+          <div class="dropdown-menu" [class.open]="userMenuAberto">
+            <div class="dropdown-header">
+              <div class="user-info">
+                <div class="user-avatar-large">
+                  <img *ngIf="usuarioLogado?.avatar" [src]="usuarioLogado?.avatar" [alt]="usuarioLogado?.username ?? 'Usuário'">
+                  <i *ngIf="!usuarioLogado?.avatar" class="fas fa-user"></i>
+                </div>
+                <div class="user-details">
+                  <div class="user-name">{{ usuarioLogado?.username ?? 'Usuário' }}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="dropdown-divider"></div>
+            
+            <ul class="menu-list">
+              <li class="menu-item" (click)="abrirPerfil(); userMenuAberto = false;">
+                <i class="menu-icon fas fa-user-circle"></i>
+                <span class="menu-text">Meu Perfil</span>
+              </li>
+              
+              <li class="menu-item" (click)="alternarTema(); userMenuAberto = false;">
+                <i class="menu-icon" [class]="temaEscuro ? 'fas fa-sun' : 'fas fa-moon'"></i>
+                <span class="menu-text">{{ temaEscuro ? 'Tema claro' : 'Tema escuro' }}</span>
+              </li>
+              
+              <div class="dropdown-divider"></div>
+              
+              <li class="menu-item" (click)="fazerLogout(); userMenuAberto = false;">
+                <i class="menu-icon fas fa-sign-out-alt"></i>
+                <span class="menu-text">Sair</span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
-    </nz-header>
-    <nz-content>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb-section">
+      <app-breadcrumb></app-breadcrumb>
+    </div>
+
+    <!-- Conteúdo -->
+    <main class="content">
       <div class="content-scroll-area">
-        <app-breadcrumb></app-breadcrumb>
         <router-outlet></router-outlet>
       </div>
-    </nz-content>
-    <nz-footer>Copyright ©{{ anoAtual }} Todos os direitos reservados para RGR SISTEMAS</nz-footer>
-  </nz-layout>
-</nz-layout>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      Copyright ©{{ anoAtual }} Todos os direitos reservados para RGR SISTEMAS
+    </footer>
+  </div>
+</div>

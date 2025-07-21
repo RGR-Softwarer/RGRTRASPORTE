@@ -1,16 +1,30 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule, Location } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Veiculo } from '../../../../dominio/entidade/veiculo';
 import { ApiService } from '../../../../services/http/api.service';
 import { TrasportadorUrls } from '../../../../dominio/enum/trasportador-url-enum';
-import { Location } from '@angular/common';
 import { BreadcrumbService } from '../../../../services/breadcrumb/breadcrumb.service';
 import { NotificationService } from '../../../../shared/services/notification.service';
+import { FormularioComponent } from '../../../../componentes/formulario/formulario.component';
+import { InputFieldComponent } from '../../../../shared/components/form/input-field/input-field.component';
+import { SelectFieldComponent } from '../../../../shared/components/form/select-field/select-field.component';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-veiculo-formulario',
   templateUrl: './veiculo-formulario.component.html',
-  styleUrls: ['./veiculo-formulario.component.scss']
+  styleUrls: ['./veiculo-formulario.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormularioComponent,
+    InputFieldComponent,
+    SelectFieldComponent,
+    ButtonComponent
+  ]
 })
 export class VeiculoFormularioComponent implements OnInit {
 

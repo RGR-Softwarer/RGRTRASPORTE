@@ -6,12 +6,6 @@ import { HomeRoutingModule } from './homeRoutingModule';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { HomeComponent } from './home.component';
 import { BreadcrumbModule } from '../componentes/breadcrumb/breadcrumb.module';
-import { NzLayoutModule } from 'ng-zorro-antd/layout';
-import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzMenuModule } from 'ng-zorro-antd/menu';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
-import { NzButtonModule } from 'ng-zorro-antd/button';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 @NgModule({
     imports: [
@@ -22,13 +16,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
         ReactiveFormsModule,
         DashboardModule,
         BreadcrumbModule,
-        NzLayoutModule,
-        NzIconModule,
-        NzMenuModule,
-        NzDropDownModule,
-        NzButtonModule,
-        NzDividerModule
+        HomeComponent
     ],
-    declarations: [HomeComponent]
+    declarations: []
 })
 export class HomeModule { }

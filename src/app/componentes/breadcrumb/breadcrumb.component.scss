@@ -1,10 +1,7 @@
 .breadcrumb-container {
-  margin: 16px 0;
-  padding: 12px 16px;
-  background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
-  border-radius: 8px;
-  border-left: 4px solid #1890ff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin: 0;
+  padding: 8px 0;
+  background: transparent;
   position: relative;
 
   .breadcrumb-main {
@@ -17,8 +14,9 @@
       align-items: center;
       flex-wrap: wrap;
       list-style: none;
-      font-size: 14px;
-      line-height: 1.5;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #666;
     }
 
     .breadcrumb-item {
@@ -30,67 +28,66 @@
   }
 
   .breadcrumb-link {
-    color: #1890ff;
+    color: #666;
     text-decoration: none;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    padding: 2px 6px;
-    border-radius: 4px;
+    font-weight: 400;
+    transition: all 0.2s ease;
+    padding: 2px 4px;
+    border-radius: 3px;
     display: inline-flex;
     align-items: center;
     cursor: pointer;
     
     &:hover {
-      color: #40a9ff;
-      background-color: rgba(24, 144, 255, 0.1);
-      text-decoration: underline;
+      color: #1890ff;
+      background-color: rgba(24, 144, 255, 0.05);
     }
     
     &:focus {
-      outline: 2px solid #40a9ff;
-      outline-offset: 2px;
-      background-color: rgba(24, 144, 255, 0.1);
+      outline: 1px solid #1890ff;
+      outline-offset: 1px;
+      background-color: rgba(24, 144, 255, 0.05);
     }
 
     .breadcrumb-icon {
-      margin-right: 4px;
-      font-size: 14px;
+      margin-right: 3px;
+      font-size: 12px;
     }
 
     .breadcrumb-label {
-      font-size: 14px;
+      font-size: 13px;
     }
   }
 
   .breadcrumb-current {
-    color: #262626;
-    font-weight: 600;
-    padding: 2px 6px;
-    background-color: rgba(38, 38, 38, 0.08);
-    border-radius: 4px;
+    color: #333;
+    font-weight: 500;
+    padding: 2px 4px;
+    background-color: rgba(51, 51, 51, 0.05);
+    border-radius: 3px;
     display: inline-flex;
     align-items: center;
 
     .breadcrumb-icon {
-      margin-right: 4px;
-      font-size: 14px;
+      margin-right: 3px;
+      font-size: 12px;
       color: #1890ff;
     }
 
     .breadcrumb-label {
-      font-size: 14px;
+      font-size: 13px;
     }
   }
 
   .breadcrumb-separator {
-    font-size: 12px;
-    color: #bfbfbf;
-    margin: 0 8px;
+    font-size: 10px;
+    color: #ccc;
+    margin: 0 6px;
     display: flex;
     align-items: center;
     
     i {
-      font-size: 10px;
+      font-size: 8px;
     }
   }
 
@@ -141,8 +138,8 @@
 // Responsividade
 @media (max-width: 768px) {
   .breadcrumb-container {
-    margin: 12px 0;
-    padding: 8px 12px;
+    margin: 0;
+    padding: 6px 0;
     
     .breadcrumb-main {
       .breadcrumb-list {
@@ -172,7 +169,7 @@
 
 @media (max-width: 480px) {
   .breadcrumb-container {
-    padding: 6px 8px;
+    padding: 4px 0;
     
     .breadcrumb-main {
       .breadcrumb-list {

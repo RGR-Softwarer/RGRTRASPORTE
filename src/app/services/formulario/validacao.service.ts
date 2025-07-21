@@ -125,7 +125,7 @@ export class ValidacaoService {
    */
   scrollParaPrimeiroErro(): void {
     setTimeout(() => {
-      const firstErrorElement = document.querySelector('.ant-form-item-has-error input, .ant-form-item-has-error nz-select, .ant-form-item-has-error textarea, .ant-form-item-has-error nz-date-picker, .ant-form-item-has-error .ant-picker');
+      const firstErrorElement = document.querySelector('.is-invalid input, .is-invalid select, .is-invalid textarea, .is-invalid .datepicker');
       if (firstErrorElement) {
         firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         (firstErrorElement as HTMLElement).focus();

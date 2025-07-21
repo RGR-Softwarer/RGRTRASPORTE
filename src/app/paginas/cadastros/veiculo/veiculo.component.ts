@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Veiculo } from '../../../dominio/entidade/veiculo';
 import { ConfiguracaoGrid } from '../../../dominio/interface/grid/configuracao-grid';
 import { Action } from '../../../dominio/interface/grid/action-grid';
@@ -8,11 +9,14 @@ import { Observable } from 'rxjs';
 import { DecoratorUtils } from '../../../services/decorator/formulario-decorator';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { environment } from '../../../../environments/environment';
+import { GridComponent } from '../../../componentes/grid/grid.component';
 
 @Component({
   selector: 'app-veiculo',
   templateUrl: './veiculo.component.html',
   styleUrls: ['./veiculo.component.scss'],
+  standalone: true,
+  imports: [CommonModule, GridComponent]
 })
 export class VeiculoComponent implements OnInit {
 
