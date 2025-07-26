@@ -17,11 +17,12 @@ public class Passageiro : Pessoa
         long localidadeEmbarqueId,
         long localidadeDesembarqueId,
         string observacao,
-        bool situacao) : base(nome, cpf, telefone, email, sexo, observacao, situacao)
+        bool situacao) : base(nome, cpf, telefone, email, sexo, observacao)
     {
         LocalidadeId = localidadeId;
         LocalidadeEmbarqueId = localidadeEmbarqueId;
         LocalidadeDesembarqueId = localidadeDesembarqueId;
+        Situacao = situacao;
     }
 
     public Localidade Localidade { get; private set; }
@@ -30,6 +31,22 @@ public class Passageiro : Pessoa
     public new long? LocalidadeEmbarqueId { get; private set; }
     public Localidade LocalidadeDesembarque { get; private set; }
     public new long? LocalidadeDesembarqueId { get; private set; }
+
+    public void Atualizar(
+        string nome,
+        string cpf,
+        string telefone,
+        string email,
+        SexoEnum sexo,
+        long localidadeId,
+        long localidadeEmbarqueId,
+        long localidadeDesembarqueId,
+        string observacao,
+        bool situacao)
+    {
+        base.Atualizar(nome, cpf, telefone, email, sexo, localidadeId, localidadeEmbarqueId, localidadeDesembarqueId, observacao);
+        Situacao = situacao;
+    }
 
     public void AtualizarLocalidades(
         long localidadeId,

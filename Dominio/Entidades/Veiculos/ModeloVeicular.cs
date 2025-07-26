@@ -1,4 +1,5 @@
 ﻿using Dominio.Enums.Veiculo;
+using Dominio.Exceptions;
 
 namespace Dominio.Entidades.Veiculos
 {
@@ -17,6 +18,9 @@ namespace Dominio.Entidades.Veiculos
             bool possuiClimatizador,
             bool situacao)
         {
+            ValidarDescricao(descricaoModelo);
+            ValidarQuantidades(quantidadeAssento, quantidadeEixo, capacidadeMaxima, passageirosEmPe);
+
             Descricao = descricaoModelo;
             Tipo = tipo;
             QuantidadeAssento = quantidadeAssento;
@@ -26,6 +30,7 @@ namespace Dominio.Entidades.Veiculos
             PossuiBanheiro = possuiBanheiro;
             PossuiClimatizador = possuiClimatizador;
             Situacao = situacao;
+            Situacao = true;
             Veiculos = new List<Veiculo>();
         }
 
@@ -40,17 +45,77 @@ namespace Dominio.Entidades.Veiculos
         public bool PossuiClimatizador { get; private set; }
         public ICollection<Veiculo> Veiculos { get; private set; }
 
-        public string DescricaoAtivo
+        public string DescricaoAtivo => Situacao ? "Ativo" : "Inativo";
+
+        public void Atualizar(
+            string descricao,
+            TipoModeloVeiculoEnum tipo,
+            int quantidadeAssento,
+            int quantidadeEixo,
+            int capacidadeMaxima,
+            int passageirosEmPe,
+            bool possuiBanheiro,
+            bool possuiClimatizador,
+            bool situacao)
         {
-            get { return Situacao ? "Ativo" : "Inativo"; }
+            ValidarDescricao(descricao);
+            ValidarQuantidades(quantidadeAssento, quantidadeEixo, capacidadeMaxima, passageirosEmPe);
+
+            Descricao = descricao;
+            Tipo = tipo;
+            QuantidadeAssento = quantidadeAssento;
+            QuantidadeEixo = quantidadeEixo;
+            CapacidadeMaxima = capacidadeMaxima;
+            PassageirosEmPe = passageirosEmPe;
+            PossuiBanheiro = possuiBanheiro;
+            PossuiClimatizador = possuiClimatizador;
         }
 
-        public void Atualizar(string nome, int quantidadePassageiros, bool ativo)
+        public void Ativar()
         {
-            Descricao = nome;
-            Situacao = ativo;
-            QuantidadeAssento = quantidadePassageiros;
+            if (Situacao)
+                throw new DomainException("Modelo já está ativo.");
 
+            Situacao = true;
         }
+
+        public void Inativar()
+        {
+            if (!Situacao)
+                throw new DomainException("Modelo já está inativo.");
+
+            if (Veiculos.Any(v => v.Situacao))
+                throw new DomainException("Não é possível inativar um modelo que possui veículos ativos.");
+
+            Situacao = false;
+        }
+
+        private void ValidarDescricao(string descricao)
+        {
+            if (string.IsNullOrWhiteSpace(descricao))
+                throw new DomainException("Descrição é obrigatória.");
+
+            if (descricao.Length > 100)
+                throw new DomainException("Descrição deve ter no máximo 100 caracteres.");
+        }
+
+        private void ValidarQuantidades(int quantidadeAssento, int quantidadeEixo, int capacidadeMaxima, int passageirosEmPe)
+        {
+            if (quantidadeAssento <= 0)
+                throw new DomainException("Quantidade de assentos deve ser maior que zero.");
+
+            if (quantidadeEixo <= 0)
+                throw new DomainException("Quantidade de eixos deve ser maior que zero.");
+
+            if (capacidadeMaxima <= 0)
+                throw new DomainException("Capacidade máxima deve ser maior que zero.");
+
+            if (passageirosEmPe < 0)
+                throw new DomainException("Quantidade de passageiros em pé não pode ser negativa.");
+
+            if (capacidadeMaxima < quantidadeAssento + passageirosEmPe)
+                throw new DomainException("Capacidade máxima deve ser maior ou igual à soma de assentos e passageiros em pé.");
+        }
+    
     }
 }

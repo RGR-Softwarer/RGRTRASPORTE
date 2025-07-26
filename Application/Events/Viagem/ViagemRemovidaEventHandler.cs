@@ -1,20 +1,26 @@
+using Dominio.Events.Viagens;
 using MediatR;
-using Dominio.Events.Viagem;
-using Dominio.Interfaces.Service.Viagens;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Events.Viagem;
 
 public class ViagemRemovidaEventHandler : INotificationHandler<ViagemRemovidaEvent>
 {
-    private readonly IViagemService _viagemService;
+    private readonly ILogger<ViagemRemovidaEventHandler> _logger;
 
-    public ViagemRemovidaEventHandler(IViagemService viagemService)
+    public ViagemRemovidaEventHandler(ILogger<ViagemRemovidaEventHandler> logger)
     {
-        _viagemService = viagemService;
+        _logger = logger;
     }
 
-    public async Task Handle(ViagemRemovidaEvent notification, CancellationToken cancellationToken)
+    public Task Handle(ViagemRemovidaEvent notification, CancellationToken cancellationToken)
     {
-        await _viagemService.RemoverAsync(notification.ViagemId);
+        _logger.LogInformation("Viagem {ViagemId} removida em {DataRemocao}", 
+            notification.ViagemId,  DateTime.UtcNow);
+
+        // Aqui você pode adicionar lógica adicional para processar o evento
+        // Por exemplo: enviar notificações, atualizar cache, etc.
+
+        return Task.CompletedTask;
     }
 } 

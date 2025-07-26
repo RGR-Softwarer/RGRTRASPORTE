@@ -1,13 +1,13 @@
 using Application.Commands.Base;
 using Application.Common;
 
-namespace Application.Commands.Viagem.ViagemPosicao;
+namespace Application.Commands.Viagem.Gatilho;
 
-public class RemoverViagemPosicaoCommand : BaseCommand<BaseResponse<bool>>
+public class RemoverGatilhoViagemCommand : BaseCommand<BaseResponse<bool>>
 {
     public long Id { get; private set; }
 
-    public RemoverViagemPosicaoCommand(
+    public RemoverGatilhoViagemCommand(
         long id,
         string usuarioId,
         string usuarioCriacao) : base(usuarioId, usuarioCriacao)

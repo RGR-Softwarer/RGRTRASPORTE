@@ -31,6 +31,7 @@ public class EditarViagemCommandValidator : AbstractValidator<EditarViagemComman
             .GreaterThan(0)
             .WithMessage("O veículo é obrigatório");
 
+
         RuleFor(x => x.LocalidadeOrigemId)
             .GreaterThan(0)
             .WithMessage("A localidade de origem é obrigatória");

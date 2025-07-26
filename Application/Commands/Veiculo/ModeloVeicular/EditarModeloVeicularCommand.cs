@@ -1,5 +1,6 @@
 using Application.Commands.Base;
 using Application.Common;
+using Dominio.Enums.Veiculo;
 
 namespace Application.Commands.Veiculo.ModeloVeicular;
 
@@ -7,21 +8,38 @@ public class EditarModeloVeicularCommand : BaseCommand<BaseResponse<bool>>
 {
     public long Id { get; private set; }
     public string Descricao { get; private set; }
-    public int QuantidadePassageiros { get; private set; }
-    public bool Ativo { get; private set; }
+    public TipoModeloVeiculoEnum Tipo { get; private set; }
+    public int QuantidadeAssento { get; private set; }
+    public int QuantidadeEixo { get; private set; }
+    public int CapacidadeMaxima { get; private set; }
+    public int PassageirosEmPe { get; private set; }
+    public bool PossuiBanheiro { get; private set; }
+    public bool PossuiClimatizador { get; private set; }
+    public bool Situacao { get; private set; }
 
     public EditarModeloVeicularCommand(
         long id,
-        string nome,
         string descricao,
-        int quantidadePassageiros,
-        bool ativo,
+        TipoModeloVeiculoEnum tipo,
+        int quantidadeAssento,
+        int quantidadeEixo,
+        int capacidadeMaxima,
+        int passageirosEmPe,
+        bool possuiBanheiro,
+        bool possuiClimatizador,
+        bool situacao,
         string usuarioId,
         string usuarioCriacao) : base(usuarioId, usuarioCriacao)
     {
         Id = id;
         Descricao = descricao;
-        QuantidadePassageiros = quantidadePassageiros;
-        Ativo = ativo;
+        Tipo = tipo;
+        QuantidadeAssento = quantidadeAssento;
+        QuantidadeEixo = quantidadeEixo;
+        CapacidadeMaxima = capacidadeMaxima;
+        PassageirosEmPe = passageirosEmPe;
+        PossuiBanheiro = possuiBanheiro;
+        PossuiClimatizador = possuiClimatizador;
+        Situacao = situacao;
     }
 } 

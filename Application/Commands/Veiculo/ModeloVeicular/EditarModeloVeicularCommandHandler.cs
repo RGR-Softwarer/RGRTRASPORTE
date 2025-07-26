@@ -30,8 +30,14 @@ public class EditarModeloVeicularCommandHandler : IRequestHandler<EditarModeloVe
 
             modeloVeicular.Atualizar(
                 request.Descricao,
-                request.QuantidadePassageiros,
-                request.Ativo);
+                request.Tipo,
+                request.QuantidadeAssento,
+                request.QuantidadeEixo,
+                request.CapacidadeMaxima,
+                request.PassageirosEmPe,
+                request.PossuiBanheiro,
+                request.PossuiClimatizador,
+                request.Situacao);
 
             await _modeloVeicularRepository.AtualizarAsync(modeloVeicular);
 

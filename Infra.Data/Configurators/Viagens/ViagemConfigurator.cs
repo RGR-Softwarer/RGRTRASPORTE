@@ -13,7 +13,7 @@ namespace Infra.Data.Configurators.Viagens
 
             builder.ToTable("T_VIAGEM");
 
-            builder.Property(v => v.CodigoViagem)
+            builder.Property(v => v.Codigo)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_CODIGO");
 
@@ -89,64 +89,41 @@ namespace Infra.Data.Configurators.Viagens
                 .IsRequired()
                 .HasColumnName($"{prefixo}_DISTANCIA");
 
-            builder.Property(v => v.NumeroPassageiros)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_NUMERO_PASSAGEIROS");
-
-            builder.Property(v => v.Lotado)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_LOTADO");
-
-            builder.Property(v => v.Excesso)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_EXCESSO");
-
-            builder.Property(v => v.MotivoProblema)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_MOTIVO_PROBLEMA");
-
             builder.Property(v => v.DescricaoViagem)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_DESCRICAO");
-
-            builder.Property(v => v.LatitudeFimViagem)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_LATITUDE_FIM");
-
-            builder.Property(v => v.LatitudeInicioViagem)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_LATITUDE_INICIO");
-
-            builder.Property(v => v.DistanciaRealizada)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_DISTANCIA_REALIZADA");
 
             builder.Property(v => v.PolilinhaRota)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_POLILINHA_ROTA");
 
-            builder.Property(v => v.PolilinhaRotaRealizada)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_POLILINHA_ROTA_REALIZADA");
-
-            builder.Property(v => v.Situacao)
-                .IsRequired()
-                .HasConversion<int>()
-                .HasColumnName($"{prefixo}_SITUACAO");
-
-            builder.Property(v => v.MotivoCancelamento)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_MOTIVO_CANCELAMENTO");
-
             builder.Property(v => v.Ativo)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_ATIVO");
+
+            builder.Property(v => v.Situacao)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_SITUACAO");
+
+            builder.Property(v => v.Lotado)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_LOTADO");
 
             builder.Property(v => v.DataInicioViagem)
                 .HasColumnName($"{prefixo}_DATA_INICIO");
 
             builder.Property(v => v.DataFimViagem)
                 .HasColumnName($"{prefixo}_DATA_FIM");
+
+            builder.HasMany(v => v.Passageiros)
+                .WithOne(p => p.Viagem)
+                .HasForeignKey(p => p.ViagemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasMany(v => v.Posicoes)
+                .WithOne(p => p.Viagem)
+                .HasForeignKey(p => p.ViagemId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Dominio.Enums.Pessoas;
 using Dominio.Enums.Veiculo;
+using Dominio.Exceptions;
 
 namespace Dominio.Entidades.Pessoas
 {
@@ -17,9 +18,12 @@ namespace Dominio.Entidades.Pessoas
             string cnh,
             CategoriaCNHEnum categoriaCNH,
             DateTime validadeCNH,
-            string observacao,
-            bool situacao) : base(nome, cpf, telefone, email, sexo, observacao, situacao)
+            string observacao) : base(nome, cpf, telefone, email, sexo, observacao)
         {
+            ValidarRG(rg);
+            ValidarCNH(cnh);
+            ValidarValidadeCNH(validadeCNH);
+
             RG = rg;
             CNH = cnh;
             CategoriaCNH = categoriaCNH;
@@ -37,19 +41,67 @@ namespace Dominio.Entidades.Pessoas
             CategoriaCNHEnum categoriaCNH,
             DateTime validadeCNH)
         {
+            ValidarRG(rg);
+            ValidarCNH(cnh);
+            ValidarValidadeCNH(validadeCNH);
+
             RG = rg;
             CNH = cnh;
             CategoriaCNH = categoriaCNH;
             ValidadeCNH = validadeCNH;
         }
 
-        #region Propriedades Virtuais
-
-        protected override string DescricaoFormatada
+        public void RenovarCNH(DateTime novaValidade)
         {
-            //get { return $"{Nome} ({CPF_Formatado})"; }
-            get { return $"{Nome}"; }
+            ValidarValidadeCNH(novaValidade);
+            ValidadeCNH = novaValidade;
         }
+
+        public bool CNHExpirada => ValidadeCNH < DateTime.Today;
+
+        public bool PodeDirigirVeiculo(TipoModeloVeiculoEnum tipoVeiculo)
+        {
+            return tipoVeiculo switch
+            {
+                TipoModeloVeiculoEnum.Van => CategoriaCNH == CategoriaCNHEnum.B || CategoriaCNH == CategoriaCNHEnum.D,
+                TipoModeloVeiculoEnum.Onibus => CategoriaCNH == CategoriaCNHEnum.D,
+                _ => false
+            };
+        }
+
+        protected override string DescricaoFormatada => $"{Nome} ({CPF_Formatado})";
+
+        private void ValidarRG(string rg)
+        {
+            if (string.IsNullOrWhiteSpace(rg))
+                throw new DomainException("RG é obrigatório.");
+
+            if (rg.Length > 20)
+                throw new DomainException("RG deve ter no máximo 20 caracteres.");
+        }
+
+        private void ValidarCNH(string cnh)
+        {
+            if (string.IsNullOrWhiteSpace(cnh))
+                throw new DomainException("CNH é obrigatória.");
+
+            if (cnh.Length != 11)
+                throw new DomainException("CNH deve ter 11 caracteres.");
+
+            if (!cnh.All(char.IsDigit))
+                throw new DomainException("CNH deve conter apenas números.");
+        }
+
+        private void ValidarValidadeCNH(DateTime validade)
+        {
+            if (validade < DateTime.Today)
+                throw new DomainException("Data de validade da CNH não pode ser anterior à data atual.");
+
+            if (validade > DateTime.Today.AddYears(10))
+                throw new DomainException("Data de validade da CNH não pode ser superior a 10 anos.");
+        }
+
+        #region Propriedades Virtuais
 
         public string DescricaoAtivo
         {

@@ -1,19 +1,27 @@
+using Dominio.Events;
+using Dominio.Events.Viagens;
 using MediatR;
-using Dominio.Interfaces.Service.Viagens;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Events.Viagem;
 
-public class ViagemIniciadaEventHandler : INotificationHandler<Dominio.Events.Viagem.ViagemIniciadaEvent>
+public class ViagemIniciadaEventHandler : INotificationHandler<ViagemIniciadaEvent>
 {
-    private readonly IViagemService _viagemService;
+    private readonly ILogger<ViagemIniciadaEventHandler> _logger;
 
-    public ViagemIniciadaEventHandler(IViagemService viagemService)
+    public ViagemIniciadaEventHandler(ILogger<ViagemIniciadaEventHandler> logger)
     {
-        _viagemService = viagemService;
+        _logger = logger;
     }
 
-    public async Task Handle(Dominio.Events.Viagem.ViagemIniciadaEvent notification, CancellationToken cancellationToken)
+    public Task Handle(ViagemIniciadaEvent notification, CancellationToken cancellationToken)
     {
-        await _viagemService.IniciarViagemAsync(notification.ViagemId, notification.UsuarioOperacao);
+        _logger.LogInformation("Viagem {ViagemId} iniciada em {DataInicio}", 
+            notification.ViagemId, notification.DataInicio);
+
+        // Aqui você pode adicionar lógica adicional para processar o evento
+        // Por exemplo: enviar notificações, atualizar cache, etc.
+
+        return Task.CompletedTask;
     }
 } 

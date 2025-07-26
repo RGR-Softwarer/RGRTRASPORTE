@@ -33,22 +33,6 @@ namespace RGRTRASPORTE.Controllers.Viagens
             var id = await _mediator.Send(command);
             return await RGRResult(System.Net.HttpStatusCode.Created, id);
         }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Editar(long id, [FromBody] EditarViagemPosicaoCommand command)
-        {
-            if (id != command.Id)
-                return BadRequest("Id da rota diferente do Id do comando");
-
-            var result = await _mediator.Send(command);
-            return await RGRResult(System.Net.HttpStatusCode.OK, result);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Remover(long id)
-        {
-            var result = await _mediator.Send(new RemoverViagemPosicaoCommand(id, string.Empty, string.Empty));
-            return await RGRResult(System.Net.HttpStatusCode.OK, result);
-        }
+        
     }
 }

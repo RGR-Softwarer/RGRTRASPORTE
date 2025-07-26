@@ -1,19 +1,27 @@
+using Dominio.Events;
+using Dominio.Events.Viagens;
 using MediatR;
-using Dominio.Interfaces.Service.Viagens;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Events.Viagem;
 
-public class ViagemFinalizadaEventHandler : INotificationHandler<Dominio.Events.Viagem.ViagemFinalizadaEvent>
+public class ViagemFinalizadaEventHandler : INotificationHandler<ViagemFinalizadaEvent>
 {
-    private readonly IViagemService _viagemService;
+    private readonly ILogger<ViagemFinalizadaEventHandler> _logger;
 
-    public ViagemFinalizadaEventHandler(IViagemService viagemService)
+    public ViagemFinalizadaEventHandler(ILogger<ViagemFinalizadaEventHandler> logger)
     {
-        _viagemService = viagemService;
+        _logger = logger;
     }
 
-    public async Task Handle(Dominio.Events.Viagem.ViagemFinalizadaEvent notification, CancellationToken cancellationToken)
+    public Task Handle(ViagemFinalizadaEvent notification, CancellationToken cancellationToken)
     {
-        await _viagemService.FinalizarViagemAsync(notification.ViagemId, notification.UsuarioOperacao);
+        _logger.LogInformation("Viagem {ViagemId} finalizada em {DataFinalizacao}", 
+            notification.ViagemId, notification.DataFinalizacao);
+
+        // Aqui você pode adicionar lógica adicional para processar o evento
+        // Por exemplo: enviar notificações, atualizar cache, etc.
+
+        return Task.CompletedTask;
     }
 } 

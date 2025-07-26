@@ -37,7 +37,8 @@ public class EditarViagemCommandHandler : IRequestHandler<EditarViagemCommand, B
                 request.LocalidadeDestinoId,
                 request.ValorPassagem,
                 request.QuantidadeVagas,
-                request.Ativo);
+                request.Ativo,
+                request.GatilhoViagemId);
 
             await _viagemRepository.AtualizarAsync(viagem);
 

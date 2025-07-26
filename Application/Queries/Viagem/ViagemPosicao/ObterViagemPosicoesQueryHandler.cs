@@ -43,8 +43,8 @@ namespace Application.Queries.Viagem.ViagemPosicao
                 {
                     Id = p.Id,
                     ViagemId = p.ViagemId,
-                    Latitude = p.Latitude,
-                    Longitude = p.Longitude,
+                    Latitude = p.Latitude.ToString(),
+                    Longitude = p.Longitude.ToString(),
                     DataHora = p.DataHora
                 }).ToList();
 

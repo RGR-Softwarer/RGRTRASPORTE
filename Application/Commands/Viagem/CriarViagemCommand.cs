@@ -18,6 +18,7 @@ public class CriarViagemCommand : BaseCommand<BaseResponse<long>>
     public string DescricaoViagem { get; private set; }
     public string PolilinhaRota { get; private set; }
     public bool Ativo { get; private set; }
+    public long? GatilhoViagemId { get; private set; }
 
     public CriarViagemCommand(
         DateTime dataViagem,
@@ -33,6 +34,7 @@ public class CriarViagemCommand : BaseCommand<BaseResponse<long>>
         string descricaoViagem,
         string polilinhaRota,
         bool ativo,
+        long? gatilhoViagemId,
         string usuarioId,
         string usuarioCriacao) : base(usuarioId, usuarioCriacao)
     {
@@ -49,5 +51,6 @@ public class CriarViagemCommand : BaseCommand<BaseResponse<long>>
         DescricaoViagem = descricaoViagem;
         PolilinhaRota = polilinhaRota;
         Ativo = ativo;
+        GatilhoViagemId = gatilhoViagemId;
     }
 } 

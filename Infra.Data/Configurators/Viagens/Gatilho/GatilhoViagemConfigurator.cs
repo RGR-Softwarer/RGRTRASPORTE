@@ -64,6 +64,7 @@ namespace Infra.Data.Configurators.Viagens.Gatilho
             builder.Property(g => g.QuantidadeVagas)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_QUANTIDADE_VAGAS");
+           
 
             PropertyBuilder<List<DiaSemanaEnum>> diasSemanaProperty = builder.Property(g => g.DiasSemana);
 

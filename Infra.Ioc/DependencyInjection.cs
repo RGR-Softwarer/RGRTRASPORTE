@@ -21,10 +21,7 @@ using Dominio.Interfaces.Infra.Data.Viagens;
 using Dominio.Interfaces.Infra.Data.Motorista;
 using Dominio.Interfaces.Infra.Data.Viagens.Gatilho;
 using Dominio.Interfaces.Infra.Data;
-using Service.Services.Passageiros;
-using Service.Services.Viagens;
 using Service.Services.Hangifre;
-using Dominio.Interfaces.Service.Passageiros;
 using Dominio.Interfaces.Service.Viagens;
 using Dominio.Interfaces.Service.Viagens.Gatilho;
 using Dominio.Interfaces.Service.Hangfire;
@@ -47,7 +44,6 @@ namespace Infra.Ioc
             var applicationAssembly = typeof(Application.Commands.Localidade.CriarLocalidadeCommand).Assembly;
             var domainAssembly = typeof(Dominio.Entidades.BaseEntity).Assembly;
             var infrastructureAssembly = typeof(Infra.Data.Context.TransportadorContext).Assembly;
-            var serviceAssembly = typeof(Service.Bases.BaseService).Assembly;
 
             // === CONFIGURAÇÃO DOS CONTEXTOS ===
             // Configuração do Entity Framework com Multitenancy
@@ -93,7 +89,6 @@ namespace Infra.Ioc
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
                 cfg.RegisterServicesFromAssembly(domainAssembly);
                 cfg.RegisterServicesFromAssembly(infrastructureAssembly);
-                cfg.RegisterServicesFromAssembly(serviceAssembly);
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
             });
 
@@ -101,7 +96,6 @@ namespace Infra.Ioc
             services.AddValidatorsFromAssembly(applicationAssembly, includeInternalTypes: true);
             services.AddValidatorsFromAssembly(domainAssembly, includeInternalTypes: true);
             services.AddValidatorsFromAssembly(infrastructureAssembly, includeInternalTypes: true);
-            services.AddValidatorsFromAssembly(serviceAssembly, includeInternalTypes: true);
 
             // Pipeline Behaviors - Ordem é crucial!
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
@@ -125,20 +119,12 @@ namespace Infra.Ioc
             services.AddScoped<Dominio.Interfaces.Infra.Data.Motorista.IMotoristaRepository, Infra.Data.Repositories.Motorista.MotoristaRepository>();
             services.AddScoped<Dominio.Interfaces.Infra.Data.Viagens.Gatilho.IGatilhoViagemRepository, Infra.Data.Repositories.Viagens.Gatilho.GatilhoViagemRepository>();
 
-            // === REGISTRO AUTOMÁTICO DE SERVICES ===
-            services.AddAllServices(serviceAssembly, domainAssembly);
-
             // === REGISTROS MANUAIS ESPECÍFICOS DE SERVICES ===
-            // Garantindo que os services principais estejam registrados
-            services.AddScoped<Dominio.Interfaces.Service.Passageiros.IPassageiroService, Service.Services.Passageiros.PassageiroService>();
-            services.AddScoped<Dominio.Interfaces.Service.Viagens.IViagemService, Service.Services.Viagens.ViagemService>();
-            services.AddScoped<Dominio.Interfaces.Service.Viagens.Gatilho.IGatilhoViagemService, Service.Services.Viagens.GatilhoViagemService>();
-            services.AddScoped<Dominio.Interfaces.Service.Hangfire.IHangfireService, Service.Services.Hangifre.HangfireService>();
-
-            // === SERVIÇOS CROSSCUTTING ===
+            // Apenas serviços cross-cutting
             services.AddScoped<INotificationContext, NotificationContext>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IHangfireService, HangfireService>();
 
             // === CACHE DISTRIBUÍDO ===
             services.AddStackExchangeRedisCache(options =>
@@ -199,36 +185,7 @@ namespace Infra.Ioc
         /// </summary>
         public static IServiceCollection AddAllServices(this IServiceCollection services, params Assembly[] assemblies)
         {
-            foreach (var assembly in assemblies)
-            {
-                // Busca por classes concretas que terminam com "Service"
-                var serviceTypes = assembly.GetTypes()
-                    .Where(t => !t.IsAbstract && !t.IsInterface && !t.IsGenericTypeDefinition)
-                    .Where(t => t.Name.EndsWith("Service"))
-                    .Where(t => !t.Name.StartsWith("Base")) // Ignora classes base
-                    .Where(t => !t.Name.Contains("Generic")) // Ignora classes genéricas
-                    .ToList();
-
-                foreach (var serviceType in serviceTypes)
-                {
-                    // Encontra interfaces específicas
-                    var interfaces = serviceType.GetInterfaces()
-                        .Where(i => i.Name.EndsWith("Service"))
-                        .Where(i => !i.IsGenericTypeDefinition) // Ignora tipos genéricos abertos
-                        .Where(i => !i.Name.Equals("IDisposable"))
-                        .Where(i => i.Name.StartsWith("I")) // Convenção de interface
-                        .ToList();
-
-                    foreach (var interfaceType in interfaces)
-                    {
-                        if (!services.Any(s => s.ServiceType == interfaceType))
-                        {
-                            services.AddScoped(interfaceType, serviceType);
-                        }
-                    }
-                }
-            }
-
+            // Removido pois não há mais necessidade de registro automático de serviços de domínio
             return services;
         }
 

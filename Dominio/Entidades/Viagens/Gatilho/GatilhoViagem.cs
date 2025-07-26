@@ -27,11 +27,9 @@ namespace Dominio.Entidades.Viagens.Gatilho
             List<DiaSemanaEnum> diasSemana,
             bool ativo)
         {
-            if (string.IsNullOrEmpty(descricao))
-                throw new DomainException("A descrição é obrigatória");
-
-            if (diasSemana == null || !diasSemana.Any())
-                throw new DomainException("Pelo menos um dia da semana deve ser selecionado");
+            ValidarCriacao(descricao, horarioSaida, horarioChegada, veiculoId, motoristaId,
+                localidadeOrigemId, localidadeDestinoId, valorPassagem, quantidadeVagas,
+                distancia, descricaoViagem, polilinhaRota, diasSemana);
 
             Descricao = descricao;
             VeiculoId = veiculoId;
@@ -68,21 +66,20 @@ namespace Dominio.Entidades.Viagens.Gatilho
         public virtual ICollection<Viagem> Viagens { get; private set; }
         public List<DiaSemanaEnum> DiasSemana { get; private set; }
 
-        public void Atualizar(
+        private void ValidarCriacao(
             string descricao,
+            TimeSpan horarioSaida,
+            TimeSpan horarioChegada,
             long veiculoId,
             long motoristaId,
             long localidadeOrigemId,
             long localidadeDestinoId,
-            TimeSpan horarioSaida,
-            TimeSpan horarioChegada,
             decimal valorPassagem,
             int quantidadeVagas,
             decimal distancia,
             string descricaoViagem,
             string polilinhaRota,
-            List<DiaSemanaEnum> diasSemana,
-            bool ativo)
+            List<DiaSemanaEnum> diasSemana)
         {
             if (string.IsNullOrEmpty(descricao))
                 throw new DomainException("A descrição é obrigatória");
@@ -90,20 +87,84 @@ namespace Dominio.Entidades.Viagens.Gatilho
             if (diasSemana == null || !diasSemana.Any())
                 throw new DomainException("Pelo menos um dia da semana deve ser selecionado");
 
-            Descricao = descricao;
-            VeiculoId = veiculoId;
-            MotoristaId = motoristaId;
-            LocalidadeOrigemId = localidadeOrigemId;
-            LocalidadeDestinoId = localidadeDestinoId;
+            if (horarioChegada <= horarioSaida)
+                throw new DomainException("O horário de chegada deve ser maior que o horário de saída");
+
+            if (veiculoId <= 0)
+                throw new DomainException("O veículo é obrigatório");
+
+            if (motoristaId <= 0)
+                throw new DomainException("O motorista é obrigatório");
+
+            if (localidadeOrigemId <= 0)
+                throw new DomainException("A localidade de origem é obrigatória");
+
+            if (localidadeDestinoId <= 0)
+                throw new DomainException("A localidade de destino é obrigatória");
+
+            if (localidadeOrigemId == localidadeDestinoId)
+                throw new DomainException("A localidade de destino não pode ser igual à localidade de origem");
+
+            if (valorPassagem <= 0)
+                throw new DomainException("O valor da passagem deve ser maior que zero");
+
+            if (quantidadeVagas <= 0)
+                throw new DomainException("A quantidade de vagas deve ser maior que zero");
+
+            if (distancia <= 0)
+                throw new DomainException("A distância deve ser maior que zero");
+
+            if (string.IsNullOrEmpty(descricaoViagem))
+                throw new DomainException("A descrição da viagem é obrigatória");
+
+            if (descricaoViagem.Length > 500)
+                throw new DomainException("A descrição da viagem não pode ter mais que 500 caracteres");
+
+            if (string.IsNullOrEmpty(polilinhaRota))
+                throw new DomainException("A polilinha da rota é obrigatória");
+        }
+
+        public void AtualizarHorarios(TimeSpan horarioSaida, TimeSpan horarioChegada)
+        {
+            if (horarioChegada <= horarioSaida)
+                throw new DomainException("O horário de chegada deve ser maior que o horário de saída");
+
             HorarioSaida = horarioSaida;
             HorarioChegada = horarioChegada;
+        }
+
+        public void AtualizarValorPassagem(decimal valorPassagem)
+        {
+            if (valorPassagem <= 0)
+                throw new DomainException("O valor da passagem deve ser maior que zero");
+
             ValorPassagem = valorPassagem;
+        }
+
+        public void AtualizarQuantidadeVagas(int quantidadeVagas)
+        {
+            if (quantidadeVagas <= 0)
+                throw new DomainException("A quantidade de vagas deve ser maior que zero");
+
             QuantidadeVagas = quantidadeVagas;
-            Distancia = distancia;
-            DescricaoViagem = descricaoViagem;
-            PolilinhaRota = polilinhaRota;
+        }
+
+        public void AtualizarDiasSemana(List<DiaSemanaEnum> diasSemana)
+        {
+            if (diasSemana == null || !diasSemana.Any())
+                throw new DomainException("Pelo menos um dia da semana deve ser selecionado");
+
             DiasSemana = diasSemana;
-            Ativo = ativo;
+        }
+
+        public void Ativar()
+        {
+            Ativo = true;
+        }
+
+        public void Desativar()
+        {
+            Ativo = false;
         }
 
         public Viagem GerarViagem(DateTime data)
@@ -124,7 +185,8 @@ namespace Dominio.Entidades.Viagens.Gatilho
                 Distancia,
                 DescricaoViagem,
                 PolilinhaRota,
-                Ativo);
+                Ativo,
+                Id);
         }
 
         protected override string DescricaoFormatada => Descricao;

@@ -28,7 +28,7 @@ public class CancelarViagemCommandHandler : IRequestHandler<CancelarViagemComman
             if (viagem == null)
                 return BaseResponse<bool>.Erro("Viagem não encontrada");
 
-            viagem.Cancelar(request.Motivo);
+            viagem.CancelarViagem(request.Motivo);
 
             await _viagemRepository.AtualizarAsync(viagem);
 

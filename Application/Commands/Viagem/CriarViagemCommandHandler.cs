@@ -37,7 +37,8 @@ public class CriarViagemCommandHandler : IRequestHandler<CriarViagemCommand, Bas
                 request.Distancia,
                 request.DescricaoViagem,
                 request.PolilinhaRota,
-                request.Ativo);
+                request.Ativo,
+                request.GatilhoViagemId);
 
             await _viagemRepository.AdicionarAsync(viagem);
 

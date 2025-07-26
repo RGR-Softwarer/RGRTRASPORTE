@@ -8,14 +8,14 @@ namespace Application.Commands.Viagem.ViagemPosicao;
 
 public class AdicionarViagemPosicaoCommandHandler : IRequestHandler<AdicionarViagemPosicaoCommand, BaseResponse<long>>
 {
-    private readonly IViagemPosicaoRepository _viagemPosicaoRepository;
+    private readonly IViagemRepository _viagemRepository;
     private readonly ILogger<AdicionarViagemPosicaoCommandHandler> _logger;
 
     public AdicionarViagemPosicaoCommandHandler(
-        IViagemPosicaoRepository viagemPosicaoRepository,
+        IViagemRepository viagemRepository,
         ILogger<AdicionarViagemPosicaoCommandHandler> logger)
     {
-        _viagemPosicaoRepository = viagemPosicaoRepository;
+        _viagemRepository = viagemRepository;
         _logger = logger;
     }
 
@@ -25,17 +25,17 @@ public class AdicionarViagemPosicaoCommandHandler : IRequestHandler<AdicionarVia
         {
             _logger.LogInformation("Adicionando posição para a viagem {ViagemId}", request.ViagemId);
 
-            var viagemPosicao = new Dominio.Entidades.Viagens.ViagemPosicao(
-                request.ViagemId,
-                request.DataPosicao,
-                request.Latitude.ToString(),
-                request.Longitude.ToString());
+            var viagem = await _viagemRepository.ObterPorIdAsync(request.ViagemId);
+            if (viagem == null)
+                return BaseResponse<long>.Erro("Viagem não encontrada");
 
-            await _viagemPosicaoRepository.AdicionarAsync(viagemPosicao);
+            viagem.AdicionarPosicao(request.Latitude, request.Longitude, request.DataPosicao);
+            await _viagemRepository.AtualizarAsync(viagem);
 
+            var posicao = viagem.Posicoes.Last();
             _logger.LogInformation("Posição adicionada com sucesso para a viagem {ViagemId}", request.ViagemId);
 
-            return BaseResponse<long>.Ok(viagemPosicao.Id, "Posição adicionada com sucesso");
+            return BaseResponse<long>.Ok(posicao.Id, "Posição adicionada com sucesso");
         }
         catch (Exception ex)
         {

@@ -15,20 +15,35 @@ namespace Infra.Data.Configurators.Viagens
 
             builder.Property(vp => vp.ViagemId)
                 .IsRequired()
-                .HasColumnName($"VIA_VIAGEM_ID");
+                .HasColumnName($"VIA_ID");
 
             builder.Property(vp => vp.PassageiroId)
                 .IsRequired()
-                .HasColumnName($"PAS_PASSAGEIRO_ID");
+                .HasColumnName($"PAS_ID");
+
+            builder.Property(vp => vp.DataReserva)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_DATA_RESERVA");
+
+            builder.Property(vp => vp.Confirmado)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_CONFIRMADO");
+
+            builder.Property(vp => vp.DataConfirmacao)
+                .HasColumnName($"{prefixo}_DATA_CONFIRMACAO");
+
+            builder.Property(vp => vp.Observacao)
+                .HasColumnName($"{prefixo}_OBSERVACAO");
 
             builder.HasOne(vp => vp.Viagem)
-                .WithMany()
+                .WithMany(v => v.Passageiros)
                 .HasForeignKey(vp => vp.ViagemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            //builder.HasOne(vp => vp.Passageiro)
-            //    .WithMany()
-            //    .HasForeignKey(vp => vp.PassageiroId);
+            builder.HasOne(vp => vp.Passageiro)
+                .WithMany()
+                .HasForeignKey(vp => vp.PassageiroId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

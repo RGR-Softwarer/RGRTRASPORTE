@@ -7,14 +7,14 @@ namespace Application.Commands.Viagem;
 
 public class RemoverPassageiroViagemCommandHandler : IRequestHandler<RemoverPassageiroViagemCommand, BaseResponse<bool>>
 {
-    private readonly IViagemPassageiroRepository _viagemPassageiroRepository;
+    private readonly IViagemRepository _viagemRepository;
     private readonly ILogger<RemoverPassageiroViagemCommandHandler> _logger;
 
     public RemoverPassageiroViagemCommandHandler(
-        IViagemPassageiroRepository viagemPassageiroRepository,
+        IViagemRepository viagemRepository,
         ILogger<RemoverPassageiroViagemCommandHandler> logger)
     {
-        _viagemPassageiroRepository = viagemPassageiroRepository;
+        _viagemRepository = viagemRepository;
         _logger = logger;
     }
 
@@ -24,14 +24,12 @@ public class RemoverPassageiroViagemCommandHandler : IRequestHandler<RemoverPass
         {
             _logger.LogInformation("Removendo passageiro {PassageiroId} da viagem {ViagemId}", request.PassageiroId, request.ViagemId);
 
-            // Busca por passageiros da viagem e filtra pelo passageiro específico
-            var passageirosDaViagem = await _viagemPassageiroRepository.ObterPassageirosPorViagemAsync(request.ViagemId);
-            var viagemPassageiro = passageirosDaViagem.FirstOrDefault(vp => vp.PassageiroId == request.PassageiroId);
-            
-            if (viagemPassageiro == null)
-                return BaseResponse<bool>.Erro("Passageiro não encontrado na viagem");
+            var viagem = await _viagemRepository.ObterPorIdAsync(request.ViagemId);
+            if (viagem == null)
+                return BaseResponse<bool>.Erro("Viagem não encontrada");
 
-            await _viagemPassageiroRepository.RemoverAsync(viagemPassageiro);
+            viagem.RemoverPassageiro(request.PassageiroId);
+            await _viagemRepository.AtualizarAsync(viagem);
 
             _logger.LogInformation("Passageiro {PassageiroId} removido com sucesso da viagem {ViagemId}", request.PassageiroId, request.ViagemId);
 
