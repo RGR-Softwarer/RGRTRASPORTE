@@ -29,9 +29,9 @@ export class LoginService {
     this.apiService.post<LoginResponse>(ClienteUrls.Login, { email, senha })
     .pipe(
       map((response) => {
-        if (response.sucesso) {
+        if (response.success) {
           this.notificationService.success('Sucesso', 'Login bem-sucedido');
-          this.appContextService.salvaAppContext(new AppContext(email, response.dados.token, ""));
+          this.appContextService.salvaAppContext(new AppContext(email, response.data.token, ""));
           this.router.navigate(['']);
           return true;
         }

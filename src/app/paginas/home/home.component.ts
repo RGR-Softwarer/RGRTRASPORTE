@@ -2,10 +2,10 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router, Route, NavigationEnd, RouterOutlet, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, filter } from 'rxjs';
-import { AppContextService } from '../services/context/app.context';
-import { AppContext } from '../dominio/entidade/app.context';
-import { NotificationService, ConfirmService } from '../shared/services';
-import { BreadcrumbComponent } from '../componentes/breadcrumb/breadcrumb.component';
+import { AppContextService } from '../../services/context/app.context';
+import { AppContext } from '../../dominio/entidade/app.context';
+import { NotificationService, ConfirmService } from '../../shared/services';
+import { BreadcrumbComponent } from '../../componentes/breadcrumb/breadcrumb.component';
 
 interface MenuItem {
   path: string;

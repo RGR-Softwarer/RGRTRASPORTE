@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { AppContextService } from '../../../services/context/app.context';
 import { NotificationService } from '../../../shared/services/notification.service';
 
@@ -35,7 +36,9 @@ import { NotificationService } from '../../../shared/services/notification.servi
     p {
       color: #666;
     }
-  `]
+  `],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class LogoutComponent implements OnInit {
 

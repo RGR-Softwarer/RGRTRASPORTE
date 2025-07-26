@@ -473,23 +473,48 @@ export class GridComponent implements OnInit, OnDestroy {
     
     try {
       const response = await firstValueFrom(
-        this.apiService.get<any[]>(this.buscarTodosUrl)
+        this.apiService.get<any>(this.buscarTodosUrl)
       );
       
       const apiTime = performance.now() - startTime;
       console.log(`⚡ [PERFORMANCE] API respondeu em ${apiTime.toFixed(2)}ms`);
+      console.log('📄 [DEBUG] Resposta completa da API:', response);
       
-      if (response && response.sucesso && response.dados) {
-        const dados = Array.isArray(response.dados) ? response.dados : [];
-        const totalTime = performance.now() - startTime;
-        console.log(`✅ [PERFORMANCE] obterTodos() finalizado em ${totalTime.toFixed(2)}ms - ${dados.length} registros`);
-        return dados;
-      } else {
-        console.warn('Resposta da API não contém dados válidos:', response);
-        return [];
+      // Processar resposta de forma mais flexível
+      let dados: any[] = [];
+      
+      if (response) {
+        // Tratar response como any para verificar diferentes formatos
+        const resp = response as any;
+        
+        // Verificar diferentes formatos de resposta
+        if (resp.success && resp.data) {
+          // Formato novo: { success: true, data: [...] }
+          dados = Array.isArray(resp.data) ? resp.data : [];
+        } else if (resp.sucesso && resp.dados) {
+          // Formato antigo: { sucesso: true, dados: [...] }  
+          dados = Array.isArray(resp.dados) ? resp.dados : [];
+        } else if (Array.isArray(resp)) {
+          // Resposta direta como array
+          dados = resp;
+        } else if (resp.data && Array.isArray(resp.data)) {
+          // Resposta com propriedade data
+          dados = resp.data;
+        } else if (resp.dados && Array.isArray(resp.dados)) {
+          // Resposta com propriedade dados
+          dados = resp.dados;
+        } else {
+          console.warn('⚠️ [GRID] Formato de resposta não reconhecido:', response);
+        }
       }
+      
+      const totalTime = performance.now() - startTime;
+      console.log(`✅ [PERFORMANCE] obterTodos() finalizado em ${totalTime.toFixed(2)}ms - ${dados.length} registros`);
+      console.log('📊 [DEBUG] Dados processados:', dados);
+      
+      return dados;
     } catch (error: unknown) {
-      console.error('Erro ao obter dados:', error);
+      console.error('❌ [GRID] Erro ao obter dados:', error);
       this.notificationService.error('Erro', 'Erro ao obter dados');
       return [];
     }

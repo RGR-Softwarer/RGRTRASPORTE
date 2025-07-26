@@ -13,7 +13,7 @@ export const routes: Routes = [
       },
       { 
         path: 'inicio', 
-        loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule), 
+        loadChildren: () => import('../dashboard/dashboard.module').then(m => m.DashboardModule), 
         data: { breadcrumb: 'Início', icon: 'home' }  // Icone de casa
       },
       {

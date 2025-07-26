@@ -94,8 +94,8 @@ export class VeiculoFormularioComponent implements OnInit {
     
     this.apiService.get(url).subscribe({
       next: (response: any) => {
-        if (response.sucesso && response.dados) {
-          Object.assign(this.veiculo, response.dados);
+        if (response.success && response.data) {
+          Object.assign(this.veiculo, response.data);
           console.log('=== DADOS CARREGADOS PARA EDIÇÃO (API) ===');
           console.log('Dados do veículo:', this.veiculo);
           console.log('Modo de edição:', this.isEditMode);
@@ -158,7 +158,7 @@ export class VeiculoFormularioComponent implements OnInit {
     request.subscribe({
       next: response => {
         console.log('Resposta do servidor:', response);
-        if (response.sucesso) {
+        if (response.success) {
           const mensagem = this.isEditMode ? 'Veículo atualizado com sucesso' : 'Veículo salvo com sucesso';
           this.notificationService.success('Sucesso', mensagem);
           this.location.back();

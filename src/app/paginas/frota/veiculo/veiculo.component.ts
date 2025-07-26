@@ -8,7 +8,7 @@ import { VeiculoFacade } from './services/veiculo.facade';
 import { Observable } from 'rxjs';
 import { DecoratorUtils } from '../../../services/decorator/formulario-decorator';
 import { NotificationService } from '../../../shared/services/notification.service';
-import { environment } from '../../../../environments/environment';
+import { ConfigService } from '../../../services/config/config.service';
 import { GridComponent } from '../../../componentes/grid/grid.component';
 
 @Component({
@@ -21,7 +21,7 @@ import { GridComponent } from '../../../componentes/grid/grid.component';
 export class VeiculoComponent implements OnInit {
 
   // Propriedades para o GridComponent
-  buscarTodosUrl: string = `${environment.apiBaseUrl}/Veiculo`;
+  buscarTodosUrl: string;
   adicionarUrl: string = '/frota/veiculo/adicionar';
   entidade: any = new Veiculo();
   identificador: string = 'veiculo-grid';
@@ -33,10 +33,12 @@ export class VeiculoComponent implements OnInit {
   constructor(
     private router: Router,
     private facade: VeiculoFacade,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private configService: ConfigService
   ) {
     this.veiculos$ = this.facade.veiculos$;
     this.isLoading$ = this.facade.isLoading$;
+    this.buscarTodosUrl = `${this.configService.getApiBaseUrl()}/Veiculo`;
   }
 
   ngOnInit(): void {

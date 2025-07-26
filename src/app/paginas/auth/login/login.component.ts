@@ -1,20 +1,25 @@
 import { Component, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { PasswordValidator } from '../../../services/validators/password.validator';
 import { LoginService } from '../../../services/login/login.service';
 import { NotificationService } from '../../../shared/services/notification.service';
+import { TypedFormGroup } from '../../../dominio/interface/forms/form-types';
 
-interface LoginForm {
-  email: string | null;
-  senha: string | null;
-  lembrar: boolean | null;
+interface LoginFormData {
+  email: string;
+  senha: string;
+  lembrar: boolean;
 }
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterModule]
 })
 export class LoginComponent implements AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -27,17 +32,23 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
   
   // Formulário tipado
   loginForm = new FormGroup({
-    email: new FormControl('', [
-      Validators.required, 
-      Validators.email, 
-      Validators.pattern(this.emailRegex), 
-      Validators.minLength(10)
-    ]),
-    senha: new FormControl('', [
-      Validators.required, 
-      PasswordValidator.validate
-    ]),
-    lembrar: new FormControl(false)
+    email: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [
+        Validators.required, 
+        Validators.email, 
+        Validators.pattern(this.emailRegex), 
+        Validators.minLength(10)
+      ]
+    }),
+    senha: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [
+        Validators.required, 
+        PasswordValidator.validate
+      ]
+    }),
+    lembrar: new FormControl<boolean>(false, { nonNullable: true })
   });
 
   constructor(
@@ -73,7 +84,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     this.loading = true;
     
     try {
-      const formValue = this.loginForm.value as LoginForm;
+      const formValue = this.loginForm.value as LoginFormData;
       
       if (!formValue.email || !formValue.senha) {
         throw new Error('Email e senha são obrigatórios');

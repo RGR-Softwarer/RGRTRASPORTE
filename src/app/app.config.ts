@@ -5,6 +5,7 @@ import localePt from '@angular/common/locales/pt';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { LoggingService } from './services/utils/log/logging.service';
+import { ConfigService } from './services/config/config.service';
 
 import { routes } from './app.routes';
 
@@ -17,6 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     { provide: LOCALE_ID, useValue: 'pt-BR' },
     provideHttpClient(withInterceptorsFromDi()),
-    LoggingService
+    LoggingService,
+    ConfigService
   ]
 };
