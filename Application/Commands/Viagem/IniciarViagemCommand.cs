@@ -8,9 +8,7 @@ public class IniciarViagemCommand : BaseCommand<BaseResponse<bool>>
     public long Id { get; private set; }
 
     public IniciarViagemCommand(
-        long id,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        long id)
     {
         Id = id;
     }

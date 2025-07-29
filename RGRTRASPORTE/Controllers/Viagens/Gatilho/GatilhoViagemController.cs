@@ -52,7 +52,7 @@ public class GatilhoViagemController : AbstractControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Remover(long id)
     {
-        var result = await _mediator.Send(new RemoverGatilhoViagemCommand(id, "1", "1"));
+        var result = await _mediator.Send(new RemoverGatilhoViagemCommand(id));
         return await RGRResult(System.Net.HttpStatusCode.OK, result);
     }
 }

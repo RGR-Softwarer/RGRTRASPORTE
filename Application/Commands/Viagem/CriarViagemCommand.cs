@@ -12,7 +12,6 @@ public class CriarViagemCommand : BaseCommand<BaseResponse<long>>
     public long MotoristaId { get; private set; }
     public long LocalidadeOrigemId { get; private set; }
     public long LocalidadeDestinoId { get; private set; }
-    public decimal ValorPassagem { get; private set; }
     public int QuantidadeVagas { get; private set; }
     public decimal Distancia { get; private set; }
     public string DescricaoViagem { get; private set; }
@@ -28,15 +27,12 @@ public class CriarViagemCommand : BaseCommand<BaseResponse<long>>
         long motoristaId,
         long localidadeOrigemId,
         long localidadeDestinoId,
-        decimal valorPassagem,
         int quantidadeVagas,
         decimal distancia,
         string descricaoViagem,
         string polilinhaRota,
         bool ativo,
-        long? gatilhoViagemId,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        long? gatilhoViagemId)
     {
         DataViagem = dataViagem;
         HorarioSaida = horarioSaida;
@@ -45,7 +41,6 @@ public class CriarViagemCommand : BaseCommand<BaseResponse<long>>
         MotoristaId = motoristaId;
         LocalidadeOrigemId = localidadeOrigemId;
         LocalidadeDestinoId = localidadeDestinoId;
-        ValorPassagem = valorPassagem;
         QuantidadeVagas = quantidadeVagas;
         Distancia = distancia;
         DescricaoViagem = descricaoViagem;

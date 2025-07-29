@@ -43,7 +43,7 @@ namespace RGRTRASPORTE.Controllers.Localidades
             var response = await _mediator.Send(query);
             
             if (response == null || !response.Sucesso)
-                return NoContent();
+                return await RGRResult(System.Net.HttpStatusCode.NotFound, $"Localidade com ID {id} não encontrada");
 
             return await RGRResult(System.Net.HttpStatusCode.OK, response);
         }
@@ -68,7 +68,7 @@ namespace RGRTRASPORTE.Controllers.Localidades
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remover(long id)
         {
-            var command = new RemoverLocalidadeCommand(id, User.Identity.Name, User.Identity.Name);
+            var command = new RemoverLocalidadeCommand(id);
             var response = await _mediator.Send(command);
             return await RGRResult(System.Net.HttpStatusCode.OK, response);
         }

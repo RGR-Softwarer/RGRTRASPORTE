@@ -37,7 +37,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
         [HttpDelete("{viagemId}/{passageiroId}")]
         public async Task<IActionResult> Remover(long viagemId, long passageiroId)
         {
-            var command = new RemoverPassageiroViagemCommand(viagemId, passageiroId, User.Identity.Name, User.Identity.Name);
+            var command = new RemoverPassageiroViagemCommand(viagemId, passageiroId);
             var result = await _mediator.Send(command);
             return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }

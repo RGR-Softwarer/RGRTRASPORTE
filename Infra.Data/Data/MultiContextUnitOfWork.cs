@@ -1,9 +1,5 @@
-using Dominio.Entidades;
-using Dominio.Entidades.Auditoria;
 using Dominio.Interfaces.Infra.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using System.Data;
 using System.Transactions;
 
 namespace Infra.Data.Data
@@ -46,28 +42,10 @@ namespace Infra.Data.Data
                     // Salva as mudanças em todos os contextos
                     foreach (var context in _dbContexts)
                     {
-                        if (context.ChangeTracker.HasChanges())
+                        if (context is DbContext dbContext && dbContext.ChangeTracker.HasChanges())
                         {
                             var changes = await context.SaveChangesAsync();
                             totalChanges += changes;
-
-                            // Processa a auditoria para as entidades pendentes
-                            if (context.PendingEntities != null && context.PendingEntities.Any())
-                            {
-                                foreach (var (entity, historicoObjeto) in context.PendingEntities)
-                                {
-                                    if (entity != null && historicoObjeto != null)
-                                    {
-                                        historicoObjeto.CodigoObjeto = entity.Id;
-                                        historicoObjeto.DescricaoObjeto = entity.DescricaoAuditoria;
-                                        historicoObjeto.Data = DateTime.UtcNow;
-
-                                        context.Set<HistoricoObjeto>().Add(historicoObjeto);
-                                        await context.SaveChangesAsync();
-                                    }
-                                }
-                                context.PendingEntities.Clear();
-                            }
                         }
                     }
 
@@ -97,6 +75,7 @@ namespace Infra.Data.Data
 
                 // Recarrega as entidades modificadas
                 var rollbackTasks = _dbContexts
+                    .OfType<DbContext>()
                     .SelectMany(context => context.ChangeTracker.Entries()
                         .Where(e => e.State != EntityState.Unchanged)
                         .Select(entry => entry.ReloadAsync()))
@@ -125,7 +104,7 @@ namespace Infra.Data.Data
                     _transactionScope?.Dispose();
                     _transactionScope = null;
 
-                    foreach (var context in _dbContexts)
+                    foreach (var context in _dbContexts.OfType<IDisposable>())
                     {
                         context.Dispose();
                     }

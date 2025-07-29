@@ -4,10 +4,5 @@ namespace Application.Queries.Base;
 
 public abstract class BaseQuery<TResponse> : IRequest<TResponse>
 {
-    public DateTime DataConsulta { get; private set; }
-
-    protected BaseQuery()
-    {
-        DataConsulta = DateTime.UtcNow;
-    }
+    // Classe simplificada - propriedades de auditoria podem ser adicionadas via behaviors/interceptors
 } 

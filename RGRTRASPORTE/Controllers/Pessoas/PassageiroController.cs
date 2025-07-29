@@ -32,7 +32,7 @@ namespace RGRTRASPORTE.Controllers.Pessoas
         {
             var passageiro = await _mediator.Send(new ObterPassageiroPorIdQuery(id, auditado));
             if (passageiro == null)
-                return NoContent();
+                return await RGRResult(System.Net.HttpStatusCode.NotFound, $"Passageiro com ID {id} não encontrado");
 
             return await RGRResult(System.Net.HttpStatusCode.OK, passageiro);
         }
@@ -57,7 +57,7 @@ namespace RGRTRASPORTE.Controllers.Pessoas
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remover(long id)
         {
-            var command = new RemoverPassageiroCommand(id, User.Identity.Name, User.Identity.Name);
+            var command = new RemoverPassageiroCommand(id);
             var result = await _mediator.Send(command);
             return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }

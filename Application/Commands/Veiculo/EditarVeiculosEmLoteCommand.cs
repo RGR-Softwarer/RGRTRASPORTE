@@ -14,9 +14,7 @@ public class EditarVeiculosEmLoteCommand : BaseCommand<BaseResponse<bool>>
     public IEnumerable<VeiculoLoteEdicaoDto> Veiculos { get; private set; }
 
     public EditarVeiculosEmLoteCommand(
-        IEnumerable<VeiculoLoteEdicaoDto> veiculos,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        IEnumerable<VeiculoLoteEdicaoDto> veiculos)
     {
         Veiculos = veiculos;
     }

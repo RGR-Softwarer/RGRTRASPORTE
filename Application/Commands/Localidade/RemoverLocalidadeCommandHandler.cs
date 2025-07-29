@@ -1,5 +1,6 @@
 using Application.Common;
-using Dominio.Interfaces.Infra.Data.Localidades;
+using Dominio.Interfaces.Infra.Data;
+using LocalidadeEntity = Dominio.Entidades.Localidades.Localidade;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -7,11 +8,11 @@ namespace Application.Commands.Localidade;
 
 public class RemoverLocalidadeCommandHandler : IRequestHandler<RemoverLocalidadeCommand, BaseResponse<bool>>
 {
-    private readonly ILocalidadeRepository _localidadeRepository;
+    private readonly IGenericRepository<LocalidadeEntity> _localidadeRepository;
     private readonly ILogger<RemoverLocalidadeCommandHandler> _logger;
 
     public RemoverLocalidadeCommandHandler(
-        ILocalidadeRepository localidadeRepository,
+        IGenericRepository<LocalidadeEntity> localidadeRepository,
         ILogger<RemoverLocalidadeCommandHandler> logger)
     {
         _localidadeRepository = localidadeRepository;

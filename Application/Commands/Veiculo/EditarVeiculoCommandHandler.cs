@@ -1,5 +1,6 @@
 using Application.Common;
-using Dominio.Interfaces.Infra.Data.Veiculo;
+using Dominio.Interfaces.Infra.Data;
+using VeiculoEntity = Dominio.Entidades.Veiculos.Veiculo;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -7,11 +8,11 @@ namespace Application.Commands.Veiculo;
 
 public class EditarVeiculoCommandHandler : IRequestHandler<EditarVeiculoCommand, BaseResponse<bool>>
 {
-    private readonly IVeiculoRepository _veiculoRepository;
+    private readonly IGenericRepository<VeiculoEntity> _veiculoRepository;
     private readonly ILogger<EditarVeiculoCommandHandler> _logger;
 
     public EditarVeiculoCommandHandler(
-        IVeiculoRepository veiculoRepository,
+        IGenericRepository<VeiculoEntity> veiculoRepository,
         ILogger<EditarVeiculoCommandHandler> logger)
     {
         _veiculoRepository = veiculoRepository;
@@ -28,7 +29,7 @@ public class EditarVeiculoCommandHandler : IRequestHandler<EditarVeiculoCommand,
             if (veiculo == null)
                 return BaseResponse<bool>.Erro($"Veículo com ID {request.Id} não encontrado");
 
-            var veiculoAtualizado = new Dominio.Entidades.Veiculos.Veiculo(
+            var veiculoAtualizado = Dominio.Entidades.Veiculos.Veiculo.CriarVeiculo(
                 request.Placa,
                 request.Modelo,
                 request.Marca,

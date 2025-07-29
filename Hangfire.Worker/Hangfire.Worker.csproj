@@ -2,17 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>disable</Nullable>
-    <NullableReferenceTypes>false</NullableReferenceTypes>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningsNotAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8619;CS8625;CS8629;CS8631;CS8632;CS8633;CS8634</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="14.0.0" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Hangfire" Version="1.8.20" />
     <PackageReference Include="Hangfire.Dashboard.Basic.Authentication" Version="7.0.1" />
     <PackageReference Include="Hangfire.PostgreSql" Version="1.20.12" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>

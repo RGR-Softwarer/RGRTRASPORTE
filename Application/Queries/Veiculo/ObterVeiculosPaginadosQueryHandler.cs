@@ -91,8 +91,8 @@ public class ObterVeiculosPaginadosQueryHandler : IRequestHandler<ObterVeiculosP
 
             expression = filtro.Campo.ToLower() switch
             {
-                "placa" => CombineAnd(expression, v => v.Placa.ToLower().Contains(valor)),
-                "placaformatada" => CombineAnd(expression, v => v.Placa.ToLower().Contains(valor)),
+                "placa" => CombineAnd(expression, v => v.Placa.Numero.ToLower().Contains(valor)),
+                "placaformatada" => CombineAnd(expression, v => v.Placa.Numero.ToLower().Contains(valor)),
                 "modelo" => CombineAnd(expression, v => v.Modelo.ToLower().Contains(valor)),
                 "marca" => CombineAnd(expression, v => v.Marca.ToLower().Contains(valor)),
                 "cor" => CombineAnd(expression, v => v.Cor.ToLower().Contains(valor)),

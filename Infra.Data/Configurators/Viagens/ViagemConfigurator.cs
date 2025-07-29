@@ -13,19 +13,24 @@ namespace Infra.Data.Configurators.Viagens
 
             builder.ToTable("T_VIAGEM");
 
+            // Mapeamento básico do Codigo (será convertido internamente pela entidade)
             builder.Property(v => v.Codigo)
+                .HasConversion(
+                    codigo => codigo.Valor,
+                    valor => new Dominio.ValueObjects.CodigoViagem(valor))
                 .IsRequired()
                 .HasColumnName($"{prefixo}_CODIGO");
 
-            builder.Property(v => v.DataViagem)
+            // Propriedades do PeriodoViagem mapeadas para shadow properties para manter compatibilidade
+            builder.Property<DateTime>("DataViagem")
                 .IsRequired()
                 .HasColumnName($"{prefixo}_DATA");
 
-            builder.Property(v => v.HorarioSaida)
+            builder.Property<TimeSpan>("HorarioSaida")
                 .IsRequired()
                 .HasColumnName($"{prefixo}_HORA_SAIDA");
 
-            builder.Property(v => v.HorarioChegada)
+            builder.Property<TimeSpan>("HorarioChegada")
                 .IsRequired()
                 .HasColumnName($"{prefixo}_HORA_CHEGADA");
 
@@ -42,40 +47,21 @@ namespace Infra.Data.Configurators.Viagens
                 .IsRequired()
                 .HasColumnName($"MOT_ID");
 
-            builder.HasOne(v => v.Motorista)
-                .WithMany()
-                .HasForeignKey(v => v.MotoristaId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.Property(v => v.LocalidadeOrigemId)
                 .IsRequired()
                 .HasColumnName($"LOC_ORIGEM_ID");
-
-            builder.HasOne(v => v.LocalidadeOrigem)
-                .WithMany()
-                .HasForeignKey(v => v.LocalidadeOrigemId)
-                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Property(v => v.LocalidadeDestinoId)
                 .IsRequired()
                 .HasColumnName($"LOC_DESTINO_ID");
 
-            builder.HasOne(v => v.LocalidadeDestino)
-                .WithMany()
-                .HasForeignKey(v => v.LocalidadeDestinoId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             builder.Property(v => v.GatilhoViagemId)
-                .HasColumnName($"GAT_ID");
+                .HasColumnName($"GAV_ID");
 
             builder.HasOne(v => v.GatilhoViagem)
                 .WithMany()
                 .HasForeignKey(v => v.GatilhoViagemId)
                 .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Property(v => v.ValorPassagem)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_VALOR_PASSAGEM");
 
             builder.Property(v => v.QuantidadeVagas)
                 .IsRequired()
@@ -85,7 +71,11 @@ namespace Infra.Data.Configurators.Viagens
                 .IsRequired()
                 .HasColumnName($"{prefixo}_VAGAS_DISPONIVEIS");
 
+            // Mapeamento do Value Object Distancia
             builder.Property(v => v.Distancia)
+                .HasConversion(
+                    distancia => distancia.Quilometros,
+                    km => new Dominio.ValueObjects.Distancia(km))
                 .IsRequired()
                 .HasColumnName($"{prefixo}_DISTANCIA");
 
@@ -93,7 +83,11 @@ namespace Infra.Data.Configurators.Viagens
                 .IsRequired()
                 .HasColumnName($"{prefixo}_DESCRICAO");
 
+            // Mapeamento do Value Object Polilinha
             builder.Property(v => v.PolilinhaRota)
+                .HasConversion(
+                    polilinha => polilinha.Rota,
+                    rota => new Dominio.ValueObjects.Polilinha(rota))
                 .IsRequired()
                 .HasColumnName($"{prefixo}_POLILINHA_ROTA");
 
@@ -124,6 +118,20 @@ namespace Infra.Data.Configurators.Viagens
                 .WithOne(p => p.Viagem)
                 .HasForeignKey(p => p.ViagemId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Ignorar o Value Object Periodo para mapear propriedades individuais
+            builder.Ignore(v => v.Periodo);
+
+            // Relacionamento com Veiculo (agora no mesmo contexto)
+            builder.HasOne(v => v.Veiculo)
+                .WithMany()
+                .HasForeignKey(v => v.VeiculoId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Ignorar propriedades de navegação para entidades do CadastroContext
+            builder.Ignore(v => v.Motorista);
+            builder.Ignore(v => v.LocalidadeOrigem);
+            builder.Ignore(v => v.LocalidadeDestino);
         }
     }
 }

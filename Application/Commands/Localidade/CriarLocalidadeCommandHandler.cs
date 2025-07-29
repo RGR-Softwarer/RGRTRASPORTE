@@ -1,51 +1,40 @@
+using Application.Commands.Localidade;
 using Application.Common;
-using Dominio.Interfaces.Infra.Data.Localidades;
+using Dominio.Interfaces.Infra.Data;
+using Dominio.ValueObjects;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
-namespace Application.Commands.Localidade;
-
-public class CriarLocalidadeCommandHandler : IRequestHandler<CriarLocalidadeCommand, BaseResponse<long>>
+namespace Application.Commands.Localidade
 {
-    private readonly ILocalidadeRepository _localidadeRepository;
-    private readonly ILogger<CriarLocalidadeCommandHandler> _logger;
-
-    public CriarLocalidadeCommandHandler(
-        ILocalidadeRepository localidadeRepository,
-        ILogger<CriarLocalidadeCommandHandler> logger)
+    public class CriarLocalidadeCommandHandler : IRequestHandler<CriarLocalidadeCommand, BaseResponse<long>>
     {
-        _localidadeRepository = localidadeRepository;
-        _logger = logger;
-    }
+        private readonly IGenericRepository<Dominio.Entidades.Localidades.Localidade> _localidadeRepository;
 
-    public async Task<BaseResponse<long>> Handle(CriarLocalidadeCommand request, CancellationToken cancellationToken)
-    {
-        try
+        public CriarLocalidadeCommandHandler(
+            IGenericRepository<Dominio.Entidades.Localidades.Localidade> localidadeRepository)
         {
-            _logger.LogInformation("Iniciando criação da localidade {Nome}", request.Nome);
+            _localidadeRepository = localidadeRepository;
+        }
 
-            var localidade = new Dominio.Entidades.Localidades.Localidade(
-                request.Nome,
+        public async Task<BaseResponse<long>> Handle(CriarLocalidadeCommand request, CancellationToken cancellationToken)
+        {
+            var endereco = new Endereco(
                 request.Estado,
                 request.Cidade,
                 request.Cep,
                 request.Bairro,
                 request.Logradouro,
                 request.Numero,
-                request.Complemento,
+                request.Complemento);
+
+            var localidade = Dominio.Entidades.Localidades.Localidade.CriarLocalidade(
+                request.Nome,
+                endereco,
                 request.Latitude,
                 request.Longitude);
 
             await _localidadeRepository.AdicionarAsync(localidade);
-
-            _logger.LogInformation("Localidade {Nome} adicionada ao contexto com sucesso", request.Nome);
-
-            return BaseResponse<long>.Ok(localidade.Id, "Localidade criada com sucesso");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Erro ao criar localidade {Nome}", request.Nome);
-            return BaseResponse<long>.Erro("Erro ao criar localidade", new List<string> { ex.Message });
+            return BaseResponse<long>.Ok(localidade.Id);
         }
     }
 } 

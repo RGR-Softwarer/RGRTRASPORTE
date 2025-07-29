@@ -12,8 +12,9 @@ namespace RGRTRASPORTE.Mapper.Viagens
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ViagemId, opt => opt.MapFrom(src => src.ViagemId))
                 .ForMember(dest => dest.DataHora, opt => opt.MapFrom(src => src.DataHora))
-                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude.ToString()))
-                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude.ToString()));
+                // Fixed: Using proper decimal mapping instead of ToString() to preserve precision
+                .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Latitude))
+                .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Longitude));
         }
     }
 }

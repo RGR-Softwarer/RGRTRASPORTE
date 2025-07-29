@@ -11,8 +11,7 @@ public class AtualizarGatilhoViagemCommand : BaseCommand<BaseResponse<bool>>
     public AtualizarGatilhoViagemCommand(
         long id,
         string descricao,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        bool ativo)
     {
         Id = id;
         Descricao = descricao;

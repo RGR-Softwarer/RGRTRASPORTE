@@ -1,5 +1,7 @@
 ﻿using Dominio.Entidades.Localidades;
 using Dominio.Enums.Pessoas;
+using Dominio.Events.Base;
+using Dominio.ValueObjects;
 
 namespace Dominio.Entidades.Pessoas.Passageiros;
 
@@ -9,7 +11,7 @@ public class Passageiro : Pessoa
 
     public Passageiro(
         string nome,
-        string cpf,
+        CPF cpf,
         string telefone,
         string email,
         SexoEnum sexo,
@@ -23,6 +25,8 @@ public class Passageiro : Pessoa
         LocalidadeEmbarqueId = localidadeEmbarqueId;
         LocalidadeDesembarqueId = localidadeDesembarqueId;
         Situacao = situacao;
+
+        AddDomainEvent(new PassageiroCriadoEvent(Id, nome, cpf.Numero));
     }
 
     public Localidade Localidade { get; private set; }
@@ -34,7 +38,7 @@ public class Passageiro : Pessoa
 
     public void Atualizar(
         string nome,
-        string cpf,
+        CPF cpf,
         string telefone,
         string email,
         SexoEnum sexo,
@@ -46,6 +50,9 @@ public class Passageiro : Pessoa
     {
         base.Atualizar(nome, cpf, telefone, email, sexo, localidadeId, localidadeEmbarqueId, localidadeDesembarqueId, observacao);
         Situacao = situacao;
+        UpdateTimestamp();
+
+        AddDomainEvent(new PassageiroAtualizadoEvent(Id, nome, cpf.Numero));
     }
 
     public void AtualizarLocalidades(
@@ -56,5 +63,51 @@ public class Passageiro : Pessoa
         LocalidadeId = localidadeId;
         LocalidadeEmbarqueId = localidadeEmbarqueId;
         LocalidadeDesembarqueId = localidadeDesembarqueId;
+        UpdateTimestamp();
+
+        AddDomainEvent(new PassageiroLocalidadesAtualizadasEvent(Id, Nome, CPF.Numero));
+    }
+}
+
+// Eventos de domínio para Passageiro
+public class PassageiroCriadoEvent : DomainEvent
+{
+    public long PassageiroId { get; }
+    public string Nome { get; }
+    public string CPF { get; }
+
+    public PassageiroCriadoEvent(long passageiroId, string nome, string cpf)
+    {
+        PassageiroId = passageiroId;
+        Nome = nome;
+        CPF = cpf;
+    }
+}
+
+public class PassageiroAtualizadoEvent : DomainEvent
+{
+    public long PassageiroId { get; }
+    public string Nome { get; }
+    public string CPF { get; }
+
+    public PassageiroAtualizadoEvent(long passageiroId, string nome, string cpf)
+    {
+        PassageiroId = passageiroId;
+        Nome = nome;
+        CPF = cpf;
+    }
+}
+
+public class PassageiroLocalidadesAtualizadasEvent : DomainEvent
+{
+    public long PassageiroId { get; }
+    public string Nome { get; }
+    public string CPF { get; }
+
+    public PassageiroLocalidadesAtualizadasEvent(long passageiroId, string nome, string cpf)
+    {
+        PassageiroId = passageiroId;
+        Nome = nome;
+        CPF = cpf;
     }
 }

@@ -10,9 +10,7 @@ public class CancelarViagemCommand : BaseCommand<BaseResponse<bool>>
 
     public CancelarViagemCommand(
         long id,
-        string motivo,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        string motivo)
     {
         Id = id;
         Motivo = motivo;

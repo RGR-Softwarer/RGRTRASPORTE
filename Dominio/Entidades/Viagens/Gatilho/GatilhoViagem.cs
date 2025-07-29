@@ -3,11 +3,12 @@ using Dominio.Entidades.Pessoas;
 using Dominio.Entidades.Veiculos;
 using Dominio.Enums.Data;
 using Dominio.Enums.Viagens;
+using Dominio.Events.Base;
 using Dominio.Exceptions;
 
 namespace Dominio.Entidades.Viagens.Gatilho
 {
-    public class GatilhoViagem : BaseEntity
+    public class GatilhoViagem : AggregateRoot
     {
         protected GatilhoViagem() { } // Construtor protegido para EF Core
 
@@ -45,6 +46,8 @@ namespace Dominio.Entidades.Viagens.Gatilho
             PolilinhaRota = polilinhaRota;
             DiasSemana = diasSemana;
             Ativo = ativo;
+
+            AddDomainEvent(new GatilhoViagemCriadoEvent(Id, descricao));
         }
 
         public string Descricao { get; private set; }
@@ -131,6 +134,8 @@ namespace Dominio.Entidades.Viagens.Gatilho
 
             HorarioSaida = horarioSaida;
             HorarioChegada = horarioChegada;
+            UpdateTimestamp();
+            AddDomainEvent(new GatilhoViagemHorarioAtualizadoEvent(Id, Descricao));
         }
 
         public void AtualizarValorPassagem(decimal valorPassagem)
@@ -139,6 +144,8 @@ namespace Dominio.Entidades.Viagens.Gatilho
                 throw new DomainException("O valor da passagem deve ser maior que zero");
 
             ValorPassagem = valorPassagem;
+            UpdateTimestamp();
+            AddDomainEvent(new GatilhoViagemValorAtualizadoEvent(Id, Descricao, valorPassagem));
         }
 
         public void AtualizarQuantidadeVagas(int quantidadeVagas)
@@ -147,6 +154,8 @@ namespace Dominio.Entidades.Viagens.Gatilho
                 throw new DomainException("A quantidade de vagas deve ser maior que zero");
 
             QuantidadeVagas = quantidadeVagas;
+            UpdateTimestamp();
+            AddDomainEvent(new GatilhoViagemVagasAtualizadasEvent(Id, Descricao, quantidadeVagas));
         }
 
         public void AtualizarDiasSemana(List<DiaSemanaEnum> diasSemana)
@@ -155,16 +164,22 @@ namespace Dominio.Entidades.Viagens.Gatilho
                 throw new DomainException("Pelo menos um dia da semana deve ser selecionado");
 
             DiasSemana = diasSemana;
+            UpdateTimestamp();
+            AddDomainEvent(new GatilhoViagemDiasAtualizadosEvent(Id, Descricao));
         }
 
         public void Ativar()
         {
             Ativo = true;
+            UpdateTimestamp();
+            AddDomainEvent(new GatilhoViagemAtivadoEvent(Id, Descricao));
         }
 
         public void Desativar()
         {
             Ativo = false;
+            UpdateTimestamp();
+            AddDomainEvent(new GatilhoViagemDesativadoEvent(Id, Descricao));
         }
 
         public Viagem GerarViagem(DateTime data)
@@ -172,23 +187,124 @@ namespace Dominio.Entidades.Viagens.Gatilho
             if (!DiasSemana.Contains((DiaSemanaEnum)data.DayOfWeek))
                 throw new DomainException("Data não corresponde aos dias da semana configurados");
 
-            return new Viagem(
+            var viagem = Viagem.CriarViagemComGatilho(
                 data,
-                HorarioSaida,
-                HorarioChegada,
+                this,
                 VeiculoId,
                 MotoristaId,
-                LocalidadeOrigemId,
-                LocalidadeDestinoId,
-                ValorPassagem,
                 QuantidadeVagas,
                 Distancia,
                 DescricaoViagem,
                 PolilinhaRota,
-                Ativo,
-                Id);
+                Ativo);
+
+            AddDomainEvent(new ViagemGeradaPorGatilhoEvent(Id, viagem.Id, data));
+            return viagem;
         }
 
         protected override string DescricaoFormatada => Descricao;
+    }
+
+    // Eventos de domínio para GatilhoViagem
+    public class GatilhoViagemCriadoEvent : DomainEvent
+    {
+        public long GatilhoId { get; }
+        public string Descricao { get; }
+
+        public GatilhoViagemCriadoEvent(long gatilhoId, string descricao)
+        {
+            GatilhoId = gatilhoId;
+            Descricao = descricao;
+        }
+    }
+
+    public class GatilhoViagemHorarioAtualizadoEvent : DomainEvent
+    {
+        public long GatilhoId { get; }
+        public string Descricao { get; }
+
+        public GatilhoViagemHorarioAtualizadoEvent(long gatilhoId, string descricao)
+        {
+            GatilhoId = gatilhoId;
+            Descricao = descricao;
+        }
+    }
+
+    public class GatilhoViagemValorAtualizadoEvent : DomainEvent
+    {
+        public long GatilhoId { get; }
+        public string Descricao { get; }
+        public decimal NovoValor { get; }
+
+        public GatilhoViagemValorAtualizadoEvent(long gatilhoId, string descricao, decimal novoValor)
+        {
+            GatilhoId = gatilhoId;
+            Descricao = descricao;
+            NovoValor = novoValor;
+        }
+    }
+
+    public class GatilhoViagemVagasAtualizadasEvent : DomainEvent
+    {
+        public long GatilhoId { get; }
+        public string Descricao { get; }
+        public int NovaQuantidade { get; }
+
+        public GatilhoViagemVagasAtualizadasEvent(long gatilhoId, string descricao, int novaQuantidade)
+        {
+            GatilhoId = gatilhoId;
+            Descricao = descricao;
+            NovaQuantidade = novaQuantidade;
+        }
+    }
+
+    public class GatilhoViagemDiasAtualizadosEvent : DomainEvent
+    {
+        public long GatilhoId { get; }
+        public string Descricao { get; }
+
+        public GatilhoViagemDiasAtualizadosEvent(long gatilhoId, string descricao)
+        {
+            GatilhoId = gatilhoId;
+            Descricao = descricao;
+        }
+    }
+
+    public class GatilhoViagemAtivadoEvent : DomainEvent
+    {
+        public long GatilhoId { get; }
+        public string Descricao { get; }
+
+        public GatilhoViagemAtivadoEvent(long gatilhoId, string descricao)
+        {
+            GatilhoId = gatilhoId;
+            Descricao = descricao;
+        }
+    }
+
+    public class GatilhoViagemDesativadoEvent : DomainEvent
+    {
+        public long GatilhoId { get; }
+        public string Descricao { get; }
+
+        public GatilhoViagemDesativadoEvent(long gatilhoId, string descricao)
+        {
+            GatilhoId = gatilhoId;
+            Descricao = descricao;
+        }
+    }
+
+    public class ViagemGeradaPorGatilhoEvent : DomainEvent
+    {
+        public long GatilhoId { get; }
+        public long ViagemId { get; }
+        public DateTime DataViagem { get; }
+
+        public ViagemGeradaPorGatilhoEvent(long gatilhoId, long viagemId, DateTime dataViagem)
+        {
+            GatilhoId = gatilhoId;
+            ViagemId = viagemId;
+            DataViagem = dataViagem;
+        }
     }
 }

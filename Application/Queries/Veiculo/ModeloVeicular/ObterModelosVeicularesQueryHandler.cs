@@ -1,6 +1,7 @@
 using Application.Common;
 using Application.Queries.Veiculo.ModeloVeicular.Models;
-using Dominio.Interfaces.Infra.Data.Veiculo;
+using Dominio.Interfaces.Infra.Data;
+using ModeloVeicularEntity = Dominio.Entidades.Veiculos.ModeloVeicular;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -8,11 +9,11 @@ namespace Application.Queries.Veiculo.ModeloVeicular
 {
     public class ObterModelosVeicularesQueryHandler : IRequestHandler<ObterModelosVeicularesQuery, BaseResponse<IEnumerable<ModeloVeicularDto>>>
     {
-        private readonly IModeloVeicularRepository _modeloVeicularRepository;
+        private readonly IGenericRepository<ModeloVeicularEntity> _modeloVeicularRepository;
         private readonly ILogger<ObterModelosVeicularesQueryHandler> _logger;
 
         public ObterModelosVeicularesQueryHandler(
-            IModeloVeicularRepository modeloVeicularRepository,
+            IGenericRepository<ModeloVeicularEntity> modeloVeicularRepository,
             ILogger<ObterModelosVeicularesQueryHandler> logger)
         {
             _modeloVeicularRepository = modeloVeicularRepository;

@@ -1,14 +1,26 @@
 ﻿using Dominio.Enums.Veiculo;
+using Dominio.Events.Base;
 using Dominio.Exceptions;
+using Dominio.ValueObjects;
+using Dominio.Specifications;
+using Dominio.Services;
+using Dominio.Interfaces;
 
 namespace Dominio.Entidades.Veiculos
 {
-    public class Veiculo : BaseEntity
+    public class Veiculo : AggregateRoot
     {
-        protected Veiculo() { } // Construtor protegido para EF Core
+        // Specifications para validações básicas
+        private static readonly VeiculoPodeSerAtivadoSpecification _podeSerAtivado = new();
+        private static readonly VeiculoPodeSerInativadoSpecification _podeSerInativado = new();
+        private static readonly VeiculoPodeSerEditadoSpecification _podeSerEditado = new();
+        private static readonly VeiculoPodeAtualizarLicenciamentoSpecification _podeAtualizarLicenciamento = new();
 
-        public Veiculo(
-            string placa,
+        private Veiculo() { } // Para EF Core
+
+        // Construtor privado - usar Factory Methods
+        private Veiculo(
+            Placa placa,
             string modelo,
             string marca,
             string numeroChassi,
@@ -22,13 +34,15 @@ namespace Dominio.Entidades.Veiculos
             string observacao,
             long? modeloVeiculoId)
         {
-            ValidarPlaca(placa);
-            ValidarModelo(modelo);
-            ValidarMarca(marca);
-            ValidarNumeroChassi(numeroChassi);
-            ValidarAnos(anoModelo, anoFabricacao);
-            ValidarCor(cor);
-            ValidarRenavam(renavam);
+            // Validações básicas de integridade
+            if (placa == null)
+                throw new DomainException("Placa é obrigatória");
+
+            if (string.IsNullOrWhiteSpace(modelo))
+                throw new DomainException("Modelo é obrigatório");
+
+            if (string.IsNullOrWhiteSpace(marca))
+                throw new DomainException("Marca é obrigatória");
 
             Placa = placa;
             Modelo = modelo;
@@ -44,9 +58,71 @@ namespace Dominio.Entidades.Veiculos
             Observacao = observacao;
             ModeloVeiculoId = modeloVeiculoId;
             Situacao = true;
+
+            AddDomainEvent(new VeiculoCriadoEvent(Id, placa.Numero, modelo, marca));
         }
 
-        public string Placa { get; private set; }
+        // Factory Methods
+        public static Veiculo CriarVeiculo(
+            Placa placa,
+            string modelo,
+            string marca,
+            string numeroChassi,
+            int anoModelo,
+            int anoFabricacao,
+            string cor,
+            string renavam,
+            DateTime? vencimentoLicenciamento,
+            TipoCombustivelEnum tipoCombustivel,
+            StatusVeiculoEnum status,
+            string observacao,
+            long? modeloVeiculoId)
+        {
+            return new Veiculo(placa, modelo, marca, numeroChassi, anoModelo, anoFabricacao,
+                cor, renavam, vencimentoLicenciamento, tipoCombustivel, status, observacao, modeloVeiculoId);
+        }
+
+        // Factory Method com validação por NotificationContext
+        public static (Veiculo? veiculo, bool sucesso) CriarVeiculoComValidacao(
+            Placa placa,
+            string modelo,
+            string marca,
+            string numeroChassi,
+            int anoModelo,
+            int anoFabricacao,
+            string cor,
+            string renavam,
+            DateTime? vencimentoLicenciamento,
+            TipoCombustivelEnum tipoCombustivel,
+            StatusVeiculoEnum status,
+            string observacao,
+            long? modeloVeiculoId,
+            INotificationContext notificationContext)
+        {
+            var validationService = new VeiculoValidationService();
+            var valido = validationService.ValidarCriacao(placa, modelo, marca, numeroChassi,
+                anoModelo, anoFabricacao, cor, renavam, vencimentoLicenciamento,
+                tipoCombustivel, status, observacao, modeloVeiculoId, notificationContext);
+
+            if (!valido)
+                return (null, false);
+
+            try
+            {
+                var veiculo = CriarVeiculo(placa, modelo, marca, numeroChassi, anoModelo,
+                    anoFabricacao, cor, renavam, vencimentoLicenciamento, tipoCombustivel,
+                    status, observacao, modeloVeiculoId);
+                
+                return (veiculo, true);
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return (null, false);
+            }
+        }
+
+        public Placa Placa { get; private set; }
         public string Modelo { get; private set; }
         public string Marca { get; private set; }
         public string NumeroChassi { get; private set; }
@@ -62,9 +138,9 @@ namespace Dominio.Entidades.Veiculos
         public virtual ModeloVeicular ModeloVeiculo { get; private set; }
         public bool Situacao { get; private set; }
 
-        public virtual string PlacaFormatada => string.IsNullOrWhiteSpace(Placa) ? string.Empty : $"{Placa.Substring(0, 3)}-{Placa.Substring(3, 4)}";
+        public virtual string PlacaFormatada => Placa.Formatada;
 
-        protected override string DescricaoFormatada => Placa;
+        protected override string DescricaoFormatada => Placa.Formatada;
 
         public void Atualizar(
             string modelo,
@@ -76,9 +152,17 @@ namespace Dominio.Entidades.Veiculos
             string observacao,
             long? modeloVeiculoId)
         {
-            ValidarModelo(modelo);
-            ValidarMarca(marca);
-            ValidarCor(cor);
+            EnsureVeiculoPodeSerEditado();
+
+            // Validações básicas de integridade
+            if (string.IsNullOrWhiteSpace(modelo))
+                throw new DomainException("Modelo é obrigatório");
+
+            if (string.IsNullOrWhiteSpace(marca))
+                throw new DomainException("Marca é obrigatória");
+
+            if (string.IsNullOrWhiteSpace(cor))
+                throw new DomainException("Cor é obrigatória");
 
             Modelo = modelo;
             Marca = marca;
@@ -88,107 +172,237 @@ namespace Dominio.Entidades.Veiculos
             Status = status;
             Observacao = observacao;
             ModeloVeiculoId = modeloVeiculoId;
+            UpdateTimestamp();
+
+            AddDomainEvent(new VeiculoAtualizadoEvent(Id, Placa.Numero));
+        }
+
+        // Método com validação por NotificationContext
+        public bool AtualizarComValidacao(
+            string modelo,
+            string marca,
+            string cor,
+            DateTime? vencimentoLicenciamento,
+            TipoCombustivelEnum tipoCombustivel,
+            StatusVeiculoEnum status,
+            string observacao,
+            long? modeloVeiculoId,
+            INotificationContext notificationContext)
+        {
+            var validationService = new VeiculoValidationService();
+            var valido = validationService.ValidarAtualizacao(this, modelo, marca, cor,
+                vencimentoLicenciamento, tipoCombustivel, status, observacao, modeloVeiculoId, notificationContext);
+
+            if (!valido)
+                return false;
+
+            try
+            {
+                Atualizar(modelo, marca, cor, vencimentoLicenciamento, tipoCombustivel,
+                    status, observacao, modeloVeiculoId);
+                return true;
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return false;
+            }
         }
 
         public void AtualizarLicenciamento(DateTime vencimento)
         {
-            if (vencimento < DateTime.Today)
-                throw new DomainException("Data de vencimento do licenciamento não pode ser anterior à data atual.");
+            EnsureVeiculoPodeAtualizarLicenciamento();
+            EnsureVencimentoLicenciamentoValido(vencimento);
 
             VencimentoLicenciamento = vencimento;
+            UpdateTimestamp();
+            AddDomainEvent(new VeiculoLicenciamentoAtualizadoEvent(Id, Placa.Numero, vencimento));
+        }
+
+        // Método com validação por NotificationContext
+        public bool AtualizarLicenciamentoComValidacao(DateTime vencimento, INotificationContext notificationContext)
+        {
+            var validationService = new VeiculoValidationService();
+            var valido = validationService.ValidarAtualizacaoLicenciamento(this, vencimento, notificationContext);
+
+            if (!valido)
+                return false;
+
+            try
+            {
+                AtualizarLicenciamento(vencimento);
+                return true;
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return false;
+            }
         }
 
         public void Ativar()
         {
-            if (Situacao)
-                throw new DomainException("Veículo já está ativo.");
+            EnsureVeiculoPodeSerAtivado();
 
             Situacao = true;
+            UpdateTimestamp();
+            AddDomainEvent(new VeiculoAtivadoEvent(Id, Placa.Numero));
+        }
+
+        // Método com validação por NotificationContext
+        public bool AtivarComValidacao(INotificationContext notificationContext)
+        {
+            var validationService = new VeiculoValidationService();
+            var valido = validationService.ValidarAtivacao(this, notificationContext);
+
+            if (!valido)
+                return false;
+
+            try
+            {
+                Ativar();
+                return true;
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return false;
+            }
         }
 
         public void Inativar()
         {
-            if (!Situacao)
-                throw new DomainException("Veículo já está inativo.");
+            EnsureVeiculoPodeSerInativado();
 
             Situacao = false;
+            UpdateTimestamp();
+            AddDomainEvent(new VeiculoInativadoEvent(Id, Placa.Numero));
         }
 
-        private void ValidarPlaca(string placa)
+        // Método com validação por NotificationContext
+        public bool InativarComValidacao(INotificationContext notificationContext)
         {
-            if (string.IsNullOrWhiteSpace(placa))
-                throw new DomainException("Placa é obrigatória.");
+            var validationService = new VeiculoValidationService();
+            var valido = validationService.ValidarInativacao(this, notificationContext);
 
-            if (placa.Length != 7)
-                throw new DomainException("Placa deve ter 7 caracteres.");
+            if (!valido)
+                return false;
 
-            if (!placa.All(c => char.IsLetterOrDigit(c)))
-                throw new DomainException("Placa deve conter apenas letras e números.");
+            try
+            {
+                Inativar();
+                return true;
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return false;
+            }
         }
 
-        private void ValidarModelo(string modelo)
-        {
-            if (string.IsNullOrWhiteSpace(modelo))
-                throw new DomainException("Modelo é obrigatório.");
+        // Métodos de consulta
+        public bool PodeSerAtivado() => _podeSerAtivado.IsSatisfiedBy(this);
+        public bool PodeSerInativado() => _podeSerInativado.IsSatisfiedBy(this);
+        public bool PodeSerEditado() => _podeSerEditado.IsSatisfiedBy(this);
+        public bool PodeAtualizarLicenciamento() => _podeAtualizarLicenciamento.IsSatisfiedBy(this);
 
-            if (modelo.Length > 50)
-                throw new DomainException("Modelo deve ter no máximo 50 caracteres.");
+        // Validações usando Specifications
+        private void EnsureVeiculoPodeSerAtivado()
+        {
+            if (!_podeSerAtivado.IsSatisfiedBy(this))
+                throw new DomainException(_podeSerAtivado.ErrorMessage);
         }
 
-        private void ValidarMarca(string marca)
+        private void EnsureVeiculoPodeSerInativado()
         {
-            if (string.IsNullOrWhiteSpace(marca))
-                throw new DomainException("Marca é obrigatória.");
-
-            if (marca.Length > 50)
-                throw new DomainException("Marca deve ter no máximo 50 caracteres.");
+            if (!_podeSerInativado.IsSatisfiedBy(this))
+                throw new DomainException(_podeSerInativado.ErrorMessage);
         }
 
-        private void ValidarNumeroChassi(string numeroChassi)
+        private void EnsureVeiculoPodeSerEditado()
         {
-            if (string.IsNullOrWhiteSpace(numeroChassi))
-                throw new DomainException("Número do chassi é obrigatório.");
-
-            if (numeroChassi.Length != 17)
-                throw new DomainException("Número do chassi deve ter 17 caracteres.");
-
-            if (!numeroChassi.All(c => char.IsLetterOrDigit(c)))
-                throw new DomainException("Número do chassi deve conter apenas letras e números.");
+            if (!_podeSerEditado.IsSatisfiedBy(this))
+                throw new DomainException(_podeSerEditado.ErrorMessage);
         }
 
-        private void ValidarAnos(int anoModelo, int anoFabricacao)
+        private void EnsureVeiculoPodeAtualizarLicenciamento()
         {
-            var anoAtual = DateTime.Now.Year;
-
-            if (anoModelo < anoFabricacao)
-                throw new DomainException("Ano do modelo não pode ser anterior ao ano de fabricação.");
-
-            if (anoModelo > anoAtual + 1)
-                throw new DomainException("Ano do modelo não pode ser posterior ao ano seguinte.");
-
-            if (anoFabricacao < 1900 || anoFabricacao > anoAtual)
-                throw new DomainException("Ano de fabricação inválido.");
+            if (!_podeAtualizarLicenciamento.IsSatisfiedBy(this))
+                throw new DomainException(_podeAtualizarLicenciamento.ErrorMessage);
         }
 
-        private void ValidarCor(string cor)
+        private void EnsureVencimentoLicenciamentoValido(DateTime vencimento)
         {
-            if (string.IsNullOrWhiteSpace(cor))
-                throw new DomainException("Cor é obrigatória.");
-
-            if (cor.Length > 30)
-                throw new DomainException("Cor deve ter no máximo 30 caracteres.");
+            var vencimentoValidoSpec = new VencimentoLicenciamentoValidoSpecification();
+            if (!vencimentoValidoSpec.IsSatisfiedBy(vencimento))
+                throw new DomainException(vencimentoValidoSpec.ErrorMessage);
         }
+    }
 
-        private void ValidarRenavam(string renavam)
+    // Eventos de domínio para Veiculo
+    public class VeiculoCriadoEvent : DomainEvent
+    {
+        public long VeiculoId { get; }
+        public string Placa { get; }
+        public string Modelo { get; }
+        public string Marca { get; }
+
+        public VeiculoCriadoEvent(long veiculoId, string placa, string modelo, string marca)
         {
-            if (string.IsNullOrWhiteSpace(renavam))
-                throw new DomainException("RENAVAM é obrigatório.");
+            VeiculoId = veiculoId;
+            Placa = placa;
+            Modelo = modelo;
+            Marca = marca;
+        }
+    }
 
-            if (renavam.Length != 11)
-                throw new DomainException("RENAVAM deve ter 11 caracteres.");
+    public class VeiculoAtualizadoEvent : DomainEvent
+    {
+        public long VeiculoId { get; }
+        public string Placa { get; }
 
-            if (!renavam.All(char.IsDigit))
-                throw new DomainException("RENAVAM deve conter apenas números.");
+        public VeiculoAtualizadoEvent(long veiculoId, string placa)
+        {
+            VeiculoId = veiculoId;
+            Placa = placa;
+        }
+    }
+
+    public class VeiculoLicenciamentoAtualizadoEvent : DomainEvent
+    {
+        public long VeiculoId { get; }
+        public string Placa { get; }
+        public DateTime NovoVencimento { get; }
+
+        public VeiculoLicenciamentoAtualizadoEvent(long veiculoId, string placa, DateTime novoVencimento)
+        {
+            VeiculoId = veiculoId;
+            Placa = placa;
+            NovoVencimento = novoVencimento;
+        }
+    }
+
+    public class VeiculoAtivadoEvent : DomainEvent
+    {
+        public long VeiculoId { get; }
+        public string Placa { get; }
+
+        public VeiculoAtivadoEvent(long veiculoId, string placa)
+        {
+            VeiculoId = veiculoId;
+            Placa = placa;
+        }
+    }
+
+    public class VeiculoInativadoEvent : DomainEvent
+    {
+        public long VeiculoId { get; }
+        public string Placa { get; }
+
+        public VeiculoInativadoEvent(long veiculoId, string placa)
+        {
+            VeiculoId = veiculoId;
+            Placa = placa;
         }
     }
 }

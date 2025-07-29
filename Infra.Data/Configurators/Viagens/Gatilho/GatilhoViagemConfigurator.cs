@@ -25,7 +25,7 @@ namespace Infra.Data.Configurators.Viagens.Gatilho
 
             builder.Property(g => g.MotoristaId)
                 .IsRequired()
-                .HasColumnName($"MOT_MOTORISTA_ID");
+                .HasColumnName($"MOT_ID");
 
             builder.Property(g => g.LocalidadeOrigemId)
                 .IsRequired()
@@ -85,15 +85,20 @@ namespace Infra.Data.Configurators.Viagens.Gatilho
 
             diasSemanaProperty.HasColumnName($"{prefixo}_DIAS_SEMANA");
 
+            builder.HasMany(g => g.Viagens)
+                .WithOne(v => v.GatilhoViagem)
+                .HasForeignKey(v => v.GatilhoViagemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relacionamento com Veiculo (agora no mesmo contexto)
             builder.HasOne(g => g.Veiculo)
                 .WithMany()
                 .HasForeignKey(g => g.VeiculoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(g => g.Viagens)
-                .WithOne(v => v.GatilhoViagem)
-                .HasForeignKey(v => v.GatilhoViagemId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Ignorar navegações para entidades do CadastroContext
+            builder.Ignore(g => g.LocalidadeOrigem);
+            builder.Ignore(g => g.LocalidadeDestino);
         }
     }
 }

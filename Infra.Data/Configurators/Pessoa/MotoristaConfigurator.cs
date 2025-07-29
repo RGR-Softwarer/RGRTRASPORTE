@@ -22,6 +22,9 @@ namespace Infra.Data.Configurators.Pessoa
                 .HasColumnName($"{prefixo}_SITUACAO");
 
             builder.Property(m => m.CPF)
+                .HasConversion(
+                    cpf => cpf.Numero,
+                    numero => new Dominio.ValueObjects.CPF(numero))
                 .IsRequired()
                 .HasColumnName($"{prefixo}_CPF");
 
@@ -51,6 +54,19 @@ namespace Infra.Data.Configurators.Pessoa
 
             builder.Property(m => m.Observacao)
                 .HasColumnName($"{prefixo}_OBSERVACAO");
+
+            builder.Property(m => m.LocalidadeId)
+                .IsRequired()
+                .HasColumnName($"LOC_ID");
+
+            builder.Property(m => m.Sexo)
+                .IsRequired()
+                .HasConversion<int>()
+                .HasColumnName($"{prefixo}_SEXO");
+
+            // Ignorar propriedades que não fazem sentido para Motorista
+            builder.Ignore(m => m.LocalidadeEmbarqueId);
+            builder.Ignore(m => m.LocalidadeDesembarqueId);
         }
     }
 }

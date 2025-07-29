@@ -21,17 +21,26 @@ namespace Infra.Data.Configurators.Viagens
                 .IsRequired()
                 .HasColumnName($"{prefixo}_DATA_HORA");
 
-            builder.Property(vp => vp.Latitude)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_LATITUDE");
+            // Configurar o mapeamento do Value Object Coordenada usando owned entity
+            builder.OwnsOne(vp => vp.Coordenada, coord =>
+            {
+                coord.Property(c => c.Latitude)
+                    .HasColumnName($"{prefixo}_LATITUDE")
+                    .IsRequired();
+                
+                coord.Property(c => c.Longitude)
+                    .HasColumnName($"{prefixo}_LONGITUDE")
+                    .IsRequired();
+            });
 
-            builder.Property(vp => vp.Longitude)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_LONGITUDE");
+            // Ignorar as propriedades de conveniência somente leitura
+            builder.Ignore(vp => vp.Latitude);
+            builder.Ignore(vp => vp.Longitude);
 
             builder.HasOne(vp => vp.Viagem)
-                .WithMany()
-                .HasForeignKey(vp => vp.ViagemId);
+                .WithMany(v => v.Posicoes)
+                .HasForeignKey(vp => vp.ViagemId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

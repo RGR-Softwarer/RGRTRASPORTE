@@ -14,13 +14,11 @@ public class AdicionarViagemPosicaoCommand : BaseCommand<BaseResponse<long>>
         long viagemId,
         decimal latitude,
         decimal longitude,
-        DateTime dataPosicao,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        DateTime dataHora)
     {
         ViagemId = viagemId;
         Latitude = latitude;
         Longitude = longitude;
-        DataPosicao = dataPosicao;
+        DataPosicao = dataHora;
     }
 } 

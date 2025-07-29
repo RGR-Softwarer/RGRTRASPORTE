@@ -1,23 +1,24 @@
 using Dominio.Enums.Pessoas;
+using Dominio.Events.Base;
 using Dominio.Exceptions;
 using Dominio.Interfaces.Service.Pessoas;
+using Dominio.ValueObjects;
 
 namespace Dominio.Entidades.Pessoas;
 
-public abstract class Pessoa : BaseEntity, IPessoa
+public abstract class Pessoa : AggregateRoot, IPessoa
 {
     protected Pessoa() { } // Construtor protegido para EF Core
 
     protected Pessoa(
         string nome,
-        string cpf,
+        CPF cpf,
         string telefone,
         string email,
         SexoEnum sexo,
         string observacao)
     {
         ValidarNome(nome);
-        ValidarCPF(cpf);
         ValidarTelefone(telefone);
         ValidarEmail(email);
 
@@ -31,7 +32,7 @@ public abstract class Pessoa : BaseEntity, IPessoa
     }
 
     public string Nome { get; protected set; }
-    public string CPF { get; protected set; }
+    public CPF CPF { get; protected set; }
     public string Telefone { get; protected set; }
     public string Email { get; protected set; }
     public SexoEnum Sexo { get; protected set; }
@@ -41,9 +42,11 @@ public abstract class Pessoa : BaseEntity, IPessoa
     public bool Situacao { get; protected set; }
     public string Observacao { get; protected set; }
 
+    public string CPF_Formatado => CPF.NumeroFormatado;
+
     public virtual void Atualizar(
         string nome,
-        string cpf,
+        CPF cpf,
         string telefone,
         string email,
         SexoEnum sexo,
@@ -53,7 +56,6 @@ public abstract class Pessoa : BaseEntity, IPessoa
         string observacao)
     {
         ValidarNome(nome);
-        ValidarCPF(cpf);
         ValidarTelefone(telefone);
         ValidarEmail(email);
 
@@ -66,6 +68,7 @@ public abstract class Pessoa : BaseEntity, IPessoa
         LocalidadeEmbarqueId = localidadeEmbarqueId;
         LocalidadeDesembarqueId = localidadeDesembarqueId;
         Observacao = observacao;
+        UpdateTimestamp();
     }
 
     public void Ativar()
@@ -74,6 +77,7 @@ public abstract class Pessoa : BaseEntity, IPessoa
             throw new DomainException("Pessoa já está ativa.");
 
         Situacao = true;
+        UpdateTimestamp();
     }
 
     public void Inativar()
@@ -82,11 +86,10 @@ public abstract class Pessoa : BaseEntity, IPessoa
             throw new DomainException("Pessoa já está inativa.");
 
         Situacao = false;
+        UpdateTimestamp();
     }
 
-    public string CPF_Formatado => string.IsNullOrWhiteSpace(CPF) ? string.Empty : $"{CPF.Substring(0, 3)}.{CPF.Substring(3, 3)}.{CPF.Substring(6, 3)}-{CPF.Substring(9, 2)}";
-
-    protected override string DescricaoFormatada => $"{Nome} ({CPF_Formatado})";
+    protected override string DescricaoFormatada => $"{Nome} ({CPF.NumeroFormatado})";
 
     private void ValidarNome(string nome)
     {
@@ -95,21 +98,6 @@ public abstract class Pessoa : BaseEntity, IPessoa
 
         if (nome.Length > 100)
             throw new DomainException("Nome deve ter no máximo 100 caracteres.");
-    }
-
-    private void ValidarCPF(string cpf)
-    {
-        if (string.IsNullOrWhiteSpace(cpf))
-            throw new DomainException("CPF é obrigatório.");
-
-        if (cpf.Length != 11)
-            throw new DomainException("CPF deve ter 11 caracteres.");
-
-        if (!cpf.All(char.IsDigit))
-            throw new DomainException("CPF deve conter apenas números.");
-
-        if (!ValidarDigitosCPF(cpf))
-            throw new DomainException("CPF inválido.");
     }
 
     private void ValidarTelefone(string telefone)
@@ -134,46 +122,5 @@ public abstract class Pessoa : BaseEntity, IPessoa
 
         if (!email.Contains("@") || !email.Contains("."))
             throw new DomainException("E-mail inválido.");
-    }
-
-    private bool ValidarDigitosCPF(string cpf)
-    {
-        if (cpf.Length != 11)
-            return false;
-
-        if (cpf.All(c => c == cpf[0]))
-            return false;
-
-        var multiplicador1 = new[] { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
-        var multiplicador2 = new[] { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
-
-        var tempCpf = cpf.Substring(0, 9);
-        var soma = 0;
-
-        for (var i = 0; i < 9; i++)
-            soma += int.Parse(tempCpf[i].ToString()) * multiplicador1[i];
-
-        var resto = soma % 11;
-        if (resto < 2)
-            resto = 0;
-        else
-            resto = 11 - resto;
-
-        var digito = resto.ToString();
-        tempCpf = tempCpf + digito;
-        soma = 0;
-
-        for (var i = 0; i < 10; i++)
-            soma += int.Parse(tempCpf[i].ToString()) * multiplicador2[i];
-
-        resto = soma % 11;
-        if (resto < 2)
-            resto = 0;
-        else
-            resto = 11 - resto;
-
-        digito = digito + resto.ToString();
-
-        return cpf.EndsWith(digito);
     }
 }

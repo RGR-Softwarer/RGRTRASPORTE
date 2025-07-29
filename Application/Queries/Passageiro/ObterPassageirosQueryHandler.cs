@@ -34,7 +34,7 @@ namespace Application.Queries.Passageiro
                     passageirosFiltrados = passageirosFiltrados.Where(p => p.Nome.ToLower().Contains(request.Nome.ToLower()));
 
                 if (!string.IsNullOrEmpty(request.CPF))
-                    passageirosFiltrados = passageirosFiltrados.Where(p => p.CPF.Contains(request.CPF));
+                    passageirosFiltrados = passageirosFiltrados.Where(p => p.CPF.Numero.Equals(request.CPF));
 
                 if (request.Situacao.HasValue)
                     passageirosFiltrados = passageirosFiltrados.Where(p => p.Situacao == request.Situacao.Value);

@@ -31,9 +31,7 @@ public class CriarLocalidadeCommand : BaseCommand<BaseResponse<long>>
         string numero,
         string complemento,
         decimal latitude,
-        decimal longitude,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        decimal longitude)
     {
         Nome = nome;
         Estado = estado;

@@ -42,9 +42,7 @@ public class EditarViagemCommandValidator : AbstractValidator<EditarViagemComman
             .NotEqual(x => x.LocalidadeOrigemId)
             .WithMessage("A localidade de destino deve ser diferente da localidade de origem");
 
-        RuleFor(x => x.ValorPassagem)
-            .GreaterThan(0)
-            .WithMessage("O valor da passagem deve ser maior que zero");
+        // REMOVIDO: ValorPassagem não existe mais na entidade Viagem
 
         RuleFor(x => x.QuantidadeVagas)
             .GreaterThan(0)

@@ -1,9 +1,11 @@
 ﻿using Dominio.Enums.Veiculo;
 using Dominio.Exceptions;
+using Dominio.Events.Base;
+using Dominio.Events.Veiculos;
 
 namespace Dominio.Entidades.Veiculos
 {
-    public class ModeloVeicular : BaseEntity
+    public class ModeloVeicular : AggregateRoot
     {
         protected ModeloVeicular() { } // Construtor protegido para EF Core
 
@@ -32,6 +34,8 @@ namespace Dominio.Entidades.Veiculos
             Situacao = situacao;
             Situacao = true;
             Veiculos = new List<Veiculo>();
+
+            AddDomainEvent(new ModeloVeicularCriadoEvent(Id, descricaoModelo, tipo));
         }
 
         public bool Situacao { get; private set; }
@@ -69,6 +73,9 @@ namespace Dominio.Entidades.Veiculos
             PassageirosEmPe = passageirosEmPe;
             PossuiBanheiro = possuiBanheiro;
             PossuiClimatizador = possuiClimatizador;
+            
+            UpdateTimestamp();
+            AddDomainEvent(new ModeloVeicularAtualizadoEvent(Id, descricao));
         }
 
         public void Ativar()
@@ -77,6 +84,8 @@ namespace Dominio.Entidades.Veiculos
                 throw new DomainException("Modelo já está ativo.");
 
             Situacao = true;
+            UpdateTimestamp();
+            AddDomainEvent(new ModeloVeicularAtivadoEvent(Id, Descricao));
         }
 
         public void Inativar()
@@ -88,6 +97,8 @@ namespace Dominio.Entidades.Veiculos
                 throw new DomainException("Não é possível inativar um modelo que possui veículos ativos.");
 
             Situacao = false;
+            UpdateTimestamp();
+            AddDomainEvent(new ModeloVeicularInativadoEvent(Id, Descricao));
         }
 
         private void ValidarDescricao(string descricao)
@@ -116,6 +127,7 @@ namespace Dominio.Entidades.Veiculos
             if (capacidadeMaxima < quantidadeAssento + passageirosEmPe)
                 throw new DomainException("Capacidade máxima deve ser maior ou igual à soma de assentos e passageiros em pé.");
         }
-    
+
+        protected override string DescricaoFormatada => $"{Descricao} ({Tipo})";
     }
 }

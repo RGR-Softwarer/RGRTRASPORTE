@@ -1,18 +1,19 @@
 using Application.Common;
 using Application.Queries.Viagem.Models;
-using Dominio.Interfaces.Infra.Data.Viagens;
+using Dominio.Interfaces.Infra.Data;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using ViagemPosicaoEntity = Dominio.Entidades.Viagens.ViagemPosicao;
 
 namespace Application.Queries.Viagem.ViagemPosicao
 {
     public class ObterViagemPosicoesQueryHandler : IRequestHandler<ObterViagemPosicoesQuery, BaseResponse<IEnumerable<ViagemPosicaoDto>>>
     {
-        private readonly IViagemPosicaoRepository _viagemPosicaoRepository;
+        private readonly IGenericRepository<ViagemPosicaoEntity> _viagemPosicaoRepository;
         private readonly ILogger<ObterViagemPosicoesQueryHandler> _logger;
 
         public ObterViagemPosicoesQueryHandler(
-            IViagemPosicaoRepository viagemPosicaoRepository,
+            IGenericRepository<ViagemPosicaoEntity> viagemPosicaoRepository,
             ILogger<ObterViagemPosicoesQueryHandler> logger)
         {
             _viagemPosicaoRepository = viagemPosicaoRepository;

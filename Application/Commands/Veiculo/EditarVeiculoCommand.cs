@@ -35,9 +35,7 @@ public class EditarVeiculoCommand : BaseCommand<BaseResponse<bool>>
         TipoCombustivelEnum tipoCombustivel,
         StatusVeiculoEnum status,
         string observacao,
-        long? modeloVeiculoId,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        long? modeloVeiculoId)
     {
         Id = id;
         Placa = placa;

@@ -1,21 +1,22 @@
 using MediatR;
 using Application.Common;
-using Dominio.Interfaces.Infra.Data.Viagens.Gatilho;
+using Dominio.Interfaces.Infra.Data;
+using GatilhoViagemEntity = Dominio.Entidades.Viagens.Gatilho.GatilhoViagem;
 
 namespace Application.Commands.Viagem.Gatilho;
 
 public class RemoverGatilhoViagemCommandHandler : IRequestHandler<RemoverGatilhoViagemCommand, BaseResponse<bool>>
 {
-    private readonly IGatilhoViagemRepository _repository;
+    private readonly IGenericRepository<GatilhoViagemEntity> _repository;
 
-    public RemoverGatilhoViagemCommandHandler(IGatilhoViagemRepository repository)
+    public RemoverGatilhoViagemCommandHandler(IGenericRepository<GatilhoViagemEntity> repository)
     {
         _repository = repository;
     }
 
     public async Task<BaseResponse<bool>> Handle(RemoverGatilhoViagemCommand request, CancellationToken cancellationToken)
     {
-        var gatilho = await _repository.ObterGatilhoCompletoPorIdAsync(request.Id);
+        var gatilho = await _repository.ObterPorIdAsync(request.Id);
         if (gatilho == null)
             return BaseResponse<bool>.Erro("Gatilho não encontrado");
 

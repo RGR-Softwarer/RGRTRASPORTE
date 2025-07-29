@@ -1,6 +1,7 @@
 using Application.Common;
 using Application.Queries.Veiculo.Models;
-using Dominio.Interfaces.Infra.Data.Veiculo;
+using Dominio.Interfaces.Infra.Data;
+using VeiculoEntity = Dominio.Entidades.Veiculos.Veiculo;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -8,11 +9,11 @@ namespace Application.Queries.Veiculo
 {
     public class ObterVeiculosQueryHandler : IRequestHandler<ObterVeiculosQuery, BaseResponse<IEnumerable<VeiculoDto>>>
     {
-        private readonly IVeiculoRepository _veiculoRepository;
+        private readonly IGenericRepository<VeiculoEntity> _veiculoRepository;
         private readonly ILogger<ObterVeiculosQueryHandler> _logger;
 
         public ObterVeiculosQueryHandler(
-            IVeiculoRepository veiculoRepository,
+            IGenericRepository<VeiculoEntity> veiculoRepository,
             ILogger<ObterVeiculosQueryHandler> logger)
         {
             _veiculoRepository = veiculoRepository;
@@ -31,7 +32,7 @@ namespace Application.Queries.Veiculo
                 var veiculosFiltrados = veiculos.AsQueryable();
 
                 if (!string.IsNullOrEmpty(request.Placa))
-                    veiculosFiltrados = veiculosFiltrados.Where(v => v.Placa.ToLower().Contains(request.Placa.ToLower()));
+                    veiculosFiltrados = veiculosFiltrados.Where(v => v.Placa.Numero.ToLower().Contains(request.Placa.ToLower()));
 
                 if (!string.IsNullOrEmpty(request.Modelo))
                     veiculosFiltrados = veiculosFiltrados.Where(v => v.Modelo.ToLower().Contains(request.Modelo.ToLower()));

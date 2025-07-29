@@ -1,66 +1,40 @@
 using Application.Commands.Viagem;
+using Application.Validators.Base;
 using FluentValidation;
 
 namespace Application.Validators.Viagem;
 
-public class CriarViagemCommandValidator : AbstractValidator<CriarViagemCommand>
+public class CriarViagemCommandValidator : BaseValidator<CriarViagemCommand>
 {
     public CriarViagemCommandValidator()
     {
-        RuleFor(x => x.DataViagem)
-            .NotEmpty()
-            .WithMessage("A data da viagem é obrigatória")
-            .GreaterThanOrEqualTo(DateTime.Today)
-            .WithMessage("A data da viagem deve ser maior ou igual a data atual");
+        ValidarDataObrigatoria(RuleFor(x => x.DataViagem), "data da viagem");
+        ValidarDataFutura(RuleFor(x => x.DataViagem), "data da viagem");
 
         RuleFor(x => x.HorarioSaida)
-            .NotEmpty()
+            .Must(h => h != TimeSpan.Zero)
             .WithMessage("O horário de saída é obrigatório");
 
         RuleFor(x => x.HorarioChegada)
-            .NotEmpty()
+            .Must(h => h != TimeSpan.Zero)
             .WithMessage("O horário de chegada é obrigatório")
             .GreaterThan(x => x.HorarioSaida)
             .WithMessage("O horário de chegada deve ser maior que o horário de saída");
 
-        RuleFor(x => x.VeiculoId)
-            .GreaterThan(0)
-            .WithMessage("O veículo é obrigatório");
-
-        RuleFor(x => x.MotoristaId)
-            .GreaterThan(0)
-            .WithMessage("O motorista é obrigatório");
-
-        RuleFor(x => x.LocalidadeOrigemId)
-            .GreaterThan(0)
-            .WithMessage("A localidade de origem é obrigatória");
-
+        ValidarIdObrigatorio(RuleFor(x => x.VeiculoId), "veículo");
+        ValidarIdObrigatorio(RuleFor(x => x.MotoristaId), "motorista");
+        ValidarIdObrigatorio(RuleFor(x => x.LocalidadeOrigemId), "localidade de origem");
+        
+        ValidarIdObrigatorio(RuleFor(x => x.LocalidadeDestinoId), "localidade de destino");
+        
         RuleFor(x => x.LocalidadeDestinoId)
-            .GreaterThan(0)
-            .WithMessage("A localidade de destino é obrigatória")
             .NotEqual(x => x.LocalidadeOrigemId)
             .WithMessage("A localidade de destino deve ser diferente da localidade de origem");
 
-        RuleFor(x => x.ValorPassagem)
-            .GreaterThan(0)
-            .WithMessage("O valor da passagem deve ser maior que zero");
+        ValidarQuantidadePositiva(RuleFor(x => x.QuantidadeVagas), "quantidade de vagas");
+        ValidarValorPositivo(RuleFor(x => x.Distancia), "distância");
 
-        RuleFor(x => x.QuantidadeVagas)
-            .GreaterThan(0)
-            .WithMessage("A quantidade de vagas deve ser maior que zero");
-
-        RuleFor(x => x.Distancia)
-            .GreaterThan(0)
-            .WithMessage("A distância deve ser maior que zero");
-
-        RuleFor(x => x.DescricaoViagem)
-            .NotEmpty()
-            .WithMessage("A descrição da viagem é obrigatória")
-            .MaximumLength(500)
-            .WithMessage("A descrição da viagem deve ter no máximo 500 caracteres");
-
-        RuleFor(x => x.PolilinhaRota)
-            .NotEmpty()
-            .WithMessage("A rota é obrigatória");
+        ValidarTextoObrigatorio(RuleFor(x => x.DescricaoViagem), "descrição da viagem", 500);
+        ValidarTextoObrigatorio(RuleFor(x => x.PolilinhaRota), "polilinha da rota", 10000);
     }
 } 

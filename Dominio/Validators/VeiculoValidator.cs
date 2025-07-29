@@ -8,10 +8,8 @@ namespace Dominio.Validators
         public VeiculoValidator()
         {
             RuleFor(v => v.Placa)
-                .NotEmpty().WithMessage("A placa é obrigatória.")
-                .Length(7).WithMessage("A placa deve ter 7 caracteres.")
-                .Matches("^[A-Z]{3}[0-9]{4}$|^[A-Z]{3}[0-9][A-Z][0-9]{2}$").WithMessage("Formato de placa inválido. Formatos aceitos: antigo (AAA1234) ou Mercosul (AAA1A23).");
-
+                .NotNull().WithMessage("A placa é obrigatória.");
+           
             RuleFor(v => v.Modelo)
                 .NotEmpty().WithMessage("O modelo é obrigatório.");
 

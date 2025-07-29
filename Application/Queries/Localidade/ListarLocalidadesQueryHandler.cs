@@ -1,7 +1,8 @@
 using Application.Common;
 using Application.Queries.Localidade.Models;
 using AutoMapper;
-using Dominio.Interfaces.Infra.Data.Localidades;
+using Dominio.Interfaces.Infra.Data;
+using LocalidadeEntity = Dominio.Entidades.Localidades.Localidade;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -9,12 +10,12 @@ namespace Application.Queries.Localidade;
 
 public class ListarLocalidadesQueryHandler : IRequestHandler<ListarLocalidadesQuery, BaseResponse<IEnumerable<LocalidadeDto>>>
 {
-    private readonly ILocalidadeRepository _localidadeRepository;
+    private readonly IGenericRepository<LocalidadeEntity> _localidadeRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<ListarLocalidadesQueryHandler> _logger;
 
     public ListarLocalidadesQueryHandler(
-        ILocalidadeRepository localidadeRepository,
+        IGenericRepository<LocalidadeEntity> localidadeRepository,
         IMapper mapper,
         ILogger<ListarLocalidadesQueryHandler> logger)
     {

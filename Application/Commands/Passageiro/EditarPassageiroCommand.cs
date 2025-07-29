@@ -29,9 +29,7 @@ public class EditarPassageiroCommand : BaseCommand<BaseResponse<bool>>
         long localidadeEmbarqueId,
         long localidadeDesembarqueId,
         string observacao,
-        bool situacao,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        bool situacao)
     {
         Id = id;
         Nome = nome;

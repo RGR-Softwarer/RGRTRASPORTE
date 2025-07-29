@@ -10,9 +10,7 @@ public class RemoverPassageiroViagemCommand : BaseCommand<BaseResponse<bool>>
 
     public RemoverPassageiroViagemCommand(
         long viagemId,
-        long passageiroId,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        long passageiroId)
     {
         ViagemId = viagemId;
         PassageiroId = passageiroId;

@@ -39,7 +39,7 @@ namespace RGRTRASPORTE.Controllers.Veiculos
         {
             var modelo = await _mediator.Send(new ObterModeloVeicularPorIdQuery(id));
             if (modelo == null)
-                return NoContent();
+                return await RGRResult(System.Net.HttpStatusCode.NotFound, $"Modelo veicular com ID {id} não encontrado");
 
             return await RGRResult(System.Net.HttpStatusCode.OK, modelo);
         }
@@ -64,7 +64,7 @@ namespace RGRTRASPORTE.Controllers.Veiculos
         [HttpDelete("{id}")]
         public async Task<IActionResult> Remover(long id)
         {
-            var command = new RemoverModeloVeicularCommand(id, User.Identity.Name, User.Identity.Name);
+            var command = new RemoverModeloVeicularCommand(id);
             var result = await _mediator.Send(command);
             return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }

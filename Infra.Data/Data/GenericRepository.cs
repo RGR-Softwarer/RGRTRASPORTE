@@ -1,7 +1,4 @@
-﻿using Dominio.Dtos.Auditoria;
-using Dominio.Entidades;
-using Dominio.Entidades.Auditoria;
-using Dominio.Enums.Auditoria;
+﻿using Dominio.Entidades;
 using Dominio.Interfaces.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -99,22 +96,14 @@ namespace Infra.Data.Data
             return await query.Skip(inicioRegistros).Take(maximoRegistros).ToListAsync(cancellationToken);
         }
 
-        public async Task<T> ObterPorIdAsync(long id, bool auditado = false, CancellationToken cancellationToken = default)
+        public async Task<T> ObterPorIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            var registro = await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-
-            if (auditado)
-                registro?.Initialize();
-
-            return registro;
+            return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
-        public async Task AdicionarAsync(T entidade, AuditadoDto auditado = null, CancellationToken cancellationToken = default)
+        public async Task AdicionarAsync(T entidade, CancellationToken cancellationToken = default)
         {
             await AddAsync(entidade, cancellationToken);
-
-            if (auditado != null)
-                AuditarAsync(auditado, entidade, null, AcaoBancoDadosEnum.Insert);
         }
 
         public async Task AdicionarEmLoteAsync(List<T> listaEntidades, CancellationToken cancellationToken = default)
@@ -122,13 +111,9 @@ namespace Infra.Data.Data
             await AddManyAsync(listaEntidades, cancellationToken);
         }
 
-        public async Task AtualizarAsync(T entidade, AuditadoDto auditado = null)
+        public async Task AtualizarAsync(T entidade)
         {
             Update(entidade);
-
-            if (auditado != null)
-                AuditarAsync(auditado, entidade, entidade.GetChanges(), AcaoBancoDadosEnum.Update);
-
             await Task.CompletedTask;
         }
 
@@ -175,14 +160,12 @@ namespace Infra.Data.Data
 
         private void Update(T entity)
         {
-            _context.Set<T>().Attach(entity);
-            _context.GetEntry(entity).State = EntityState.Modified;
+            _context.Set<T>().Update(entity);
         }
 
         private void UpdateMany(List<T> entities)
         {
-            _context.Set<T>().AttachRange(entities);
-            _context.GetEntry(entities).State = EntityState.Modified;
+            _context.Set<T>().UpdateRange(entities);
         }
 
         private void Remove(T entity)
@@ -195,34 +178,6 @@ namespace Infra.Data.Data
             _context.Set<T>().RemoveRange(listaEntidades);
         }
 
-        #endregion Métodos Privados     
-
-        #region Métodos Privados - Auditoria
-
-        private void AuditarAsync(AuditadoDto auditado, T entidade, List<HistoricoPropriedade> alteracoes, AcaoBancoDadosEnum acao, string descricaoAcao = "")
-        {
-            if (_context.PendingEntities == null)
-                return;
-
-            var historico = new HistoricoObjeto
-            {
-                CodigoObjeto = entidade.Id,
-                Data = DateTime.UtcNow,
-                Objeto = entidade.GetType().Name,
-                Acao = acao,
-                DescricaoObjeto = entidade.DescricaoAuditoria ?? string.Empty,
-                DescricaoAcao = !string.IsNullOrWhiteSpace(descricaoAcao) ? descricaoAcao : acao.ObterDescricao(),
-                IP = auditado.IP,
-                TipoAuditado = auditado.TipoAuditado,
-                OrigemAuditado = auditado.OrigemAuditado
-            };
-
-            if (alteracoes?.Count > 0)
-                historico.HistoricoPropriedade = alteracoes;
-
-            _context.PendingEntities.Add((entidade, historico));
-        }
-
-        #endregion
+        #endregion Métodos Privados             
     }
 }

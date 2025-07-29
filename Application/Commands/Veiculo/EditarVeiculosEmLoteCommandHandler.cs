@@ -1,5 +1,6 @@
 using Application.Common;
-using Dominio.Interfaces.Infra.Data.Veiculo;
+using Dominio.Interfaces.Infra.Data;
+using VeiculoEntity = Dominio.Entidades.Veiculos.Veiculo;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -7,11 +8,11 @@ namespace Application.Commands.Veiculo;
 
 public class EditarVeiculosEmLoteCommandHandler : IRequestHandler<EditarVeiculosEmLoteCommand, BaseResponse<bool>>
 {
-    private readonly IVeiculoRepository _veiculoRepository;
+    private readonly IGenericRepository<VeiculoEntity> _veiculoRepository;
     private readonly ILogger<EditarVeiculosEmLoteCommandHandler> _logger;
 
     public EditarVeiculosEmLoteCommandHandler(
-        IVeiculoRepository veiculoRepository,
+        IGenericRepository<VeiculoEntity> veiculoRepository,
         ILogger<EditarVeiculosEmLoteCommandHandler> logger)
     {
         _veiculoRepository = veiculoRepository;
@@ -25,7 +26,7 @@ public class EditarVeiculosEmLoteCommandHandler : IRequestHandler<EditarVeiculos
             _logger.LogInformation("Iniciando edição em lote de {Quantidade} veículos", request.Veiculos.Count());
 
             var veiculos = request.Veiculos.Select(v => {
-                var veiculo = new Dominio.Entidades.Veiculos.Veiculo(
+                var veiculo = Dominio.Entidades.Veiculos.Veiculo.CriarVeiculo(
                     v.Placa,
                     v.Modelo,
                     v.Marca,

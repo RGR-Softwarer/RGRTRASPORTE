@@ -1,15 +1,16 @@
 using MediatR;
 using AutoMapper;
-using Dominio.Interfaces.Infra.Data.Viagens.Gatilho;
+using Dominio.Interfaces.Infra.Data;
+using GatilhoViagemEntity = Dominio.Entidades.Viagens.Gatilho.GatilhoViagem;
 
 namespace Application.Queries.Viagem.Gatilho;
 
 public class ObterGatilhoViagemPorIdQueryHandler : IRequestHandler<ObterGatilhoViagemPorIdQuery, GatilhoViagemDto>
 {
-    private readonly IGatilhoViagemRepository _repository;
+    private readonly IGenericRepository<GatilhoViagemEntity> _repository;
     private readonly IMapper _mapper;
 
-    public ObterGatilhoViagemPorIdQueryHandler(IGatilhoViagemRepository repository, IMapper mapper)
+    public ObterGatilhoViagemPorIdQueryHandler(IGenericRepository<GatilhoViagemEntity> repository, IMapper mapper)
     {
         _repository = repository;
         _mapper = mapper;

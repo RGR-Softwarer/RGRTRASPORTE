@@ -1,4 +1,5 @@
-﻿using Dominio.Dtos;
+﻿using Application.Dtos;
+using Dominio.Dtos;
 using Infra.CrossCutting.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -33,18 +34,18 @@ namespace RGRTRASPORTE.Filtros
             }
         }
 
-        private static RetornoGenericoDto CriarResultadoCustomizado(ExceptionContext contexto, object value = null)
+        private static RetornoGenericoDto<object> CriarResultadoCustomizado(ExceptionContext contexto, object value = null)
         {
             var mensagens = new List<string>
             {
                 contexto.Exception.Message
             };
 
-            return new RetornoGenericoDto
+            return new RetornoGenericoDto<object>
             {
                 Sucesso = true,
                 Dados = value,
-                Mensagens = mensagens
+                Mensagem = contexto.Exception.Message
             };
         }
     }

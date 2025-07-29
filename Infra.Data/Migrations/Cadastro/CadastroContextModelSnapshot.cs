@@ -17,10 +17,85 @@ namespace Infra.Data.Migrations.Cadastro
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.1")
+                .HasAnnotation("ProductVersion", "8.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Dominio.Entidades.Auditoria.RegistroAuditoria", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("RAU_ID");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("Acao")
+                        .HasColumnType("integer")
+                        .HasColumnName("RAU_ACAO");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("RAU_CREATED_AT");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("RAU_CREATED_BY");
+
+                    b.Property<string>("Dados")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("RAU_DADOS");
+
+                    b.Property<DateTime>("DataOcorrencia")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("RAU_DATA_OCORRENCIA");
+
+                    b.Property<long>("EntidadeId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("RAU_ENTIDADE_ID");
+
+                    b.Property<string>("IP")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("RAU_IP");
+
+                    b.Property<string>("NomeEntidade")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("RAU_NOME_ENTIDADE");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("RAU_UPDATED_AT");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("RAU_UPDATED_BY");
+
+                    b.Property<string>("Usuario")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("RAU_USUARIO");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("UpdatedAt");
+
+                    b.HasIndex("UpdatedBy");
+
+                    b.ToTable("T_REGISTRO_AUDITORIA", (string)null);
+                });
 
             modelBuilder.Entity("Dominio.Entidades.Localidades.Localidade", b =>
                 {
@@ -35,43 +110,18 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("boolean")
                         .HasColumnName("LOC_ATIVO");
 
-                    b.Property<string>("Bairro")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_BAIRRO");
-
-                    b.Property<string>("Cep")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_CEP");
-
-                    b.Property<string>("Cidade")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_CIDADE");
-
-                    b.Property<string>("Complemento")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_COMPLEMENTO");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("LOC_CREATED_AT");
 
-                    b.Property<string>("Estado")
+                    b.Property<string>("CreatedBy")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("LOC_UF");
+                        .HasColumnName("LOC_CREATED_BY");
 
                     b.Property<decimal>("Latitude")
                         .HasColumnType("numeric")
                         .HasColumnName("LOC_LATITUDE");
-
-                    b.Property<string>("Logradouro")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_LOGRADOURO");
 
                     b.Property<decimal>("Longitude")
                         .HasColumnType("numeric")
@@ -82,20 +132,24 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("text")
                         .HasColumnName("LOC_NOME");
 
-                    b.Property<string>("Numero")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("LOC_NUMERO");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("LOC_UPDATED_AT");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("LOC_UPDATED_BY");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedAt");
 
+                    b.HasIndex("CreatedBy");
+
                     b.HasIndex("UpdatedAt");
+
+                    b.HasIndex("UpdatedBy");
 
                     b.ToTable("T_LOCALIDADE", (string)null);
                 });
@@ -127,19 +181,19 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("MOT_CREATED_AT");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("MOT_CREATED_BY");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("MOT_EMAIL");
 
-                    b.Property<long>("LocalidadeDesembarqueId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("LocalidadeEmbarqueId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("LocalidadeId")
-                        .HasColumnType("bigint");
+                        .HasColumnType("bigint")
+                        .HasColumnName("LOC_ID");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -147,15 +201,18 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnName("MOT_NOME");
 
                     b.Property<string>("Observacao")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("MOT_OBSERVACAO");
 
                     b.Property<string>("RG")
+                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("MOT_RG");
 
                     b.Property<int>("Sexo")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("MOT_SEXO");
 
                     b.Property<bool>("Situacao")
                         .HasColumnType("boolean")
@@ -170,6 +227,11 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("MOT_UPDATED_AT");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("MOT_UPDATED_BY");
+
                     b.Property<DateTime>("ValidadeCNH")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("MOT_VALIDADE_CNH");
@@ -178,7 +240,11 @@ namespace Infra.Data.Migrations.Cadastro
 
                     b.HasIndex("CreatedAt");
 
+                    b.HasIndex("CreatedBy");
+
                     b.HasIndex("UpdatedAt");
+
+                    b.HasIndex("UpdatedBy");
 
                     b.ToTable("T_MOTORISTA", (string)null);
                 });
@@ -200,6 +266,11 @@ namespace Infra.Data.Migrations.Cadastro
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("PAS_CREATED_AT");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("PAS_CREATED_BY");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -247,9 +318,16 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("PAS_UPDATED_AT");
 
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("PAS_UPDATED_BY");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedAt");
+
+                    b.HasIndex("CreatedBy");
 
                     b.HasIndex("LocalidadeDesembarqueId");
 
@@ -258,6 +336,8 @@ namespace Infra.Data.Migrations.Cadastro
                     b.HasIndex("LocalidadeId");
 
                     b.HasIndex("UpdatedAt");
+
+                    b.HasIndex("UpdatedBy");
 
                     b.ToTable("T_PASSAGEIRO", (string)null);
                 });

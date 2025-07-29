@@ -7,10 +7,7 @@ public class RemoverGatilhoViagemCommand : BaseCommand<BaseResponse<bool>>
 {
     public long Id { get; private set; }
 
-    public RemoverGatilhoViagemCommand(
-        long id,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+    public RemoverGatilhoViagemCommand(long id)
     {
         Id = id;
     }

@@ -1,5 +1,6 @@
 using Application.Common;
-using Dominio.Interfaces.Infra.Data.Veiculo;
+using Dominio.Interfaces.Infra.Data;
+using ModeloVeicularEntity = Dominio.Entidades.Veiculos.ModeloVeicular;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -7,11 +8,11 @@ namespace Application.Commands.Veiculo.ModeloVeicular;
 
 public class RemoverModeloVeicularCommandHandler : IRequestHandler<RemoverModeloVeicularCommand, BaseResponse<bool>>
 {
-    private readonly IModeloVeicularRepository _modeloVeicularRepository;
+    private readonly IGenericRepository<ModeloVeicularEntity> _modeloVeicularRepository;
     private readonly ILogger<RemoverModeloVeicularCommandHandler> _logger;
 
     public RemoverModeloVeicularCommandHandler(
-        IModeloVeicularRepository modeloVeicularRepository,
+        IGenericRepository<ModeloVeicularEntity> modeloVeicularRepository,
         ILogger<RemoverModeloVeicularCommandHandler> logger)
     {
         _modeloVeicularRepository = modeloVeicularRepository;

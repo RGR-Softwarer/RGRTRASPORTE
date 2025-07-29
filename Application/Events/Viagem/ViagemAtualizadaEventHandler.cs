@@ -1,19 +1,24 @@
-using Dominio.Interfaces.Hangfire;
-using Hangfire;
+using Dominio.Events.Viagens;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Events.Viagem
 {
     public class ViagemAtualizadaEventHandler : INotificationHandler<ViagemAtualizadaEvent>
     {
+        private readonly ILogger<ViagemAtualizadaEventHandler> _logger;
+
+        public ViagemAtualizadaEventHandler(ILogger<ViagemAtualizadaEventHandler> logger)
+        {
+            _logger = logger;
+        }
+
         public Task Handle(ViagemAtualizadaEvent notification, CancellationToken cancellationToken)
         {
-            BackgroundJob.Enqueue<IProcessadorDeEventoService>(job =>
-                job.ProcessarViagemAtualizada(new Dominio.Dtos.Viagens.ViagemAtualizadaJobData()
-                {
-                    ViagemId = notification.ViagemId,
-                }));
-
+            _logger.LogInformation("Viagem {ViagemId} foi atualizada", notification.ViagemId);
+            
+            // TODO: Implementar processamento específico se necessário
+            
             return Task.CompletedTask;
         }
     }

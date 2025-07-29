@@ -1,5 +1,4 @@
-﻿using Dominio.Dtos.Auditoria;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Dominio.Interfaces.Infra.Data
 {
@@ -13,12 +12,12 @@ namespace Dominio.Interfaces.Infra.Data
                 bool isDescending = false,
                 Expression<Func<T, bool>> filter = null); 
         Task<List<T>> ObterTodosAsync(CancellationToken cancellationToken = default);
-        Task<T> ObterPorIdAsync(long id, bool auditado = false, CancellationToken cancellationToken = default);
+        Task<T> ObterPorIdAsync(long id, CancellationToken cancellationToken = default);
         Task AdicionarEmLoteAsync(List<T> listaEntidades, CancellationToken cancellationToken = default);
         Task RemoverAsync(T entidade);
         Task RemoverEmLoteAsync(List<T> listaEntidades);
-        Task AtualizarAsync(T entidade, AuditadoDto auditado = null);
+        Task AtualizarAsync(T entidade);
         Task AtualizarEmLoteAsync(List<T> listaEntidades);
-        Task AdicionarAsync(T entidade, AuditadoDto auditado = null, CancellationToken cancellationToken = default);
+        Task AdicionarAsync(T entidade, CancellationToken cancellationToken = default);
     }
 }

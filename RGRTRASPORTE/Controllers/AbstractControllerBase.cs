@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using Application.Common;
 using Microsoft.Extensions.Logging;
+using Application.Dtos;
 
 namespace RGRTRASPORTE.Controllers
 {
@@ -24,14 +25,11 @@ namespace RGRTRASPORTE.Controllers
             // Se há erro, ignora o value e retorna só as mensagens de erro
             if (existeErro)
             {
-                var resposta = new RetornoGenericoDto
+                var resposta = new RetornoGenericoDto<object>
                 {
                     Dados = null,
-                    Mensagens = _notificationHandler.GetNotifications().Select(x => x.Message).ToList(),
                     Sucesso = false,
-                    Pagina = pagina,
-                    Limite = limite,
-                    Quantidade = quantidade
+                    Mensagem = string.Join(", ", _notificationHandler.GetNotifications().Select(x => x.Message))
                 };
 
                 return Task.FromResult<ActionResult>(new ObjectResult(resposta)
@@ -57,15 +55,11 @@ namespace RGRTRASPORTE.Controllers
                 }
             }
 
-            var respostaSucesso = new RetornoGenericoDto
+            var respostaSucesso = new RetornoGenericoDto<object>
             {
                 Dados = dados,
-                Mensagens = new List<string>(),
                 Sucesso = true,
-                Pagina = pagina,
-                Limite = limite,
-                Quantidade = quantidade ?? (dados is System.Collections.IEnumerable enumerable && dados is not string ? 
-                    enumerable.Cast<object>().Count() : null)
+                Mensagem = "Operação realizada com sucesso"
             };
 
             return Task.FromResult<ActionResult>(new ObjectResult(respostaSucesso)

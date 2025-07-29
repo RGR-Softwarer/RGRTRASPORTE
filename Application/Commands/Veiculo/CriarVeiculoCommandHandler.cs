@@ -1,31 +1,27 @@
 using Application.Common;
-using Dominio.Interfaces.Infra.Data.Veiculo;
+using Dominio.Interfaces.Infra.Data;
+using VeiculoEntity = Dominio.Entidades.Veiculos.Veiculo;
+using Dominio.ValueObjects;
 using MediatR;
-using Microsoft.Extensions.Logging;
 
-namespace Application.Commands.Veiculo;
-
-public class CriarVeiculoCommandHandler : IRequestHandler<CriarVeiculoCommand, BaseResponse<long>>
+namespace Application.Commands.Veiculo
 {
-    private readonly IVeiculoRepository _veiculoRepository;
-    private readonly ILogger<CriarVeiculoCommandHandler> _logger;
-
-    public CriarVeiculoCommandHandler(
-        IVeiculoRepository veiculoRepository,
-        ILogger<CriarVeiculoCommandHandler> logger)
+    public class CriarVeiculoCommandHandler : IRequestHandler<CriarVeiculoCommand, BaseResponse<long>>
     {
-        _veiculoRepository = veiculoRepository;
-        _logger = logger;
-    }
+        private readonly IGenericRepository<VeiculoEntity> _veiculoRepository;
 
-    public async Task<BaseResponse<long>> Handle(CriarVeiculoCommand request, CancellationToken cancellationToken)
-    {
-        try
+        public CriarVeiculoCommandHandler(
+            IGenericRepository<VeiculoEntity> veiculoRepository)
         {
-            _logger.LogInformation("Iniciando criação de veículo com placa {Placa}", request.Placa);
+            _veiculoRepository = veiculoRepository;
+        }
 
-            var veiculo = new Dominio.Entidades.Veiculos.Veiculo(
-                request.Placa,
+        public async Task<BaseResponse<long>> Handle(CriarVeiculoCommand request, CancellationToken cancellationToken)
+        {
+            var placa = new Placa(request.Placa);
+            
+            var veiculo = Dominio.Entidades.Veiculos.Veiculo.CriarVeiculo(
+                placa,
                 request.Modelo,
                 request.Marca,
                 request.NumeroChassi,
@@ -39,16 +35,8 @@ public class CriarVeiculoCommandHandler : IRequestHandler<CriarVeiculoCommand, B
                 request.Observacao,
                 request.ModeloVeiculoId);
 
-            await _veiculoRepository.AdicionarAsync(veiculo, cancellationToken: cancellationToken);
-
-            _logger.LogInformation("Veículo criado com sucesso. ID: {VeiculoId}", veiculo.Id);
-
-            return BaseResponse<long>.Ok(veiculo.Id, "Veículo criado com sucesso");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Erro ao criar veículo");
-            return BaseResponse<long>.Erro("Erro ao criar veículo", new List<string> { ex.Message });
+            await _veiculoRepository.AdicionarAsync(veiculo);
+            return BaseResponse<long>.Ok(veiculo.Id);
         }
     }
 } 

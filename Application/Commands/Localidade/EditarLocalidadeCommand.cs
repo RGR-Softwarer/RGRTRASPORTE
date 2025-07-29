@@ -30,9 +30,7 @@ public class EditarLocalidadeCommand : BaseCommand<BaseResponse<bool>>
         string complemento,
         decimal latitude,
         decimal longitude,
-        bool ativo,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        bool ativo)
     {
         Id = id;
         Nome = nome;

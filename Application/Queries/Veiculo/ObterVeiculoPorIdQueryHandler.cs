@@ -1,7 +1,8 @@
 using Application.Common;
 using Application.Queries.Veiculo.Models;
 using AutoMapper;
-using Dominio.Interfaces.Infra.Data.Veiculo;
+using Dominio.Interfaces.Infra.Data;
+using VeiculoEntity = Dominio.Entidades.Veiculos.Veiculo;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -9,12 +10,12 @@ namespace Application.Queries.Veiculo;
 
 public class ObterVeiculoPorIdQueryHandler : IRequestHandler<ObterVeiculoPorIdQuery, BaseResponse<VeiculoDto>>
 {
-    private readonly IVeiculoRepository _veiculoRepository;
+    private readonly IGenericRepository<VeiculoEntity> _veiculoRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<ObterVeiculoPorIdQueryHandler> _logger;
 
     public ObterVeiculoPorIdQueryHandler(
-        IVeiculoRepository veiculoRepository,
+        IGenericRepository<VeiculoEntity> veiculoRepository,
         IMapper mapper,
         ILogger<ObterVeiculoPorIdQueryHandler> logger)
     {

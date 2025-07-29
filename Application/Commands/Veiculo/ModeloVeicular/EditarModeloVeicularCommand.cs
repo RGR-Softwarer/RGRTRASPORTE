@@ -28,8 +28,7 @@ public class EditarModeloVeicularCommand : BaseCommand<BaseResponse<bool>>
         bool possuiBanheiro,
         bool possuiClimatizador,
         bool situacao,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        bool ativo)
     {
         Id = id;
         Descricao = descricao;

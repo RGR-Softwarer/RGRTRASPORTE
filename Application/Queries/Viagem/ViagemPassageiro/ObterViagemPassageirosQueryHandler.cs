@@ -1,20 +1,21 @@
 using Application.Common;
 using Application.Queries.Viagem.Models;
-using Dominio.Interfaces.Infra.Data.Viagens;
+using Dominio.Interfaces.Infra.Data;
 using Dominio.Interfaces.Infra.Data.Passageiros;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using ViagemPassageiroEntity = Dominio.Entidades.Viagens.ViagemPassageiro;
 
 namespace Application.Queries.Viagem.ViagemPassageiro
 {
     public class ObterViagemPassageirosQueryHandler : IRequestHandler<ObterViagemPassageirosQuery, BaseResponse<IEnumerable<ViagemPassageiroDto>>>
     {
-        private readonly IViagemPassageiroRepository _viagemPassageiroRepository;
+        private readonly IGenericRepository<ViagemPassageiroEntity> _viagemPassageiroRepository;
         private readonly IPassageiroRepository _passageiroRepository;
         private readonly ILogger<ObterViagemPassageirosQueryHandler> _logger;
 
         public ObterViagemPassageirosQueryHandler(
-            IViagemPassageiroRepository viagemPassageiroRepository,
+            IGenericRepository<ViagemPassageiroEntity> viagemPassageiroRepository,
             IPassageiroRepository passageiroRepository,
             ILogger<ObterViagemPassageirosQueryHandler> logger)
         {
@@ -51,7 +52,7 @@ namespace Application.Queries.Viagem.ViagemPassageiro
                             incluirPassageiro &= passageiro.Nome.ToLower().Contains(request.NomePassageiro.ToLower());
 
                         if (!string.IsNullOrEmpty(request.CPFPassageiro))
-                            incluirPassageiro &= passageiro.CPF.Contains(request.CPFPassageiro);
+                            incluirPassageiro &= passageiro.CPF.Numero.Equals(request.CPFPassageiro);
 
                         if (incluirPassageiro)
                         {

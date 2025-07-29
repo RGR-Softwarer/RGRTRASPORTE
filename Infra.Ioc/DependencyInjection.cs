@@ -7,19 +7,12 @@ using Infra.Ioc.HealthChecks;
 using Infra.Ioc.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.OpenApi.Models;
-using Infra.Data.Repositories.Localidades;
 using Infra.Data.Repositories.Passageiros;
 using Infra.Data.Repositories;
 using Infra.Data.Repositories.Viagens;
-using Infra.Data.Repositories.Motorista;
-using Infra.Data.Repositories.Viagens.Gatilho;
 using Infra.Data.Data;
-using Dominio.Interfaces.Infra.Data.Localidades;
 using Dominio.Interfaces.Infra.Data.Passageiros;
-using Dominio.Interfaces.Infra.Data.Veiculo;
 using Dominio.Interfaces.Infra.Data.Viagens;
-using Dominio.Interfaces.Infra.Data.Motorista;
-using Dominio.Interfaces.Infra.Data.Viagens.Gatilho;
 using Dominio.Interfaces.Infra.Data;
 using Service.Services.Hangifre;
 using Dominio.Interfaces.Service.Viagens;
@@ -108,16 +101,8 @@ namespace Infra.Ioc
             // Registro do GenericRepository
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             
-            // Garantindo que os repositórios principais estejam registrados
-            services.AddScoped<Dominio.Interfaces.Infra.Data.Localidades.ILocalidadeRepository, Infra.Data.Repositories.Localidades.LocalidadeRepository>();
+            // Manter apenas o registro do PassageiroRepository que tem implementação específica
             services.AddScoped<Dominio.Interfaces.Infra.Data.Passageiros.IPassageiroRepository, Infra.Data.Repositories.Passageiros.PassageiroRepository>();
-            services.AddScoped<Dominio.Interfaces.Infra.Data.Veiculo.IVeiculoRepository, Infra.Data.Repositories.VeiculoRepository>();
-            services.AddScoped<Dominio.Interfaces.Infra.Data.Veiculo.IModeloVeicularRepository, Infra.Data.Repositories.ModeloVeicularRepository>();
-            services.AddScoped<Dominio.Interfaces.Infra.Data.Viagens.IViagemRepository, Infra.Data.Repositories.Viagens.ViagemRepository>();
-            services.AddScoped<Dominio.Interfaces.Infra.Data.Viagens.IViagemPassageiroRepository, Infra.Data.Repositories.Viagens.ViagemPassageiroRepository>();
-            services.AddScoped<Dominio.Interfaces.Infra.Data.Viagens.IViagemPosicaoRepository, Infra.Data.Repositories.Viagens.ViagemPosicaoRepository>();
-            services.AddScoped<Dominio.Interfaces.Infra.Data.Motorista.IMotoristaRepository, Infra.Data.Repositories.Motorista.MotoristaRepository>();
-            services.AddScoped<Dominio.Interfaces.Infra.Data.Viagens.Gatilho.IGatilhoViagemRepository, Infra.Data.Repositories.Viagens.Gatilho.GatilhoViagemRepository>();
 
             // === REGISTROS MANUAIS ESPECÍFICOS DE SERVICES ===
             // Apenas serviços cross-cutting

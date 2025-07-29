@@ -5,38 +5,43 @@ namespace Dominio.Interfaces.Infra.Data.Viagens
 {
     public interface IViagemRepository : IGenericRepository<Viagem>
     {
-        Task<Viagem> ObterViagemCompletaPorIdAsync(long id);
+        // Métodos de consulta básicos
+        Task<Viagem?> ObterPorIdComIncludes(long id);
         Task<IEnumerable<Viagem>> ObterViagensPorSituacaoAsync(SituacaoViagemEnum situacao);
         Task<IEnumerable<Viagem>> ObterViagensPorDataAsync(DateTime dataInicio, DateTime dataFim);
         Task<IEnumerable<Viagem>> ObterViagensPorLocalidadeAsync(long localidadeId, bool origem = true);
-        Task<IEnumerable<Viagem>> ObterViagensPorVeiculoAsync(long veiculoId);
-        Task<bool> ExisteViagemConflitanteAsync(DateTime data, TimeSpan horaSaida, TimeSpan horaChegada, long veiculoId, long? viagemIdExcluir = null);
-        Task<bool> ExisteViagemAgendadaParaVeiculo(long veiculoId, DateTime data);
-        Task<bool> ExisteViagemAgendadaParaMotorista(long motoristaId, DateTime data);
         Task<IEnumerable<Viagem>> ObterViagensPorMotoristaAsync(long motoristaId);
-        Task<IEnumerable<Viagem>> ObterViagensPorPassageiroAsync(long passageiroId);
-        Task<IEnumerable<Viagem>> ObterViagensPorGatilhoAsync(long gatilhoId);
+        Task<IEnumerable<Viagem>> ObterViagensPorVeiculoAsync(long veiculoId);
+
+        // Métodos de verificação de existência
+        Task<bool> ExisteViagemConflitanteAsync(long veiculoId, DateTime data);
+        Task<bool> ExisteViagemMotoristaAsync(long motoristaId, DateTime data);
+        Task<bool> ExisteViagemVeiculoAsync(long veiculoId, DateTime data);
+        Task<bool> ExisteViagemNoPeriodoAsync(long veiculoId, DateTime data, TimeSpan horarioInicio, TimeSpan horarioFim);
+
+        // Métodos por estado/situação
+        Task<IEnumerable<Viagem>> ObterViagensAtivasAsync();
+        Task<IEnumerable<Viagem>> ObterViagensComVagasAsync();
+        Task<IEnumerable<Viagem>> ObterViagensLotadasAsync();
         Task<IEnumerable<Viagem>> ObterViagensEmAndamentoAsync();
-        Task<IEnumerable<Viagem>> ObterViagensAgendadasAsync();
-        Task<IEnumerable<Viagem>> ObterViagensFinalizadasAsync();
-        Task<IEnumerable<Viagem>> ObterViagensCanceladasAsync();
-        Task<IEnumerable<Viagem>> ObterViagensPorPeriodoAsync(DateTime dataInicio, DateTime dataFim, SituacaoViagemEnum? situacao = null);
+        Task<IEnumerable<Viagem>> ObterViagensFinalizadasAsync(DateTime dataInicio, DateTime dataFim);
+        Task<IEnumerable<Viagem>> ObterViagensAgendadasAsync(DateTime dataInicio, DateTime dataFim);
+
+        // Métodos por período
         Task<IEnumerable<Viagem>> ObterViagensPorVeiculoEPeriodoAsync(long veiculoId, DateTime dataInicio, DateTime dataFim);
         Task<IEnumerable<Viagem>> ObterViagensPorMotoristaEPeriodoAsync(long motoristaId, DateTime dataInicio, DateTime dataFim);
-        Task<IEnumerable<Viagem>> ObterViagensPorLocalidadeEPeriodoAsync(long localidadeId, bool origem, DateTime dataInicio, DateTime dataFim);
-        Task<IEnumerable<Viagem>> ObterViagensPorValorPassagemAsync(decimal valorMinimo, decimal valorMaximo);
-        Task<IEnumerable<Viagem>> ObterViagensPorDistanciaAsync(decimal distanciaMinima, decimal distanciaMaxima);
-        Task<IEnumerable<Viagem>> ObterViagensPorQuantidadeVagasAsync(int quantidadeMinima, int quantidadeMaxima);
-        Task<IEnumerable<Viagem>> ObterViagensPorVagasDisponiveisAsync(int quantidadeMinima, int quantidadeMaxima);
-        Task<IEnumerable<Viagem>> ObterViagensPorLotacaoAsync(bool lotado);
-        Task<IEnumerable<Viagem>> ObterViagensPorAtivoAsync(bool ativo);
-        Task<IEnumerable<Viagem>> ObterViagensPorGatilhoEPeriodoAsync(long gatilhoId, DateTime dataInicio, DateTime dataFim);
-        Task<IEnumerable<Viagem>> ObterViagensPorPassageiroEPeriodoAsync(long passageiroId, DateTime dataInicio, DateTime dataFim);
         Task<IEnumerable<Viagem>> ObterViagensPorSituacaoEPeriodoAsync(SituacaoViagemEnum situacao, DateTime dataInicio, DateTime dataFim);
-        Task<IEnumerable<Viagem>> ObterViagensPorSituacaoEVeiculoAsync(SituacaoViagemEnum situacao, long veiculoId);
-        Task<IEnumerable<Viagem>> ObterViagensPorSituacaoEMotoristaAsync(SituacaoViagemEnum situacao, long motoristaId);
-        Task<IEnumerable<Viagem>> ObterViagensPorSituacaoELocalidadeAsync(SituacaoViagemEnum situacao, long localidadeId, bool origem);
-        Task<IEnumerable<Viagem>> ObterViagensPorSituacaoEGatilhoAsync(SituacaoViagemEnum situacao, long gatilhoId);
-        Task<IEnumerable<Viagem>> ObterViagensPorSituacaoEPassageiroAsync(SituacaoViagemEnum situacao, long passageiroId);
+
+        // Métodos especializados
+        Task<IEnumerable<Viagem>> ObterViagensPorRota(long origemId, long destinoId);
+        Task<IEnumerable<Viagem>> ObterViagensPorGatilhoAsync(long gatilhoId, DateTime dataInicio, DateTime dataFim);
+        Task<IEnumerable<Viagem>> ObterViagensPassageiroAsync(long passageiroId, DateTime dataInicio, DateTime dataFim);
+        Task<IEnumerable<Viagem>> ObterViagensProximasAsync(DateTime data, TimeSpan horario, int minutos = 30);
+
+        // Métodos de contagem
+        Task<int> ContarViagensAtivas();
+        Task<int> ContarViagensComVagas();
+        Task<int> ContarViagensEmAndamento();
+        Task<int> ContarViagensFinalizadas();
     }
 }

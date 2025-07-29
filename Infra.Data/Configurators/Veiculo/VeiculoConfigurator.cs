@@ -13,6 +13,9 @@ namespace Infra.Data.Configurators.Veiculo
             builder.ToTable("T_VEICULO");
 
             builder.Property(p => p.Placa)
+                .HasConversion(
+                    placa => placa.Numero,
+                    numero => new Dominio.ValueObjects.Placa(numero))
                 .IsRequired()
                 .HasColumnName($"{prefixo}_PLACA");
 
@@ -63,6 +66,11 @@ namespace Infra.Data.Configurators.Veiculo
             builder.HasOne(h => h.ModeloVeiculo)
                 .WithMany(p => p.Veiculos)
                 .HasForeignKey(h => h.ModeloVeiculoId);
+
+            builder.Property(p => p.Situacao)
+                .IsRequired()
+                .HasConversion<int>()
+                .HasColumnName($"{prefixo}_SITUACAO");
         }
     }
 }

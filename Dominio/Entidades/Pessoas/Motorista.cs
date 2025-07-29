@@ -1,6 +1,8 @@
 ﻿using Dominio.Enums.Pessoas;
 using Dominio.Enums.Veiculo;
+using Dominio.Events.Base;
 using Dominio.Exceptions;
+using Dominio.ValueObjects;
 
 namespace Dominio.Entidades.Pessoas
 {
@@ -10,7 +12,7 @@ namespace Dominio.Entidades.Pessoas
 
         public Motorista(
             string nome,
-            string cpf,
+            CPF cpf,
             string rg,
             string telefone,
             string email,
@@ -28,6 +30,8 @@ namespace Dominio.Entidades.Pessoas
             CNH = cnh;
             CategoriaCNH = categoriaCNH;
             ValidadeCNH = validadeCNH;
+
+            AddDomainEvent(new MotoristaCriadoEvent(Id, nome, cpf.Numero));
         }
 
         public string RG { get; private set; }
@@ -49,12 +53,17 @@ namespace Dominio.Entidades.Pessoas
             CNH = cnh;
             CategoriaCNH = categoriaCNH;
             ValidadeCNH = validadeCNH;
+            UpdateTimestamp();
+
+            AddDomainEvent(new MotoristaDocumentosAtualizadosEvent(Id, Nome, CPF.Numero));
         }
 
         public void RenovarCNH(DateTime novaValidade)
         {
             ValidarValidadeCNH(novaValidade);
             ValidadeCNH = novaValidade;
+            UpdateTimestamp();
+            AddDomainEvent(new MotoristaCNHRenovadaEvent(Id, Nome, CPF.Numero, novaValidade));
         }
 
         public bool CNHExpirada => ValidadeCNH < DateTime.Today;
@@ -69,7 +78,7 @@ namespace Dominio.Entidades.Pessoas
             };
         }
 
-        protected override string DescricaoFormatada => $"{Nome} ({CPF_Formatado})";
+        protected override string DescricaoFormatada => $"{Nome} ({CPF.NumeroFormatado})";
 
         private void ValidarRG(string rg)
         {
@@ -109,5 +118,50 @@ namespace Dominio.Entidades.Pessoas
         }
 
         #endregion
+    }
+
+    // Eventos de domínio para Motorista
+    public class MotoristaCriadoEvent : DomainEvent
+    {
+        public long MotoristaId { get; }
+        public string Nome { get; }
+        public string CPF { get; }
+
+        public MotoristaCriadoEvent(long motoristaId, string nome, string cpf)
+        {
+            MotoristaId = motoristaId;
+            Nome = nome;
+            CPF = cpf;
+        }
+    }
+
+    public class MotoristaDocumentosAtualizadosEvent : DomainEvent
+    {
+        public long MotoristaId { get; }
+        public string Nome { get; }
+        public string CPF { get; }
+
+        public MotoristaDocumentosAtualizadosEvent(long motoristaId, string nome, string cpf)
+        {
+            MotoristaId = motoristaId;
+            Nome = nome;
+            CPF = cpf;
+        }
+    }
+
+    public class MotoristaCNHRenovadaEvent : DomainEvent
+    {
+        public long MotoristaId { get; }
+        public string Nome { get; }
+        public string CPF { get; }
+        public DateTime NovaValidade { get; }
+
+        public MotoristaCNHRenovadaEvent(long motoristaId, string nome, string cpf, DateTime novaValidade)
+        {
+            MotoristaId = motoristaId;
+            Nome = nome;
+            CPF = cpf;
+            NovaValidade = novaValidade;
+        }
     }
 }

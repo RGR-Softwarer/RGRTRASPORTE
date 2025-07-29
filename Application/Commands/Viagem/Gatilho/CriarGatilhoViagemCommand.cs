@@ -11,8 +11,7 @@ public class CriarGatilhoViagemCommand : BaseCommand<BaseResponse<long>>
     public CriarGatilhoViagemCommand(
         long viagemId,
         string descricao,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        bool ativo)
     {
         ViagemId = viagemId;
         Descricao = descricao;

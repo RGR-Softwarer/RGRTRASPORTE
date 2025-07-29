@@ -18,6 +18,9 @@ namespace Infra.Data.Configurators.Pessoa.Passageiros
                 .HasColumnName($"{prefixo}_NOME");
 
             builder.Property(p => p.CPF)
+                .HasConversion(
+                    cpf => cpf.Numero,
+                    numero => new Dominio.ValueObjects.CPF(numero))
                 .IsRequired()
                 .HasColumnName($"{prefixo}_CPF");
 
@@ -45,25 +48,13 @@ namespace Infra.Data.Configurators.Pessoa.Passageiros
                 .IsRequired()
                 .HasColumnName($"LOC_ID");
 
-            builder.HasOne(p => p.Localidade)
-                .WithMany()
-                .HasForeignKey(p => p.LocalidadeId);
-
             builder.Property(p => p.LocalidadeDesembarqueId)
                 .IsRequired()
                 .HasColumnName($"LOC_DESEMBARQUE_ID");
 
-            builder.HasOne(p => p.LocalidadeDesembarque)
-                .WithMany()
-                .HasForeignKey(p => p.LocalidadeDesembarqueId);
-
             builder.Property(p => p.LocalidadeEmbarqueId)
                 .IsRequired()
                 .HasColumnName($"LOC_EMBARQUE_ID");
-
-            builder.HasOne(p => p.LocalidadeEmbarque)
-                .WithMany()
-                .HasForeignKey(p => p.LocalidadeEmbarqueId);
         }
     }
 }

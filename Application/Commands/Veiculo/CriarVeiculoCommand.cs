@@ -33,9 +33,7 @@ public class CriarVeiculoCommand : BaseCommand<BaseResponse<long>>
         TipoCombustivelEnum tipoCombustivel,
         StatusVeiculoEnum status,
         string observacao,
-        long? modeloVeiculoId,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        long? modeloVeiculoId)
     {
         Placa = placa;
         Modelo = modelo;

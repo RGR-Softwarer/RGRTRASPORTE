@@ -35,7 +35,6 @@ public class EditarViagemCommandHandler : IRequestHandler<EditarViagemCommand, B
                 request.VeiculoId,
                 request.LocalidadeOrigemId,
                 request.LocalidadeDestinoId,
-                request.ValorPassagem,
                 request.QuantidadeVagas,
                 request.Ativo,
                 request.GatilhoViagemId);

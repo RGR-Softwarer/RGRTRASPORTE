@@ -26,9 +26,7 @@ public class AdicionarVeiculosEmLoteCommand : BaseCommand<BaseResponse<IEnumerab
     public IEnumerable<VeiculoLoteDto> Veiculos { get; private set; }
 
     public AdicionarVeiculosEmLoteCommand(
-        IEnumerable<VeiculoLoteDto> veiculos,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        IEnumerable<VeiculoLoteDto> veiculos)
     {
         Veiculos = veiculos;
     }

@@ -5,7 +5,7 @@
         public long Id { get; set; }
         public long ViagemId { get; init; }
         public DateTime DataHora { get; init; }
-        public string Latitude { get; init; }
-        public string Longitude { get; init; }
+        public decimal Latitude { get; init; }
+        public decimal Longitude { get; init; }
     }
 }

@@ -40,10 +40,8 @@ namespace Infra.Data.Configurators.Viagens
                 .HasForeignKey(vp => vp.ViagemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(vp => vp.Passageiro)
-                .WithMany()
-                .HasForeignKey(vp => vp.PassageiroId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Ignorar navegação para entidade do CadastroContext
+            builder.Ignore(vp => vp.Passageiro);
         }
     }
 }

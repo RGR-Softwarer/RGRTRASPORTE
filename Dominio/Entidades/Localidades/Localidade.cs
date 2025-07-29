@@ -1,189 +1,283 @@
-﻿using Dominio.Exceptions;
+﻿using Dominio.Events.Base;
+using Dominio.Exceptions;
+using Dominio.ValueObjects;
+using Dominio.Specifications;
+using Dominio.Services;
+using Dominio.Interfaces;
 
 namespace Dominio.Entidades.Localidades
 {
-    public class Localidade : BaseEntity
+    public class Localidade : AggregateRoot
     {
-        protected Localidade() { } // Construtor protegido para EF Core
+        // Specifications para validações básicas
+        private static readonly LocalidadePodeSerAtivadaSpecification _podeSerAtivada = new();
+        private static readonly LocalidadePodeSerInativadaSpecification _podeSerInativada = new();
+        private static readonly LocalidadePodeSerEditadaSpecification _podeSerEditada = new();
 
-        public Localidade(
+        private Localidade() { } // Para EF Core
+
+        // Construtor privado - usar Factory Methods
+        private Localidade(
             string nome,
-            string estado,
-            string cidade,
-            string cep,
-            string bairro,
-            string logradouro,
-            string numero,
-            string complemento,
+            Endereco endereco,
             decimal latitude,
             decimal longitude)
         {
-            ValidarNome(nome);
-            ValidarEstado(estado);
-            ValidarCidade(cidade);
-            ValidarCEP(cep);
-            ValidarBairro(bairro);
-            ValidarLogradouro(logradouro);
-            ValidarNumero(numero);
-            ValidarCoordenadas(latitude, longitude);
+            // Validações básicas de integridade
+            if (string.IsNullOrWhiteSpace(nome))
+                throw new DomainException("Nome é obrigatório");
+
+            if (endereco == null)
+                throw new DomainException("Endereço é obrigatório");
 
             Nome = nome;
-            Estado = estado;
-            Cidade = cidade;
-            Cep = cep;
-            Bairro = bairro;
-            Logradouro = logradouro;
-            Numero = numero;
-            Complemento = complemento;
+            Endereco = endereco;
             Latitude = latitude;
             Longitude = longitude;
             Ativo = true;
+
+            AddDomainEvent(new LocalidadeCriadaEvent(Id, nome));
+        }
+
+        // Factory Methods
+        public static Localidade CriarLocalidade(
+            string nome,
+            Endereco endereco,
+            decimal latitude,
+            decimal longitude)
+        {
+            return new Localidade(nome, endereco, latitude, longitude);
+        }
+
+        // Factory Method com validação por NotificationContext
+        public static (Localidade? localidade, bool sucesso) CriarLocalidadeComValidacao(
+            string nome,
+            Endereco endereco,
+            decimal latitude,
+            decimal longitude,
+            INotificationContext notificationContext)
+        {
+            var validationService = new LocalidadeValidationService();
+            var valido = validationService.ValidarCriacao(nome, endereco, latitude, longitude, notificationContext);
+
+            if (!valido)
+                return (null, false);
+
+            try
+            {
+                var localidade = CriarLocalidade(nome, endereco, latitude, longitude);
+                return (localidade, true);
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return (null, false);
+            }
         }
 
         public string Nome { get; private set; }
-        public string Estado { get; private set; }
-        public string Cidade { get; private set; }
-        public string Cep { get; private set; }
-        public string Bairro { get; private set; }
-        public string Logradouro { get; private set; }
-        public string Numero { get; private set; }
-        public string Complemento { get; private set; }
+        public Endereco Endereco { get; private set; }
         public decimal Latitude { get; private set; }
         public decimal Longitude { get; private set; }
         public bool Ativo { get; private set; }
 
-        public string Uf => Estado?.ToUpperInvariant();
-
-        public string EnderecoCompleto => $"{Logradouro}, {Numero}{(string.IsNullOrWhiteSpace(Complemento) ? "" : $" - {Complemento}")}, {Bairro}, {Cidade}/{Estado}, CEP: {Cep}";
+        // Propriedades de conveniência para compatibilidade com EF
+        public string Estado => Endereco.Estado;
+        public string Cidade => Endereco.Cidade;
+        public string Cep => Endereco.Cep;
+        public string Bairro => Endereco.Bairro;
+        public string Logradouro => Endereco.Logradouro;
+        public string Numero => Endereco.Numero;
+        public string Complemento => Endereco.Complemento;
+        public string Uf => Endereco.Uf;
+        public string EnderecoCompleto => Endereco.EnderecoCompleto;
 
         public void Atualizar(
             string nome,
-            string estado,
-            string cidade,
-            string cep,
-            string bairro,
-            string logradouro,
-            string numero,
-            string complemento,
+            Endereco endereco,
             decimal latitude,
             decimal longitude,
             bool ativo)
         {
-            ValidarNome(nome);
-            ValidarEstado(estado);
-            ValidarCidade(cidade);
-            ValidarCEP(cep);
-            ValidarBairro(bairro);
-            ValidarLogradouro(logradouro);
-            ValidarNumero(numero);
-            ValidarCoordenadas(latitude, longitude);
+            EnsureLocalidadePodeSerEditada();
+
+            // Validações básicas de integridade
+            if (string.IsNullOrWhiteSpace(nome))
+                throw new DomainException("Nome é obrigatório");
+
+            if (endereco == null)
+                throw new DomainException("Endereço é obrigatório");
 
             Nome = nome;
-            Estado = estado;
-            Cidade = cidade;
-            Cep = cep;
-            Bairro = bairro;
-            Logradouro = logradouro;
-            Numero = numero;
-            Complemento = complemento;
+            Endereco = endereco;
             Latitude = latitude;
             Longitude = longitude;
+            Ativo = ativo;
+            UpdateTimestamp();
+
+            AddDomainEvent(new LocalidadeAtualizadaEvent(Id, nome));
+        }
+
+        // Método com validação por NotificationContext
+        public bool AtualizarComValidacao(
+            string nome,
+            Endereco endereco,
+            decimal latitude,
+            decimal longitude,
+            bool ativo,
+            INotificationContext notificationContext)
+        {
+            var validationService = new LocalidadeValidationService();
+            var valido = validationService.ValidarAtualizacao(this, nome, endereco, latitude, longitude, notificationContext);
+
+            if (!valido)
+                return false;
+
+            try
+            {
+                Atualizar(nome, endereco, latitude, longitude, ativo);
+                return true;
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return false;
+            }
         }
 
         public void Ativar()
         {
-            if (Ativo)
-                throw new DomainException("Localidade já está ativa.");
+            EnsureLocalidadePodeSerAtivada();
 
             Ativo = true;
+            UpdateTimestamp();
+            AddDomainEvent(new LocalidadeAtivadaEvent(Id, Nome));
+        }
+
+        // Método com validação por NotificationContext
+        public bool AtivarComValidacao(INotificationContext notificationContext)
+        {
+            var validationService = new LocalidadeValidationService();
+            var valido = validationService.ValidarAtivacao(this, notificationContext);
+
+            if (!valido)
+                return false;
+
+            try
+            {
+                Ativar();
+                return true;
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return false;
+            }
         }
 
         public void Inativar()
         {
-            if (!Ativo)
-                throw new DomainException("Localidade já está inativa.");
+            EnsureLocalidadePodeSerInativada();
 
             Ativo = false;
+            UpdateTimestamp();
+            AddDomainEvent(new LocalidadeInativadaEvent(Id, Nome));
         }
 
-        protected override string DescricaoFormatada => $"{Nome} - {Cidade}/{Estado}";
-
-        private void ValidarNome(string nome)
+        // Método com validação por NotificationContext
+        public bool InativarComValidacao(INotificationContext notificationContext)
         {
-            if (string.IsNullOrWhiteSpace(nome))
-                throw new DomainException("Nome é obrigatório.");
+            var validationService = new LocalidadeValidationService();
+            var valido = validationService.ValidarInativacao(this, notificationContext);
 
-            if (nome.Length > 100)
-                throw new DomainException("Nome deve ter no máximo 100 caracteres.");
+            if (!valido)
+                return false;
+
+            try
+            {
+                Inativar();
+                return true;
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return false;
+            }
         }
 
-        private void ValidarEstado(string estado)
+        // Métodos de consulta
+        public bool PodeSerAtivada() => _podeSerAtivada.IsSatisfiedBy(this);
+        public bool PodeSerInativada() => _podeSerInativada.IsSatisfiedBy(this);
+        public bool PodeSerEditada() => _podeSerEditada.IsSatisfiedBy(this);
+
+        // Validações usando Specifications
+        private void EnsureLocalidadePodeSerAtivada()
         {
-            if (string.IsNullOrWhiteSpace(estado))
-                throw new DomainException("Estado é obrigatório.");
-
-            if (estado.Length != 2)
-                throw new DomainException("Estado deve ter 2 caracteres.");
-
-            if (!estado.All(char.IsLetter))
-                throw new DomainException("Estado deve conter apenas letras.");
+            if (!_podeSerAtivada.IsSatisfiedBy(this))
+                throw new DomainException(_podeSerAtivada.ErrorMessage);
         }
 
-        private void ValidarCidade(string cidade)
+        private void EnsureLocalidadePodeSerInativada()
         {
-            if (string.IsNullOrWhiteSpace(cidade))
-                throw new DomainException("Cidade é obrigatória.");
-
-            if (cidade.Length > 100)
-                throw new DomainException("Cidade deve ter no máximo 100 caracteres.");
+            if (!_podeSerInativada.IsSatisfiedBy(this))
+                throw new DomainException(_podeSerInativada.ErrorMessage);
         }
 
-        private void ValidarCEP(string cep)
+        private void EnsureLocalidadePodeSerEditada()
         {
-            if (string.IsNullOrWhiteSpace(cep))
-                throw new DomainException("CEP é obrigatório.");
-
-            if (cep.Length != 8)
-                throw new DomainException("CEP deve ter 8 caracteres.");
-
-            if (!cep.All(char.IsDigit))
-                throw new DomainException("CEP deve conter apenas números.");
+            if (!_podeSerEditada.IsSatisfiedBy(this))
+                throw new DomainException(_podeSerEditada.ErrorMessage);
         }
 
-        private void ValidarBairro(string bairro)
-        {
-            if (string.IsNullOrWhiteSpace(bairro))
-                throw new DomainException("Bairro é obrigatório.");
+        protected override string DescricaoFormatada => $"{Nome} - {Endereco.Cidade}/{Endereco.Estado}";
+    }
 
-            if (bairro.Length > 100)
-                throw new DomainException("Bairro deve ter no máximo 100 caracteres.");
+    // Eventos de domínio para Localidade
+    public class LocalidadeCriadaEvent : DomainEvent
+    {
+        public long LocalidadeId { get; }
+        public string Nome { get; }
+
+        public LocalidadeCriadaEvent(long localidadeId, string nome)
+        {
+            LocalidadeId = localidadeId;
+            Nome = nome;
         }
+    }
 
-        private void ValidarLogradouro(string logradouro)
+    public class LocalidadeAtualizadaEvent : DomainEvent
+    {
+        public long LocalidadeId { get; }
+        public string Nome { get; }
+
+        public LocalidadeAtualizadaEvent(long localidadeId, string nome)
         {
-            if (string.IsNullOrWhiteSpace(logradouro))
-                throw new DomainException("Logradouro é obrigatório.");
-
-            if (logradouro.Length > 200)
-                throw new DomainException("Logradouro deve ter no máximo 200 caracteres.");
+            LocalidadeId = localidadeId;
+            Nome = nome;
         }
+    }
 
-        private void ValidarNumero(string numero)
+    public class LocalidadeAtivadaEvent : DomainEvent
+    {
+        public long LocalidadeId { get; }
+        public string Nome { get; }
+
+        public LocalidadeAtivadaEvent(long localidadeId, string nome)
         {
-            if (string.IsNullOrWhiteSpace(numero))
-                throw new DomainException("Número é obrigatório.");
-
-            if (numero.Length > 10)
-                throw new DomainException("Número deve ter no máximo 10 caracteres.");
+            LocalidadeId = localidadeId;
+            Nome = nome;
         }
+    }
 
-        private void ValidarCoordenadas(decimal latitude, decimal longitude)
+    public class LocalidadeInativadaEvent : DomainEvent
+    {
+        public long LocalidadeId { get; }
+        public string Nome { get; }
+
+        public LocalidadeInativadaEvent(long localidadeId, string nome)
         {
-            if (latitude < -90 || latitude > 90)
-                throw new DomainException("Latitude deve estar entre -90 e 90.");
-
-            if (longitude < -180 || longitude > 180)
-                throw new DomainException("Longitude deve estar entre -180 e 180.");
+            LocalidadeId = localidadeId;
+            Nome = nome;
         }
     }
 }

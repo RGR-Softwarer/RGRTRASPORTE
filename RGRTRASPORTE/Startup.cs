@@ -43,6 +43,9 @@ namespace RGRTRASPORTE
 
             services.AddInfrastructure(_configuration);
 
+            // Auditoria
+            services.AddAuditoria();
+
             // AutoMapper
             services.AddAutoMapper(typeof(Startup), typeof(Application.Commands.Viagem.IniciarViagemCommand));
 

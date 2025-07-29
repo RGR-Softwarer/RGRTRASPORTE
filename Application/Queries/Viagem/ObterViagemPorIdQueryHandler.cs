@@ -29,7 +29,7 @@ public class ObterViagemPorIdQueryHandler : IRequestHandler<ObterViagemPorIdQuer
         {
             _logger.LogInformation("Buscando viagem com ID {ViagemId}", request.Id);
 
-            var viagem = await _viagemRepository.ObterViagemCompletaPorIdAsync(request.Id);
+            var viagem = await _viagemRepository.ObterPorIdComIncludes(request.Id);
             
             if (viagem == null)
             {

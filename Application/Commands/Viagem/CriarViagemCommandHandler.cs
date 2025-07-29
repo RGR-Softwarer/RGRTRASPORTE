@@ -24,7 +24,7 @@ public class CriarViagemCommandHandler : IRequestHandler<CriarViagemCommand, Bas
         {
             _logger.LogInformation("Iniciando criação de viagem para data {DataViagem}", request.DataViagem);
 
-            var viagem = new Dominio.Entidades.Viagens.Viagem(
+            var viagem = Dominio.Entidades.Viagens.Viagem.CriarViagemRegular(
                 request.DataViagem,
                 request.HorarioSaida,
                 request.HorarioChegada,
@@ -32,13 +32,11 @@ public class CriarViagemCommandHandler : IRequestHandler<CriarViagemCommand, Bas
                 request.MotoristaId,
                 request.LocalidadeOrigemId,
                 request.LocalidadeDestinoId,
-                request.ValorPassagem,
                 request.QuantidadeVagas,
                 request.Distancia,
                 request.DescricaoViagem,
                 request.PolilinhaRota,
-                request.Ativo,
-                request.GatilhoViagemId);
+                request.Ativo);
 
             await _viagemRepository.AdicionarAsync(viagem);
 

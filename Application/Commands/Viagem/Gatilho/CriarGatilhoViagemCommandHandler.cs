@@ -1,16 +1,15 @@
 using MediatR;
 using Application.Common;
-using Dominio.Entidades.Viagens;
-using Dominio.Interfaces.Infra.Data.Viagens.Gatilho;
-using Dominio.Entidades.Viagens.Gatilho;
+using Dominio.Interfaces.Infra.Data;
+using GatilhoViagemEntity = Dominio.Entidades.Viagens.Gatilho.GatilhoViagem;
 
 namespace Application.Commands.Viagem.Gatilho;
 
 public class CriarGatilhoViagemCommandHandler : IRequestHandler<CriarGatilhoViagemCommand, BaseResponse<long>>
 {
-    private readonly IGatilhoViagemRepository _repository;
+    private readonly IGenericRepository<GatilhoViagemEntity> _repository;
 
-    public CriarGatilhoViagemCommandHandler(IGatilhoViagemRepository repository)
+    public CriarGatilhoViagemCommandHandler(IGenericRepository<GatilhoViagemEntity> repository)
     {
         _repository = repository;
     }

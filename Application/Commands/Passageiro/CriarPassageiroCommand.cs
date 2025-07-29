@@ -27,9 +27,7 @@ public class CriarPassageiroCommand : BaseCommand<BaseResponse<long>>
         long localidadeEmbarqueId,
         long localidadeDesembarqueId,
         string observacao,
-        bool situacao,
-        string usuarioId,
-        string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+        bool situacao)
     {
         Nome = nome;
         CPF = cpf;

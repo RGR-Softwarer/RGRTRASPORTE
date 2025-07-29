@@ -2,10 +2,10 @@
 {
     public enum AcaoBancoDadosEnum
     {
-        Insert = 0,
-        Update = 1,
-        Delete = 2,
-        Registro = 3
+        Insercao = 1,
+        Alteracao = 2,
+        Exclusao = 3,
+        Evento = 4
     }
 
     public static class AcaoBancoDadosHelper
@@ -14,9 +14,9 @@
         {
             switch (acao)
             {
-                case AcaoBancoDadosEnum.Insert: return "Adicionado";
-                case AcaoBancoDadosEnum.Update: return "Atualizado";
-                case AcaoBancoDadosEnum.Delete: return "Excluido";
+                case AcaoBancoDadosEnum.Insercao: return "Adicionado";
+                case AcaoBancoDadosEnum.Alteracao: return "Atualizado";
+                case AcaoBancoDadosEnum.Exclusao: return "Excluido";
                 default: return "RegistroDeAcao";
             }
         }

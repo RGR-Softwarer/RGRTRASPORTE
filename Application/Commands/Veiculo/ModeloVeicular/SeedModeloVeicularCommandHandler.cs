@@ -1,16 +1,17 @@
 using Application.Common;
 using Dominio.Entidades.Veiculos;
 using Dominio.Enums.Veiculo;
-using Dominio.Interfaces.Infra.Data.Veiculo;
+using Dominio.Interfaces.Infra.Data;
+using ModeloVeicularEntity = Dominio.Entidades.Veiculos.ModeloVeicular;
 using MediatR;
 
 namespace Application.Commands.Veiculo.ModeloVeicular;
 
 public class SeedModeloVeicularCommandHandler : IRequestHandler<SeedModeloVeicularCommand, BaseResponse<string>>
 {
-    private readonly IModeloVeicularRepository _modeloVeicularRepository;
+    private readonly IGenericRepository<ModeloVeicularEntity> _modeloVeicularRepository;
 
-    public SeedModeloVeicularCommandHandler(IModeloVeicularRepository modeloVeicularRepository)
+    public SeedModeloVeicularCommandHandler(IGenericRepository<ModeloVeicularEntity> modeloVeicularRepository)
     {
         _modeloVeicularRepository = modeloVeicularRepository;
     }

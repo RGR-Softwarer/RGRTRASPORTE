@@ -1,5 +1,6 @@
 using Application.Common;
-using Dominio.Interfaces.Infra.Data.Localidades;
+using Dominio.Interfaces.Infra.Data;
+using LocalidadeEntity = Dominio.Entidades.Localidades.Localidade;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -7,11 +8,11 @@ namespace Application.Commands.Localidade;
 
 public class EditarLocalidadeCommandHandler : IRequestHandler<EditarLocalidadeCommand, BaseResponse<bool>>
 {
-    private readonly ILocalidadeRepository _localidadeRepository;
+    private readonly IGenericRepository<LocalidadeEntity> _localidadeRepository;
     private readonly ILogger<EditarLocalidadeCommandHandler> _logger;
 
     public EditarLocalidadeCommandHandler(
-        ILocalidadeRepository localidadeRepository,
+        IGenericRepository<LocalidadeEntity> localidadeRepository,
         ILogger<EditarLocalidadeCommandHandler> logger)
     {
         _localidadeRepository = localidadeRepository;
@@ -28,15 +29,18 @@ public class EditarLocalidadeCommandHandler : IRequestHandler<EditarLocalidadeCo
             if (localidade == null)
                 return BaseResponse<bool>.Erro("Localidade não encontrada");
 
-            localidade.Atualizar(
-                request.Nome,
+            var endereco = new Dominio.ValueObjects.Endereco(
                 request.Estado,
                 request.Cidade,
                 request.Cep,
                 request.Bairro,
                 request.Logradouro,
                 request.Numero,
-                request.Complemento,
+                request.Complemento);
+
+            localidade.Atualizar(
+                request.Nome,
+                endereco,
                 request.Latitude,
                 request.Longitude,
                 request.Ativo);

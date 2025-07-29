@@ -17,35 +17,7 @@ namespace Infra.Data.Configurators.Localidades
                 .IsRequired()
                 .HasColumnName($"{prefixo}_NOME");
 
-            builder.Property(l => l.Cep)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_CEP");
 
-            builder.Property(l => l.Estado)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_UF");
-
-            builder.Ignore(l => l.Uf);
-
-            builder.Property(l => l.Cidade)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_CIDADE");
-
-            builder.Property(l => l.Bairro)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_BAIRRO");
-
-            builder.Property(l => l.Logradouro)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_LOGRADOURO");
-
-            builder.Property(l => l.Complemento)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_COMPLEMENTO"); 
-            
-            builder.Property(l => l.Numero)
-                .IsRequired()
-                .HasColumnName($"{prefixo}_NUMERO"); 
             
             builder.Property(l => l.Latitude)
                 .IsRequired()
@@ -58,6 +30,18 @@ namespace Infra.Data.Configurators.Localidades
             builder.Property(l => l.Ativo)
                 .IsRequired()
                 .HasColumnName($"{prefixo}_ATIVO");
+
+            // Ignorar o Value Object Endereco e propriedades de conveniência
+            builder.Ignore(l => l.Endereco);
+            builder.Ignore(l => l.Estado);
+            builder.Ignore(l => l.Cidade);
+            builder.Ignore(l => l.Cep);
+            builder.Ignore(l => l.Bairro);
+            builder.Ignore(l => l.Logradouro);
+            builder.Ignore(l => l.Numero);
+            builder.Ignore(l => l.Complemento);
+            builder.Ignore(l => l.Uf);
+            builder.Ignore(l => l.EnderecoCompleto);
         }
     }
 }

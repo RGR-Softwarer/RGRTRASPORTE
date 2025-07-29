@@ -1,8 +1,17 @@
 Set-DefaultProject Infra.Data
 
-Add-Migration C000001  -Context CadastroContext -OutputDir Migrations/Cadastro
+# Remover migrations existentes (se necessário)
+dotnet ef migrations remove --context CadastroContext --project Infra.Data
+dotnet ef migrations remove --context TransportadorContext --project Infra.Data
 
-Add-Migration T000001  -Context TransportadorContext -OutputDir Migrations/Transportador
+# Criar migrations iniciais (com chaves estrangeiras corretas e índices de auditoria)
+dotnet ef migrations add C000001_Inicial --context CadastroContext --output-dir Migrations/Cadastro --project Infra.Data
+dotnet ef migrations add T000001_Inicial --context TransportadorContext --output-dir Migrations/Transportador --project Infra.Data
 
-Update-Database -Context TransportadorContext
-Update-Database -Context CadastroContext
+# Aplicar migrations na ordem correta
+dotnet ef database update --context CadastroContext --project Infra.Data
+dotnet ef database update --context TransportadorContext --project Infra.Data
+
+# Para reverter migrations (se necessário)
+dotnet ef database update 0 --context CadastroContext --project Infra.Data
+dotnet ef database update 0 --context TransportadorContext --project Infra.Data

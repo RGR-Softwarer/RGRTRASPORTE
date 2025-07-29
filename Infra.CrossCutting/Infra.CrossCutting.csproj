@@ -3,25 +3,26 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>disable</Nullable>
-    <NullableReferenceTypes>false</NullableReferenceTypes>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <WarningsNotAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8618;CS8619;CS8625;CS8629;CS8631;CS8632;CS8633;CS8634</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.0" />
-    <PackageReference Include="AspNetCore.HealthChecks.Hangfire" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.1" />
-    <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
-    <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
-    <PackageReference Include="Serilog.Exceptions" Version="8.4.0" />
-    <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="9.0.3" />
-    <PackageReference Include="StackExchange.Redis" Version="2.7.10" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.2.0" />
-    <PackageReference Include="Polly" Version="8.2.1" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.1.2" />
+    <PackageReference Include="prometheus-net" Version="8.2.1" />
+    <PackageReference Include="Serilog" Version="3.1.1" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
   </ItemGroup>
 
   <ItemGroup>

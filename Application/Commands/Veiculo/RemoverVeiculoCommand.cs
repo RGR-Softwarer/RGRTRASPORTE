@@ -7,7 +7,7 @@ public class RemoverVeiculoCommand : BaseCommand<BaseResponse<bool>>
 {
     public long Id { get; private set; }
 
-    public RemoverVeiculoCommand(long id, string usuarioId, string usuarioCriacao) : base(usuarioId, usuarioCriacao)
+    public RemoverVeiculoCommand(long id)
     {
         Id = id;
     }
