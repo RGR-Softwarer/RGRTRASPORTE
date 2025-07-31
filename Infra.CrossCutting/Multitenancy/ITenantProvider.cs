@@ -1,4 +1,4 @@
-﻿namespace Infra.CrossCutting.Multitenancy
+namespace Infra.CrossCutting.Multitenancy
 {
     public interface ITenantProvider
     {

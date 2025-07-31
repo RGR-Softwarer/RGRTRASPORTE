@@ -1,4 +1,4 @@
-﻿using Dominio.Dtos.Viagens.Gatilho;
+using Dominio.Dtos.Viagens.Gatilho;
 using Dominio.Entidades.Viagens.Gatilho;
 
 namespace Dominio.Interfaces.Service.Viagens.Gatilho

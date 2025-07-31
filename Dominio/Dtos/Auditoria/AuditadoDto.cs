@@ -1,4 +1,4 @@
-﻿using Dominio.Enums.Auditoria;
+using Dominio.Enums.Auditoria;
 
 namespace Dominio.Dtos.Auditoria
 {

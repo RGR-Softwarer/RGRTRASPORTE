@@ -1,4 +1,4 @@
-﻿using Dominio.Dtos;
+using Dominio.Dtos;
 using Dominio.Interfaces.Infra.Data;
 using Infra.CrossCutting.Handlers.Notifications;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ namespace RGRTRASPORTE.Controllers
         {
             var existeErro = _notificationHandler.HasNotifications();
 
-            // Se há erro, ignora o value e retorna só as mensagens de erro
+            // Se h� erro, ignora o value e retorna s� as mensagens de erro
             if (existeErro)
             {
                 var resposta = new RetornoGenericoDto<object>
@@ -38,13 +38,12 @@ namespace RGRTRASPORTE.Controllers
                 });
             }
 
-            // Se não há erro, extrai os dados do BaseResponse se for o caso
             object dados = value;
             if (value != null)
             {
                 var valueType = value.GetType();
                 
-                // Verifica se é um BaseResponse<T>
+                // Verifica se � um BaseResponse<T>
                 if (valueType.IsGenericType && valueType.GetGenericTypeDefinition() == typeof(BaseResponse<>))
                 {
                     var dadosProperty = valueType.GetProperty("Dados");
@@ -59,7 +58,7 @@ namespace RGRTRASPORTE.Controllers
             {
                 Dados = dados,
                 Sucesso = true,
-                Mensagem = "Operação realizada com sucesso"
+                Mensagem = "Opera��o realizada com sucesso"
             };
 
             return Task.FromResult<ActionResult>(new ObjectResult(respostaSucesso)

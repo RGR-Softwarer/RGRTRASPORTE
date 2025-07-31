@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades.Pessoas.Passageiros;
+using Dominio.Entidades.Pessoas.Passageiros;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

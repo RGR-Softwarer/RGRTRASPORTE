@@ -1,4 +1,4 @@
-﻿namespace Dominio.Dtos.Localidades
+namespace Dominio.Dtos.Localidades
 {
     public class LocalidadeDto
     {

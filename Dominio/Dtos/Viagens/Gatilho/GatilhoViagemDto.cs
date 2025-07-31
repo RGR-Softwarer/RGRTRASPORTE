@@ -1,4 +1,4 @@
-﻿using Dominio.Enums.Data;
+using Dominio.Enums.Data;
 
 namespace Dominio.Dtos.Viagens.Gatilho
 {

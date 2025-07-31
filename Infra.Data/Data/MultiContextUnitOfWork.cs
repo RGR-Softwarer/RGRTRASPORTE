@@ -17,7 +17,7 @@ namespace Infra.Data.Data
                 throw new ArgumentException("Pelo menos um contexto deve ser fornecido", nameof(dbContexts));
         }
 
-        public async Task<int> Commit()
+        public async Task<int> Commit(CancellationToken cancellationToken = default)
         {
             if (_disposed)
                 throw new ObjectDisposedException(nameof(MultiContextUnitOfWork));
@@ -44,7 +44,7 @@ namespace Infra.Data.Data
                     {
                         if (context is DbContext dbContext && dbContext.ChangeTracker.HasChanges())
                         {
-                            var changes = await context.SaveChangesAsync();
+                            var changes = await context.SaveChangesAsync(cancellationToken);
                             totalChanges += changes;
                         }
                     }
@@ -62,7 +62,7 @@ namespace Infra.Data.Data
             return totalChanges;
         }
 
-        public async Task RollBack()
+        public async Task RollBack(CancellationToken cancellationToken = default)
         {
             if (_disposed)
                 throw new ObjectDisposedException(nameof(MultiContextUnitOfWork));
@@ -78,7 +78,7 @@ namespace Infra.Data.Data
                     .OfType<DbContext>()
                     .SelectMany(context => context.ChangeTracker.Entries()
                         .Where(e => e.State != EntityState.Unchanged)
-                        .Select(entry => entry.ReloadAsync()))
+                        .Select(entry => entry.ReloadAsync(cancellationToken)))
                     .ToList();
 
                 await Task.WhenAll(rollbackTasks);

@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Infra.CrossCutting.Handlers.Notifications;
 using Application.Commands.Viagem.Gatilho;

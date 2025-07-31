@@ -1,4 +1,4 @@
-ï»¿using Dominio.Enums.Veiculo;
+using Dominio.Enums.Veiculo;
 using Dominio.Events.Base;
 using Dominio.Exceptions;
 using Dominio.ValueObjects;
@@ -10,7 +10,7 @@ namespace Dominio.Entidades.Veiculos
 {
     public class Veiculo : AggregateRoot
     {
-        // Specifications para validaÃ§Ãµes bÃ¡sicas
+        // Specifications para validações básicas
         private static readonly VeiculoPodeSerAtivadoSpecification _podeSerAtivado = new();
         private static readonly VeiculoPodeSerInativadoSpecification _podeSerInativado = new();
         private static readonly VeiculoPodeSerEditadoSpecification _podeSerEditado = new();
@@ -34,15 +34,15 @@ namespace Dominio.Entidades.Veiculos
             string observacao,
             long? modeloVeiculoId)
         {
-            // ValidaÃ§Ãµes bÃ¡sicas de integridade
+            // Validações básicas de integridade
             if (placa == null)
-                throw new DomainException("Placa Ã© obrigatÃ³ria");
+                throw new DomainException("Placa é obrigatória");
 
             if (string.IsNullOrWhiteSpace(modelo))
-                throw new DomainException("Modelo Ã© obrigatÃ³rio");
+                throw new DomainException("Modelo é obrigatório");
 
             if (string.IsNullOrWhiteSpace(marca))
-                throw new DomainException("Marca Ã© obrigatÃ³ria");
+                throw new DomainException("Marca é obrigatória");
 
             Placa = placa;
             Modelo = modelo;
@@ -82,7 +82,7 @@ namespace Dominio.Entidades.Veiculos
                 cor, renavam, vencimentoLicenciamento, tipoCombustivel, status, observacao, modeloVeiculoId);
         }
 
-        // Factory Method com validaÃ§Ã£o por NotificationContext
+        // Factory Method com validação por NotificationContext
         public static (Veiculo? veiculo, bool sucesso) CriarVeiculoComValidacao(
             Placa placa,
             string modelo,
@@ -122,20 +122,20 @@ namespace Dominio.Entidades.Veiculos
             }
         }
 
-        public Placa Placa { get; private set; }
-        public string Modelo { get; private set; }
-        public string Marca { get; private set; }
-        public string NumeroChassi { get; private set; }
+        public Placa Placa { get; private set; } = null!;
+        public string Modelo { get; private set; } = null!;
+        public string Marca { get; private set; } = null!;
+        public string NumeroChassi { get; private set; } = null!;
         public int AnoModelo { get; private set; }
         public int AnoFabricacao { get; private set; }
-        public string Cor { get; private set; }
-        public string Renavam { get; private set; }
+        public string Cor { get; private set; } = null!;
+        public string Renavam { get; private set; } = null!;
         public virtual DateTime? VencimentoLicenciamento { get; private set; }
         public TipoCombustivelEnum TipoCombustivel { get; private set; }
         public StatusVeiculoEnum Status { get; private set; }
-        public string Observacao { get; private set; }
+        public string Observacao { get; private set; } = null!;
         public long? ModeloVeiculoId { get; private set; }
-        public virtual ModeloVeicular ModeloVeiculo { get; private set; }
+        public virtual ModeloVeicular ModeloVeiculo { get; private set; } = null!;
         public bool Situacao { get; private set; }
 
         public virtual string PlacaFormatada => Placa.Formatada;
@@ -154,15 +154,15 @@ namespace Dominio.Entidades.Veiculos
         {
             EnsureVeiculoPodeSerEditado();
 
-            // ValidaÃ§Ãµes bÃ¡sicas de integridade
+            // Validações básicas de integridade
             if (string.IsNullOrWhiteSpace(modelo))
-                throw new DomainException("Modelo Ã© obrigatÃ³rio");
+                throw new DomainException("Modelo é obrigatório");
 
             if (string.IsNullOrWhiteSpace(marca))
-                throw new DomainException("Marca Ã© obrigatÃ³ria");
+                throw new DomainException("Marca é obrigatória");
 
             if (string.IsNullOrWhiteSpace(cor))
-                throw new DomainException("Cor Ã© obrigatÃ³ria");
+                throw new DomainException("Cor é obrigatória");
 
             Modelo = modelo;
             Marca = marca;
@@ -177,7 +177,7 @@ namespace Dominio.Entidades.Veiculos
             AddDomainEvent(new VeiculoAtualizadoEvent(Id, Placa.Numero));
         }
 
-        // MÃ©todo com validaÃ§Ã£o por NotificationContext
+        // Método com validação por NotificationContext
         public bool AtualizarComValidacao(
             string modelo,
             string marca,
@@ -219,7 +219,7 @@ namespace Dominio.Entidades.Veiculos
             AddDomainEvent(new VeiculoLicenciamentoAtualizadoEvent(Id, Placa.Numero, vencimento));
         }
 
-        // MÃ©todo com validaÃ§Ã£o por NotificationContext
+        // Método com validação por NotificationContext
         public bool AtualizarLicenciamentoComValidacao(DateTime vencimento, INotificationContext notificationContext)
         {
             var validationService = new VeiculoValidationService();
@@ -249,7 +249,7 @@ namespace Dominio.Entidades.Veiculos
             AddDomainEvent(new VeiculoAtivadoEvent(Id, Placa.Numero));
         }
 
-        // MÃ©todo com validaÃ§Ã£o por NotificationContext
+        // Método com validação por NotificationContext
         public bool AtivarComValidacao(INotificationContext notificationContext)
         {
             var validationService = new VeiculoValidationService();
@@ -279,7 +279,7 @@ namespace Dominio.Entidades.Veiculos
             AddDomainEvent(new VeiculoInativadoEvent(Id, Placa.Numero));
         }
 
-        // MÃ©todo com validaÃ§Ã£o por NotificationContext
+        // Método com validação por NotificationContext
         public bool InativarComValidacao(INotificationContext notificationContext)
         {
             var validationService = new VeiculoValidationService();
@@ -300,13 +300,13 @@ namespace Dominio.Entidades.Veiculos
             }
         }
 
-        // MÃ©todos de consulta
+        // Métodos de consulta
         public bool PodeSerAtivado() => _podeSerAtivado.IsSatisfiedBy(this);
         public bool PodeSerInativado() => _podeSerInativado.IsSatisfiedBy(this);
         public bool PodeSerEditado() => _podeSerEditado.IsSatisfiedBy(this);
         public bool PodeAtualizarLicenciamento() => _podeAtualizarLicenciamento.IsSatisfiedBy(this);
 
-        // ValidaÃ§Ãµes usando Specifications
+        // Validações usando Specifications
         private void EnsureVeiculoPodeSerAtivado()
         {
             if (!_podeSerAtivado.IsSatisfiedBy(this))
@@ -339,7 +339,7 @@ namespace Dominio.Entidades.Veiculos
         }
     }
 
-    // Eventos de domÃ­nio para Veiculo
+    // Eventos de domínio para Veiculo
     public class VeiculoCriadoEvent : DomainEvent
     {
         public long VeiculoId { get; }

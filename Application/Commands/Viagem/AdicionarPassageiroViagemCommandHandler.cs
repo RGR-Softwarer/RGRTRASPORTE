@@ -29,16 +29,16 @@ public class AdicionarPassageiroViagemCommandHandler : IRequestHandler<Adicionar
         {
             _logger.LogInformation("Adicionando passageiro {PassageiroId} à viagem {ViagemId}", request.PassageiroId, request.ViagemId);
 
-            var viagem = await _viagemRepository.ObterPorIdAsync(request.ViagemId);
+            var viagem = await _viagemRepository.ObterPorIdAsync(request.ViagemId, cancellationToken);
             if (viagem == null)
                 return BaseResponse<bool>.Erro("Viagem não encontrada");
 
-            var passageiro = await _passageiroRepository.ObterPorIdAsync(request.PassageiroId);
+            var passageiro = await _passageiroRepository.ObterPorIdAsync(request.PassageiroId, cancellationToken);
             if (passageiro == null)
                 return BaseResponse<bool>.Erro("Passageiro não encontrado");
 
             viagem.AdicionarPassageiro(passageiro);
-            await _viagemRepository.AtualizarAsync(viagem);
+            await _viagemRepository.AtualizarAsync(viagem, cancellationToken);
 
             _logger.LogInformation("Passageiro {PassageiroId} adicionado à viagem {ViagemId} com sucesso", request.PassageiroId, request.ViagemId);
 

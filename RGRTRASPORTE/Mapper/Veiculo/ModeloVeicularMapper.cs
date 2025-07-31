@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Dominio.Dtos.Veiculo;
 using Dominio.Entidades.Veiculos;
 //Ajustar

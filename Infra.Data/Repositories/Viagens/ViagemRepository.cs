@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades.Viagens;
+using Dominio.Entidades.Viagens;
 using Dominio.Enums.Viagens;
 using Dominio.Interfaces.Infra.Data;
 using Dominio.Interfaces.Infra.Data.Viagens;
@@ -199,7 +199,7 @@ namespace Infra.Data.Repositories.Viagens
                 .ToListAsync();
         }
 
-        // REMOVIDO: ObterViagensPorValorPassagemAsync - ValorPassagem não existe mais na entidade Viagem
+        // REMOVIDO: ObterViagensPorValorPassagemAsync - ValorPassagem n�o existe mais na entidade Viagem
 
         public async Task<int> ContarViagensAtivas()
         {

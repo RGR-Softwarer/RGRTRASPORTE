@@ -1,4 +1,4 @@
-﻿using Dominio.Enums.Pessoas;
+using Dominio.Enums.Pessoas;
 using Dominio.Enums.Veiculo;
 using Dominio.Events.Base;
 using Dominio.Exceptions;
@@ -34,8 +34,8 @@ namespace Dominio.Entidades.Pessoas
             AddDomainEvent(new MotoristaCriadoEvent(Id, nome, cpf.Numero));
         }
 
-        public string RG { get; private set; }
-        public string CNH { get; private set; }
+        public string RG { get; private set; } = null!;
+        public string CNH { get; private set; } = null!;
         public CategoriaCNHEnum CategoriaCNH { get; private set; }
         public DateTime ValidadeCNH { get; private set; }
 
@@ -83,31 +83,31 @@ namespace Dominio.Entidades.Pessoas
         private void ValidarRG(string rg)
         {
             if (string.IsNullOrWhiteSpace(rg))
-                throw new DomainException("RG é obrigatório.");
+                throw new DomainException("RG � obrigat�rio.");
 
             if (rg.Length > 20)
-                throw new DomainException("RG deve ter no máximo 20 caracteres.");
+                throw new DomainException("RG deve ter no m�ximo 20 caracteres.");
         }
 
         private void ValidarCNH(string cnh)
         {
             if (string.IsNullOrWhiteSpace(cnh))
-                throw new DomainException("CNH é obrigatória.");
+                throw new DomainException("CNH � obrigat�ria.");
 
             if (cnh.Length != 11)
                 throw new DomainException("CNH deve ter 11 caracteres.");
 
             if (!cnh.All(char.IsDigit))
-                throw new DomainException("CNH deve conter apenas números.");
+                throw new DomainException("CNH deve conter apenas n�meros.");
         }
 
         private void ValidarValidadeCNH(DateTime validade)
         {
             if (validade < DateTime.Today)
-                throw new DomainException("Data de validade da CNH não pode ser anterior à data atual.");
+                throw new DomainException("Data de validade da CNH n�o pode ser anterior � data atual.");
 
             if (validade > DateTime.Today.AddYears(10))
-                throw new DomainException("Data de validade da CNH não pode ser superior a 10 anos.");
+                throw new DomainException("Data de validade da CNH n�o pode ser superior a 10 anos.");
         }
 
         #region Propriedades Virtuais
@@ -120,12 +120,12 @@ namespace Dominio.Entidades.Pessoas
         #endregion
     }
 
-    // Eventos de domínio para Motorista
+    // Eventos de dom�nio para Motorista
     public class MotoristaCriadoEvent : DomainEvent
     {
         public long MotoristaId { get; }
-        public string Nome { get; }
-        public string CPF { get; }
+        public string Nome { get; } = null!;
+        public string CPF { get; } = null!;
 
         public MotoristaCriadoEvent(long motoristaId, string nome, string cpf)
         {
@@ -138,8 +138,8 @@ namespace Dominio.Entidades.Pessoas
     public class MotoristaDocumentosAtualizadosEvent : DomainEvent
     {
         public long MotoristaId { get; }
-        public string Nome { get; }
-        public string CPF { get; }
+        public string Nome { get; } = null!;
+        public string CPF { get; } = null!;
 
         public MotoristaDocumentosAtualizadosEvent(long motoristaId, string nome, string cpf)
         {
@@ -152,8 +152,8 @@ namespace Dominio.Entidades.Pessoas
     public class MotoristaCNHRenovadaEvent : DomainEvent
     {
         public long MotoristaId { get; }
-        public string Nome { get; }
-        public string CPF { get; }
+        public string Nome { get; } = null!;
+        public string CPF { get; } = null!;
         public DateTime NovaValidade { get; }
 
         public MotoristaCNHRenovadaEvent(long motoristaId, string nome, string cpf, DateTime novaValidade)

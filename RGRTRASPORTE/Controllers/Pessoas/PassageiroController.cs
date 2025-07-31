@@ -1,4 +1,4 @@
-﻿using Application.Commands.Passageiro;
+using Application.Commands.Passageiro;
 using Application.Queries.Passageiro;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
@@ -32,7 +32,7 @@ namespace RGRTRASPORTE.Controllers.Pessoas
         {
             var passageiro = await _mediator.Send(new ObterPassageiroPorIdQuery(id, auditado));
             if (passageiro == null)
-                return await RGRResult(System.Net.HttpStatusCode.NotFound, $"Passageiro com ID {id} não encontrado");
+                return await RGRResult(System.Net.HttpStatusCode.NotFound, $"Passageiro com ID {id} n�o encontrado");
 
             return await RGRResult(System.Net.HttpStatusCode.OK, passageiro);
         }

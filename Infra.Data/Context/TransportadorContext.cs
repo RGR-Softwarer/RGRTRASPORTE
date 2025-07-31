@@ -1,4 +1,4 @@
-ï»¿using Dominio.Entidades;
+using Dominio.Entidades;
 using Dominio.Entidades.Auditoria;
 using Dominio.Entidades.Pessoas;
 using Dominio.Entidades.Veiculos;
@@ -25,18 +25,18 @@ namespace Infra.Data.Context
         public DbSet<ViagemPosicao> ViagemPosicoes { get; set; }
         public DbSet<GatilhoViagem> GatilhoViagens { get; set; }
 
-        // Entidades de VeÃ­culos
+        // Entidades de Veículos
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<ModeloVeicular> ModelosVeiculares { get; set; }
 
-        // Auditoria - DisponÃ­vel em ambos os contextos
+        // Auditoria - Disponível em ambos os contextos
         public DbSet<RegistroAuditoria> RegistrosAuditoria { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Ignorar Value Objects que nÃ£o devem ser mapeados como entidades
+            // Ignorar Value Objects que não devem ser mapeados como entidades
             modelBuilder.Ignore<Dominio.ValueObjects.Endereco>();
             modelBuilder.Ignore<Dominio.ValueObjects.CPF>();
             modelBuilder.Ignore<Dominio.ValueObjects.Placa>();
@@ -46,7 +46,7 @@ namespace Infra.Data.Context
             modelBuilder.Ignore<Dominio.ValueObjects.Distancia>();
             modelBuilder.Ignore<Dominio.Events.Base.DomainEvent>();
 
-            // ConfiguraÃ§Ãµes das entidades
+            // Configurações das entidades
             modelBuilder.ApplyConfiguration(new ViagemConfigurator());
             modelBuilder.ApplyConfiguration(new ViagemPassageiroConfigurator());
             modelBuilder.ApplyConfiguration(new ViagemPosicaoConfigurator());

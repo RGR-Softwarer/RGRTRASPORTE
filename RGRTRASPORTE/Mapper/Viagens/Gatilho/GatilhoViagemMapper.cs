@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Dominio.Dtos.Viagens.Gatilho;
 using Dominio.Entidades.Viagens.Gatilho;
 

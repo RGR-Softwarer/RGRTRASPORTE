@@ -74,7 +74,9 @@ namespace Teste.HealthChecks
             
             // Assert
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Equal("Healthy", result.RootElement.GetProperty("status").GetString());
+            Assert.NotNull(result);
+            var status = result.RootElement.GetProperty("status").GetString();
+            Assert.Equal("Healthy", status);
         }
 
         [Fact]

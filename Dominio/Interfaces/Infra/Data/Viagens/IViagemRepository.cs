@@ -1,11 +1,11 @@
-ï»¿using Dominio.Entidades.Viagens;
+using Dominio.Entidades.Viagens;
 using Dominio.Enums.Viagens;
 
 namespace Dominio.Interfaces.Infra.Data.Viagens
 {
     public interface IViagemRepository : IGenericRepository<Viagem>
     {
-        // MÃ©todos de consulta bÃ¡sicos
+        // Métodos de consulta básicos
         Task<Viagem?> ObterPorIdComIncludes(long id);
         Task<IEnumerable<Viagem>> ObterViagensPorSituacaoAsync(SituacaoViagemEnum situacao);
         Task<IEnumerable<Viagem>> ObterViagensPorDataAsync(DateTime dataInicio, DateTime dataFim);
@@ -13,13 +13,13 @@ namespace Dominio.Interfaces.Infra.Data.Viagens
         Task<IEnumerable<Viagem>> ObterViagensPorMotoristaAsync(long motoristaId);
         Task<IEnumerable<Viagem>> ObterViagensPorVeiculoAsync(long veiculoId);
 
-        // MÃ©todos de verificaÃ§Ã£o de existÃªncia
+        // Métodos de verificação de existência
         Task<bool> ExisteViagemConflitanteAsync(long veiculoId, DateTime data);
         Task<bool> ExisteViagemMotoristaAsync(long motoristaId, DateTime data);
         Task<bool> ExisteViagemVeiculoAsync(long veiculoId, DateTime data);
         Task<bool> ExisteViagemNoPeriodoAsync(long veiculoId, DateTime data, TimeSpan horarioInicio, TimeSpan horarioFim);
 
-        // MÃ©todos por estado/situaÃ§Ã£o
+        // Métodos por estado/situação
         Task<IEnumerable<Viagem>> ObterViagensAtivasAsync();
         Task<IEnumerable<Viagem>> ObterViagensComVagasAsync();
         Task<IEnumerable<Viagem>> ObterViagensLotadasAsync();
@@ -27,18 +27,18 @@ namespace Dominio.Interfaces.Infra.Data.Viagens
         Task<IEnumerable<Viagem>> ObterViagensFinalizadasAsync(DateTime dataInicio, DateTime dataFim);
         Task<IEnumerable<Viagem>> ObterViagensAgendadasAsync(DateTime dataInicio, DateTime dataFim);
 
-        // MÃ©todos por perÃ­odo
+        // Métodos por período
         Task<IEnumerable<Viagem>> ObterViagensPorVeiculoEPeriodoAsync(long veiculoId, DateTime dataInicio, DateTime dataFim);
         Task<IEnumerable<Viagem>> ObterViagensPorMotoristaEPeriodoAsync(long motoristaId, DateTime dataInicio, DateTime dataFim);
         Task<IEnumerable<Viagem>> ObterViagensPorSituacaoEPeriodoAsync(SituacaoViagemEnum situacao, DateTime dataInicio, DateTime dataFim);
 
-        // MÃ©todos especializados
+        // Métodos especializados
         Task<IEnumerable<Viagem>> ObterViagensPorRota(long origemId, long destinoId);
         Task<IEnumerable<Viagem>> ObterViagensPorGatilhoAsync(long gatilhoId, DateTime dataInicio, DateTime dataFim);
         Task<IEnumerable<Viagem>> ObterViagensPassageiroAsync(long passageiroId, DateTime dataInicio, DateTime dataFim);
         Task<IEnumerable<Viagem>> ObterViagensProximasAsync(DateTime data, TimeSpan horario, int minutos = 30);
 
-        // MÃ©todos de contagem
+        // Métodos de contagem
         Task<int> ContarViagensAtivas();
         Task<int> ContarViagensComVagas();
         Task<int> ContarViagensEmAndamento();

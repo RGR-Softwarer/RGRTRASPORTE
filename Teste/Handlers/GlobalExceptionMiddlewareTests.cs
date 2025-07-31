@@ -45,6 +45,7 @@ namespace Teste.Handlers
             var response = JsonSerializer.Deserialize<ErrorResponse>(responseBody);
 
             Assert.Equal((int)HttpStatusCode.BadRequest, _context.Response.StatusCode);
+            Assert.NotNull(response);
             Assert.Equal("Business error", response.Message);
             Assert.False(response.Success);
         }
@@ -66,6 +67,7 @@ namespace Teste.Handlers
             var response = JsonSerializer.Deserialize<ErrorResponse>(responseBody);
 
             Assert.Equal((int)HttpStatusCode.NotFound, _context.Response.StatusCode);
+            Assert.NotNull(response);
             Assert.Equal("Recurso não encontrado.", response.Details);
             Assert.False(response.Success);
         }

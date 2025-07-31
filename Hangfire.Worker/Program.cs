@@ -13,5 +13,7 @@ public class Program
         var app = builder.Build();
 
         await startup.Configure(app, builder.Environment);
+        
+        await app.RunAsync();
     }
 }

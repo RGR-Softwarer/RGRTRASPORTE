@@ -1,4 +1,4 @@
-Ôªøusing Dominio.Enums.Veiculo;
+using Dominio.Enums.Veiculo;
 using Dominio.Exceptions;
 using Dominio.Events.Base;
 using Dominio.Events.Veiculos;
@@ -39,7 +39,7 @@ namespace Dominio.Entidades.Veiculos
         }
 
         public bool Situacao { get; private set; }
-        public string Descricao { get; private set; }
+        public string Descricao { get; private set; } = null!;
         public TipoModeloVeiculoEnum Tipo { get; private set; }
         public int QuantidadeAssento { get; private set; }
         public int QuantidadeEixo { get; private set; }
@@ -47,7 +47,7 @@ namespace Dominio.Entidades.Veiculos
         public int PassageirosEmPe { get; private set; }
         public bool PossuiBanheiro { get; private set; }
         public bool PossuiClimatizador { get; private set; }
-        public ICollection<Veiculo> Veiculos { get; private set; }
+        public ICollection<Veiculo> Veiculos { get; private set; } = null!;
 
         public string DescricaoAtivo => Situacao ? "Ativo" : "Inativo";
 
@@ -81,7 +81,7 @@ namespace Dominio.Entidades.Veiculos
         public void Ativar()
         {
             if (Situacao)
-                throw new DomainException("Modelo j√° est√° ativo.");
+                throw new DomainException("Modelo j· est· ativo.");
 
             Situacao = true;
             UpdateTimestamp();
@@ -91,10 +91,10 @@ namespace Dominio.Entidades.Veiculos
         public void Inativar()
         {
             if (!Situacao)
-                throw new DomainException("Modelo j√° est√° inativo.");
+                throw new DomainException("Modelo j· est· inativo.");
 
             if (Veiculos.Any(v => v.Situacao))
-                throw new DomainException("N√£o √© poss√≠vel inativar um modelo que possui ve√≠culos ativos.");
+                throw new DomainException("N„o È possÌvel inativar um modelo que possui veÌculos ativos.");
 
             Situacao = false;
             UpdateTimestamp();
@@ -104,10 +104,10 @@ namespace Dominio.Entidades.Veiculos
         private void ValidarDescricao(string descricao)
         {
             if (string.IsNullOrWhiteSpace(descricao))
-                throw new DomainException("Descri√ß√£o √© obrigat√≥ria.");
+                throw new DomainException("DescriÁ„o È obrigatÛria.");
 
             if (descricao.Length > 100)
-                throw new DomainException("Descri√ß√£o deve ter no m√°ximo 100 caracteres.");
+                throw new DomainException("DescriÁ„o deve ter no m·ximo 100 caracteres.");
         }
 
         private void ValidarQuantidades(int quantidadeAssento, int quantidadeEixo, int capacidadeMaxima, int passageirosEmPe)
@@ -119,13 +119,13 @@ namespace Dominio.Entidades.Veiculos
                 throw new DomainException("Quantidade de eixos deve ser maior que zero.");
 
             if (capacidadeMaxima <= 0)
-                throw new DomainException("Capacidade m√°xima deve ser maior que zero.");
+                throw new DomainException("Capacidade m·xima deve ser maior que zero.");
 
             if (passageirosEmPe < 0)
-                throw new DomainException("Quantidade de passageiros em p√© n√£o pode ser negativa.");
+                throw new DomainException("Quantidade de passageiros em pÈ n„o pode ser negativa.");
 
             if (capacidadeMaxima < quantidadeAssento + passageirosEmPe)
-                throw new DomainException("Capacidade m√°xima deve ser maior ou igual √† soma de assentos e passageiros em p√©.");
+                throw new DomainException("Capacidade m·xima deve ser maior ou igual ‡ soma de assentos e passageiros em pÈ.");
         }
 
         protected override string DescricaoFormatada => $"{Descricao} ({Tipo})";

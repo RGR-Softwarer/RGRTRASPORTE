@@ -4,18 +4,20 @@ namespace Infra.CrossCutting.Cache
     {
         Task<T> GetOrCreateAsync<T>(
             string key,
-            Func<Task<T>> factory,
-            TimeSpan? customExpiration = null);
+            Func<CancellationToken, Task<T>> factory,
+            TimeSpan? customExpiration = null,
+            CancellationToken cancellationToken = default);
 
-        Task<T> GetAsync<T>(string key);
+        Task<T> GetAsync<T>(string key, CancellationToken cancellationToken = default);
 
         Task SetAsync<T>(
             string key,
             T value,
-            TimeSpan? customExpiration = null);
+            TimeSpan? customExpiration = null,
+            CancellationToken cancellationToken = default);
 
-        Task RemoveAsync(string key);
+        Task RemoveAsync(string key, CancellationToken cancellationToken = default);
         
-        Task RemoveByPrefixAsync(string prefix);
+        Task RemoveByPrefixAsync(string prefix, CancellationToken cancellationToken = default);
     }
 } 

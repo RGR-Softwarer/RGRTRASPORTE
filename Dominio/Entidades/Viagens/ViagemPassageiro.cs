@@ -1,4 +1,4 @@
-Ôªøusing Dominio.Entidades.Pessoas.Passageiros;
+using Dominio.Entidades.Pessoas.Passageiros;
 using Dominio.Exceptions;
 
 namespace Dominio.Entidades.Viagens
@@ -12,7 +12,7 @@ namespace Dominio.Entidades.Viagens
         public DateTime? DataConfirmacao { get; private set; }
         public string? Observacao { get; private set; }
 
-        // Navega√ß√£o
+        // NavegaÁ„o
         public Viagem Viagem { get; private set; }
         public Passageiro Passageiro { get; private set; }
 
@@ -32,16 +32,16 @@ namespace Dominio.Entidades.Viagens
         private void ValidarCriacao(Viagem viagem, long passageiroId)
         {
             if (viagem == null)
-                throw new DomainException("Viagem √© obrigat√≥ria");
+                throw new DomainException("Viagem È obrigatÛria");
 
             if (passageiroId <= 0)
-                throw new DomainException("Passageiro √© obrigat√≥rio");
+                throw new DomainException("Passageiro È obrigatÛrio");
         }
 
         public void ConfirmarReserva()
         {
             if (Confirmado)
-                throw new DomainException("Reserva j√° est√° confirmada");
+                throw new DomainException("Reserva j· est· confirmada");
 
             Confirmado = true;
             DataConfirmacao = DateTime.UtcNow;
@@ -50,7 +50,7 @@ namespace Dominio.Entidades.Viagens
         public void CancelarReserva()
         {
             if (!Confirmado)
-                throw new DomainException("Reserva n√£o est√° confirmada");
+                throw new DomainException("Reserva n„o est· confirmada");
 
             Confirmado = false;
             DataConfirmacao = null;
@@ -59,10 +59,10 @@ namespace Dominio.Entidades.Viagens
         public void AdicionarObservacao(string observacao)
         {
             if (string.IsNullOrEmpty(observacao))
-                throw new DomainException("Observa√ß√£o √© obrigat√≥ria");
+                throw new DomainException("ObservaÁ„o È obrigatÛria");
 
             if (observacao.Length > 500)
-                throw new DomainException("Observa√ß√£o n√£o pode ter mais que 500 caracteres");
+                throw new DomainException("ObservaÁ„o n„o pode ter mais que 500 caracteres");
 
             Observacao = observacao;
         }

@@ -1,4 +1,4 @@
-ï»¿#nullable enable
+#nullable enable
 
 using Dominio.Enums.Viagens;
 
@@ -25,7 +25,7 @@ namespace Dominio.Dtos.Viagens
         public int QuantidadeVagas { get; init; }
         public int VagasDisponiveis { get; init; }
         
-        // Propriedades dos Value Objects como primitivos para serializaÃ§Ã£o
+        // Propriedades dos Value Objects como primitivos para serialização
         public decimal DistanciaQuilometros { get; init; }
         public string DescricaoViagem { get; init; } = string.Empty;
         public string PolilinhaRota { get; init; } = string.Empty;

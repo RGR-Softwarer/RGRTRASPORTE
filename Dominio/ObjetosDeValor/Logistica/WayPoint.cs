@@ -1,4 +1,4 @@
-﻿namespace Dominio.ObjetosDeValor.Logistica
+namespace Dominio.ObjetosDeValor.Logistica
 {
     public class WayPoint
     {

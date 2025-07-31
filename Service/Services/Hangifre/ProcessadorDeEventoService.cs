@@ -1,4 +1,4 @@
-﻿using Dominio.Dtos.Viagens;
+using Dominio.Dtos.Viagens;
 using Dominio.Entidades.Viagens;
 using Dominio.Interfaces.Infra.Data;
 using Infra.CrossCutting.Multitenancy;

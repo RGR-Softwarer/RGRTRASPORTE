@@ -1,4 +1,4 @@
-ï»¿using Dominio.Events.Base;
+using Dominio.Events.Base;
 using Dominio.Exceptions;
 using Dominio.ValueObjects;
 using Dominio.Specifications;
@@ -9,7 +9,7 @@ namespace Dominio.Entidades.Localidades
 {
     public class Localidade : AggregateRoot
     {
-        // Specifications para validaÃ§Ãµes bÃ¡sicas
+        // Specifications para validações básicas
         private static readonly LocalidadePodeSerAtivadaSpecification _podeSerAtivada = new();
         private static readonly LocalidadePodeSerInativadaSpecification _podeSerInativada = new();
         private static readonly LocalidadePodeSerEditadaSpecification _podeSerEditada = new();
@@ -23,12 +23,12 @@ namespace Dominio.Entidades.Localidades
             decimal latitude,
             decimal longitude)
         {
-            // ValidaÃ§Ãµes bÃ¡sicas de integridade
+            // Validações básicas de integridade
             if (string.IsNullOrWhiteSpace(nome))
-                throw new DomainException("Nome Ã© obrigatÃ³rio");
+                throw new DomainException("Nome é obrigatório");
 
             if (endereco == null)
-                throw new DomainException("EndereÃ§o Ã© obrigatÃ³rio");
+                throw new DomainException("Endereço é obrigatório");
 
             Nome = nome;
             Endereco = endereco;
@@ -49,7 +49,7 @@ namespace Dominio.Entidades.Localidades
             return new Localidade(nome, endereco, latitude, longitude);
         }
 
-        // Factory Method com validaÃ§Ã£o por NotificationContext
+        // Factory Method com validação por NotificationContext
         public static (Localidade? localidade, bool sucesso) CriarLocalidadeComValidacao(
             string nome,
             Endereco endereco,
@@ -61,7 +61,7 @@ namespace Dominio.Entidades.Localidades
             var valido = validationService.ValidarCriacao(nome, endereco, latitude, longitude, notificationContext);
 
             if (!valido)
-                return (null, false);
+                return ((Localidade?)null, false);
 
             try
             {
@@ -71,17 +71,17 @@ namespace Dominio.Entidades.Localidades
             catch (DomainException ex)
             {
                 notificationContext.AddNotification(ex.Message);
-                return (null, false);
+                return ((Localidade?)null, false);
             }
         }
 
-        public string Nome { get; private set; }
-        public Endereco Endereco { get; private set; }
+        public string Nome { get; private set; } = null!;
+        public Endereco Endereco { get; private set; } = null!;
         public decimal Latitude { get; private set; }
         public decimal Longitude { get; private set; }
         public bool Ativo { get; private set; }
 
-        // Propriedades de conveniÃªncia para compatibilidade com EF
+        // Propriedades de conveniência para compatibilidade com EF
         public string Estado => Endereco.Estado;
         public string Cidade => Endereco.Cidade;
         public string Cep => Endereco.Cep;
@@ -101,12 +101,12 @@ namespace Dominio.Entidades.Localidades
         {
             EnsureLocalidadePodeSerEditada();
 
-            // ValidaÃ§Ãµes bÃ¡sicas de integridade
+            // Validações básicas de integridade
             if (string.IsNullOrWhiteSpace(nome))
-                throw new DomainException("Nome Ã© obrigatÃ³rio");
+                throw new DomainException("Nome é obrigatório");
 
             if (endereco == null)
-                throw new DomainException("EndereÃ§o Ã© obrigatÃ³rio");
+                throw new DomainException("Endereço é obrigatório");
 
             Nome = nome;
             Endereco = endereco;
@@ -118,7 +118,7 @@ namespace Dominio.Entidades.Localidades
             AddDomainEvent(new LocalidadeAtualizadaEvent(Id, nome));
         }
 
-        // MÃ©todo com validaÃ§Ã£o por NotificationContext
+        // Método com validação por NotificationContext
         public bool AtualizarComValidacao(
             string nome,
             Endereco endereco,
@@ -154,7 +154,7 @@ namespace Dominio.Entidades.Localidades
             AddDomainEvent(new LocalidadeAtivadaEvent(Id, Nome));
         }
 
-        // MÃ©todo com validaÃ§Ã£o por NotificationContext
+        // Método com validação por NotificationContext
         public bool AtivarComValidacao(INotificationContext notificationContext)
         {
             var validationService = new LocalidadeValidationService();
@@ -184,7 +184,7 @@ namespace Dominio.Entidades.Localidades
             AddDomainEvent(new LocalidadeInativadaEvent(Id, Nome));
         }
 
-        // MÃ©todo com validaÃ§Ã£o por NotificationContext
+        // Método com validação por NotificationContext
         public bool InativarComValidacao(INotificationContext notificationContext)
         {
             var validationService = new LocalidadeValidationService();
@@ -205,12 +205,12 @@ namespace Dominio.Entidades.Localidades
             }
         }
 
-        // MÃ©todos de consulta
+        // Métodos de consulta
         public bool PodeSerAtivada() => _podeSerAtivada.IsSatisfiedBy(this);
         public bool PodeSerInativada() => _podeSerInativada.IsSatisfiedBy(this);
         public bool PodeSerEditada() => _podeSerEditada.IsSatisfiedBy(this);
 
-        // ValidaÃ§Ãµes usando Specifications
+        // Validações usando Specifications
         private void EnsureLocalidadePodeSerAtivada()
         {
             if (!_podeSerAtivada.IsSatisfiedBy(this))
@@ -232,7 +232,7 @@ namespace Dominio.Entidades.Localidades
         protected override string DescricaoFormatada => $"{Nome} - {Endereco.Cidade}/{Endereco.Estado}";
     }
 
-    // Eventos de domÃ­nio para Localidade
+    // Eventos de domínio para Localidade
     public class LocalidadeCriadaEvent : DomainEvent
     {
         public long LocalidadeId { get; }

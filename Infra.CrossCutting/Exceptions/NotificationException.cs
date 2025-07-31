@@ -1,4 +1,4 @@
-﻿namespace Infra.CrossCutting.Exceptions
+namespace Infra.CrossCutting.Exceptions
 {
     public class NotificationException : Exception
     {

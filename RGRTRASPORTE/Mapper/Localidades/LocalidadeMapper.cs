@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Dominio.Dtos.Localidades;
 using Dominio.Entidades.Localidades;
 //Ajustar

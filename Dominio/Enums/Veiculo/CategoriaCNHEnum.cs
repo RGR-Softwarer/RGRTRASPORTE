@@ -1,4 +1,4 @@
-﻿namespace Dominio.Enums.Veiculo
+namespace Dominio.Enums.Veiculo
 {
     public enum CategoriaCNHEnum
     {

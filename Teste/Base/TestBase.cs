@@ -24,12 +24,12 @@ namespace Teste.Base
 
         protected T GetService<T>() where T : class
         {
-            return ServiceProvider.GetService<T>();
+            return ServiceProvider.GetService<T>() ?? throw new InvalidOperationException($"Service {typeof(T).Name} not registered");
         }
 
         protected Mock<T> GetMock<T>() where T : class
         {
-            return Services.BuildServiceProvider().GetService<Mock<T>>();
+            return Services.BuildServiceProvider().GetService<Mock<T>>() ?? throw new InvalidOperationException($"Mock {typeof(T).Name} not registered");
         }
 
         public virtual void Dispose()

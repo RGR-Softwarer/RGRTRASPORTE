@@ -1,4 +1,4 @@
-﻿namespace Dominio.Enums.Auditoria
+namespace Dominio.Enums.Auditoria
 {
     public enum AcaoBancoDadosEnum
     {

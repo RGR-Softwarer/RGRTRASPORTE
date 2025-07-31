@@ -1,4 +1,4 @@
-ï»¿using Dominio.Enums.Viagens;
+using Dominio.Enums.Viagens;
 using Dominio.Exceptions;
 using Dominio.ValueObjects;
 
@@ -10,7 +10,7 @@ namespace Dominio.Entidades.Viagens
         public Coordenada Coordenada { get; private set; }
         public DateTime DataHora { get; private set; }
                 
-        // NavegaÃ§Ã£o
+        // Navegação
         public Viagem Viagem { get; private set; }
 
         private ViagemPosicao() { } // Para EF
@@ -28,24 +28,24 @@ namespace Dominio.Entidades.Viagens
         private void ValidarCriacao(Viagem viagem, DateTime dataHora)
         {
             if (viagem == null)
-                throw new DomainException("Viagem Ã© obrigatÃ³ria");
+                throw new DomainException("Viagem é obrigatória");
 
             if (dataHora > DateTime.UtcNow)
-                throw new DomainException("Data/hora nÃ£o pode ser futura");
+                throw new DomainException("Data/hora não pode ser futura");
 
             if (viagem.Situacao != SituacaoViagemEnum.EmAndamento)
-                throw new DomainException("Apenas viagens em andamento podem receber posiÃ§Ãµes");
+                throw new DomainException("Apenas viagens em andamento podem receber posições");
         }
 
         public decimal CalcularDistancia(ViagemPosicao outraPosicao)
         {
             if (outraPosicao == null)
-                throw new DomainException("PosiÃ§Ã£o de referÃªncia Ã© obrigatÃ³ria");
+                throw new DomainException("Posição de referência é obrigatória");
 
             return Coordenada.CalcularDistancia(outraPosicao.Coordenada);
         }
 
-        // Propriedades para compatibilidade com o cÃ³digo existente
+        // Propriedades para compatibilidade com o código existente
         public decimal Latitude => Coordenada.Latitude;
         public decimal Longitude => Coordenada.Longitude;
     }

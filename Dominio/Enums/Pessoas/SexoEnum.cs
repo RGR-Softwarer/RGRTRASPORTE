@@ -1,4 +1,4 @@
-﻿namespace Dominio.Enums.Pessoas
+namespace Dominio.Enums.Pessoas
 {
     public enum SexoEnum
     {

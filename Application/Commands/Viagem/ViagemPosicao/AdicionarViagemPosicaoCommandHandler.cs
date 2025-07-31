@@ -25,12 +25,12 @@ public class AdicionarViagemPosicaoCommandHandler : IRequestHandler<AdicionarVia
         {
             _logger.LogInformation("Adicionando posição para a viagem {ViagemId}", request.ViagemId);
 
-            var viagem = await _viagemRepository.ObterPorIdAsync(request.ViagemId);
+            var viagem = await _viagemRepository.ObterPorIdAsync(request.ViagemId, cancellationToken);
             if (viagem == null)
                 return BaseResponse<long>.Erro("Viagem não encontrada");
 
             viagem.AdicionarPosicao(request.Latitude, request.Longitude, request.DataPosicao);
-            await _viagemRepository.AtualizarAsync(viagem);
+            await _viagemRepository.AtualizarAsync(viagem, cancellationToken);
 
             var posicao = viagem.Posicoes.Last();
             _logger.LogInformation("Posição adicionada com sucesso para a viagem {ViagemId}", request.ViagemId);

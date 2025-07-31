@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RGRTRASPORTE.Controllers.Viagens
 {
-    [Route("api/[controller]")]
+    [Route("api/Viagem/{viagemId}/passageiros")]
     [ApiController]
     public class ViagemPassageiroController : AbstractControllerBase
     {
@@ -21,24 +21,26 @@ namespace RGRTRASPORTE.Controllers.Viagens
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterTodos([FromQuery] ObterViagemPassageirosQuery query)
+        public async Task<IActionResult> ObterTodos(long viagemId, [FromQuery] ObterViagemPassageirosQuery query, CancellationToken cancellationToken)
         {
-            var viagemPassageiros = await _mediator.Send(query);
+            query.ViagemId = viagemId; // Garante que o ID da rota seja usado
+            var viagemPassageiros = await _mediator.Send(query, cancellationToken);
             return await RGRResult(System.Net.HttpStatusCode.OK, viagemPassageiros);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Adicionar([FromBody] AdicionarPassageiroViagemCommand command)
+        public async Task<IActionResult> Adicionar(long viagemId, [FromBody] AdicionarPassageiroViagemApiCommand command, CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(command);
+            command.ViagemId = viagemId; // Garante que o ID da rota seja usado
+            var result = await _mediator.Send(command, cancellationToken);
             return await RGRResult(System.Net.HttpStatusCode.Created, result);
         }
 
-        [HttpDelete("{viagemId}/{passageiroId}")]
-        public async Task<IActionResult> Remover(long viagemId, long passageiroId)
+        [HttpDelete("{passageiroId}")]
+        public async Task<IActionResult> Remover(long viagemId, long passageiroId, CancellationToken cancellationToken)
         {
             var command = new RemoverPassageiroViagemCommand(viagemId, passageiroId);
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(command, cancellationToken);
             return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
     }

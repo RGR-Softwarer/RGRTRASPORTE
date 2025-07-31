@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades.Localidades;
+using Dominio.Entidades.Localidades;
 using Dominio.Enums.Pessoas;
 using Dominio.Events.Base;
 using Dominio.ValueObjects;
@@ -29,11 +29,11 @@ public class Passageiro : Pessoa
         AddDomainEvent(new PassageiroCriadoEvent(Id, nome, cpf.Numero));
     }
 
-    public Localidade Localidade { get; private set; }
+    public Localidade Localidade { get; private set; } = null!;
     public new long LocalidadeId { get; private set; }
-    public Localidade LocalidadeEmbarque { get; private set; }
+    public Localidade LocalidadeEmbarque { get; private set; } = null!;
     public new long? LocalidadeEmbarqueId { get; private set; }
-    public Localidade LocalidadeDesembarque { get; private set; }
+    public Localidade LocalidadeDesembarque { get; private set; } = null!;
     public new long? LocalidadeDesembarqueId { get; private set; }
 
     public void Atualizar(
@@ -69,12 +69,12 @@ public class Passageiro : Pessoa
     }
 }
 
-// Eventos de domínio para Passageiro
+// Eventos de dom�nio para Passageiro
 public class PassageiroCriadoEvent : DomainEvent
 {
     public long PassageiroId { get; }
-    public string Nome { get; }
-    public string CPF { get; }
+    public string Nome { get; } = null!;
+    public string CPF { get; } = null!;
 
     public PassageiroCriadoEvent(long passageiroId, string nome, string cpf)
     {
@@ -87,8 +87,8 @@ public class PassageiroCriadoEvent : DomainEvent
 public class PassageiroAtualizadoEvent : DomainEvent
 {
     public long PassageiroId { get; }
-    public string Nome { get; }
-    public string CPF { get; }
+    public string Nome { get; } = null!;
+    public string CPF { get; } = null!;
 
     public PassageiroAtualizadoEvent(long passageiroId, string nome, string cpf)
     {
@@ -101,8 +101,8 @@ public class PassageiroAtualizadoEvent : DomainEvent
 public class PassageiroLocalidadesAtualizadasEvent : DomainEvent
 {
     public long PassageiroId { get; }
-    public string Nome { get; }
-    public string CPF { get; }
+    public string Nome { get; } = null!;
+    public string CPF { get; } = null!;
 
     public PassageiroLocalidadesAtualizadasEvent(long passageiroId, string nome, string cpf)
     {

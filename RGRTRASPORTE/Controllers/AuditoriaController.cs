@@ -108,7 +108,7 @@ namespace RGRTRASPORTE.Controllers
                 );
 
                 return Ok(RetornoGenericoDto<object>.ComSucesso(
-                    null,
+                    new { },
                     "Evento personalizado registrado com sucesso"
                 ));
             }

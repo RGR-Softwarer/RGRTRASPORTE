@@ -1,4 +1,4 @@
-﻿using Hangfire.PostgreSql;
+using Hangfire.PostgreSql;
 using HangfireBasicAuthenticationFilter;
 using Infra.Ioc;
 
@@ -48,7 +48,7 @@ namespace Hangfire.Worker
            // services.AddScoped<ITesteJob, TesteJob>();
         }
 
-        public async Task Configure(WebApplication app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobs = null)
+        public Task Configure(WebApplication app, IWebHostEnvironment env, IBackgroundJobClient backgroundJobs = null)
         {
             app.UseHangfireDashboard("/hangfire", new DashboardOptions
             {
@@ -65,10 +65,7 @@ namespace Hangfire.Worker
 
             app.MapHangfireDashboard();
 
-            app.UseHangfireServer(new BackgroundJobServerOptions
-            {
-                ServerName = "Hangfire.Postgres"
-            });
+            // Hangfire server j� configurado no ConfigureServices com AddHangfireServer
 
             var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
 
@@ -77,7 +74,7 @@ namespace Hangfire.Worker
             //    job => job.ExecutarAsync(),
             //    "0 8-23 * * *");
 
-            app.Run();
+            return Task.CompletedTask;
         }
     }
 }

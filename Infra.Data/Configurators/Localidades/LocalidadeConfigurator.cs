@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades.Localidades;
+using Dominio.Entidades.Localidades;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -31,7 +31,7 @@ namespace Infra.Data.Configurators.Localidades
                 .IsRequired()
                 .HasColumnName($"{prefixo}_ATIVO");
 
-            // Ignorar o Value Object Endereco e propriedades de conveniência
+            // Ignorar o Value Object Endereco e propriedades de conveni�ncia
             builder.Ignore(l => l.Endereco);
             builder.Ignore(l => l.Estado);
             builder.Ignore(l => l.Cidade);

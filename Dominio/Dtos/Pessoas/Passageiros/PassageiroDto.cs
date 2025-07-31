@@ -1,4 +1,4 @@
-﻿using Dominio.Enums.Pessoas;
+using Dominio.Enums.Pessoas;
 
 namespace Dominio.Dtos.Pessoas.Passageiros
 {

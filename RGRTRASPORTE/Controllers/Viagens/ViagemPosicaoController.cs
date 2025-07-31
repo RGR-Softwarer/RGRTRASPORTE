@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RGRTRASPORTE.Controllers.Viagens
 {
-    [Route("api/[controller]")]
+    [Route("api/Viagem/{viagemId}/posicoes")]
     [ApiController]
     public class ViagemPosicaoController : AbstractControllerBase
     {
@@ -21,16 +21,18 @@ namespace RGRTRASPORTE.Controllers.Viagens
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterTodos([FromQuery] ObterViagemPosicoesQuery query)
+        public async Task<IActionResult> ObterTodos(long viagemId, [FromQuery] ObterViagemPosicoesQuery query, CancellationToken cancellationToken)
         {
-            var viagemPosicoes = await _mediator.Send(query);
+            query.ViagemId = viagemId; // Garante que o ID da rota seja usado
+            var viagemPosicoes = await _mediator.Send(query, cancellationToken);
             return await RGRResult(System.Net.HttpStatusCode.OK, viagemPosicoes);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Adicionar([FromBody] AdicionarViagemPosicaoCommand command)
+        public async Task<IActionResult> Adicionar(long viagemId, [FromBody] AdicionarViagemPosicaoApiCommand command, CancellationToken cancellationToken)
         {
-            var id = await _mediator.Send(command);
+            command.ViagemId = viagemId; // Garante que o ID da rota seja usado
+            var id = await _mediator.Send(command, cancellationToken);
             return await RGRResult(System.Net.HttpStatusCode.Created, id);
         }
         

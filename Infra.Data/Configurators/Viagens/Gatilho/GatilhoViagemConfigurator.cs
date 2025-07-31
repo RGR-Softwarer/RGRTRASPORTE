@@ -1,4 +1,4 @@
-ï»¿using Dominio.Entidades.Viagens.Gatilho;
+using Dominio.Entidades.Viagens.Gatilho;
 using Dominio.Enums.Data;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
@@ -96,7 +96,7 @@ namespace Infra.Data.Configurators.Viagens.Gatilho
                 .HasForeignKey(g => g.VeiculoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Ignorar navegaÃ§Ãµes para entidades do CadastroContext
+            // Ignorar navegações para entidades do CadastroContext
             builder.Ignore(g => g.LocalidadeOrigem);
             builder.Ignore(g => g.LocalidadeDestino);
         }

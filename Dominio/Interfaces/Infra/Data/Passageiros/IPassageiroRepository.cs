@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades.Pessoas.Passageiros;
+using Dominio.Entidades.Pessoas.Passageiros;
 
 namespace Dominio.Interfaces.Infra.Data.Passageiros
 {

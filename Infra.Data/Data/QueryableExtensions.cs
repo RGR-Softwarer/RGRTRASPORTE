@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Collections.Concurrent;
 
@@ -6,7 +6,7 @@ namespace Infra.Data.Data
 {
     public static class QueryableExtensions
     {
-        // Cache para melhorar performance de ordenação dinâmica
+        // Cache para melhorar performance de ordena��o din�mica
         private static readonly ConcurrentDictionary<string, LambdaExpression> _orderExpressions = new();
 
         /// <summary>

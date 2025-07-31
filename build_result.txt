@@ -1,0 +1,13 @@
+Versão do MSBuild 17.9.8+b34f75857 para .NET
+Compilação de 30/07/2025 21:34:06 iniciada.
+     1>Projeto "C:\Workspace\RGRTRASPORTE\RGRTRASPORTE.sln" no nó 1 (Restore destino(s)).
+     1>ValidateSolutionConfiguration:
+         Compilando a configuração de solução "Debug|Any CPU".
+Tentando cancelar a compilação...
+     1>Projeto de compilação pronto "C:\Workspace\RGRTRASPORTE\RGRTRASPORTE.sln" (Restore destino(s)) -- FALHA.
+
+FALHA da compilação.
+    0 Aviso(s)
+    0 Erro(s)
+
+Tempo Decorrido 00:00:03.83

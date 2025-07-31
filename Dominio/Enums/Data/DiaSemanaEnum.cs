@@ -1,4 +1,4 @@
-ï»¿namespace Dominio.Enums.Data
+namespace Dominio.Enums.Data
 {
     public enum DiaSemanaEnum
     {
@@ -19,11 +19,11 @@
             {
                 case DiaSemanaEnum.Domingo: return "Domingo";
                 case DiaSemanaEnum.Segunda: return "Segunda";
-                case DiaSemanaEnum.Terca: return "TerÃ§a";
+                case DiaSemanaEnum.Terca: return "Terça";
                 case DiaSemanaEnum.Quarta: return "Quarta";
                 case DiaSemanaEnum.Quinta: return "Quinta";
                 case DiaSemanaEnum.Sexta: return "Sexta";
-                case DiaSemanaEnum.Sabado: return "SÃ¡bado";
+                case DiaSemanaEnum.Sabado: return "Sábado";
                 default: return string.Empty;
             }
         }
@@ -45,7 +45,7 @@
                 case DiaSemanaEnum.Quarta: return "Quarta";
                 case DiaSemanaEnum.Quinta: return "Quinta";
                 case DiaSemanaEnum.Sexta: return "Sexta";
-                case DiaSemanaEnum.Sabado: return "SÃ¡bado";
+                case DiaSemanaEnum.Sabado: return "Sábado";
                 default: return string.Empty;
             }
         }

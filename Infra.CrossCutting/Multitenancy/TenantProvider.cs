@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 
 namespace Infra.CrossCutting.Multitenancy
 {
@@ -27,7 +27,7 @@ namespace Infra.CrossCutting.Multitenancy
             if (!string.IsNullOrWhiteSpace(_tenantIdContext.Value))
                 return _tenantIdContext.Value;
 
-            throw new InvalidOperationException("TenantId não encontrado no header ou contexto.");
+            throw new InvalidOperationException("TenantId n�o encontrado no header ou contexto.");
         }
 
         public string GetTenantConnectionString()
@@ -39,7 +39,7 @@ namespace Infra.CrossCutting.Multitenancy
                 "localhost:5173" => "Server=66.135.11.124;Port=5432;Database=RGRTrasporte;User Id=postgres;Password=S3cureP@ssw0rd!2024;Pooling=true;MinPoolSize=1;MaxPoolSize=20;Timeout=30;CommandTimeout=60;SslMode=Prefer;",
                 "66.135.11.124:4000" => "Server=66.135.11.124;Port=5432;Database=RGRTrasporte;User Id=postgres;Password=S3cureP@ssw0rd!2024;Pooling=true;MinPoolSize=1;MaxPoolSize=20;Timeout=30;CommandTimeout=60;SslMode=Prefer;",
                 "cliente2" => "Host=localhost;Database=cliente2;Username=postgres;Password=123",
-                _ => throw new Exception($"Tenant '{tenantId}' não identificado.")
+                _ => throw new Exception($"Tenant '{tenantId}' n�o identificado.")
             };
         }
 

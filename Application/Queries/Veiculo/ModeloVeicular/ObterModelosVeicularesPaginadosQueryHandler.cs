@@ -38,7 +38,8 @@ public class ObterModelosVeicularesPaginadosQueryHandler : IRequestHandler<Obter
                 request.TamanhoPagina,
                 orderByProperty,
                 request.Descendente,
-                filter);
+                filter,
+                cancellationToken);
 
             // Converte para DTO com descrições corretas
             var itemsDto = items.Select(m => new ModeloVeicularDto

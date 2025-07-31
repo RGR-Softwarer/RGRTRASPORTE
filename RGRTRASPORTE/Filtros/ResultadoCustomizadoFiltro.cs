@@ -1,10 +1,10 @@
-﻿using Application.Dtos;
+using Application.Dtos;
 using Dominio.Dtos;
 using Infra.CrossCutting.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
-//início da Função
+//in�cio da Fun��o
 namespace RGRTRASPORTE.Filtros
 {
     public class ResultadoCustomizadoFiltro : IActionFilter, IExceptionFilter

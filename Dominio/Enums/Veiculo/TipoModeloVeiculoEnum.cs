@@ -1,13 +1,13 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Dominio.Enums.Veiculo
 {
     public enum TipoModeloVeiculoEnum
     {
-        [Description("Ônibus")]
+        [Description("�nibus")]
         Onibus = 0,
         
-        [Description("Micro-ônibus")]
+        [Description("Micro-�nibus")]
         MicroOnibus = 1,
         
         [Description("Van")]
@@ -23,8 +23,8 @@ namespace Dominio.Enums.Veiculo
         {
             return tipoModeloVeiculo switch
             {
-                TipoModeloVeiculoEnum.Onibus => "Ônibus",
-                TipoModeloVeiculoEnum.MicroOnibus => "Micro-ônibus",
+                TipoModeloVeiculoEnum.Onibus => "�nibus",
+                TipoModeloVeiculoEnum.MicroOnibus => "Micro-�nibus",
                 TipoModeloVeiculoEnum.Van => "Van",
                 TipoModeloVeiculoEnum.Carro => "Carro",
                 _ => string.Empty
@@ -36,7 +36,7 @@ namespace Dominio.Enums.Veiculo
             return situacao ? "Ativo" : "Inativo";
         }
 
-        public static string ObterDescricaoBoolean(bool valor, string textoTrue = "Sim", string textoFalse = "Não")
+        public static string ObterDescricaoBoolean(bool valor, string textoTrue = "Sim", string textoFalse = "N�o")
         {
             return valor ? textoTrue : textoFalse;
         }
@@ -45,8 +45,8 @@ namespace Dominio.Enums.Veiculo
         {
             return new Dictionary<int, string>
             {
-                { (int)TipoModeloVeiculoEnum.Onibus, "Ônibus" },
-                { (int)TipoModeloVeiculoEnum.MicroOnibus, "Micro-ônibus" },
+                { (int)TipoModeloVeiculoEnum.Onibus, "�nibus" },
+                { (int)TipoModeloVeiculoEnum.MicroOnibus, "Micro-�nibus" },
                 { (int)TipoModeloVeiculoEnum.Van, "Van" },
                 { (int)TipoModeloVeiculoEnum.Carro, "Carro" }
             };

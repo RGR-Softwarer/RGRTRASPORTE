@@ -20,21 +20,22 @@ namespace Infra.CrossCutting.Cache
 
         public async Task<T> GetOrCreateAsync<T>(
             string key,
-            Func<Task<T>> factory,
-            TimeSpan? customExpiration = null)
+            Func<CancellationToken, Task<T>> factory,
+            TimeSpan? customExpiration = null,
+            CancellationToken cancellationToken = default)
         {
-            var cachedValue = await GetAsync<T>(key);
+            var cachedValue = await GetAsync<T>(key, cancellationToken);
             if (cachedValue != null)
                 return cachedValue;
 
-            var value = await factory();
-            await SetAsync(key, value, customExpiration);
+            var value = await factory(cancellationToken);
+            await SetAsync(key, value, customExpiration, cancellationToken);
             return value;
         }
 
-        public async Task<T> GetAsync<T>(string key)
+        public async Task<T> GetAsync<T>(string key, CancellationToken cancellationToken = default)
         {
-            var value = await _cache.GetStringAsync(key);
+            var value = await _cache.GetStringAsync(key, cancellationToken);
             if (string.IsNullOrEmpty(value))
                 return default;
 
@@ -44,7 +45,8 @@ namespace Infra.CrossCutting.Cache
         public async Task SetAsync<T>(
             string key,
             T value,
-            TimeSpan? customExpiration = null)
+            TimeSpan? customExpiration = null,
+            CancellationToken cancellationToken = default)
         {
             var options = customExpiration.HasValue
                 ? new DistributedCacheEntryOptions
@@ -54,15 +56,15 @@ namespace Infra.CrossCutting.Cache
                 : _options;
 
             var serializedValue = JsonSerializer.Serialize(value);
-            await _cache.SetStringAsync(key, serializedValue, options);
+            await _cache.SetStringAsync(key, serializedValue, options, cancellationToken);
         }
 
-        public async Task RemoveAsync(string key)
+        public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)
         {
-            await _cache.RemoveAsync(key);
+            await _cache.RemoveAsync(key, cancellationToken);
         }
 
-        public async Task RemoveByPrefixAsync(string prefix)
+        public async Task RemoveByPrefixAsync(string prefix, CancellationToken cancellationToken = default)
         {
             // Nota: Esta é uma implementação básica.
             // Para uma solução mais robusta, considere usar Redis com SCAN

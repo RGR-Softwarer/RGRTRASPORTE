@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades.Pessoas;
+using Dominio.Entidades.Pessoas;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -64,7 +64,7 @@ namespace Infra.Data.Configurators.Pessoa
                 .HasConversion<int>()
                 .HasColumnName($"{prefixo}_SEXO");
 
-            // Ignorar propriedades que não fazem sentido para Motorista
+            // Ignorar propriedades que n�o fazem sentido para Motorista
             builder.Ignore(m => m.LocalidadeEmbarqueId);
             builder.Ignore(m => m.LocalidadeDesembarqueId);
         }

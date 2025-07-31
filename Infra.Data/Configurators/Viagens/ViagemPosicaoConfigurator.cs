@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades.Viagens;
+using Dominio.Entidades.Viagens;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -33,7 +33,7 @@ namespace Infra.Data.Configurators.Viagens
                     .IsRequired();
             });
 
-            // Ignorar as propriedades de conveniência somente leitura
+            // Ignorar as propriedades de conveni�ncia somente leitura
             builder.Ignore(vp => vp.Latitude);
             builder.Ignore(vp => vp.Longitude);
 

@@ -1,0 +1,9 @@
+Versão do MSBuild 17.9.8+b34f75857 para .NET
+  Determinando os projetos a serem restaurados...
+Tentando cancelar a compilação...
+
+FALHA da compilação.
+    0 Aviso(s)
+    0 Erro(s)
+
+Tempo Decorrido 00:00:03.78

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Dominio.Dtos.Viagens;
 using Dominio.Entidades.Viagens;
 
@@ -27,7 +27,7 @@ namespace RGRTRASPORTE.Mapper.Viagens
                 .ForMember(dest => dest.DataInicioViagem, opt => opt.MapFrom(src => src.DataInicioViagem))
                 .ForMember(dest => dest.DataFimViagem, opt => opt.MapFrom(src => src.DataFimViagem))
                 
-                // REMOVIDO: ValorPassagem não existe mais na entidade Viagem
+                // REMOVIDO: ValorPassagem n�o existe mais na entidade Viagem
                 
                 .ForMember(dest => dest.QuantidadeVagas, opt => opt.MapFrom(src => src.QuantidadeVagas))
                 .ForMember(dest => dest.VagasDisponiveis, opt => opt.MapFrom(src => src.VagasDisponiveis))

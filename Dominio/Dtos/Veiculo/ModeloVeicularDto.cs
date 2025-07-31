@@ -1,4 +1,4 @@
-﻿using Dominio.Enums.Veiculo;
+using Dominio.Enums.Veiculo;
 
 namespace Dominio.Dtos.Veiculo
 {

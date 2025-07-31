@@ -1,4 +1,4 @@
-﻿namespace Dominio.Dtos.Viagens
+namespace Dominio.Dtos.Viagens
 {
     public class ViagemPassageiroDto
     {

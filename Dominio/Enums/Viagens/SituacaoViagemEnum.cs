@@ -1,4 +1,4 @@
-﻿namespace Dominio.Enums.Viagens
+namespace Dominio.Enums.Viagens
 {
     public enum SituacaoViagemEnum
     {

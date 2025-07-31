@@ -1,4 +1,4 @@
-ï»¿using Dominio.Events.Viagens;
+using Dominio.Events.Viagens;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
@@ -16,8 +16,8 @@ public class ViagemCriadaEventHandler : INotificationHandler<ViagemCriadaEvent>
     public Task Handle(ViagemCriadaEvent notification, CancellationToken cancellationToken)
     {        
 
-        // Aqui vocÃª pode adicionar lÃ³gica adicional para processar o evento
-        // Por exemplo: enviar notificaÃ§Ãµes, atualizar cache, etc.
+        // Aqui você pode adicionar lógica adicional para processar o evento
+        // Por exemplo: enviar notificações, atualizar cache, etc.
 
         return Task.CompletedTask;
     }

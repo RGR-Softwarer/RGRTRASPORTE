@@ -1,4 +1,4 @@
-﻿using Dominio.Interfaces.Infra.Data;
+using Dominio.Interfaces.Infra.Data;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 
@@ -27,15 +27,15 @@ namespace Application.Behaviors
                 var response = await next();
 
                 if (_notificationHandler.HasNotifications())
-                    await _unitOfWork.RollBack();
+                    await _unitOfWork.RollBack(cancellationToken);
                 else
-                    await _unitOfWork.Commit();
+                    await _unitOfWork.Commit(cancellationToken);
 
                 return response;
             }
             catch
             {
-                await _unitOfWork.RollBack();
+                await _unitOfWork.RollBack(cancellationToken);
                 throw;
             }
         }

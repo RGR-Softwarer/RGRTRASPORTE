@@ -1,4 +1,4 @@
-ï»¿using Dominio.Entidades.Viagens;
+using Dominio.Entidades.Viagens;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -40,7 +40,7 @@ namespace Infra.Data.Configurators.Viagens
                 .HasForeignKey(vp => vp.ViagemId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Ignorar navegaÃ§Ã£o para entidade do CadastroContext
+            // Ignorar navegação para entidade do CadastroContext
             builder.Ignore(vp => vp.Passageiro);
         }
     }

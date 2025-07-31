@@ -1,4 +1,4 @@
-﻿using Application.Commands.Localidade;
+using Application.Commands.Localidade;
 using Application.Queries.Localidade;
 using Application.Queries.Localidade.Models;
 using Dominio.Dtos;
@@ -23,7 +23,7 @@ namespace RGRTRASPORTE.Controllers.Localidades
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterTodos([FromQuery] string nome = null, [FromQuery] string estado = null, [FromQuery] bool? ativo = null)
+        public async Task<IActionResult> ObterTodos([FromQuery] string nome = null, [FromQuery] string estado = null, [FromQuery] bool ativo = false)
         {
             var query = new ObterLocalidadesQuery
             {
@@ -43,7 +43,7 @@ namespace RGRTRASPORTE.Controllers.Localidades
             var response = await _mediator.Send(query);
             
             if (response == null || !response.Sucesso)
-                return await RGRResult(System.Net.HttpStatusCode.NotFound, $"Localidade com ID {id} não encontrada");
+                return await RGRResult(System.Net.HttpStatusCode.NotFound, $"Localidade com ID {id} n�o encontrada");
 
             return await RGRResult(System.Net.HttpStatusCode.OK, response);
         }

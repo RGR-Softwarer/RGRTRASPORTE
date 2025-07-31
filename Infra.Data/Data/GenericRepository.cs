@@ -1,4 +1,4 @@
-ï»¿using Dominio.Entidades;
+using Dominio.Entidades;
 using Dominio.Interfaces.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -18,7 +18,7 @@ namespace Infra.Data.Data
             _context = context;
         }
 
-        #region MÃ©todos PÃºblicos
+        #region Métodos Públicos
 
         public virtual async Task<IEnumerable<T>> ObterTodosAsync()
         {
@@ -40,7 +40,8 @@ namespace Infra.Data.Data
         int pageSize,
         string orderByProperty = "",
         bool isDescending = false,
-        Expression<Func<T, bool>> filter = null)
+        Expression<Func<T, bool>> filter = null,
+        CancellationToken cancellationToken = default)
         {
             var query = Query();
 
@@ -48,14 +49,14 @@ namespace Infra.Data.Data
             if (filter != null)
                 query = query.Where(filter);
 
-            // ObtÃ©m o total antes da paginaÃ§Ã£o
-            var total = await query.CountAsync();
+            // Obtém o total antes da paginação
+            var total = await query.CountAsync(cancellationToken);
 
-            // Aplica ordenaÃ§Ã£o se propriedade fornecida
+            // Aplica ordenação se propriedade fornecida
             if (!string.IsNullOrWhiteSpace(orderByProperty))
                 query = query.OrderByDynamic(orderByProperty, isDescending);
 
-            // Aplica paginaÃ§Ã£o
+            // Aplica paginação
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
@@ -111,25 +112,25 @@ namespace Infra.Data.Data
             await AddManyAsync(listaEntidades, cancellationToken);
         }
 
-        public async Task AtualizarAsync(T entidade)
+        public async Task AtualizarAsync(T entidade, CancellationToken cancellationToken = default)
         {
             Update(entidade);
             await Task.CompletedTask;
         }
 
-        public async Task AtualizarEmLoteAsync(List<T> listaEntidades)
+        public async Task AtualizarEmLoteAsync(List<T> listaEntidades, CancellationToken cancellationToken = default)
         {
             UpdateMany(listaEntidades);
             await Task.CompletedTask;
         }
 
-        public async Task RemoverAsync(T entidade)
+        public async Task RemoverAsync(T entidade, CancellationToken cancellationToken = default)
         {
             Remove(entidade);
             await Task.CompletedTask;
         }
 
-        public async Task RemoverEmLoteAsync(List<T> listaEntidades)
+        public async Task RemoverEmLoteAsync(List<T> listaEntidades, CancellationToken cancellationToken = default)
         {
             RemoveLote(listaEntidades);
             await Task.CompletedTask;
@@ -144,9 +145,9 @@ namespace Infra.Data.Data
             return await _context.Set<T>().CountAsync(cancellationToken);
         }
 
-        #endregion MÃ©todos PÃºblicos
+        #endregion Métodos Públicos
 
-        #region MÃ©todos Privados
+        #region Métodos Privados
 
         private async Task AddAsync(T entity, CancellationToken cancellationToken = default)
         {
@@ -178,6 +179,6 @@ namespace Infra.Data.Data
             _context.Set<T>().RemoveRange(listaEntidades);
         }
 
-        #endregion MÃ©todos Privados             
+        #endregion Métodos Privados             
     }
 }

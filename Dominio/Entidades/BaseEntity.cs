@@ -1,4 +1,4 @@
-﻿using Dominio.Events.Base;
+using Dominio.Events.Base;
 
 namespace Dominio.Entidades
 {

@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 
 namespace Infra.CrossCutting.Handlers.Notifications
 {

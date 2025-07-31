@@ -1,4 +1,4 @@
-ï»¿using Dominio.Entidades.Viagens;
+using Dominio.Entidades.Viagens;
 using Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -13,7 +13,7 @@ namespace Infra.Data.Configurators.Viagens
 
             builder.ToTable("T_VIAGEM");
 
-            // Mapeamento bÃ¡sico do Codigo (serÃ¡ convertido internamente pela entidade)
+            // Mapeamento básico do Codigo (será convertido internamente pela entidade)
             builder.Property(v => v.Codigo)
                 .HasConversion(
                     codigo => codigo.Valor,
@@ -128,7 +128,7 @@ namespace Infra.Data.Configurators.Viagens
                 .HasForeignKey(v => v.VeiculoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Ignorar propriedades de navegaÃ§Ã£o para entidades do CadastroContext
+            // Ignorar propriedades de navegação para entidades do CadastroContext
             builder.Ignore(v => v.Motorista);
             builder.Ignore(v => v.LocalidadeOrigem);
             builder.Ignore(v => v.LocalidadeDestino);

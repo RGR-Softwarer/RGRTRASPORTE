@@ -1,4 +1,4 @@
-ï»¿using Dominio.Entidades;
+using Dominio.Entidades;
 using Dominio.Entidades.Auditoria;
 using Dominio.Entidades.Localidades;
 using Dominio.Entidades.Pessoas;
@@ -23,20 +23,20 @@ namespace Infra.Data.Context
         public DbSet<Passageiro> Passageiros { get; set; }
         public DbSet<Motorista> Motoristas { get; set; }
 
-        // Auditoria - Nova implementaÃ§Ã£o
+        // Auditoria - Nova implementação
         public DbSet<RegistroAuditoria> RegistrosAuditoria { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Ignorar Value Objects que nÃ£o devem ser mapeados como entidades
+            // Ignorar Value Objects que não devem ser mapeados como entidades
             modelBuilder.Ignore<Dominio.ValueObjects.Endereco>();
             modelBuilder.Ignore<Dominio.ValueObjects.CPF>();
             modelBuilder.Ignore<Dominio.ValueObjects.Placa>();
             modelBuilder.Ignore<Dominio.Events.Base.DomainEvent>();
 
-            // ConfiguraÃ§Ãµes das entidades
+            // Configurações das entidades
             modelBuilder.ApplyConfiguration(new LocalidadeConfigurator());
             modelBuilder.ApplyConfiguration(new PassageiroConfigurator());
             modelBuilder.ApplyConfiguration(new MotoristaConfigurator());

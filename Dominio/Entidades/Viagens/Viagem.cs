@@ -1,4 +1,4 @@
-Ôªø#nullable enable
+#nullable enable
 
 using Dominio.Entidades.Localidades;
 using Dominio.Entidades.Pessoas;
@@ -20,16 +20,16 @@ using Dominio.Interfaces;
 namespace Dominio.Entidades.Viagens
 {
     /// <summary>
-    /// Aggregate Root para entidade Viagem seguindo padr√µes DDD.
+    /// Aggregate Root para entidade Viagem seguindo padrıes DDD.
     /// Representa uma viagem de transporte com passageiros, rotas e posicionamento.
     /// </summary>
     /// <remarks>
     /// Esta classe implementa:
-    /// - Factory Methods para cria√ß√£o controlada
+    /// - Factory Methods para criaÁ„o controlada
     /// - Value Objects para tipos complexos
-    /// - Domain Events para comunica√ß√£o
-    /// - Specifications para regras de neg√≥cio
-    /// - Notification Pattern para valida√ß√µes
+    /// - Domain Events para comunicaÁ„o
+    /// - Specifications para regras de negÛcio
+    /// - Notification Pattern para validaÁıes
     /// </remarks>
     public class Viagem : AggregateRoot
     {
@@ -39,7 +39,7 @@ namespace Dominio.Entidades.Viagens
         public Distancia Distancia { get; private set; }
         public Polilinha PolilinhaRota { get; private set; }
 
-        // Propriedades primitivas que n√£o justificam Value Objects
+        // Propriedades primitivas que n„o justificam Value Objects
         public long VeiculoId { get; private set; }
         public long MotoristaId { get; private set; }
         public long LocalidadeOrigemId { get; private set; }
@@ -61,14 +61,14 @@ namespace Dominio.Entidades.Viagens
         private readonly List<ViagemPosicao> _posicoes = new();
         public IReadOnlyCollection<ViagemPosicao> Posicoes => _posicoes.AsReadOnly();
 
-        // Navega√ß√£o
+        // NavegaÁ„o
         public Veiculo Veiculo { get; private set; }
         public Motorista Motorista { get; private set; }
         public Localidade LocalidadeOrigem { get; private set; }
         public Localidade LocalidadeDestino { get; private set; }
         public GatilhoViagem GatilhoViagem { get; private set; }
 
-        // Specifications para consultas b√°sicas
+        // Specifications para consultas b·sicas
         private static readonly ViagemPodeSerIniciadaSpecification _podeSerIniciada = new();
         private static readonly ViagemPodeSerFinalizadaSpecification _podeSerFinalizada = new();
         private static readonly ViagemPodeSerCanceladaSpecification _podeSerCancelada = new();
@@ -91,9 +91,9 @@ namespace Dominio.Entidades.Viagens
             bool ativo,
             long? gatilhoViagemId = null)
         {
-            // Valida√ß√µes b√°sicas de integridade - as regras de neg√≥cio complexas s√£o validadas no ValidationService
+            // ValidaÁıes b·sicas de integridade - as regras de negÛcio complexas s„o validadas no ValidationService
             if (veiculoId <= 0 || motoristaId <= 0 || localidadeOrigemId <= 0 || localidadeDestinoId <= 0 || quantidadeVagas <= 0)
-                throw new DomainException("Dados obrigat√≥rios n√£o informados");
+                throw new DomainException("Dados obrigatÛrios n„o informados");
 
             Periodo = periodo;
             VeiculoId = veiculoId;
@@ -115,22 +115,22 @@ namespace Dominio.Entidades.Viagens
 
         // Factory Methods
         /// <summary>
-        /// Cria uma nova viagem regular atrav√©s de Factory Method.
+        /// Cria uma nova viagem regular atravÈs de Factory Method.
         /// </summary>
         /// <param name="dataViagem">Data da viagem</param>
-        /// <param name="horarioSaida">Hor√°rio de sa√≠da</param>
-        /// <param name="horarioChegada">Hor√°rio de chegada</param>
-        /// <param name="veiculoId">ID do ve√≠culo</param>
+        /// <param name="horarioSaida">Hor·rio de saÌda</param>
+        /// <param name="horarioChegada">Hor·rio de chegada</param>
+        /// <param name="veiculoId">ID do veÌculo</param>
         /// <param name="motoristaId">ID do motorista</param>
         /// <param name="localidadeOrigemId">ID da localidade de origem</param>
         /// <param name="localidadeDestinoId">ID da localidade de destino</param>
-        /// <param name="quantidadeVagas">Quantidade de vagas dispon√≠veis</param>
-        /// <param name="distanciaKm">Dist√¢ncia em quil√¥metros</param>
-        /// <param name="descricaoViagem">Descri√ß√£o da viagem</param>
+        /// <param name="quantidadeVagas">Quantidade de vagas disponÌveis</param>
+        /// <param name="distanciaKm">Dist‚ncia em quilÙmetros</param>
+        /// <param name="descricaoViagem">DescriÁ„o da viagem</param>
         /// <param name="polilinhaRota">Polilinha da rota</param>
-        /// <param name="ativo">Se a viagem est√° ativa</param>
-        /// <returns>Nova inst√¢ncia de Viagem</returns>
-        /// <exception cref="DomainException">Lan√ßada quando dados obrigat√≥rios n√£o s√£o informados</exception>
+        /// <param name="ativo">Se a viagem est· ativa</param>
+        /// <returns>Nova inst‚ncia de Viagem</returns>
+        /// <exception cref="DomainException">LanÁada quando dados obrigatÛrios n„o s„o informados</exception>
         public static Viagem CriarViagemRegular(
             DateTime dataViagem,
             TimeSpan horarioSaida,
@@ -154,7 +154,7 @@ namespace Dominio.Entidades.Viagens
                 polilinha, ativo);
         }
 
-        // Factory Method com valida√ß√£o por NotificationContext
+        // Factory Method com validaÁ„o por NotificationContext
         public static (Viagem? viagem, bool sucesso) CriarViagemRegularComValidacao(
             DateTime dataViagem,
             TimeSpan horarioSaida,
@@ -215,7 +215,7 @@ namespace Dominio.Entidades.Viagens
                 ativo, gatilho.Id);
         }
 
-        // M√©todos de neg√≥cio
+        // MÈtodos de negÛcio
         public void AdicionarPassageiro(Passageiro passageiro)
         {
             EnsurePassageiroValido(passageiro);
@@ -234,7 +234,7 @@ namespace Dominio.Entidades.Viagens
                 AddDomainEvent(new ViagemLotadaEvent(Id, _passageiros.Count));
         }
 
-        // M√©todo de neg√≥cio com valida√ß√£o por NotificationContext
+        // MÈtodo de negÛcio com validaÁ„o por NotificationContext
         public bool AdicionarPassageiroComValidacao(Passageiro passageiro, INotificationContext notificationContext)
         {
             var validationService = new ViagemValidationService();
@@ -286,7 +286,7 @@ namespace Dominio.Entidades.Viagens
             AddDomainEvent(new PosicaoAdicionadaEvent(Id, latitude, longitude, dataHora));
         }
 
-        // M√©todo de neg√≥cio com valida√ß√£o por NotificationContext
+        // MÈtodo de negÛcio com validaÁ„o por NotificationContext
         public bool AdicionarPosicaoComValidacao(decimal latitude, decimal longitude, DateTime dataHora, INotificationContext notificationContext)
         {
             var validationService = new ViagemValidationService();
@@ -355,9 +355,9 @@ namespace Dominio.Entidades.Viagens
             var horariosAnteriores = (Periodo.HoraSaida, Periodo.HoraChegada);
             var novosPeriodo = new PeriodoViagem(dataViagem, horarioSaida, horarioChegada);
 
-            // Valida√ß√µes b√°sicas de integridade
+            // ValidaÁıes b·sicas de integridade
             if (veiculoId <= 0 || localidadeOrigemId <= 0 || localidadeDestinoId <= 0 || quantidadeVagas <= 0)
-                throw new DomainException("Dados obrigat√≥rios n√£o informados");
+                throw new DomainException("Dados obrigatÛrios n„o informados");
 
             Periodo = novosPeriodo;
             VeiculoId = veiculoId;
@@ -380,7 +380,7 @@ namespace Dominio.Entidades.Viagens
             }
         }
 
-        // M√©todo de atualiza√ß√£o com valida√ß√£o por NotificationContext
+        // MÈtodo de atualizaÁ„o com validaÁ„o por NotificationContext
         public bool AtualizarComValidacao(
             DateTime dataViagem,
             TimeSpan horarioSaida,
@@ -413,7 +413,7 @@ namespace Dominio.Entidades.Viagens
             }
         }
 
-        // M√©todos de consulta
+        // MÈtodos de consulta
         public bool TemPassageiro(long passageiroId) 
             => _passageiros.Any(p => p.PassageiroId == passageiroId);
 
@@ -427,14 +427,14 @@ namespace Dominio.Entidades.Viagens
         public bool PodeSerFinalizada() => _podeSerFinalizada.IsSatisfiedBy(this);
         public bool PodeSerCancelada() => _podeSerCancelada.IsSatisfiedBy(this);
 
-        // Valida√ß√µes usando Specifications
+        // ValidaÁıes usando Specifications
         private void EnsureViagemPodeReceberPassageiros()
         {
             if (Situacao != SituacaoViagemEnum.Agendada)
                 throw new DomainException("Viagem deve estar agendada para receber passageiros");
             
             if (VagasDisponiveis <= 0)
-                throw new DomainException("N√£o h√° vagas dispon√≠veis na viagem");
+                throw new DomainException("N„o h· vagas disponÌveis na viagem");
         }
 
         private void EnsureViagemPodeSerIniciada()
@@ -470,27 +470,27 @@ namespace Dominio.Entidades.Viagens
         private void EnsurePassageiroValido(Passageiro passageiro)
         {
             if (passageiro == null)
-                throw new DomainException("Passageiro √© obrigat√≥rio");
+                throw new DomainException("Passageiro È obrigatÛrio");
         }
 
         private void EnsurePassageiroNaoEstaNaviagem(long passageiroId)
         {
             if (_passageiros.Any(p => p.PassageiroId == passageiroId))
-                throw new DomainException("Passageiro j√° est√° na viagem");
+                throw new DomainException("Passageiro j· est· na viagem");
         }
 
         private void EnsurePassageiroExiste(ViagemPassageiro? viagemPassageiro)
         {
             if (viagemPassageiro == null)
-                throw new DomainException("Passageiro n√£o encontrado na viagem");
+                throw new DomainException("Passageiro n„o encontrado na viagem");
         }
 
-        // Valida√ß√µes espec√≠ficas de dom√≠nio - mantendo apenas as que s√£o intr√≠nsecas √† entidade
+        // ValidaÁıes especÌficas de domÌnio - mantendo apenas as que s„o intrÌnsecas ‡ entidade
 
         private void ValidarDataHoraPosicao(DateTime dataHora)
         {
             if (dataHora > DateTime.UtcNow)
-                throw new DomainException("Data/hora n√£o pode ser futura");
+                throw new DomainException("Data/hora n„o pode ser futura");
         }
 
         private void AtualizarVagasDisponiveis()

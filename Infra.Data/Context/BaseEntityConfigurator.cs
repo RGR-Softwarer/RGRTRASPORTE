@@ -1,4 +1,4 @@
-﻿using Dominio.Entidades;
+using Dominio.Entidades;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Globalization;
@@ -40,7 +40,7 @@ namespace Infra.Data.Context
             builder.HasIndex(x => x.CreatedBy);
             builder.HasIndex(x => x.UpdatedBy);
 
-            // Ignorar propriedades do AggregateRoot que não devem ser persistidas
+            // Ignorar propriedades do AggregateRoot que n�o devem ser persistidas
             if (typeof(AggregateRoot).IsAssignableFrom(typeof(TEntity)))
             {
                 builder.Ignore("DomainEvents");

@@ -1,4 +1,4 @@
-Ôªøusing Dominio.Entidades.Localidades;
+using Dominio.Entidades.Localidades;
 using Dominio.Entidades.Pessoas;
 using Dominio.Entidades.Veiculos;
 using Dominio.Enums.Data;
@@ -50,24 +50,24 @@ namespace Dominio.Entidades.Viagens.Gatilho
             AddDomainEvent(new GatilhoViagemCriadoEvent(Id, descricao));
         }
 
-        public string Descricao { get; private set; }
-        public virtual Veiculo Veiculo { get; private set; }
+        public string Descricao { get; private set; } = null!;
+        public virtual Veiculo Veiculo { get; private set; } = null!;
         public long VeiculoId { get; private set; }
         public long MotoristaId { get; private set; }
-        public virtual Localidade LocalidadeOrigem { get; private set; }
+        public virtual Localidade LocalidadeOrigem { get; private set; } = null!;
         public long LocalidadeOrigemId { get; private set; }
-        public virtual Localidade LocalidadeDestino { get; private set; }
+        public virtual Localidade LocalidadeDestino { get; private set; } = null!;
         public long LocalidadeDestinoId { get; private set; }
         public TimeSpan HorarioSaida { get; private set; }
         public TimeSpan HorarioChegada { get; private set; }
         public decimal ValorPassagem { get; private set; }
         public int QuantidadeVagas { get; private set; }
         public decimal Distancia { get; private set; }
-        public string DescricaoViagem { get; private set; }
-        public string PolilinhaRota { get; private set; }
+        public string DescricaoViagem { get; private set; } = null!;
+        public string PolilinhaRota { get; private set; } = null!;
         public bool Ativo { get; private set; }
-        public virtual ICollection<Viagem> Viagens { get; private set; }
-        public List<DiaSemanaEnum> DiasSemana { get; private set; }
+        public virtual ICollection<Viagem> Viagens { get; private set; } = null!;
+        public List<DiaSemanaEnum> DiasSemana { get; private set; } = null!;
 
         private void ValidarCriacao(
             string descricao,
@@ -85,28 +85,28 @@ namespace Dominio.Entidades.Viagens.Gatilho
             List<DiaSemanaEnum> diasSemana)
         {
             if (string.IsNullOrEmpty(descricao))
-                throw new DomainException("A descri√ß√£o √© obrigat√≥ria");
+                throw new DomainException("A descriÁ„o È obrigatÛria");
 
             if (diasSemana == null || !diasSemana.Any())
                 throw new DomainException("Pelo menos um dia da semana deve ser selecionado");
 
             if (horarioChegada <= horarioSaida)
-                throw new DomainException("O hor√°rio de chegada deve ser maior que o hor√°rio de sa√≠da");
+                throw new DomainException("O hor·rio de chegada deve ser maior que o hor·rio de saÌda");
 
             if (veiculoId <= 0)
-                throw new DomainException("O ve√≠culo √© obrigat√≥rio");
+                throw new DomainException("O veÌculo È obrigatÛrio");
 
             if (motoristaId <= 0)
-                throw new DomainException("O motorista √© obrigat√≥rio");
+                throw new DomainException("O motorista È obrigatÛrio");
 
             if (localidadeOrigemId <= 0)
-                throw new DomainException("A localidade de origem √© obrigat√≥ria");
+                throw new DomainException("A localidade de origem È obrigatÛria");
 
             if (localidadeDestinoId <= 0)
-                throw new DomainException("A localidade de destino √© obrigat√≥ria");
+                throw new DomainException("A localidade de destino È obrigatÛria");
 
             if (localidadeOrigemId == localidadeDestinoId)
-                throw new DomainException("A localidade de destino n√£o pode ser igual √† localidade de origem");
+                throw new DomainException("A localidade de destino n„o pode ser igual ‡ localidade de origem");
 
             if (valorPassagem <= 0)
                 throw new DomainException("O valor da passagem deve ser maior que zero");
@@ -115,22 +115,22 @@ namespace Dominio.Entidades.Viagens.Gatilho
                 throw new DomainException("A quantidade de vagas deve ser maior que zero");
 
             if (distancia <= 0)
-                throw new DomainException("A dist√¢ncia deve ser maior que zero");
+                throw new DomainException("A dist‚ncia deve ser maior que zero");
 
             if (string.IsNullOrEmpty(descricaoViagem))
-                throw new DomainException("A descri√ß√£o da viagem √© obrigat√≥ria");
+                throw new DomainException("A descriÁ„o da viagem È obrigatÛria");
 
             if (descricaoViagem.Length > 500)
-                throw new DomainException("A descri√ß√£o da viagem n√£o pode ter mais que 500 caracteres");
+                throw new DomainException("A descriÁ„o da viagem n„o pode ter mais que 500 caracteres");
 
             if (string.IsNullOrEmpty(polilinhaRota))
-                throw new DomainException("A polilinha da rota √© obrigat√≥ria");
+                throw new DomainException("A polilinha da rota È obrigatÛria");
         }
 
         public void AtualizarHorarios(TimeSpan horarioSaida, TimeSpan horarioChegada)
         {
             if (horarioChegada <= horarioSaida)
-                throw new DomainException("O hor√°rio de chegada deve ser maior que o hor√°rio de sa√≠da");
+                throw new DomainException("O hor·rio de chegada deve ser maior que o hor·rio de saÌda");
 
             HorarioSaida = horarioSaida;
             HorarioChegada = horarioChegada;
@@ -185,7 +185,7 @@ namespace Dominio.Entidades.Viagens.Gatilho
         public Viagem GerarViagem(DateTime data)
         {
             if (!DiasSemana.Contains((DiaSemanaEnum)data.DayOfWeek))
-                throw new DomainException("Data n√£o corresponde aos dias da semana configurados");
+                throw new DomainException("Data n„o corresponde aos dias da semana configurados");
 
             var viagem = Viagem.CriarViagemComGatilho(
                 data,
@@ -205,7 +205,7 @@ namespace Dominio.Entidades.Viagens.Gatilho
         protected override string DescricaoFormatada => Descricao;
     }
 
-    // Eventos de dom√≠nio para GatilhoViagem
+    // Eventos de domÌnio para GatilhoViagem
     public class GatilhoViagemCriadoEvent : DomainEvent
     {
         public long GatilhoId { get; }

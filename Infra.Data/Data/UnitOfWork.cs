@@ -1,4 +1,4 @@
-﻿using Dominio.Interfaces.Infra.Data;
+using Dominio.Interfaces.Infra.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Data.Data
@@ -12,18 +12,18 @@ namespace Infra.Data.Data
             _dbContext = dbContext;
         }
 
-        public async Task<int> Commit()
+        public async Task<int> Commit(CancellationToken cancellationToken = default)
         {
-            return await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task RollBack()
+        public async Task RollBack(CancellationToken cancellationToken = default)
         {
             // Recarrega todas as entidades rastreadas
             if (_dbContext is DbContext context)
             {
                 var tasks = context.ChangeTracker.Entries()
-                        .Select(entry => entry.ReloadAsync()).ToList();
+                        .Select(entry => entry.ReloadAsync(cancellationToken)).ToList();
 
                 await Task.WhenAll(tasks);
             }

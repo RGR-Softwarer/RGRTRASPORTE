@@ -1,4 +1,4 @@
-﻿using Hangfire;
+using Hangfire;
 using Hangfire.PostgreSql;
 using Infra.Ioc;
 using System.Reflection;

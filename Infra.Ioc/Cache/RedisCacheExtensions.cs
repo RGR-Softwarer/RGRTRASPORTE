@@ -11,7 +11,8 @@ namespace Infra.Ioc.Cache
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            var redisConnection = configuration.GetConnectionString("Redis");
+            var redisConnection = configuration.GetConnectionString("Redis") 
+                ?? throw new InvalidOperationException("Redis connection string not found");
             
             services.AddStackExchangeRedisCache(options =>
             {

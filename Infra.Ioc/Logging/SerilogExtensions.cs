@@ -15,7 +15,8 @@ namespace Infra.Ioc.Logging
             this IHostBuilder builder,
             IConfiguration configuration)
         {
-            var elasticUri = configuration["Elasticsearch:Uri"];
+            var elasticUri = configuration["Elasticsearch:Uri"] 
+                ?? throw new InvalidOperationException("Elasticsearch URI not found in configuration");
             var applicationName = configuration["ApplicationName"] ?? "RGRTransporte";
 
             Log.Logger = new LoggerConfiguration()

@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+using System.Linq.Expressions;
 
 namespace Dominio.Interfaces.Infra.Data
 {
@@ -10,14 +10,15 @@ namespace Dominio.Interfaces.Infra.Data
                 int pageSize,
                 string orderByProperty = "",
                 bool isDescending = false,
-                Expression<Func<T, bool>> filter = null); 
+                Expression<Func<T, bool>> filter = null,
+                CancellationToken cancellationToken = default); 
         Task<List<T>> ObterTodosAsync(CancellationToken cancellationToken = default);
         Task<T> ObterPorIdAsync(long id, CancellationToken cancellationToken = default);
         Task AdicionarEmLoteAsync(List<T> listaEntidades, CancellationToken cancellationToken = default);
-        Task RemoverAsync(T entidade);
-        Task RemoverEmLoteAsync(List<T> listaEntidades);
-        Task AtualizarAsync(T entidade);
-        Task AtualizarEmLoteAsync(List<T> listaEntidades);
+        Task RemoverAsync(T entidade, CancellationToken cancellationToken = default);
+        Task RemoverEmLoteAsync(List<T> listaEntidades, CancellationToken cancellationToken = default);
+        Task AtualizarAsync(T entidade, CancellationToken cancellationToken = default);
+        Task AtualizarEmLoteAsync(List<T> listaEntidades, CancellationToken cancellationToken = default);
         Task AdicionarAsync(T entidade, CancellationToken cancellationToken = default);
     }
 }

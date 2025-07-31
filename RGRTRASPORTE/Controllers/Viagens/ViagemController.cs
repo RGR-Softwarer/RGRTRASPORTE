@@ -1,4 +1,4 @@
-Ôªøusing Application.Commands.Viagem;
+using Application.Commands.Viagem;
 using Application.Queries.Viagem;
 using Dominio.Interfaces.Hangfire;
 using Hangfire;
@@ -36,21 +36,21 @@ namespace RGRTRASPORTE.Controllers.Viagens
             _mediator = mediator;
             _backgroundJobClient = backgroundJobClient;
             _googleApiKey = configuration["GoogleMaps:ApiKey"]??
-                string.Empty; //?? throw new InvalidOperationException("Google Maps API Key n√£o configurada");
+                string.Empty; //?? throw new InvalidOperationException("Google Maps API Key n„o configurada");
             _httpClient = new HttpClient();
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterTodos([FromQuery] ObterViagensQuery query)
+        public async Task<IActionResult> ObterTodos([FromQuery] ObterViagensQuery query, CancellationToken cancellationToken)
         {
-            var viagens = await _mediator.Send(query);
+            var viagens = await _mediator.Send(query, cancellationToken);
             return await RGRResult(System.Net.HttpStatusCode.OK, viagens);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> ObterPorId(long id, [FromQuery] bool auditado = false)
+        public async Task<IActionResult> ObterPorId(long id, [FromQuery] bool auditado = false, CancellationToken cancellationToken = default)
         {
-            var viagem = await _mediator.Send(new ObterViagemPorIdQuery(id));
+            var viagem = await _mediator.Send(new ObterViagemPorIdQuery(id), cancellationToken);
             if (viagem == null)
                 return NoContent();
 
@@ -58,9 +58,9 @@ namespace RGRTRASPORTE.Controllers.Viagens
         }
 
         [HttpPost]
-        public async Task<IActionResult> Adicionar([FromBody] CriarViagemCommand command)
+        public async Task<IActionResult> Adicionar([FromBody] CriarViagemCommand command, CancellationToken cancellationToken)
         {
-            var id = await _mediator.Send(command);
+            var id = await _mediator.Send(command, cancellationToken);
             return await RGRResult(System.Net.HttpStatusCode.Created, id);
         }
 
@@ -105,10 +105,10 @@ namespace RGRTRASPORTE.Controllers.Viagens
         }
 
         [HttpGet("ObterRotaViagem/{id}")]
-        public async Task<IActionResult> ObterRotaViagem(long id)
+        public async Task<IActionResult> ObterRotaViagem(long id, CancellationToken cancellationToken)
         {
-            var latirudeOrigem = "-27.100"; // Latitude de Chapec√≥
-            var logidetudaOrigem = "-52.615"; // Longitude de Chapec√≥
+            var latirudeOrigem = "-27.100"; // Latitude de ChapecÛ
+            var logidetudaOrigem = "-52.615"; // Longitude de ChapecÛ
             var latirudeDestino = "-26.950"; // Latitude de Xaxim
             var logidetudaDestino = "-52.537"; // Longitude de Xaxim
             var latirudeParada = "-27.203"; // Latitude de Cordilheira Alta (parada)
@@ -119,12 +119,24 @@ namespace RGRTRASPORTE.Controllers.Viagens
 
             try
             {
-                var response = await _httpClient.GetAsync(url);
+                // ? MELHOR PR¡TICA: HttpClient com CancellationToken e timeout
+                using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                timeoutCts.CancelAfter(TimeSpan.FromSeconds(30)); // Timeout de 30 segundos para APIs externas
+                
+                var response = await _httpClient.GetAsync(url, timeoutCts.Token);
                 if (response.IsSuccessStatusCode)
                 {
-                    var responseBody = await response.Content.ReadAsStringAsync();
+                    var responseBody = await response.Content.ReadAsStringAsync(timeoutCts.Token);
                     return await RGRResult(System.Net.HttpStatusCode.OK, responseBody);
                 }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                return await RGRResult(System.Net.HttpStatusCode.RequestTimeout, "RequisiÁ„o cancelada pelo cliente");
+            }
+            catch (OperationCanceledException)
+            {
+                return await RGRResult(System.Net.HttpStatusCode.RequestTimeout, "Timeout na chamada para Google Maps API");
             }
             catch (Exception ex)
             {
@@ -132,208 +144,6 @@ namespace RGRTRASPORTE.Controllers.Viagens
             }
 
             return await RGRResult(System.Net.HttpStatusCode.BadRequest, "Erro ao obter a rota da viagem");
-        }
-
-        [HttpGet("TesteHangifire")]
-        public async Task<IActionResult> TesteHangfire()
-        {
-            var jobData = new Dominio.Dtos.Viagens.ViagemCriadaJobData
-            {
-                ViagemId = 123
-            };
-
-            _backgroundJobClient.Enqueue<IProcessadorDeEventoService>(x => x.ProcessarViagemCriada(jobData));
-
-            return await RGRResult(System.Net.HttpStatusCode.OK, new
-            {
-                Success = true,
-                Message = "Job agendado com sucesso"
-            });
-        }
-
-        [HttpGet("TesteSilvani")]
-        public async Task<IActionResult> Teste()
-        {
-            // 1. Configura√ß√£o de exemplo
-            var config = ObterConfiguracaoExemplo();
-
-            // 2. Valores de entrada
-            var valoresDinamicos = ObterValoresDinamicos();
-
-            // 3. Token
-            string token = string.Empty;
-            if (config.Auth?.Type != AuthType.None)
-            {
-                token = await ObterTokenAsync(config.Auth);
-            }
-
-            // 4. Payload final
-            var payloadFinal = GerarPayload(config.Integration.PayloadTemplate, valoresDinamicos);
-
-            // 5. Montar request
-            var request = MontarRequest(config, payloadFinal, token);
-
-            // 6. Executar chamada
-            var response = await _httpClient.SendAsync(request);
-            var body = await response.Content.ReadAsStringAsync();
-
-            return await RGRResult(System.Net.HttpStatusCode.OK, new
-            {
-                Success = response.IsSuccessStatusCode,
-                StatusCode = (int)response.StatusCode,
-                Message = response.IsSuccessStatusCode ? "Integra√ß√£o realizada com sucesso" : "Erro na integra√ß√£o",
-                Response = body
-            });
-        }
-
-        private IntegrationConfig ObterConfiguracaoExemplo()
-        {
-            return new IntegrationConfig
-            {
-                Auth = new AuthConfig
-                {
-                    Type = AuthType.Basic,
-                    Credentials = new Dictionary<string, string>
-            {
-                { "username", "multiwebhookqa" },
-                { "password", "Nz6ldbPMI0Rw4f95" }
-            },
-                    TokenHeaderNameToSend = "Authorization",
-                    TokenHeaderFormatToSend = "Basic {token}"
-                },
-                Integration = new IntegrationDetails
-                {
-                    Url = "https://m8px22ce74.execute-api.us-east-1.amazonaws.com/tcs/webhook-gerar-carregamento",
-                    Method = "POST",
-                    Headers = new Dictionary<string, string>
-            {
-                { "Content-Type", "application/json" }
-            },
-                    PayloadTemplate = new Dictionary<string, string>
-            {
-                { "tarefa", "#tarefa" },
-                { "codigo", "#codigo" },
-                { "volumes", "#for:volumes" }
-            }
-                }
-            };
-        }
-
-        private Dictionary<string, object> ObterValoresDinamicos()
-        {
-            return new Dictionary<string, object>
-    {
-        { "tarefa", "carregamento123" },
-        { "codigo", "456789" },
-        { "volumes", new List<Dictionary<string, string>>
-            {
-                new() { { "codigo", "V001" }, { "quantidade", "10" } },
-                new() { { "codigo", "V002" }, { "quantidade", "5" } }
-            }
-        }
-    };
-        }
-
-        private Dictionary<string, object> GerarPayload(Dictionary<string, string> template, Dictionary<string, object> valores)
-        {
-            var payload = new Dictionary<string, object>();
-
-            foreach (var campo in template)
-            {
-                if (campo.Value.StartsWith("#for:"))
-                {
-                    var caminho = campo.Value.Substring(5); // Ex: volumes
-                    var nomeLista = caminho.Split('.')[0];
-
-                    if (valores.TryGetValue(nomeLista, out var listaObj) &&
-                        listaObj is List<Dictionary<string, string>> lista)
-                    {
-                        payload[campo.Key] = lista;
-                    }
-                }
-                else
-                {
-                    var chave = campo.Value.Trim('#');
-                    if (valores.TryGetValue(chave, out var valor))
-                        payload[campo.Key] = valor;
-                    else
-                        payload[campo.Key] = campo.Value;
-                }
-            }
-
-            return payload;
-        }
-        private HttpRequestMessage MontarRequest(IntegrationConfig config, Dictionary<string, object> payload, string token)
-        {
-            var jsonPayload = JsonSerializer.Serialize(payload);
-            var request = new HttpRequestMessage(new HttpMethod(config.Integration.Method), config.Integration.Url)
-            {
-                Content = new StringContent(jsonPayload, Encoding.UTF8, "application/json")
-            };
-
-            foreach (var header in config.Integration.Headers)
-            {
-                request.Headers.TryAddWithoutValidation(header.Key, header.Value);
-            }
-
-            if (!string.IsNullOrEmpty(token))
-            {
-                var headerName = config.Auth.TokenHeaderNameToSend ?? config.Auth.TokenHeaderName;
-                var headerFormat = config.Auth.TokenHeaderFormatToSend ?? config.Auth.TokenHeaderFormat;
-
-                var tokenHeader = headerFormat.Replace("{token}", token);
-                request.Headers.TryAddWithoutValidation(headerName, tokenHeader);
-            }
-
-            return request;
-        }
-
-        private async Task<string> ObterTokenAsync(AuthConfig auth)
-        {
-            if (auth == null || auth.Type == AuthType.None)
-                return string.Empty;
-
-            if (auth.Type == AuthType.ApiKey)
-            {
-                if (auth.Credentials != null && auth.Credentials.Any())
-                    return auth.Credentials.First().Value;
-
-                throw new InvalidOperationException("Credencial de API Key n√£o fornecida.");
-            }
-
-            if (auth.Type == AuthType.Basic)
-            {
-                if (!auth.Credentials.TryGetValue("username", out var user) ||
-                    !auth.Credentials.TryGetValue("password", out var pass))
-                {
-                    throw new InvalidOperationException("Credenciais Basic incompletas.");
-                }
-
-                var bytes = Encoding.UTF8.GetBytes($"{user}:{pass}");
-                return Convert.ToBase64String(bytes);
-            }
-
-            // OAuth2 e outros tipos com chamada externa
-            var method = new HttpMethod(auth.AuthMethod.ToUpperInvariant());
-            var request = new HttpRequestMessage(method, auth.AuthUrl)
-            {
-                Content = new FormUrlEncodedContent(auth.Credentials)
-            };
-
-            var response = await _httpClient.SendAsync(request);
-            var body = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-                throw new InvalidOperationException($"Erro ao obter token: {response.StatusCode} - {body}");
-
-            using var jsonDoc = JsonDocument.Parse(body);
-            var tokenField = auth.TokenResponseField.Split('.');
-            JsonElement current = jsonDoc.RootElement;
-
-            foreach (var field in tokenField)
-                current = current.GetProperty(field);
-
-            return current.GetString();
         }
     }
 }

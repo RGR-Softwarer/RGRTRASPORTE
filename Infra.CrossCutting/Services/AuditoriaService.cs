@@ -30,7 +30,8 @@ namespace Infra.CrossCutting.Services
             object dadosOriginais,
             object dadosNovos,
             string usuario,
-            string ip)
+            string ip,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -49,7 +50,7 @@ namespace Infra.CrossCutting.Services
                     usuario ?? "Sistema",
                     ip ?? "Unknown");
 
-                await _repository.AdicionarAsync(registro);
+                await _repository.AdicionarAsync(registro, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -63,7 +64,8 @@ namespace Infra.CrossCutting.Services
             long entidadeId,
             string dadosEvento,
             string usuario,
-            string ip)
+            string ip,
+            CancellationToken cancellationToken = default)
         {
             try
             {
@@ -75,7 +77,7 @@ namespace Infra.CrossCutting.Services
                     usuario ?? "Sistema",
                     ip ?? "Unknown");
 
-                await _repository.AdicionarAsync(registro);
+                await _repository.AdicionarAsync(registro, cancellationToken);
             }
             catch (Exception ex)
             {
@@ -86,12 +88,13 @@ namespace Infra.CrossCutting.Services
 
         public async Task<IEnumerable<RegistroAuditoria>> ObterHistoricoAsync(
             string nomeEntidade,
-            long entidadeId)
+            long entidadeId,
+            CancellationToken cancellationToken = default)
         {
             return await _repository.Query()
                 .Where(r => r.NomeEntidade == nomeEntidade && r.EntidadeId == entidadeId)
                 .OrderByDescending(r => r.DataOcorrencia)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
         }
 
         private List<HistoricoPropriedade> CalcularDiferencas(object original, object novo)
