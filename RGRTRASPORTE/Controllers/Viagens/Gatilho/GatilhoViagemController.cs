@@ -1,8 +1,8 @@
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Infra.CrossCutting.Handlers.Notifications;
 using Application.Commands.Viagem.Gatilho;
 using Application.Queries.Viagem.Gatilho;
+using Infra.CrossCutting.Handlers.Notifications;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace RGRTRASPORTE.Controllers.Viagens.Gatilho;
 
@@ -12,10 +12,7 @@ public class GatilhoViagemController : AbstractControllerBase
 {
     private readonly IMediator _mediator;
 
-    public GatilhoViagemController(
-        IMediator mediator,
-        INotificationContext notificationHandler)
-        : base(notificationHandler)
+    public GatilhoViagemController(IMediator mediator, INotificationContext notificationHandler) : base(notificationHandler, mediator)
     {
         _mediator = mediator;
     }

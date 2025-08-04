@@ -1,5 +1,5 @@
 using AutoMapper;
-using Dominio.Dtos.Viagens.Gatilho;
+using Application.Queries.Viagem.Models;
 using Dominio.Entidades.Viagens.Gatilho;
 
 namespace RGRTRASPORTE.Mapper.Viagens.Gatilho
@@ -21,7 +21,8 @@ namespace RGRTRASPORTE.Mapper.Viagens.Gatilho
                 .ForMember(dest => dest.Distancia, opt => opt.MapFrom(src => src.Distancia))
                 .ForMember(dest => dest.PolilinhaRota, opt => opt.MapFrom(src => src.PolilinhaRota))
                 .ForMember(dest => dest.Ativo, opt => opt.MapFrom(src => src.Ativo))
-                .ForMember(dest => dest.DiasSemana, opt => opt.MapFrom(src => src.DiasSemana));
+                .ForMember(dest => dest.DiasSemana, opt => opt.MapFrom(src => src.DiasSemana))
+                .ReverseMap();
         }
     }
 }

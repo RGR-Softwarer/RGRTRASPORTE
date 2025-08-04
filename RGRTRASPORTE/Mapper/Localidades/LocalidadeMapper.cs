@@ -1,16 +1,19 @@
 using AutoMapper;
-using Dominio.Dtos.Localidades;
+using Application.Queries.Localidade.Models;
 using Dominio.Entidades.Localidades;
-//Ajustar
+
 namespace RGRTRASPORTE.Mapper.Localidades
 {
     public class LocalidadeMapper : Profile
     {
         public LocalidadeMapper()
         {
-            Console.WriteLine("LocalidadeMapper carregado.");
+            CreateMap<Localidade, LocalidadeDto>()
+                .ForMember(dest => dest.DataCadastro, opt => opt.MapFrom(src => src.CreatedAt))
+                .ForMember(dest => dest.Pais, opt => opt.MapFrom(src => "Brasil"))
+                .ReverseMap();
 
-            CreateMap<Localidade, LocalidadeDto>().ReverseMap();
+            CreateMap<Localidade, LocalidadeListagemDto>();
         }
     }
 }

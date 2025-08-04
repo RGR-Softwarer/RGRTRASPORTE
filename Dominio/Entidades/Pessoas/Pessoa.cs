@@ -105,10 +105,12 @@ public abstract class Pessoa : AggregateRoot, IPessoa
         if (string.IsNullOrWhiteSpace(telefone))
             throw new DomainException("Telefone é obrigatório.");
 
-        if (telefone.Length < 10 || telefone.Length > 11)
+        var telefoneNumerico = new string(telefone.Where(char.IsDigit).ToArray());
+
+        if (telefoneNumerico.Length < 10 || telefoneNumerico.Length > 11)
             throw new DomainException("Telefone deve ter 10 ou 11 caracteres.");
 
-        if (!telefone.All(char.IsDigit))
+        if (!telefoneNumerico.All(char.IsDigit))
             throw new DomainException("Telefone deve conter apenas números.");
     }
 

@@ -1,4 +1,5 @@
-using Dominio.Dtos.Viagens;
+using Application.Dtos.Viagens;
+using Application.Interfaces.Hangfire;
 using Dominio.Entidades.Viagens;
 using Dominio.Interfaces.Infra.Data;
 using Infra.CrossCutting.Multitenancy;
@@ -6,14 +7,14 @@ using Infra.CrossCutting.Multitenancy;
 
 namespace Service.Services.Hangifre
 {
-    public class ProcessadorDeEventoService
+    public class ProcessadorDeEventoService : IProcessadorDeEventoService
     {
         //private readonly IMediator _mediator;
         private readonly ITenantProvider _tenantProvider;
         private readonly IGenericRepository<Viagem> _viagemRepository;
 
-        public ProcessadorDeEventoService( 
-            ITenantProvider tenantProvider, 
+        public ProcessadorDeEventoService(
+            ITenantProvider tenantProvider,
             IGenericRepository<Viagem> viagemRepository)
         {
             //_mediator = mediator;

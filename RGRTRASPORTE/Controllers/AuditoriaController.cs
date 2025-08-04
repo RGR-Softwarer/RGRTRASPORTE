@@ -1,6 +1,7 @@
 using Application.Dtos;
 using Dominio.Services;
 using Infra.CrossCutting.Handlers.Notifications;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RGRTRASPORTE.Controllers
@@ -11,7 +12,7 @@ namespace RGRTRASPORTE.Controllers
     {
         private readonly IAuditoriaService _auditoriaService;
 
-        public AuditoriaController(IAuditoriaService auditoriaService, INotificationContext notificationHandler) : base(notificationHandler)
+        public AuditoriaController(IAuditoriaService auditoriaService, INotificationContext notificationHandler, IMediator mediator) : base(notificationHandler, mediator)
         {
             _auditoriaService = auditoriaService;
         }

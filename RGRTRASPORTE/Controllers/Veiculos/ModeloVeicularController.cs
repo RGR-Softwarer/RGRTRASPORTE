@@ -1,5 +1,6 @@
 using Application.Commands.Veiculo.ModeloVeicular;
 using Application.Queries.Veiculo.ModeloVeicular;
+using Application.Queries.Veiculo.ModeloVeicular.Models;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -10,28 +11,25 @@ namespace RGRTRASPORTE.Controllers.Veiculos
     [ApiController]
     public class ModeloVeicularController : AbstractControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public ModeloVeicularController(
-            IMediator mediator,
-            INotificationContext notificationHandler)
-            : base(notificationHandler)
+        public ModeloVeicularController(IMediator mediator, INotificationContext notificationHandler) : base(notificationHandler, mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> ObterTodos([FromQuery] ObterModelosVeicularesQuery query)
-        {
-            var modelos = await _mediator.Send(query);
-            return await RGRResult(System.Net.HttpStatusCode.OK, modelos);
+        {                
+            var resultado = await _mediator.Send(query);
+            
+            if (!resultado.Sucesso)
+                return BadRequest(resultado);
+                
+            return await RGRResult(System.Net.HttpStatusCode.OK, resultado);
         }
 
         [HttpPost("filtrar")]
         public async Task<IActionResult> ObterModelosVeicularesPaginados([FromBody] ObterModelosVeicularesPaginadosQuery query)
         {
-            var resultado = await _mediator.Send(query);
-            return await RGRResult(System.Net.HttpStatusCode.OK, resultado);
+            return await ObterPaginado<ObterModelosVeicularesPaginadosQuery, ModeloVeicularDto>(query);
         }
 
         [HttpGet("{id}")]
@@ -76,4 +74,4 @@ namespace RGRTRASPORTE.Controllers.Veiculos
             return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
     }
-} 
+}

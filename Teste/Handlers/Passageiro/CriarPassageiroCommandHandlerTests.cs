@@ -1,14 +1,10 @@
 using Application.Commands.Passageiro;
-
-using Dominio.Entidades.Pessoas.Passageiros;
 using Dominio.Enums.Pessoas;
 using Dominio.Interfaces.Infra.Data.Passageiros;
 using FluentAssertions;
 
 using Microsoft.Extensions.Logging;
 using Moq;
-
-using Xunit;
 
 namespace Teste.Handlers.Passageiro
 {
@@ -45,7 +41,9 @@ namespace Teste.Handlers.Passageiro
 
             _passageiroRepositoryMock
                 .Setup(x => x.AdicionarAsync(It.IsAny<Dominio.Entidades.Pessoas.Passageiros.Passageiro>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.CompletedTask);
+                    .Callback<Dominio.Entidades.Pessoas.Passageiros.Passageiro, CancellationToken>((p, _) => p.Id = 1)
+                    .Returns(Task.CompletedTask);
+
 
             // Act
             var result = await _handler.Handle(command, CancellationToken.None);
@@ -182,20 +180,22 @@ namespace Teste.Handlers.Passageiro
 
             _passageiroRepositoryMock
                 .Setup(x => x.AdicionarAsync(It.IsAny<Dominio.Entidades.Pessoas.Passageiros.Passageiro>(), It.IsAny<CancellationToken>()))
+                .Callback<Dominio.Entidades.Pessoas.Passageiros.Passageiro, CancellationToken>((p, _) => p.Id = 1)
                 .Returns(Task.CompletedTask);
 
             // Act
             await _handler.Handle(command, CancellationToken.None);
 
             // Assert
-            _loggerMock.Verify(
+            _loggerMock.Verify(    
                 x => x.Log(
                     LogLevel.Information,
                     It.IsAny<EventId>(),
-                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Passageiro criado com sucesso")),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("João Silva criado com sucesso")),
                     It.IsAny<Exception>(),
                     It.IsAny<Func<It.IsAnyType, Exception, string>>()),
                 Times.Once);
+
         }
 
         [Fact]

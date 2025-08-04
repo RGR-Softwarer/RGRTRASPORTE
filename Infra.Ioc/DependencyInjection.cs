@@ -1,31 +1,22 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
+using Application.Behaviors;
+using Dominio.Interfaces.Infra.Data;
+using Dominio.Interfaces.Service.Hangfire;
+using FluentValidation;
+using Infra.CrossCutting.Auth;
+using Infra.CrossCutting.Cache;
+using Infra.CrossCutting.Handlers.Notifications;
+using Infra.CrossCutting.Multitenancy;
 using Infra.Data.Context;
-using Infra.Ioc.Cache;
+using Infra.Data.Data;
 using Infra.Ioc.HealthChecks;
 using Infra.Ioc.Logging;
-using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.OpenApi.Models;
-using Infra.Data.Repositories.Passageiros;
-using Infra.Data.Repositories;
-using Infra.Data.Repositories.Viagens;
-using Infra.Data.Data;
-using Dominio.Interfaces.Infra.Data.Passageiros;
-using Dominio.Interfaces.Infra.Data.Viagens;
-using Dominio.Interfaces.Infra.Data;
-using Service.Services.Hangifre;
-using Dominio.Interfaces.Service.Viagens;
-using Dominio.Interfaces.Service.Viagens.Gatilho;
-using Dominio.Interfaces.Service.Hangfire;
-using Infra.CrossCutting.Cache;
-using Infra.CrossCutting.Multitenancy;
-using Infra.CrossCutting.Handlers.Notifications;
-using Infra.CrossCutting.Auth;
 using MediatR;
-using Application.Behaviors;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
+using Service.Services.Hangifre;
 using System.Reflection;
-using FluentValidation;
 
 namespace Infra.Ioc
 {
@@ -43,7 +34,7 @@ namespace Infra.Ioc
             services.AddDbContext<TransportadorContext>((serviceProvider, options) =>
             {
                 var tenantProvider = serviceProvider.GetService<ITenantProvider>();
-                var connectionString = tenantProvider?.GetTenantConnectionString() ?? 
+                var connectionString = tenantProvider?.GetTenantConnectionString() ??
                                      configuration.GetConnectionString("RGRTRASPORTE");
                 options.UseNpgsql(connectionString);
             });
@@ -51,7 +42,7 @@ namespace Infra.Ioc
             services.AddDbContext<CadastroContext>((serviceProvider, options) =>
             {
                 var tenantProvider = serviceProvider.GetService<ITenantProvider>();
-                var connectionString = tenantProvider?.GetTenantConnectionString() ?? 
+                var connectionString = tenantProvider?.GetTenantConnectionString() ??
                                      configuration.GetConnectionString("RGRTRASPORTE");
                 options.UseNpgsql(connectionString);
             });
@@ -61,11 +52,11 @@ namespace Infra.Ioc
             services.AddScoped<ITenantProvider, TenantProvider>();
 
             // Registra o contexto principal para UnitOfWork
-            services.AddScoped<IUnitOfWorkContext>(provider => 
+            services.AddScoped<IUnitOfWorkContext>(provider =>
             {
                 var tenantProvider = provider.GetRequiredService<ITenantProvider>();
                 var tenantId = tenantProvider.GetTenantId();
-                
+
                 // Lógica para determinar qual contexto usar baseado no tenant
                 if (tenantId.Contains("transportador") || tenantId.Contains("localhost"))
                     return provider.GetRequiredService<TransportadorContext>();
@@ -78,7 +69,8 @@ namespace Infra.Ioc
             //services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // === MEDIATOR E BEHAVIORS ===
-            services.AddMediatR(cfg => {
+            services.AddMediatR(cfg =>
+            {
                 cfg.RegisterServicesFromAssembly(applicationAssembly);
                 cfg.RegisterServicesFromAssembly(domainAssembly);
                 cfg.RegisterServicesFromAssembly(infrastructureAssembly);
@@ -100,7 +92,7 @@ namespace Infra.Ioc
             // === REGISTROS MANUAIS ESPECÍFICOS ===
             // Registro do GenericRepository
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            
+
             // Manter apenas o registro do PassageiroRepository que tem implementação específica
             services.AddScoped<Dominio.Interfaces.Infra.Data.Passageiros.IPassageiroRepository, Infra.Data.Repositories.Passageiros.PassageiroRepository>();
 
@@ -321,4 +313,4 @@ namespace Infra.Ioc
             return services;
         }
     }
-} 
+}

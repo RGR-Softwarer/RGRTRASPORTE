@@ -1,5 +1,6 @@
 using Application.Commands.Veiculo;
 using Application.Queries.Veiculo;
+using Application.Queries.Veiculo.Models;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -10,29 +11,27 @@ namespace RGRTRASPORTE.Controllers.Veiculos
     [ApiController]
     public class VeiculoController : AbstractControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public VeiculoController(
-            IMediator mediator,
-            INotificationContext notificationHandler)
-            : base(notificationHandler)
+        public VeiculoController(IMediator mediator, INotificationContext notificationHandler) : base(notificationHandler, mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> ObterTodos([FromQuery] ObterVeiculosQuery query)
-        {
-            var veiculos = await _mediator.Send(query);
-            return await RGRResult(System.Net.HttpStatusCode.OK, veiculos);
+        {                  
+            var resultado = await _mediator.Send(query);
+
+            if (!resultado.Sucesso)
+                return BadRequest(resultado);
+
+            return await RGRResult(System.Net.HttpStatusCode.OK, resultado);
         }
 
         [HttpPost("filtrar")]
         public async Task<IActionResult> ObterVeiculosPaginados([FromBody] ObterVeiculosPaginadosQuery query)
         {
-            var resultado = await _mediator.Send(query);
-            return await RGRResult(System.Net.HttpStatusCode.OK, resultado);
+            return await RGRResult(System.Net.HttpStatusCode.OK, await ObterPaginado<ObterVeiculosPaginadosQuery, VeiculoDto>(query));
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterPorId(long id)
@@ -65,20 +64,6 @@ namespace RGRTRASPORTE.Controllers.Veiculos
         public async Task<IActionResult> Remover(long id)
         {
             var command = new RemoverVeiculoCommand(id);
-            var result = await _mediator.Send(command);
-            return await RGRResult(System.Net.HttpStatusCode.OK, result);
-        }
-
-        [HttpPost("lote")]
-        public async Task<IActionResult> AdicionarEmLote([FromBody] AdicionarVeiculosEmLoteCommand command)
-        {
-            var result = await _mediator.Send(command);
-            return await RGRResult(System.Net.HttpStatusCode.Created, result);
-        }
-
-        [HttpPut("lote")]
-        public async Task<IActionResult> EditarEmLote([FromBody] EditarVeiculosEmLoteCommand command)
-        {
             var result = await _mediator.Send(command);
             return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }

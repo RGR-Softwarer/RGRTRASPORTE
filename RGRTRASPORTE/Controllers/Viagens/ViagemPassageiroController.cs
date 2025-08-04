@@ -10,14 +10,8 @@ namespace RGRTRASPORTE.Controllers.Viagens
     [ApiController]
     public class ViagemPassageiroController : AbstractControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public ViagemPassageiroController(
-            IMediator mediator,
-            INotificationContext notificationHandler)
-            : base(notificationHandler)
+        public ViagemPassageiroController(IMediator mediator, INotificationContext notificationHandler) : base(notificationHandler, mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
@@ -44,4 +38,4 @@ namespace RGRTRASPORTE.Controllers.Viagens
             return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
     }
-} 
+}

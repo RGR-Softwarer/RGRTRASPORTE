@@ -1,5 +1,6 @@
 using Application.Commands.Passageiro;
-using Application.Queries.Passageiro;
+using Application.Queries.Passageiros;
+using Application.Queries.Passageiros.Models;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -10,29 +11,33 @@ namespace RGRTRASPORTE.Controllers.Pessoas
     [ApiController]
     public class PassageiroController : AbstractControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public PassageiroController(
-            IMediator mediator,
-            INotificationContext notificationHandler)
-            : base(notificationHandler)
+        public PassageiroController(IMediator mediator, INotificationContext notificationHandler) : base(notificationHandler, mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObterTodos([FromQuery] ObterPassageirosQuery query)
+        public async Task<IActionResult> ObterTodos([FromBody] ObterPassageirosQuery query)
         {
-            var passageiros = await _mediator.Send(query);
-            return await RGRResult(System.Net.HttpStatusCode.OK, passageiros);
+            var resultado = await _mediator.Send(query);
+
+            if (!resultado.Sucesso)
+                return BadRequest(resultado);
+
+            return await RGRResult(System.Net.HttpStatusCode.OK, resultado);
+        }
+
+        [HttpPost("filtrar")]
+        public async Task<IActionResult> ObterPassageirosPaginados([FromBody] ObterPassageirosPaginadosQuery query)
+        {
+            return await ObterPaginado<ObterPassageirosPaginadosQuery, PassageiroDto>(query);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> ObterPorId(long id, [FromQuery] bool auditado = false)
+        public async Task<IActionResult> ObterPorId(long id)
         {
-            var passageiro = await _mediator.Send(new ObterPassageiroPorIdQuery(id, auditado));
+            var passageiro = await _mediator.Send(new ObterPassageiroPorIdQuery(id));
             if (passageiro == null)
-                return await RGRResult(System.Net.HttpStatusCode.NotFound, $"Passageiro com ID {id} n„o encontrado");
+                return await RGRResult(System.Net.HttpStatusCode.NotFound, $"Passageiro com ID {id} n√£o encontrado");
 
             return await RGRResult(System.Net.HttpStatusCode.OK, passageiro);
         }

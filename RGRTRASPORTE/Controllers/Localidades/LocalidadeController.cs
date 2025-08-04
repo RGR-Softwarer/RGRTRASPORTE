@@ -1,7 +1,5 @@
 using Application.Commands.Localidade;
 using Application.Queries.Localidade;
-using Application.Queries.Localidade.Models;
-using Dominio.Dtos;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -12,14 +10,8 @@ namespace RGRTRASPORTE.Controllers.Localidades
     [ApiController]
     public class LocalidadeController : AbstractControllerBase
     {
-        private readonly IMediator _mediator;
-
-        public LocalidadeController(
-            IMediator mediator,
-            INotificationContext notificationHandler)
-            : base(notificationHandler)
+        public LocalidadeController(IMediator mediator, INotificationContext notificationHandler) : base(notificationHandler, mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
@@ -41,7 +33,7 @@ namespace RGRTRASPORTE.Controllers.Localidades
         {
             var query = new ObterLocalidadePorIdQuery(id);
             var response = await _mediator.Send(query);
-            
+
             if (response == null || !response.Sucesso)
                 return await RGRResult(System.Net.HttpStatusCode.NotFound, $"Localidade com ID {id} n�o encontrada");
 

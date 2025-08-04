@@ -1,19 +1,9 @@
 using Application.Commands.Viagem;
 using Application.Queries.Viagem;
-using Dominio.Interfaces.Hangfire;
 using Hangfire;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Text;
-using System.Text.Json;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Dominio.Models.Integration;
-using Dominio.Models.Hangfire;
-using Dominio.Dtos.Viagens;
 
 namespace RGRTRASPORTE.Controllers.Viagens
 {
@@ -21,21 +11,14 @@ namespace RGRTRASPORTE.Controllers.Viagens
     [ApiController]
     public class ViagemController : AbstractControllerBase
     {
-        private readonly IMediator _mediator;
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly string _googleApiKey;
         private readonly HttpClient _httpClient;
 
-        public ViagemController(
-            IMediator mediator,
-            INotificationContext notificationHandler,
-            IBackgroundJobClient backgroundJobClient,
-            IConfiguration configuration)
-            : base(notificationHandler)
+        public ViagemController(IMediator mediator, INotificationContext notificationHandler, IBackgroundJobClient backgroundJobClient, IConfiguration configuration) : base(notificationHandler, mediator)
         {
-            _mediator = mediator;
             _backgroundJobClient = backgroundJobClient;
-            _googleApiKey = configuration["GoogleMaps:ApiKey"]??
+            _googleApiKey = configuration["GoogleMaps:ApiKey"] ??
                 string.Empty; //?? throw new InvalidOperationException("Google Maps API Key não configurada");
             _httpClient = new HttpClient();
         }
@@ -122,7 +105,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
                 // ? MELHOR PRÁTICA: HttpClient com CancellationToken e timeout
                 using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 timeoutCts.CancelAfter(TimeSpan.FromSeconds(30)); // Timeout de 30 segundos para APIs externas
-                
+
                 var response = await _httpClient.GetAsync(url, timeoutCts.Token);
                 if (response.IsSuccessStatusCode)
                 {
