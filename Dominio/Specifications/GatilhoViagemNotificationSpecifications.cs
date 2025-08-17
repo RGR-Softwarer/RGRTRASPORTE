@@ -23,7 +23,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados básicos do gatilho são inválidos";
 
-        public override void ValidateAndNotify((string descricao, long veiculoId, long motoristaId, long localidadeOrigemId, long localidadeDestinoId, int quantidadeVagas, string descricaoViagem, string polilinhaRota) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((string descricao, long veiculoId, long motoristaId, long localidadeOrigemId, long localidadeDestinoId, int quantidadeVagas, string descricaoViagem, string polilinhaRota) dados, IDomainNotificationContext notificationContext)
         {
             if (string.IsNullOrWhiteSpace(dados.descricao))
                 notificationContext.AddNotification("Descrição do gatilho é obrigatória");
@@ -71,7 +71,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Horários são inválidos";
 
-        public override void ValidateAndNotify((TimeSpan horarioSaida, TimeSpan horarioChegada) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((TimeSpan horarioSaida, TimeSpan horarioChegada) dados, IDomainNotificationContext notificationContext)
         {
             if (dados.horarioSaida >= dados.horarioChegada)
                 notificationContext.AddNotification("Horário de chegada deve ser maior que o horário de saída");
@@ -96,7 +96,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dias da semana são inválidos";
 
-        public override void ValidateAndNotify(List<DiaSemanaEnum> diasSemana, INotificationContext notificationContext)
+        public override void ValidateAndNotify(List<DiaSemanaEnum> diasSemana, IDomainNotificationContext notificationContext)
         {
             if (diasSemana == null || !diasSemana.Any())
                 notificationContext.AddNotification("Pelo menos um dia da semana deve ser selecionado");
@@ -121,7 +121,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados financeiros são inválidos";
 
-        public override void ValidateAndNotify((decimal valorPassagem, decimal distancia) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((decimal valorPassagem, decimal distancia) dados, IDomainNotificationContext notificationContext)
         {
             if (dados.valorPassagem <= 0)
                 notificationContext.AddNotification("Valor da passagem deve ser maior que zero");
@@ -146,7 +146,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Gatilho não pode ser desativado";
 
-        public override void ValidateAndNotify(GatilhoViagem gatilho, INotificationContext notificationContext)
+        public override void ValidateAndNotify(GatilhoViagem gatilho, IDomainNotificationContext notificationContext)
         {
             if (!gatilho.Ativo)
                 notificationContext.AddNotification("Gatilho já está inativo");
@@ -169,7 +169,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Não é possível gerar viagem para esta data";
 
-        public override void ValidateAndNotify((GatilhoViagem gatilho, DateTime data) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((GatilhoViagem gatilho, DateTime data) dados, IDomainNotificationContext notificationContext)
         {
             if (!dados.gatilho.Ativo)
                 notificationContext.AddNotification("Gatilho está inativo");

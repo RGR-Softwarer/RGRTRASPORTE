@@ -17,7 +17,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados básicos do passageiro são inválidos";
 
-        public override void ValidateAndNotify((string nome, CPF cpf, string telefone, string email) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((string nome, CPF cpf, string telefone, string email) dados, IDomainNotificationContext notificationContext)
         {
             if (string.IsNullOrWhiteSpace(dados.nome))
                 notificationContext.AddNotification("Nome do passageiro é obrigatório");
@@ -48,7 +48,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Localidades do passageiro são inválidas";
 
-        public override void ValidateAndNotify((long localidadeId, long localidadeEmbarqueId, long localidadeDesembarqueId) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((long localidadeId, long localidadeEmbarqueId, long localidadeDesembarqueId) dados, IDomainNotificationContext notificationContext)
         {
             if (dados.localidadeId <= 0)
                 notificationContext.AddNotification("Localidade principal é obrigatória");
@@ -73,7 +73,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Passageiro não pode ser inativado";
 
-        public override void ValidateAndNotify(Passageiro passageiro, INotificationContext notificationContext)
+        public override void ValidateAndNotify(Passageiro passageiro, IDomainNotificationContext notificationContext)
         {
             if (!passageiro.Situacao)
                 notificationContext.AddNotification("Passageiro já está inativo");
@@ -97,7 +97,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Passageiro não pode embarcar na viagem";
 
-        public override void ValidateAndNotify((Passageiro passageiro, long viagemId) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((Passageiro passageiro, long viagemId) dados, IDomainNotificationContext notificationContext)
         {
             if (!dados.passageiro.Situacao)
                 notificationContext.AddNotification("Passageiro está inativo");

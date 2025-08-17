@@ -2,6 +2,7 @@ using Application.Common;
 using Dominio.Interfaces.Infra.Data.Passageiros;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Infra.CrossCutting.Handlers.Notifications;
 using Dominio.Interfaces;
 using PassageiroEntity = Dominio.Entidades.Pessoas.Passageiros.Passageiro;
 
@@ -29,6 +30,9 @@ public class CriarPassageiroCommandHandler : IRequestHandler<CriarPassageiroComm
         {
             _logger.LogInformation("Iniciando criação do passageiro {Nome}", request.Nome);
 
+            // Criar adapter para converter interface
+            var domainNotificationContext = new DomainNotificationContextAdapter(_notificationContext);
+
             // Usar Factory Method com validação
             var (passageiro, sucesso) = PassageiroEntity.CriarPassageiroComValidacao(
                 request.Nome,
@@ -40,12 +44,12 @@ public class CriarPassageiroCommandHandler : IRequestHandler<CriarPassageiroComm
                 request.LocalidadeEmbarqueId,
                 request.LocalidadeDesembarqueId,
                 request.Observacao,
-                _notificationContext);
+                domainNotificationContext);
 
             if (!sucesso || passageiro == null)
             {
                 _logger.LogWarning("Falha na validação do passageiro {Nome}. Total de erros: {Count}", 
-                    request.Nome, _notificationContext.GetNotificationCount());
+                    request.Nome, domainNotificationContext.GetNotificationCount());
                 return BaseResponse<long>.Erro("Dados inválidos para criação do passageiro", new List<string> { "Falha na validação dos dados" });
             }
 

@@ -12,7 +12,7 @@ namespace Dominio.Services
             Endereco endereco,
             decimal latitude,
             decimal longitude,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var dadosBasicosSpec = new LocalidadeDadosBasicosSpecification();
             var dados = (nome, endereco, latitude, longitude);
@@ -28,7 +28,7 @@ namespace Dominio.Services
             Endereco endereco,
             decimal latitude,
             decimal longitude,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             // Validar se a localidade pode ser editada
             var podeSerEditadaSpec = new LocalidadePodeSerEditadaSpecification();
@@ -49,7 +49,7 @@ namespace Dominio.Services
 
         public bool ValidarAtivacao(
             Localidade localidade,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerAtivadaSpec = new LocalidadePodeSerAtivadaNotificationSpecification();
             podeSerAtivadaSpec.ValidateAndNotify(localidade, notificationContext);
@@ -59,7 +59,7 @@ namespace Dominio.Services
 
         public bool ValidarInativacao(
             Localidade localidade,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerInativadaSpec = new LocalidadePodeSerInativadaNotificationSpecification();
             podeSerInativadaSpec.ValidateAndNotify(localidade, notificationContext);

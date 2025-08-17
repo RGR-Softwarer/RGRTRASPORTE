@@ -98,7 +98,8 @@ namespace Infra.Ioc
 
             // === REGISTROS MANUAIS ESPECÍFICOS DE SERVICES ===
             // Apenas serviços cross-cutting
-            services.AddScoped<Dominio.Interfaces.INotificationContext, NotificationContext>();
+            services.AddScoped<INotificationContext, NotificationContext>();
+            services.AddScoped<Dominio.Interfaces.IDomainNotificationContext, NotificationContext>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IHangfireService, HangfireService>();

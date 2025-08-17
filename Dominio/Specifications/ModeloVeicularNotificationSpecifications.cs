@@ -17,7 +17,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados básicos do modelo são inválidos";
 
-        public override void ValidateAndNotify((string descricao, TipoModeloVeiculoEnum tipo, int quantidadeAssento, int quantidadeEixo) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((string descricao, TipoModeloVeiculoEnum tipo, int quantidadeAssento, int quantidadeEixo) dados, IDomainNotificationContext notificationContext)
         {
             if (string.IsNullOrWhiteSpace(dados.descricao))
                 notificationContext.AddNotification("Descrição do modelo é obrigatória");
@@ -48,7 +48,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Capacidade do modelo é inválida";
 
-        public override void ValidateAndNotify((int quantidadeAssento, int capacidadeMaxima, int passageirosEmPe) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((int quantidadeAssento, int capacidadeMaxima, int passageirosEmPe) dados, IDomainNotificationContext notificationContext)
         {
             if (dados.quantidadeAssento <= 0)
                 notificationContext.AddNotification("Quantidade de assentos deve ser maior que zero");
@@ -73,7 +73,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Modelo não pode ser inativado";
 
-        public override void ValidateAndNotify(ModeloVeicular modelo, INotificationContext notificationContext)
+        public override void ValidateAndNotify(ModeloVeicular modelo, IDomainNotificationContext notificationContext)
         {
             if (!modelo.Situacao)
                 notificationContext.AddNotification("Modelo já está inativo");

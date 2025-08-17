@@ -20,7 +20,7 @@ namespace Dominio.Services
             CategoriaCNHEnum categoriaCNH,
             DateTime validadeCNH,
             string observacao,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var dadosBasicosSpec = new MotoristaDadosBasicosSpecification();
             var cnhValidaSpec = new MotoristaCNHValidaNotificationSpecification();
@@ -45,7 +45,7 @@ namespace Dominio.Services
             long localidadeEmbarqueId,
             long localidadeDesembarqueId,
             string observacao,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             // Verificar se o motorista pode ser editado
             var podeSerEditadoSpec = new MotoristaPodeSerEditadoSpecification();
@@ -63,7 +63,7 @@ namespace Dominio.Services
         public bool ValidarRenovacaoCNH(
             Motorista motorista,
             DateTime novaValidadeCNH,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var cnhPodeSerRenovadaSpec = new MotoristaCNHPodeSerRenovadaSpecification();
             var dadosRenovacao = (motorista, novaValidadeCNH);
@@ -79,7 +79,7 @@ namespace Dominio.Services
             string cnh,
             CategoriaCNHEnum categoriaCNH,
             DateTime validadeCNH,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeAtualizarDocumentosSpec = new MotoristaPodeAtualizarDocumentosSpecification();
             if (!podeAtualizarDocumentosSpec.IsSatisfiedBy(motorista))
@@ -98,7 +98,7 @@ namespace Dominio.Services
         public bool ValidarHabilitacaoParaVeiculo(
             Motorista motorista,
             TipoModeloVeiculoEnum tipoVeiculo,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var habilitadoParaVeiculoSpec = new MotoristaHabilitadoParaVeiculoNotificationSpecification();
             var dados = (motorista, tipoVeiculo);

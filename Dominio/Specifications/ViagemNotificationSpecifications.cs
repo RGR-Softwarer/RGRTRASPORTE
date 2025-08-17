@@ -15,7 +15,7 @@ namespace Dominio.Specifications
         public override string ErrorMessage => 
             "Viagem deve estar agendada e ter vagas disponíveis para receber passageiros";
 
-        public override void ValidateAndNotify(Viagem viagem, INotificationContext notificationContext)
+        public override void ValidateAndNotify(Viagem viagem, IDomainNotificationContext notificationContext)
         {
             if (viagem.Situacao != SituacaoViagemEnum.Agendada)
             {
@@ -44,7 +44,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados básicos da viagem são inválidos";
 
-        public override void ValidateAndNotify((long veiculoId, long motoristaId, long localidadeOrigemId, long localidadeDestinoId, int quantidadeVagas, string descricaoViagem) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((long veiculoId, long motoristaId, long localidadeOrigemId, long localidadeDestinoId, int quantidadeVagas, string descricaoViagem) dados, IDomainNotificationContext notificationContext)
         {
             if (dados.veiculoId <= 0)
                 notificationContext.AddNotification("O veículo é obrigatório");
@@ -77,7 +77,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Regras de negócio da viagem são inválidas";
 
-        public override void ValidateAndNotify((long localidadeOrigemId, long localidadeDestinoId) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((long localidadeOrigemId, long localidadeDestinoId) dados, IDomainNotificationContext notificationContext)
         {
             if (dados.localidadeOrigemId == dados.localidadeDestinoId)
                 notificationContext.AddNotification("A localidade de destino não pode ser igual à localidade de origem");
@@ -104,7 +104,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Coordenadas inválidas";
 
-        public override void ValidateAndNotify((decimal latitude, decimal longitude) coordenada, INotificationContext notificationContext)
+        public override void ValidateAndNotify((decimal latitude, decimal longitude) coordenada, IDomainNotificationContext notificationContext)
         {
             if (coordenada.latitude < -90 || coordenada.latitude > 90)
                 notificationContext.AddNotification("Latitude deve estar entre -90 e 90 graus");

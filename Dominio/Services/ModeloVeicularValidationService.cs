@@ -16,7 +16,7 @@ namespace Dominio.Services
             int passageirosEmPe,
             bool possuiBanheiro,
             bool possuiClimatizador,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var dadosBasicosSpec = new ModeloVeicularDadosBasicosSpecification();
             var capacidadeValidaSpec = new ModeloVeicularCapacidadeValidaNotificationSpecification();
@@ -40,7 +40,7 @@ namespace Dominio.Services
             int passageirosEmPe,
             bool possuiBanheiro,
             bool possuiClimatizador,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             // Verificar se o modelo pode ser editado
             var podeSerEditadoSpec = new ModeloVeicularPodeSerEditadoSpecification();
@@ -57,7 +57,7 @@ namespace Dominio.Services
 
         public bool ValidarInativacao(
             ModeloVeicular modelo,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerInativadoSpec = new ModeloVeicularPodeSerInativadoNotificationSpecification();
             podeSerInativadoSpec.ValidateAndNotify(modelo, notificationContext);
@@ -67,7 +67,7 @@ namespace Dominio.Services
 
         public bool ValidarAtivacao(
             ModeloVeicular modelo,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerAtivadoSpec = new ModeloVeicularPodeSerAtivadoSpecification();
             if (!podeSerAtivadoSpec.IsSatisfiedBy(modelo))

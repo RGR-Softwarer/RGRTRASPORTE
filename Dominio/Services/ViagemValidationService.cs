@@ -20,7 +20,7 @@ namespace Dominio.Services
             decimal distanciaKm,
             string descricaoViagem,
             string polilinhaRota,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var dadosBasicosSpec = new ViagemDadosBasicosSpecification();
             var regrasNegocioSpec = new ViagemRegrasNegocioSpecification();
@@ -43,7 +43,7 @@ namespace Dominio.Services
             long localidadeOrigemId,
             long localidadeDestinoId,
             int quantidadeVagas,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             // Verificar se a viagem pode ser editada
             var podeSerEditadaSpec = new ViagemPodeSerEditadaSpecification();
@@ -65,7 +65,7 @@ namespace Dominio.Services
         public bool ValidarAdicaoPassageiro(
             Viagem viagem,
             Passageiro passageiro,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeReceberPassageiroSpec = new ViagemPodeReceberPassageiroNotificationSpecification();
             var passageiroJaEstaSpec = new PassageiroJaEstaNaviagemNotificationSpecification();
@@ -81,7 +81,7 @@ namespace Dominio.Services
             decimal latitude,
             decimal longitude,
             DateTime dataHora,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeReceberPosicaoSpec = new ViagemPodeReceberPosicaoSpecification();
             var coordenadaValidaSpec = new CoordenadaValidaSpecification();

@@ -21,7 +21,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados básicos do motorista são inválidos";
 
-        public override void ValidateAndNotify((string nome, CPF cpf, string rg, string telefone, string email) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((string nome, CPF cpf, string rg, string telefone, string email) dados, IDomainNotificationContext notificationContext)
         {
             if (string.IsNullOrWhiteSpace(dados.nome))
                 notificationContext.AddNotification("Nome do motorista é obrigatório");
@@ -59,7 +59,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados da CNH são inválidos";
 
-        public override void ValidateAndNotify((string cnh, CategoriaCNHEnum categoria, DateTime validade) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((string cnh, CategoriaCNHEnum categoria, DateTime validade) dados, IDomainNotificationContext notificationContext)
         {
             if (string.IsNullOrWhiteSpace(dados.cnh))
                 notificationContext.AddNotification("Número da CNH é obrigatório");
@@ -87,7 +87,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "CNH não pode ser renovada";
 
-        public override void ValidateAndNotify((Motorista motorista, DateTime novaValidade) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((Motorista motorista, DateTime novaValidade) dados, IDomainNotificationContext notificationContext)
         {
             if (!dados.motorista.Situacao)
                 notificationContext.AddNotification("Não é possível renovar CNH de motorista inativo");
@@ -109,7 +109,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Motorista não está habilitado para dirigir este tipo de veículo";
 
-        public override void ValidateAndNotify((Motorista motorista, TipoModeloVeiculoEnum tipoVeiculo) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((Motorista motorista, TipoModeloVeiculoEnum tipoVeiculo) dados, IDomainNotificationContext notificationContext)
         {
             if (!dados.motorista.PodeDirigirVeiculo(dados.tipoVeiculo))
                 notificationContext.AddNotification($"Categoria da CNH ({dados.motorista.CategoriaCNH}) não permite dirigir {dados.tipoVeiculo}");

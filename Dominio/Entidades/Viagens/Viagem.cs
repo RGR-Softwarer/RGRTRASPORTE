@@ -167,7 +167,7 @@ namespace Dominio.Entidades.Viagens
             decimal distanciaKm,
             string descricaoViagem,
             string polilinhaRota,
-            INotificationContext notificationContext,
+            IDomainNotificationContext notificationContext,
             bool ativo = true)
         {
             var validationService = new ViagemValidationService();
@@ -235,7 +235,7 @@ namespace Dominio.Entidades.Viagens
         }
 
         // Método de negócio com validação por NotificationContext
-        public bool AdicionarPassageiroComValidacao(Passageiro passageiro, INotificationContext notificationContext)
+        public bool AdicionarPassageiroComValidacao(Passageiro passageiro, IDomainNotificationContext notificationContext)
         {
             var validationService = new ViagemValidationService();
             var valido = validationService.ValidarAdicaoPassageiro(this, passageiro, notificationContext);
@@ -287,7 +287,7 @@ namespace Dominio.Entidades.Viagens
         }
 
         // Método de negócio com validação por NotificationContext
-        public bool AdicionarPosicaoComValidacao(decimal latitude, decimal longitude, DateTime dataHora, INotificationContext notificationContext)
+        public bool AdicionarPosicaoComValidacao(decimal latitude, decimal longitude, DateTime dataHora, IDomainNotificationContext notificationContext)
         {
             var validationService = new ViagemValidationService();
             var valido = validationService.ValidarAdicaoPosicao(this, latitude, longitude, dataHora, notificationContext);
@@ -390,7 +390,7 @@ namespace Dominio.Entidades.Viagens
             long localidadeDestinoId,
             int quantidadeVagas,
             bool ativo,
-            INotificationContext notificationContext,
+            IDomainNotificationContext notificationContext,
             long? gatilhoViagemId = null)
         {
             var validationService = new ViagemValidationService();

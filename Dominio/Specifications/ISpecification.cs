@@ -11,7 +11,7 @@ namespace Dominio.Specifications
     // Interface para specifications que trabalham com NotificationContext
     public interface INotificationSpecification<in T>
     {
-        void ValidateAndNotify(T item, INotificationContext notificationContext);
+        void ValidateAndNotify(T item, IDomainNotificationContext notificationContext);
         bool IsSatisfiedBy(T item);
     }
 
@@ -42,7 +42,7 @@ namespace Dominio.Specifications
         public abstract bool IsSatisfiedBy(T item);
         public abstract string ErrorMessage { get; }
 
-        public virtual void ValidateAndNotify(T item, INotificationContext notificationContext)
+        public virtual void ValidateAndNotify(T item, IDomainNotificationContext notificationContext)
         {
             if (!IsSatisfiedBy(item))
             {
@@ -139,7 +139,7 @@ namespace Dominio.Specifications
         public override string ErrorMessage => 
             $"Ambas condições devem ser atendidas";
 
-        public override void ValidateAndNotify(T item, INotificationContext notificationContext)
+        public override void ValidateAndNotify(T item, IDomainNotificationContext notificationContext)
         {
             _left.ValidateAndNotify(item, notificationContext);
             _right.ValidateAndNotify(item, notificationContext);
@@ -165,7 +165,7 @@ namespace Dominio.Specifications
         public override string ErrorMessage => 
             $"Pelo menos uma condição deve ser atendida";
 
-        public override void ValidateAndNotify(T item, INotificationContext notificationContext)
+        public override void ValidateAndNotify(T item, IDomainNotificationContext notificationContext)
         {
             var leftSatisfied = _left.IsSatisfiedBy(item);
             var rightSatisfied = _right.IsSatisfiedBy(item);

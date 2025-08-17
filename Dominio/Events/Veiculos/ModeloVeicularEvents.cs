@@ -52,4 +52,4 @@ namespace Dominio.Events.Veiculos
         public long ModeloVeicularId { get; }
         public string Descricao { get; }
     }
-} 
+}

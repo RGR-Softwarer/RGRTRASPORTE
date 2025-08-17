@@ -22,7 +22,7 @@ namespace Dominio.Services
             StatusVeiculoEnum status,
             string observacao,
             long? modeloVeiculoId,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var dadosBasicosSpec = new VeiculoDadosBasicosSpecification();
             var dados = (placa, modelo, marca, numeroChassi, anoModelo, anoFabricacao, cor, renavam);
@@ -42,7 +42,7 @@ namespace Dominio.Services
             StatusVeiculoEnum status,
             string observacao,
             long? modeloVeiculoId,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             // Validar se o veículo pode ser editado
             var podeSerEditadoSpec = new VeiculoPodeSerEditadoSpecification();
@@ -63,7 +63,7 @@ namespace Dominio.Services
 
         public bool ValidarAtivacao(
             Veiculo veiculo,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerAtivadoSpec = new VeiculoPodeSerAtivadoNotificationSpecification();
             podeSerAtivadoSpec.ValidateAndNotify(veiculo, notificationContext);
@@ -73,7 +73,7 @@ namespace Dominio.Services
 
         public bool ValidarInativacao(
             Veiculo veiculo,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerInativadoSpec = new VeiculoPodeSerInativadoNotificationSpecification();
             podeSerInativadoSpec.ValidateAndNotify(veiculo, notificationContext);
@@ -84,7 +84,7 @@ namespace Dominio.Services
         public bool ValidarAtualizacaoLicenciamento(
             Veiculo veiculo,
             DateTime vencimento,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeAtualizarLicenciamentoSpec = new VeiculoPodeAtualizarLicenciamentoNotificationSpecification();
             var dados = (veiculo, vencimento);

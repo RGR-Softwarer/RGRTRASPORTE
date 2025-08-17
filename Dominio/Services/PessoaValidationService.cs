@@ -14,7 +14,7 @@ namespace Dominio.Services
             CPF cpf,
             string telefone,
             string email,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var dadosBasicosSpec = new PessoaDadosBasicosSpecification();
             var dados = (nome, cpf, telefone, email);
@@ -35,7 +35,7 @@ namespace Dominio.Services
             long localidadeEmbarqueId,
             long localidadeDesembarqueId,
             string observacao,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             // Validar se a pessoa pode ser editada
             var podeSerEditadaSpec = new PessoaPodeSerEditadaSpecification();
@@ -51,7 +51,7 @@ namespace Dominio.Services
 
         public bool ValidarAtivacao(
             Pessoa pessoa,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerAtivadaSpec = new PessoaPodeSerAtivadaNotificationSpecification();
             podeSerAtivadaSpec.ValidateAndNotify(pessoa, notificationContext);
@@ -61,7 +61,7 @@ namespace Dominio.Services
 
         public bool ValidarInativacao(
             Pessoa pessoa,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerInativadaSpec = new PessoaPodeSerInativadaNotificationSpecification();
             podeSerInativadaSpec.ValidateAndNotify(pessoa, notificationContext);
@@ -74,7 +74,7 @@ namespace Dominio.Services
             string rg,
             string cnh,
             DateTime validadeCNH,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var dadosEspecificosSpec = new MotoristaDadosEspecificosSpecification();
             var dados = (rg, cnh, validadeCNH);
@@ -87,7 +87,7 @@ namespace Dominio.Services
         public bool ValidarRenovacaoCNH(
             Motorista motorista,
             DateTime novaValidade,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeRenovarCNHSpec = new MotoristaPodeRenovarCNHNotificationSpecification();
             var dados = (motorista, novaValidade);

@@ -3,7 +3,7 @@ using Dominio.Interfaces.Infra.Data;
 using ModeloVeicularEntity = Dominio.Entidades.Veiculos.ModeloVeicular;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Dominio.Interfaces;
+using Infra.CrossCutting.Handlers.Notifications;
 
 namespace Application.Commands.Veiculo.ModeloVeicular;
 
@@ -29,6 +29,9 @@ public class CriarModeloVeicularCommandHandler : IRequestHandler<CriarModeloVeic
         {
             _logger.LogInformation("Iniciando criação do modelo veicular {Nome}", request.Descricao);
 
+            // Criar adapter para converter interface
+            var domainNotificationContext = new DomainNotificationContextAdapter(_notificationContext);
+
             // Usar Factory Method com validação
             var (modeloVeicular, sucesso) = ModeloVeicularEntity.CriarModeloVeicularComValidacao(
                 request.Descricao,
@@ -39,12 +42,12 @@ public class CriarModeloVeicularCommandHandler : IRequestHandler<CriarModeloVeic
                 request.PassageirosEmPe,
                 request.PossuiBanheiro,
                 request.PossuiClimatizador,
-                _notificationContext);
+                domainNotificationContext);
 
             if (!sucesso || modeloVeicular == null)
             {
                 _logger.LogWarning("Falha na validação do modelo veicular {Nome}. Total de erros: {Count}", 
-                    request.Descricao, _notificationContext.GetNotificationCount());
+                    request.Descricao, domainNotificationContext.GetNotificationCount());
                 return BaseResponse<long>.Erro("Dados inválidos para criação do modelo veicular", new List<string> { "Falha na validação dos dados" });
             }
 

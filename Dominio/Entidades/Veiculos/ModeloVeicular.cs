@@ -65,7 +65,7 @@ namespace Dominio.Entidades.Veiculos
             int passageirosEmPe,
             bool possuiBanheiro,
             bool possuiClimatizador,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var validationService = new ModeloVeicularValidationService();
             var valido = validationService.ValidarCriacao(descricaoModelo, tipo, quantidadeAssento,

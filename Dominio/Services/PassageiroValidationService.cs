@@ -18,7 +18,7 @@ namespace Dominio.Services
             long localidadeEmbarqueId,
             long localidadeDesembarqueId,
             string observacao,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var dadosBasicosSpec = new PassageiroDadosBasicosSpecification();
             var localidadesValidasSpec = new PassageiroLocalidadesValidasNotificationSpecification();
@@ -44,7 +44,7 @@ namespace Dominio.Services
             long localidadeDesembarqueId,
             string observacao,
             bool situacao,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             // Verificar se o passageiro pode ser editado
             var podeSerEditadoSpec = new PassageiroPodeSerEditadoSpecification();
@@ -64,7 +64,7 @@ namespace Dominio.Services
             long localidadeId,
             long localidadeEmbarqueId,
             long localidadeDesembarqueId,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeAtualizarLocalidadesSpec = new PassageiroPodeAtualizarLocalidadesSpecification();
             if (!podeAtualizarLocalidadesSpec.IsSatisfiedBy(passageiro))
@@ -82,7 +82,7 @@ namespace Dominio.Services
 
         public bool ValidarAtivacao(
             Passageiro passageiro,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerAtivadoSpec = new PassageiroPodeSerAtivadoSpecification();
             if (!podeSerAtivadoSpec.IsSatisfiedBy(passageiro))
@@ -96,7 +96,7 @@ namespace Dominio.Services
 
         public bool ValidarInativacao(
             Passageiro passageiro,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerInativadoSpec = new PassageiroPodeSerInativadoNotificationSpecification();
             podeSerInativadoSpec.ValidateAndNotify(passageiro, notificationContext);
@@ -107,7 +107,7 @@ namespace Dominio.Services
         public bool ValidarEmbarqueEmViagem(
             Passageiro passageiro,
             long viagemId,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeEmbarcarSpec = new PassageiroPodeEmbarcarEmViagemSpecification();
             var dados = (passageiro, viagemId);

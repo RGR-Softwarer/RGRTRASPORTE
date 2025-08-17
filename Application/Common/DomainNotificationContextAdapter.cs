@@ -1,12 +1,16 @@
 using Dominio.Interfaces;
+using Infra.CrossCutting.Handlers.Notifications;
 
-namespace Infra.CrossCutting.Handlers.Notifications
+namespace Application.Common
 {
-    public class NotificationContextAdapter : Dominio.Interfaces.INotificationContext
+    /// <summary>
+    /// Adapter para converter entre INotificationContext (infraestrutura) e IDomainNotificationContext (domínio)
+    /// </summary>
+    internal class DomainNotificationContextAdapter : IDomainNotificationContext
     {
         private readonly INotificationContext _notificationContext;
 
-        public NotificationContextAdapter(INotificationContext notificationContext)
+        public DomainNotificationContextAdapter(INotificationContext notificationContext)
         {
             _notificationContext = notificationContext;
         }
@@ -26,4 +30,4 @@ namespace Infra.CrossCutting.Handlers.Notifications
             return _notificationContext.GetNotifications().Count;
         }
     }
-} 
+}

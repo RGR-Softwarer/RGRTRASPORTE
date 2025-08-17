@@ -2,7 +2,7 @@ using System.Net;
 
 namespace Infra.CrossCutting.Handlers.Notifications
 {
-    public class NotificationContext : INotificationContext
+    public class NotificationContext : INotificationContext, Dominio.Interfaces.IDomainNotificationContext
     {
         private List<Notification> _notifications;
 
@@ -33,6 +33,8 @@ namespace Infra.CrossCutting.Handlers.Notifications
         }
 
         public bool HasNotifications() => _notifications.Count > 0;
+        
+        public int GetNotificationCount() => _notifications.Count;
 
         public void DisposeNotifications() => _notifications = new List<Notification>();
     }

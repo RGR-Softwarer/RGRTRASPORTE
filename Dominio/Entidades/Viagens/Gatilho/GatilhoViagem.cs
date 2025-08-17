@@ -89,7 +89,7 @@ namespace Dominio.Entidades.Viagens.Gatilho
             string descricaoViagem,
             string polilinhaRota,
             List<DiaSemanaEnum> diasSemana,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var validationService = new GatilhoViagemValidationService();
             var valido = validationService.ValidarCriacao(descricao, veiculoId, motoristaId,

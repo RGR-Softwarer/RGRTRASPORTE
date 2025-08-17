@@ -17,7 +17,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados básicos da localidade são inválidos.";
 
-        public override void ValidateAndNotify((string nome, Endereco endereco, decimal latitude, decimal longitude) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((string nome, Endereco endereco, decimal latitude, decimal longitude) dados, IDomainNotificationContext notificationContext)
         {
             if (string.IsNullOrWhiteSpace(dados.nome))
                 notificationContext.AddNotification("Nome é obrigatório");
@@ -45,7 +45,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Localidade já está ativa.";
 
-        public override void ValidateAndNotify(Localidade localidade, INotificationContext notificationContext)
+        public override void ValidateAndNotify(Localidade localidade, IDomainNotificationContext notificationContext)
         {
             if (localidade.Ativo)
                 notificationContext.AddNotification("Localidade já está ativa");
@@ -61,7 +61,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Localidade já está inativa.";
 
-        public override void ValidateAndNotify(Localidade localidade, INotificationContext notificationContext)
+        public override void ValidateAndNotify(Localidade localidade, IDomainNotificationContext notificationContext)
         {
             if (!localidade.Ativo)
                 notificationContext.AddNotification("Localidade já está inativa");

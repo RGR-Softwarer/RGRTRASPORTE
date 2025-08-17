@@ -60,7 +60,7 @@ public class Passageiro : Pessoa
         long localidadeEmbarqueId,
         long localidadeDesembarqueId,
         string observacao,
-        INotificationContext notificationContext)
+        IDomainNotificationContext notificationContext)
     {
         var validationService = new PassageiroValidationService();
         var valido = validationService.ValidarCriacao(nome, cpf, telefone, email, sexo,

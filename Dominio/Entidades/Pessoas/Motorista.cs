@@ -65,7 +65,7 @@ namespace Dominio.Entidades.Pessoas
             CategoriaCNHEnum categoriaCNH,
             DateTime validadeCNH,
             string observacao,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var validationService = new MotoristaValidationService();
             var valido = validationService.ValidarCriacao(nome, cpf, rg, telefone, email, sexo,

@@ -21,7 +21,7 @@ namespace Dominio.Services
             string descricaoViagem,
             string polilinhaRota,
             List<DiaSemanaEnum> diasSemana,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var dadosBasicosSpec = new GatilhoViagemDadosBasicosSpecification();
             var horariosValidosSpec = new GatilhoViagemHorariosValidosNotificationSpecification();
@@ -58,7 +58,7 @@ namespace Dominio.Services
             string descricaoViagem,
             string polilinhaRota,
             List<DiaSemanaEnum> diasSemana,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             // Verificar se o gatilho pode ser editado
             var podeSerEditadoSpec = new GatilhoViagemPodeSerEditadoSpecification();
@@ -78,7 +78,7 @@ namespace Dominio.Services
             GatilhoViagem gatilho,
             TimeSpan horarioSaida,
             TimeSpan horarioChegada,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeAtualizarHorariosSpec = new GatilhoViagemPodeAtualizarHorariosSpecification();
             if (!podeAtualizarHorariosSpec.IsSatisfiedBy(gatilho))
@@ -97,7 +97,7 @@ namespace Dominio.Services
         public bool ValidarAtualizacaoValorPassagem(
             GatilhoViagem gatilho,
             decimal valorPassagem,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeAtualizarValorSpec = new GatilhoViagemPodeAtualizarValorSpecification();
             if (!podeAtualizarValorSpec.IsSatisfiedBy(gatilho))
@@ -124,7 +124,7 @@ namespace Dominio.Services
         public bool ValidarGeracaoViagem(
             GatilhoViagem gatilho,
             DateTime dataViagem,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeGerarViagemSpec = new GatilhoViagemPodeGerarViagemNotificationSpecification();
             var dados = (gatilho, dataViagem);
@@ -136,7 +136,7 @@ namespace Dominio.Services
 
         public bool ValidarAtivacao(
             GatilhoViagem gatilho,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerAtivadoSpec = new GatilhoViagemPodeSerAtivadoSpecification();
             if (!podeSerAtivadoSpec.IsSatisfiedBy(gatilho))
@@ -150,7 +150,7 @@ namespace Dominio.Services
 
         public bool ValidarDesativacao(
             GatilhoViagem gatilho,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var podeSerDesativadoSpec = new GatilhoViagemPodeSerDesativadoNotificationSpecification();
             podeSerDesativadoSpec.ValidateAndNotify(gatilho, notificationContext);

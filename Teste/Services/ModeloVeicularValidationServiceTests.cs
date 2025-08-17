@@ -10,12 +10,12 @@ namespace Teste.Services
     public class ModeloVeicularValidationServiceTests
     {
         private readonly ModeloVeicularValidationService _service;
-        private readonly Mock<INotificationContext> _notificationContextMock;
+        private readonly Mock<Dominio.Interfaces.IDomainNotificationContext> _notificationContextMock;
 
         public ModeloVeicularValidationServiceTests()
         {
             _service = new ModeloVeicularValidationService();
-            _notificationContextMock = new Mock<INotificationContext>();
+            _notificationContextMock = new Mock<Dominio.Interfaces.IDomainNotificationContext>();
         }
 
         [Fact]

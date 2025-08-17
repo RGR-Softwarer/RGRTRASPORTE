@@ -97,7 +97,7 @@ namespace Dominio.Entidades.Veiculos
             StatusVeiculoEnum status,
             string observacao,
             long? modeloVeiculoId,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var validationService = new VeiculoValidationService();
             var valido = validationService.ValidarCriacao(placa, modelo, marca, numeroChassi,
@@ -187,7 +187,7 @@ namespace Dominio.Entidades.Veiculos
             StatusVeiculoEnum status,
             string observacao,
             long? modeloVeiculoId,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var validationService = new VeiculoValidationService();
             var valido = validationService.ValidarAtualizacao(this, modelo, marca, cor,
@@ -220,7 +220,7 @@ namespace Dominio.Entidades.Veiculos
         }
 
         // Método com validação por NotificationContext
-        public bool AtualizarLicenciamentoComValidacao(DateTime vencimento, INotificationContext notificationContext)
+        public bool AtualizarLicenciamentoComValidacao(DateTime vencimento, IDomainNotificationContext notificationContext)
         {
             var validationService = new VeiculoValidationService();
             var valido = validationService.ValidarAtualizacaoLicenciamento(this, vencimento, notificationContext);
@@ -250,7 +250,7 @@ namespace Dominio.Entidades.Veiculos
         }
 
         // Método com validação por NotificationContext
-        public bool AtivarComValidacao(INotificationContext notificationContext)
+        public bool AtivarComValidacao(IDomainNotificationContext notificationContext)
         {
             var validationService = new VeiculoValidationService();
             var valido = validationService.ValidarAtivacao(this, notificationContext);
@@ -280,7 +280,7 @@ namespace Dominio.Entidades.Veiculos
         }
 
         // Método com validação por NotificationContext
-        public bool InativarComValidacao(INotificationContext notificationContext)
+        public bool InativarComValidacao(IDomainNotificationContext notificationContext)
         {
             var validationService = new VeiculoValidationService();
             var valido = validationService.ValidarInativacao(this, notificationContext);

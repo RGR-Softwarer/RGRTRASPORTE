@@ -25,7 +25,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados básicos do veículo são inválidos.";
 
-        public override void ValidateAndNotify((Placa placa, string modelo, string marca, string numeroChassi, int anoModelo, int anoFabricacao, string cor, string renavam) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((Placa placa, string modelo, string marca, string numeroChassi, int anoModelo, int anoFabricacao, string cor, string renavam) dados, IDomainNotificationContext notificationContext)
         {
             if (dados.placa == null)
                 notificationContext.AddNotification("Placa é obrigatória");
@@ -82,7 +82,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados de atualização do veículo são inválidos.";
 
-        public override void ValidateAndNotify((string modelo, string marca, string cor) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((string modelo, string marca, string cor) dados, IDomainNotificationContext notificationContext)
         {
             if (string.IsNullOrWhiteSpace(dados.modelo))
                 notificationContext.AddNotification("Modelo é obrigatório");
@@ -110,7 +110,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Veículo já está ativo.";
 
-        public override void ValidateAndNotify(Veiculo veiculo, INotificationContext notificationContext)
+        public override void ValidateAndNotify(Veiculo veiculo, IDomainNotificationContext notificationContext)
         {
             if (veiculo.Situacao)
                 notificationContext.AddNotification("Veículo já está ativo");
@@ -126,7 +126,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Veículo já está inativo.";
 
-        public override void ValidateAndNotify(Veiculo veiculo, INotificationContext notificationContext)
+        public override void ValidateAndNotify(Veiculo veiculo, IDomainNotificationContext notificationContext)
         {
             if (!veiculo.Situacao)
                 notificationContext.AddNotification("Veículo já está inativo");
@@ -142,7 +142,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Não é possível atualizar licenciamento.";
 
-        public override void ValidateAndNotify((Veiculo veiculo, DateTime vencimento) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((Veiculo veiculo, DateTime vencimento) dados, IDomainNotificationContext notificationContext)
         {
             if (!dados.veiculo.Situacao)
                 notificationContext.AddNotification("Não é possível atualizar licenciamento de veículo inativo");

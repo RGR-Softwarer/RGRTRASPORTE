@@ -20,7 +20,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados básicos da pessoa são inválidos.";
 
-        public override void ValidateAndNotify((string nome, CPF cpf, string telefone, string email) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((string nome, CPF cpf, string telefone, string email) dados, IDomainNotificationContext notificationContext)
         {
             if (string.IsNullOrWhiteSpace(dados.nome))
                 notificationContext.AddNotification("Nome é obrigatório");
@@ -57,7 +57,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Dados específicos do motorista são inválidos.";
 
-        public override void ValidateAndNotify((string rg, string cnh, DateTime validadeCNH) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((string rg, string cnh, DateTime validadeCNH) dados, IDomainNotificationContext notificationContext)
         {
             if (string.IsNullOrWhiteSpace(dados.rg))
                 notificationContext.AddNotification("RG é obrigatório");
@@ -88,7 +88,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Pessoa já está ativa.";
 
-        public override void ValidateAndNotify(Pessoa pessoa, INotificationContext notificationContext)
+        public override void ValidateAndNotify(Pessoa pessoa, IDomainNotificationContext notificationContext)
         {
             if (pessoa.Situacao)
                 notificationContext.AddNotification("Pessoa já está ativa");
@@ -104,7 +104,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Pessoa já está inativa.";
 
-        public override void ValidateAndNotify(Pessoa pessoa, INotificationContext notificationContext)
+        public override void ValidateAndNotify(Pessoa pessoa, IDomainNotificationContext notificationContext)
         {
             if (!pessoa.Situacao)
                 notificationContext.AddNotification("Pessoa já está inativa");
@@ -122,7 +122,7 @@ namespace Dominio.Specifications
 
         public override string ErrorMessage => "Não é possível renovar CNH.";
 
-        public override void ValidateAndNotify((Motorista motorista, DateTime novaValidade) dados, INotificationContext notificationContext)
+        public override void ValidateAndNotify((Motorista motorista, DateTime novaValidade) dados, IDomainNotificationContext notificationContext)
         {
             if (!dados.motorista.Situacao)
                 notificationContext.AddNotification("Não é possível renovar CNH de motorista inativo");

@@ -55,7 +55,7 @@ namespace Dominio.Entidades.Localidades
             Endereco endereco,
             decimal latitude,
             decimal longitude,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var validationService = new LocalidadeValidationService();
             var valido = validationService.ValidarCriacao(nome, endereco, latitude, longitude, notificationContext);
@@ -125,7 +125,7 @@ namespace Dominio.Entidades.Localidades
             decimal latitude,
             decimal longitude,
             bool ativo,
-            INotificationContext notificationContext)
+            IDomainNotificationContext notificationContext)
         {
             var validationService = new LocalidadeValidationService();
             var valido = validationService.ValidarAtualizacao(this, nome, endereco, latitude, longitude, notificationContext);
@@ -155,7 +155,7 @@ namespace Dominio.Entidades.Localidades
         }
 
         // Método com validação por NotificationContext
-        public bool AtivarComValidacao(INotificationContext notificationContext)
+        public bool AtivarComValidacao(IDomainNotificationContext notificationContext)
         {
             var validationService = new LocalidadeValidationService();
             var valido = validationService.ValidarAtivacao(this, notificationContext);
@@ -185,7 +185,7 @@ namespace Dominio.Entidades.Localidades
         }
 
         // Método com validação por NotificationContext
-        public bool InativarComValidacao(INotificationContext notificationContext)
+        public bool InativarComValidacao(IDomainNotificationContext notificationContext)
         {
             var validationService = new LocalidadeValidationService();
             var valido = validationService.ValidarInativacao(this, notificationContext);

@@ -3,7 +3,7 @@ using Dominio.Interfaces.Infra.Data;
 using ModeloVeicularEntity = Dominio.Entidades.Veiculos.ModeloVeicular;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using Dominio.Interfaces;
+using Infra.CrossCutting.Handlers.Notifications;
 using Dominio.Services;
 
 namespace Application.Commands.Veiculo.ModeloVeicular;
@@ -34,6 +34,9 @@ public class EditarModeloVeicularCommandHandler : IRequestHandler<EditarModeloVe
             if (modeloVeicular == null)
                 return BaseResponse<bool>.Erro("Modelo veicular não encontrado");
 
+            // Criar adapter para converter interface
+            var domainNotificationContext = new DomainNotificationContextAdapter(_notificationContext);
+
             // Usar Domain Service para validar atualização
             var validationService = new ModeloVeicularValidationService();
             var valido = validationService.ValidarAtualizacao(
@@ -46,12 +49,12 @@ public class EditarModeloVeicularCommandHandler : IRequestHandler<EditarModeloVe
                 request.PassageirosEmPe,
                 request.PossuiBanheiro,
                 request.PossuiClimatizador,
-                _notificationContext);
+                domainNotificationContext);
 
             if (!valido)
             {
                 _logger.LogWarning("Falha na validação da atualização do modelo veicular {Id}. Total de erros: {Count}", 
-                    request.Id, _notificationContext.GetNotificationCount());
+                    request.Id, domainNotificationContext.GetNotificationCount());
                 return BaseResponse<bool>.Erro("Dados inválidos para atualização do modelo veicular", new List<string> { "Falha na validação dos dados" });
             }
 
