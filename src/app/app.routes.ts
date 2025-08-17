@@ -13,15 +13,15 @@ export const routes: Routes = [
         children: [
             { 
                 path: 'frota/veiculo', 
-                loadComponent: () => import('./paginas/cadastros/veiculo/veiculo.component').then(c => c.VeiculoComponent) 
+                loadComponent: () => import('./paginas/frota/veiculo/veiculo.component').then(c => c.VeiculoComponent) 
             },
             { 
                 path: 'frota/veiculo/adicionar', 
-                loadComponent: () => import('./paginas/cadastros/veiculo/veiculo-formulario/veiculo-formulario.component').then(c => c.VeiculoFormularioComponent) 
+                loadComponent: () => import('./paginas/frota/veiculo/veiculo-formulario/veiculo-formulario.component').then(c => c.VeiculoFormularioComponent) 
             },
             { 
                 path: 'frota/veiculo/editar/:id', 
-                loadComponent: () => import('./paginas/cadastros/veiculo/veiculo-formulario/veiculo-formulario.component').then(c => c.VeiculoFormularioComponent) 
+                loadComponent: () => import('./paginas/frota/veiculo/veiculo-formulario/veiculo-formulario.component').then(c => c.VeiculoFormularioComponent) 
             },
             { 
                 path: 'inicio', 

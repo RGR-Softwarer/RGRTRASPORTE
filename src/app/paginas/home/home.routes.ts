@@ -27,17 +27,17 @@ export const routes: Routes = [
           },
           {
             path: 'veiculo/adicionar',
-            loadChildren: () => import('./cadastros/veiculo/veiculo-formulario/veiculo-formulario.module').then(m => m.VeiculoFormularioModule),
+            loadChildren: () => import('../frota/veiculo/veiculo-formulario/veiculo-formulario.module').then(m => m.VeiculoFormularioModule),
             data: { breadcrumb: 'Adicionar Veículo', icon: 'plus', oculta: true }
           },
           {
             path: 'veiculo/editar/:id',
-            loadChildren: () => import('./cadastros/veiculo/veiculo-formulario/veiculo-formulario.module').then(m => m.VeiculoFormularioModule),
+            loadChildren: () => import('../frota/veiculo/veiculo-formulario/veiculo-formulario.module').then(m => m.VeiculoFormularioModule),
             data: { breadcrumb: 'Editar Veículo', icon: 'edit', oculta: true }
           },
           {
             path: 'veiculo',
-            loadChildren: () => import('./cadastros/veiculo/veiculo.module').then(m => m.VeiculoModule),
+            loadChildren: () => import('../frota/veiculo/veiculo.module').then(m => m.VeiculoModule),
             data: { breadcrumb: 'Veículo', icon: 'car' }  // Icone de carro para Veículo
           },          
         ]
