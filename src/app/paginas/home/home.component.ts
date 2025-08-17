@@ -51,111 +51,13 @@ export class HomeComponent implements OnInit, OnDestroy {
       path: 'cadastros',
       breadcrumb: 'Cadastros',
       icon: 'database',
-      submenu: [
-        {
-          path: 'cadastros/motoristas',
-          breadcrumb: 'Motoristas',
-          icon: 'user-tie',
-          submenu: []
-        },
-        {
-          path: 'cadastros/clientes',
-          breadcrumb: 'Clientes',
-          icon: 'users',
-          submenu: []
-        },
-        {
-          path: 'cadastros/fornecedores',
-          breadcrumb: 'Fornecedores',
-          icon: 'building',
-          submenu: []
-        },
-        {
-          path: 'cadastros/manutencoes',
-          breadcrumb: 'Manutenções',
-          icon: 'wrench',
-          submenu: []
-        },
-        {
-          path: 'cadastros/combustiveis',
-          breadcrumb: 'Combustíveis',
-          icon: 'gas-pump',
-          submenu: []
-        },
-        {
-          path: 'cadastros/configuracoes',
-          breadcrumb: 'Configurações',
-          icon: 'cog',
-          submenu: []
-        }
-      ]
+      submenu: []
     },
     {
       path: 'relatorios',
       breadcrumb: 'Relatórios',
       icon: 'chart-bar',
-      submenu: [
-        {
-          path: 'relatorios/frota/veiculos',
-          breadcrumb: 'Relatório de Veículos',
-          icon: 'car',
-          submenu: []
-        },
-        {
-          path: 'relatorios/frota/manutencoes',
-          breadcrumb: 'Relatório de Manutenções',
-          icon: 'wrench',
-          submenu: []
-        },
-        {
-          path: 'relatorios/frota/combustivel',
-          breadcrumb: 'Relatório de Combustível',
-          icon: 'gas-pump',
-          submenu: []
-        },
-        {
-          path: 'relatorios/frota/motoristas',
-          breadcrumb: 'Relatório de Motoristas',
-          icon: 'user-tie',
-          submenu: []
-        },
-        {
-          path: 'relatorios/financeiro/custos',
-          breadcrumb: 'Relatório de Custos',
-          icon: 'dollar-sign',
-          submenu: []
-        },
-        {
-          path: 'relatorios/financeiro/faturamento',
-          breadcrumb: 'Relatório de Faturamento',
-          icon: 'chart-line',
-          submenu: []
-        },
-        {
-          path: 'relatorios/operacional/viagens',
-          breadcrumb: 'Relatório de Viagens',
-          icon: 'route',
-          submenu: []
-        },
-        {
-          path: 'relatorios/operacional/clientes',
-          breadcrumb: 'Relatório de Clientes',
-          icon: 'users',
-          submenu: []
-        },
-        {
-          path: 'relatorios/gerencial/dashboard',
-          breadcrumb: 'Dashboard Gerencial',
-          icon: 'tachometer-alt',
-          submenu: []
-        },
-        {
-          path: 'relatorios/gerencial/performance',
-          breadcrumb: 'Relatório de Performance',
-          icon: 'chart-bar',
-          submenu: []
-        }
-      ]
+      submenu: []
     }
   ];
   rotaAtual: string = '';
