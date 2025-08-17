@@ -1,0 +1,149 @@
+<div class="dashboard-gerencial-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-tachometer-alt"></i>
+      Dashboard Gerencial
+    </h1>
+    <p class="page-description">
+      Visão geral dos principais indicadores da empresa
+    </p>
+  </div>
+
+  <!-- Indicadores Principais -->
+  <div class="indicadores-grid">
+    <div class="indicador-card" 
+         *ngFor="let indicador of indicadores"
+         [class]="'card-' + indicador.cor">
+      <div class="indicador-icon">
+        <i [class]="getIconClass(indicador.icone)"></i>
+      </div>
+      <div class="indicador-content">
+        <h3 class="indicador-titulo">{{ indicador.titulo }}</h3>
+        <div class="indicador-valor">
+          <span class="valor">{{ indicador.valor }}</span>
+          <span class="unidade">{{ indicador.unidade }}</span>
+        </div>
+        <div class="indicador-variacao" [class]="getVariacaoClass(indicador.variacao)">
+          <i [class]="getVariacaoIcon(indicador.variacao)"></i>
+          <span>{{ formatarVariacao(indicador.variacao) }}</span>
+        </div>
+        <p class="indicador-descricao">{{ indicador.descricao }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="graficos-section">
+    <div class="grafico-container">
+      <div class="grafico-header">
+        <h3>Veículos por Status</h3>
+        <p>Distribuição da frota por status atual</p>
+      </div>
+      <div class="grafico-content">
+        <div class="grafico-placeholder">
+          <i class="fas fa-chart-pie"></i>
+          <p>Gráfico de Pizza - Veículos por Status</p>
+          <div class="legenda">
+            <div class="legenda-item">
+              <span class="legenda-cor" style="background: #2ecc71;"></span>
+              <span>Ativo (35)</span>
+            </div>
+            <div class="legenda-item">
+              <span class="legenda-cor" style="background: #f39c12;"></span>
+              <span>Manutenção (8)</span>
+            </div>
+            <div class="legenda-item">
+              <span class="legenda-cor" style="background: #e74c3c;"></span>
+              <span>Inativo (2)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grafico-container">
+      <div class="grafico-header">
+        <h3>Faturamento Mensal</h3>
+        <p>Evolução do faturamento nos últimos 6 meses</p>
+      </div>
+      <div class="grafico-content">
+        <div class="grafico-placeholder">
+          <i class="fas fa-chart-line"></i>
+          <p>Gráfico de Linha - Faturamento Mensal</p>
+          <div class="dados-resumo">
+            <div class="dado-item">
+              <span class="label">Média:</span>
+              <span class="valor">R$ 111.742</span>
+            </div>
+            <div class="dado-item">
+              <span class="label">Maior:</span>
+              <span class="valor">R$ 132.000</span>
+            </div>
+            <div class="dado-item">
+              <span class="label">Menor:</span>
+              <span class="valor">R$ 98.000</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grafico-container">
+      <div class="grafico-header">
+        <h3>Viagens por Mês</h3>
+        <p>Quantidade de viagens realizadas</p>
+      </div>
+      <div class="grafico-content">
+        <div class="grafico-placeholder">
+          <i class="fas fa-chart-bar"></i>
+          <p>Gráfico de Barras - Viagens por Mês</p>
+          <div class="dados-resumo">
+            <div class="dado-item">
+              <span class="label">Total:</span>
+              <span class="valor">1.910 viagens</span>
+            </div>
+            <div class="dado-item">
+              <span class="label">Média:</span>
+              <span class="valor">318 viagens/mês</span>
+            </div>
+            <div class="dado-item">
+              <span class="label">Crescimento:</span>
+              <span class="valor">+27.9%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumo Executivo -->
+  <div class="resumo-executivo">
+    <div class="resumo-header">
+      <h2>Resumo Executivo</h2>
+      <span class="periodo">Junho 2024</span>
+    </div>
+    <div class="resumo-content">
+      <div class="resumo-item positivo">
+        <i class="fas fa-check-circle"></i>
+        <div class="resumo-texto">
+          <h4>Pontos Positivos</h4>
+          <p>A frota apresentou crescimento de 12.5% com 45 veículos ativos. O faturamento mensal atingiu R$ 125.450, representando um aumento de 22.1% em relação ao mês anterior.</p>
+        </div>
+      </div>
+      <div class="resumo-item atencao">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div class="resumo-texto">
+          <h4>Pontos de Atenção</h4>
+          <p>As viagens realizadas diminuíram 5.8% este mês. É necessário investigar os motivos e implementar ações para reverter essa tendência.</p>
+        </div>
+      </div>
+      <div class="resumo-item meta">
+        <i class="fas fa-bullseye"></i>
+        <div class="resumo-texto">
+          <h4>Metas para Próximo Mês</h4>
+          <p>Aumentar o número de viagens em 10%, reduzir manutenções pendentes e expandir a base de clientes ativos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
