@@ -8,6 +8,7 @@ import { of, throwError } from 'rxjs';
 import { NotificationService } from '../../shared/services/notification.service';
 import { ClienteUrls } from '../../dominio/enum/cliente-url-enum';
 import { ApiResponse } from '../../dominio/interface/grid/api-response';
+import { environment } from '../../../environments/environment';
 
 interface LoginResponse {
   token: string;
@@ -26,6 +27,13 @@ export class LoginService {
   ) { }
 
   public authenticate(email: string, senha: string): void {
+    // Em ambiente local, permite login com qualquer usuário
+    if (!environment.production) {
+      this.simulateLocalLogin(email);
+      return;
+    }
+
+    // Em produção, usa a autenticação real
     this.apiService.post<LoginResponse>(ClienteUrls.Login, { email, senha })
     .pipe(
       map((response) => {
@@ -40,6 +48,32 @@ export class LoginService {
       catchError(this.handleError)
     )
     .subscribe();
+  }
+
+  private simulateLocalLogin(email: string): void {
+    // Simula uma resposta de sucesso para ambiente local
+    const mockToken = this.generateMockToken();
+    const mockResponse: ApiResponse<LoginResponse> = {
+      success: true,
+      data: {
+        token: mockToken
+      },
+      message: 'Login simulado para ambiente local'
+    };
+
+    // Simula um pequeno delay para parecer real
+    setTimeout(() => {
+      this.notificationService.success('Sucesso', 'Login local bem-sucedido');
+      this.appContextService.salvaAppContext(new AppContext(email, mockToken, ""));
+      this.router.navigate(['']);
+    }, 500);
+  }
+
+  private generateMockToken(): string {
+    // Gera um token mock para ambiente local
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2);
+    return `local_token_${timestamp}_${randomString}`;
   }
 
   private handleError = (error: any) => {
