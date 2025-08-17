@@ -280,7 +280,8 @@ export class HomeComponent implements OnInit, OnDestroy {
    * Abre a página de perfil do usuário
    */
   abrirPerfil(): void {
-    this.router.navigate(['/auth/profile']);
+    // this.router.navigate(['/auth/profile']);
+    this.notificationService.info('Perfil', 'Funcionalidade de perfil temporariamente desabilitada');
   }
 
   /**
@@ -290,9 +291,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.confirmService.confirmAction('Sair', 'Tem certeza que deseja sair do sistema?')
       .subscribe(confirmed => {
         if (confirmed) {
-    this.appContextService.logout();
+    // this.appContextService.logout();
     this.notificationService.success('Logout', 'Você foi desconectado com sucesso');
-    this.router.navigate(['/auth/login']);
+    // this.router.navigate(['/auth/login']);
+    this.router.navigate(['/']);
         }
       });
   }

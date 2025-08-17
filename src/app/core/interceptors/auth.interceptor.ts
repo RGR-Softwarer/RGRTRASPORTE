@@ -9,17 +9,17 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private configService: ConfigService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.configService.getAuthToken();
+    // const token = this.configService.getAuthToken();
     
-    // Só adiciona o header de autorização se houver token
-    if (token) {
-      const authReq = req.clone({
-        setHeaders: {
-          Authorization: token.startsWith('Bearer ') ? token : `Bearer ${token}`
-        }
-      });
-      return next.handle(authReq);
-    }
+    // // Só adiciona o header de autorização se houver token
+    // if (token) {
+    //   const authReq = req.clone({
+    //     setHeaders: {
+    //       Authorization: token.startsWith('Bearer ') ? token : `Bearer ${token}`
+    //   }
+    //   });
+    //   return next.handle(authReq);
+    // }
     
     return next.handle(req);
   }

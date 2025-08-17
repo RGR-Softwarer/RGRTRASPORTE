@@ -33,7 +33,8 @@ export class ForgotPasswordComponent {
       setTimeout(() => {
         this.isLoading = false;
         this.notificationService.success('Sucesso', 'Solicitação enviada com sucesso!');
-        this.router.navigate(['/auth/login']);
+        // this.router.navigate(['/auth/login']);
+        this.router.navigate(['/']);
       }, 2000);
     } else {
       this.notificationService.error('Erro', 'Por favor, preencha um email válido');
@@ -41,6 +42,7 @@ export class ForgotPasswordComponent {
   }
 
   voltarParaLogin(): void {
-    this.router.navigate(['/auth/login']);
+    // this.router.navigate(['/auth/login']);
+    this.router.navigate(['/']);
   }
 } 

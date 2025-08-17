@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { AutenticacaoGuard } from './services/login/autenticacao.guard';
+// import { AutenticacaoGuard } from './services/login/autenticacao.guard';
 
 export const routes: Routes = [
     { 
@@ -9,7 +9,7 @@ export const routes: Routes = [
     { 
         path: '', 
         loadComponent: () => import('./paginas/home/home.component').then(c => c.HomeComponent), 
-        canActivate: [AutenticacaoGuard],
+        // canActivate: [AutenticacaoGuard],
         children: [
             { 
                 path: 'frota/veiculo', 
