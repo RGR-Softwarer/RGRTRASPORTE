@@ -44,6 +44,30 @@ export class HomeComponent implements OnInit, OnDestroy {
           breadcrumb: 'Veículos',
           icon: 'car',
           submenu: []
+        },
+        {
+          path: 'frota/passageiro',
+          breadcrumb: 'Passageiros',
+          icon: 'users',
+          submenu: []
+        },
+        {
+          path: 'frota/viagem',
+          breadcrumb: 'Viagens',
+          icon: 'location',
+          submenu: []
+        },
+        {
+          path: 'frota/localidade',
+          breadcrumb: 'Localidades',
+          icon: 'map-marker-alt',
+          submenu: []
+        },
+        {
+          path: 'frota/modelo-veicular',
+          breadcrumb: 'Modelos Veiculares',
+          icon: 'truck',
+          submenu: []
         }
       ]
     },
