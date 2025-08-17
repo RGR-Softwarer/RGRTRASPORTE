@@ -3,16 +3,6 @@
     <div class="card-header">
       <h2>Login</h2>
       <p>Faça login para acessar sua conta</p>
-      
-      <!-- Mensagem informativa para ambiente local -->
-      <div *ngIf="isLocalEnvironment" class="local-environment-notice">
-        <div class="notice-content">
-          <span class="notice-icon">🔧</span>
-          <span class="notice-text">
-            <strong>Ambiente Local:</strong> Você pode fazer login com qualquer email e senha válidos.
-          </span>
-        </div>
-      </div>
     </div>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
@@ -44,9 +34,6 @@
         />
         <div class="error-message" *ngIf="hasFieldError('senha')">
           {{ getSenhaErrorMessage() }}
-        </div>
-        <div *ngIf="isLocalEnvironment" class="local-hint">
-          <small>💡 Em ambiente local, qualquer senha é aceita</small>
         </div>
       </div>
 

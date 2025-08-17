@@ -7,7 +7,6 @@ import { PasswordValidator } from '../../../services/validators/password.validat
 import { LoginService } from '../../../services/login/login.service';
 import { NotificationService } from '../../../shared/services/notification.service';
 import { TypedFormGroup } from '../../../dominio/interface/forms/form-types';
-import { environment } from '../../../../environments/environment';
 
 interface LoginFormData {
   email: string;
@@ -30,7 +29,6 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
   // Estados do componente
   loading: boolean = false;
   readonly emailRegex: string = '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$';
-  isLocalEnvironment: boolean = !environment.production;
   
   // Formulário tipado
   loginForm = new FormGroup({
@@ -45,7 +43,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     }),
     senha: new FormControl<string>('', {
       nonNullable: true,
-      validators: this.isLocalEnvironment ? [] : [
+      validators: [
         Validators.required, 
         PasswordValidator.validate
       ]
@@ -77,20 +75,10 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    // Em ambiente local, valida apenas o email
-    if (this.isLocalEnvironment) {
-      if (!this.loginForm.get('email')?.valid) {
-        this.marcarCamposInvalidos();
-        this.notificationService.error('Erro', 'Por favor, insira um email válido');
-        return;
-      }
-    } else {
-      // Em produção, valida todo o formulário
-      if (!this.loginForm.valid) {
-        this.marcarCamposInvalidos();
-        this.notificationService.error('Erro', 'Por favor, corrija os erros do formulário');
-        return;
-      }
+    if (!this.loginForm.valid) {
+      this.marcarCamposInvalidos();
+      this.notificationService.error('Erro', 'Por favor, corrija os erros do formulário');
+      return;
     }
 
     this.loading = true;
@@ -98,18 +86,11 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     try {
       const formValue = this.loginForm.value as LoginFormData;
       
-      if (!formValue.email) {
-        throw new Error('Email é obrigatório');
+      if (!formValue.email || !formValue.senha) {
+        throw new Error('Email e senha são obrigatórios');
       }
 
-      // Em ambiente local, usa qualquer senha se não fornecida
-      const senha = this.isLocalEnvironment ? (formValue.senha || 'senha_local') : formValue.senha;
-      
-      if (!this.isLocalEnvironment && !senha) {
-        throw new Error('Senha é obrigatória');
-      }
-
-      await this.loginService.authenticate(formValue.email, senha);
+      await this.loginService.authenticate(formValue.email, formValue.senha);
       this.notificationService.success('Sucesso', 'Login realizado com sucesso!');
       
     } catch (error) {
