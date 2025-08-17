@@ -1,0 +1,217 @@
+<div class="inner-content">
+  <div class="form-header">
+    <h1>{{ isEdicao ? 'Editar' : 'Novo' }} Modelo Veicular</h1>
+    <button type="button" class="btn btn-outline-secondary" (click)="voltar()">
+      <i class="fas fa-arrow-left"></i> Voltar
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="modeloForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Informações Básicas -->
+        <div class="form-section">
+          <h5 class="section-title">Informações Básicas</h5>
+          <div class="row">
+            <div class="col-md-8">
+              <label for="descricao" class="form-label">Descrição do Modelo *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="descricao" 
+                formControlName="descricao"
+                placeholder="Ex: Ônibus Urbano Mercedes-Benz O500U"
+                [class.is-invalid]="modeloForm.get('descricao')?.invalid && modeloForm.get('descricao')?.touched">
+              <div class="invalid-feedback">
+                Descrição é obrigatória (máximo 200 caracteres)
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="tipo" class="form-label">Tipo de Veículo *</label>
+              <select 
+                class="form-select" 
+                id="tipo" 
+                formControlName="tipo"
+                (change)="onTipoChange()"
+                [class.is-invalid]="modeloForm.get('tipo')?.invalid && modeloForm.get('tipo')?.touched">
+                <option value="">Selecione o tipo</option>
+                <option *ngFor="let option of tipoModeloOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback">
+                Tipo é obrigatório
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Capacidade e Especificações -->
+        <div class="form-section">
+          <h5 class="section-title">Capacidade e Especificações</h5>
+          <div class="row">
+            <div class="col-md-3">
+              <label for="quantidadeAssento" class="form-label">Quantidade de Assentos *</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="quantidadeAssento" 
+                formControlName="quantidadeAssento"
+                min="1" 
+                max="100"
+                placeholder="Ex: 40"
+                [class.is-invalid]="modeloForm.get('quantidadeAssento')?.invalid && modeloForm.get('quantidadeAssento')?.touched">
+              <div class="invalid-feedback">
+                Quantidade de assentos é obrigatória (1 a 100)
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="passageirosEmPe" class="form-label">Passageiros em Pé</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="passageirosEmPe" 
+                formControlName="passageirosEmPe"
+                min="0" 
+                max="50"
+                placeholder="Ex: 20"
+                [class.is-invalid]="modeloForm.get('passageirosEmPe')?.invalid && modeloForm.get('passageirosEmPe')?.touched">
+              <div class="invalid-feedback">
+                Máximo 50 passageiros em pé
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="capacidadeMaxima" class="form-label">Capacidade Máxima *</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="capacidadeMaxima" 
+                formControlName="capacidadeMaxima"
+                readonly
+                placeholder="Calculado automaticamente"
+                [class.is-invalid]="modeloForm.get('capacidadeMaxima')?.invalid && modeloForm.get('capacidadeMaxima')?.touched">
+              <div class="invalid-feedback">
+                Capacidade máxima é obrigatória
+              </div>
+            </div>
+            <div class="col-md-3">
+              <label for="quantidadeEixo" class="form-label">Quantidade de Eixos *</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="quantidadeEixo" 
+                formControlName="quantidadeEixo"
+                min="1" 
+                max="10"
+                placeholder="Ex: 3"
+                [class.is-invalid]="modeloForm.get('quantidadeEixo')?.invalid && modeloForm.get('quantidadeEixo')?.touched">
+              <div class="invalid-feedback">
+                Quantidade de eixos é obrigatória (1 a 10)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recursos e Comodidades -->
+        <div class="form-section">
+          <h5 class="section-title">Recursos e Comodidades</h5>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-check">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  id="possuiBanheiro" 
+                  formControlName="possuiBanheiro">
+                <label class="form-check-label" for="possuiBanheiro">
+                  <i class="fas fa-restroom me-2"></i>
+                  Possui Banheiro
+                </label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  id="possuiClimatizador" 
+                  formControlName="possuiClimatizador">
+                <label class="form-check-label" for="possuiClimatizador">
+                  <i class="fas fa-snowflake me-2"></i>
+                  Possui Ar Condicionado
+                </label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input 
+                  class="form-check-input" 
+                  type="checkbox" 
+                  id="situacao" 
+                  formControlName="situacao">
+                <label class="form-check-label" for="situacao">
+                  <i class="fas fa-check-circle me-2"></i>
+                  Modelo Ativo
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resumo das Informações -->
+        <div class="form-section" *ngIf="modeloForm.get('tipo')?.value">
+          <h5 class="section-title">Resumo</h5>
+          <div class="info-card">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="info-item">
+                  <i class="fas fa-car text-primary"></i>
+                  <span class="label">Tipo:</span>
+                  <span class="value">{{ getTipoLabel(modeloForm.get('tipo')?.value) }}</span>
+                </div>
+                <div class="info-item">
+                  <i class="fas fa-users text-info"></i>
+                  <span class="label">Capacidade Total:</span>
+                  <span class="value">{{ modeloForm.get('capacidadeMaxima')?.value || 0 }} passageiros</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="info-item">
+                  <i class="fas fa-chair text-success"></i>
+                  <span class="label">Assentos:</span>
+                  <span class="value">{{ modeloForm.get('quantidadeAssento')?.value || 0 }}</span>
+                </div>
+                <div class="info-item">
+                  <i class="fas fa-standing-person text-warning"></i>
+                  <span class="label">Em Pé:</span>
+                  <span class="value">{{ modeloForm.get('passageirosEmPe')?.value || 0 }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="isLoading">
+            <i class="fas fa-save"></i>
+            {{ isLoading ? 'Salvando...' : 'Salvar' }}
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-outline-secondary ms-2" 
+            (click)="voltar()"
+            [disabled]="isLoading">
+            <i class="fas fa-times"></i>
+            Cancelar
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

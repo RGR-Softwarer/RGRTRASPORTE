@@ -1,0 +1,29 @@
+<div class="inner-content">
+    <div class="page-header">
+        <h1>Cadastro de Modelos Veiculares</h1>
+        <div class="header-actions">
+            <button 
+                type="button" 
+                class="btn btn-outline-info me-2" 
+                (click)="popularDadosIniciais()"
+                title="Popular dados iniciais">
+                <i class="fas fa-database"></i> Popular Dados
+            </button>
+            <button 
+                type="button" 
+                class="btn btn-outline-warning me-2" 
+                (click)="recriarDadosIniciais()"
+                title="Recriar dados iniciais">
+                <i class="fas fa-refresh"></i> Recriar Dados
+            </button>
+            <button 
+                type="button" 
+                class="btn btn-outline-secondary" 
+                (click)="recarregarDados()"
+                title="Recarregar dados">
+                <i class="fas fa-sync-alt"></i> Atualizar
+            </button>
+        </div>
+    </div>
+    <app-grid [buscarTodosUrl]="buscarTodosUrl" [adicionarUrl]="adicionarUrl" [entidade]="entidade" [identificador]="'modelo-veicular-grid'"></app-grid>
+</div>

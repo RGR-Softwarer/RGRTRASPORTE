@@ -1,0 +1,222 @@
+<div class="inner-content">
+  <div class="form-header">
+    <h1>{{ isEdicao ? 'Editar' : 'Nova' }} Localidade</h1>
+    <button type="button" class="btn btn-outline-secondary" (click)="voltar()">
+      <i class="fas fa-arrow-left"></i> Voltar
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="localidadeForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Informações Básicas -->
+        <div class="form-section">
+          <h5 class="section-title">Informações Básicas</h5>
+          <div class="row">
+            <div class="col-md-8">
+              <label for="nome" class="form-label">Nome da Localidade *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="nome" 
+                formControlName="nome"
+                placeholder="Nome da localidade"
+                [class.is-invalid]="localidadeForm.get('nome')?.invalid && localidadeForm.get('nome')?.touched">
+              <div class="invalid-feedback">
+                Nome é obrigatório
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="estado" class="form-label">Estado *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="estado" 
+                formControlName="estado"
+                placeholder="Ex: SP"
+                maxlength="2"
+                style="text-transform: uppercase;"
+                [class.is-invalid]="localidadeForm.get('estado')?.invalid && localidadeForm.get('estado')?.touched">
+              <div class="invalid-feedback">
+                Estado é obrigatório (2 caracteres)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Endereço -->
+        <div class="form-section">
+          <h5 class="section-title">Endereço</h5>
+          <div class="row">
+            <div class="col-md-4">
+              <label for="cep" class="form-label">CEP *</label>
+              <div class="input-group">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="cep" 
+                  formControlName="cep"
+                  placeholder="00000-000"
+                  maxlength="9"
+                  [class.is-invalid]="localidadeForm.get('cep')?.invalid && localidadeForm.get('cep')?.touched">
+                <button 
+                  type="button" 
+                  class="btn btn-outline-primary" 
+                  (click)="buscarCep()"
+                  title="Buscar CEP">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback">
+                CEP é obrigatório
+              </div>
+            </div>
+            <div class="col-md-8">
+              <label for="cidade" class="form-label">Cidade *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="cidade" 
+                formControlName="cidade"
+                placeholder="Nome da cidade"
+                [class.is-invalid]="localidadeForm.get('cidade')?.invalid && localidadeForm.get('cidade')?.touched">
+              <div class="invalid-feedback">
+                Cidade é obrigatória
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <label for="bairro" class="form-label">Bairro *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="bairro" 
+                formControlName="bairro"
+                placeholder="Nome do bairro"
+                [class.is-invalid]="localidadeForm.get('bairro')?.invalid && localidadeForm.get('bairro')?.touched">
+              <div class="invalid-feedback">
+                Bairro é obrigatório
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="logradouro" class="form-label">Logradouro *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="logradouro" 
+                formControlName="logradouro"
+                placeholder="Rua, Avenida, etc."
+                [class.is-invalid]="localidadeForm.get('logradouro')?.invalid && localidadeForm.get('logradouro')?.touched">
+              <div class="invalid-feedback">
+                Logradouro é obrigatório
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-4">
+              <label for="numero" class="form-label">Número</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="numero" 
+                formControlName="numero"
+                placeholder="Número do endereço">
+            </div>
+            <div class="col-md-8">
+              <label for="complemento" class="form-label">Complemento</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="complemento" 
+                formControlName="complemento"
+                placeholder="Complemento (opcional)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Coordenadas -->
+        <div class="form-section">
+          <h5 class="section-title">
+            Coordenadas Geográficas
+            <button 
+              type="button" 
+              class="btn btn-sm btn-outline-info ms-2" 
+              (click)="obterLocalizacaoAtual()"
+              title="Obter localização atual">
+              <i class="fas fa-map-marker-alt"></i> Obter Localização
+            </button>
+          </h5>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="latitude" class="form-label">Latitude *</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="latitude" 
+                formControlName="latitude"
+                placeholder="Ex: -23.5505"
+                step="0.000001"
+                [class.is-invalid]="localidadeForm.get('latitude')?.invalid && localidadeForm.get('latitude')?.touched">
+              <div class="invalid-feedback">
+                Latitude é obrigatória (entre -90 e 90)
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="longitude" class="form-label">Longitude *</label>
+              <input 
+                type="number" 
+                class="form-control" 
+                id="longitude" 
+                formControlName="longitude"
+                placeholder="Ex: -46.6333"
+                step="0.000001"
+                [class.is-invalid]="localidadeForm.get('longitude')?.invalid && localidadeForm.get('longitude')?.touched">
+              <div class="invalid-feedback">
+                Longitude é obrigatória (entre -180 e 180)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="form-section">
+          <h5 class="section-title">Status</h5>
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="ativo" 
+              formControlName="ativo">
+            <label class="form-check-label" for="ativo">
+              Localidade Ativa
+            </label>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="isLoading">
+            <i class="fas fa-save"></i>
+            {{ isLoading ? 'Salvando...' : 'Salvar' }}
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-outline-secondary ms-2" 
+            (click)="voltar()"
+            [disabled]="isLoading">
+            <i class="fas fa-times"></i>
+            Cancelar
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

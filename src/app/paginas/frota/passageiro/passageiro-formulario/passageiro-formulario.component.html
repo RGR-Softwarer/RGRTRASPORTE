@@ -1,0 +1,228 @@
+<div class="inner-content">
+  <div class="form-header">
+    <h1>{{ isEdicao ? 'Editar' : 'Novo' }} Passageiro</h1>
+    <button type="button" class="btn btn-outline-secondary" (click)="voltar()">
+      <i class="fas fa-arrow-left"></i> Voltar
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <form [formGroup]="passageiroForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Informações Pessoais -->
+        <div class="form-section">
+          <h5 class="section-title">
+            <i class="fas fa-user me-2"></i>
+            Informações Pessoais
+          </h5>
+          <div class="row">
+            <div class="col-md-8">
+              <label for="nome" class="form-label">Nome Completo *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="nome" 
+                formControlName="nome"
+                placeholder="Nome completo do passageiro"
+                [class.is-invalid]="passageiroForm.get('nome')?.invalid && passageiroForm.get('nome')?.touched">
+              <div class="invalid-feedback">
+                Nome é obrigatório (máximo 150 caracteres)
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="sexo" class="form-label">Sexo *</label>
+              <select 
+                class="form-select" 
+                id="sexo" 
+                formControlName="sexo"
+                [class.is-invalid]="passageiroForm.get('sexo')?.invalid && passageiroForm.get('sexo')?.touched">
+                <option value="">Selecione</option>
+                <option *ngFor="let option of sexoOptions" [value]="option.value">
+                  {{ option.label }}
+                </option>
+              </select>
+              <div class="invalid-feedback">
+                Sexo é obrigatório
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Documentos e Contato -->
+        <div class="form-section">
+          <h5 class="section-title">
+            <i class="fas fa-id-card me-2"></i>
+            Documentos e Contato
+          </h5>
+          <div class="row">
+            <div class="col-md-4">
+              <label for="cpf" class="form-label">CPF *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="cpf" 
+                formControlName="cpf"
+                placeholder="000.000.000-00"
+                maxlength="14"
+                (blur)="formatarCpf(); validarCpf()"
+                [class.is-invalid]="passageiroForm.get('cpf')?.invalid && passageiroForm.get('cpf')?.touched">
+              <div class="invalid-feedback">
+                <span *ngIf="passageiroForm.get('cpf')?.hasError('required')">CPF é obrigatório</span>
+                <span *ngIf="passageiroForm.get('cpf')?.hasError('cpfInvalido')">CPF inválido</span>
+                <span *ngIf="passageiroForm.get('cpf')?.hasError('minlength') || passageiroForm.get('cpf')?.hasError('maxlength')">CPF deve ter 11 dígitos</span>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="telefone" class="form-label">Telefone *</label>
+              <input 
+                type="text" 
+                class="form-control" 
+                id="telefone" 
+                formControlName="telefone"
+                placeholder="(00) 00000-0000"
+                maxlength="15"
+                (blur)="formatarTelefone()"
+                [class.is-invalid]="passageiroForm.get('telefone')?.invalid && passageiroForm.get('telefone')?.touched">
+              <div class="invalid-feedback">
+                Telefone é obrigatório
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="email" class="form-label">E-mail</label>
+              <input 
+                type="email" 
+                class="form-control" 
+                id="email" 
+                formControlName="email"
+                placeholder="exemplo@email.com"
+                [class.is-invalid]="passageiroForm.get('email')?.invalid && passageiroForm.get('email')?.touched">
+              <div class="invalid-feedback">
+                <span *ngIf="passageiroForm.get('email')?.hasError('email')">E-mail inválido</span>
+                <span *ngIf="passageiroForm.get('email')?.hasError('maxlength')">E-mail muito longo (máximo 100 caracteres)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Localidades -->
+        <div class="form-section">
+          <h5 class="section-title">
+            <i class="fas fa-map-marker-alt me-2"></i>
+            Localidades
+          </h5>
+          <div class="row">
+            <div class="col-md-4">
+              <label for="localidadeId" class="form-label">Localidade de Residência *</label>
+              <select 
+                class="form-select" 
+                id="localidadeId" 
+                formControlName="localidadeId"
+                [class.is-invalid]="passageiroForm.get('localidadeId')?.invalid && passageiroForm.get('localidadeId')?.touched">
+                <option value="">Selecione uma localidade</option>
+                <!-- Aqui você pode carregar as localidades dinamicamente -->
+                <!-- <option *ngFor="let localidade of localidades" [value]="localidade.id">
+                  {{ localidade.nome }}
+                </option> -->
+              </select>
+              <div class="invalid-feedback">
+                Localidade de residência é obrigatória
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="localidadeEmbarqueId" class="form-label">Localidade de Embarque</label>
+              <select 
+                class="form-select" 
+                id="localidadeEmbarqueId" 
+                formControlName="localidadeEmbarqueId">
+                <option value="">Selecione uma localidade</option>
+                <!-- Localidades de embarque -->
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label for="localidadeDesembarqueId" class="form-label">Localidade de Desembarque</label>
+              <select 
+                class="form-select" 
+                id="localidadeDesembarqueId" 
+                formControlName="localidadeDesembarqueId">
+                <option value="">Selecione uma localidade</option>
+                <!-- Localidades de desembarque -->
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Observações -->
+        <div class="form-section">
+          <h5 class="section-title">
+            <i class="fas fa-sticky-note me-2"></i>
+            Informações Adicionais
+          </h5>
+          <div class="row">
+            <div class="col-md-12">
+              <label for="observacao" class="form-label">Observações</label>
+              <textarea 
+                class="form-control" 
+                id="observacao" 
+                formControlName="observacao"
+                rows="3"
+                maxlength="500"
+                placeholder="Informações adicionais sobre o passageiro"
+                [class.is-invalid]="passageiroForm.get('observacao')?.invalid && passageiroForm.get('observacao')?.touched"></textarea>
+              <div class="form-text">
+                {{ passageiroForm.get('observacao')?.value?.length || 0 }}/500 caracteres
+              </div>
+              <div class="invalid-feedback">
+                Observação muito longa (máximo 500 caracteres)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status -->
+        <div class="form-section">
+          <h5 class="section-title">
+            <i class="fas fa-toggle-on me-2"></i>
+            Status
+          </h5>
+          <div class="form-check-card">
+            <div class="form-check">
+              <input 
+                class="form-check-input" 
+                type="checkbox" 
+                id="situacao" 
+                formControlName="situacao">
+              <label class="form-check-label" for="situacao">
+                <i class="fas fa-user-check me-2"></i>
+                Passageiro Ativo
+              </label>
+              <small class="form-text text-muted">
+                Passageiros inativos não aparecerão nas listagens de seleção
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="isLoading">
+            <i class="fas fa-save"></i>
+            {{ isLoading ? 'Salvando...' : 'Salvar' }}
+          </button>
+          <button 
+            type="button" 
+            class="btn btn-outline-secondary ms-2" 
+            (click)="voltar()"
+            [disabled]="isLoading">
+            <i class="fas fa-times"></i>
+            Cancelar
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

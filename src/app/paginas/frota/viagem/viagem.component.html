@@ -1,0 +1,46 @@
+<div class="inner-content">
+    <div class="page-header">
+        <h1>Gerenciamento de Viagens</h1>
+        <div class="header-actions">
+            <button 
+                type="button" 
+                class="btn btn-outline-secondary" 
+                (click)="recarregarDados()"
+                title="Recarregar dados">
+                <i class="fas fa-sync-alt"></i> Atualizar
+            </button>
+        </div>
+    </div>
+    
+    <div class="info-cards">
+        <div class="info-card">
+            <div class="card-icon">
+                <i class="fas fa-route text-primary"></i>
+            </div>
+            <div class="card-content">
+                <h6>Gerenciamento Completo</h6>
+                <p>Controle total sobre o ciclo de vida das viagens</p>
+            </div>
+        </div>
+        <div class="info-card">
+            <div class="card-icon">
+                <i class="fas fa-users text-success"></i>
+            </div>
+            <div class="card-content">
+                <h6>Passageiros</h6>
+                <p>Gerenciamento de passageiros por viagem</p>
+            </div>
+        </div>
+        <div class="info-card">
+            <div class="card-icon">
+                <i class="fas fa-map-marked-alt text-info"></i>
+            </div>
+            <div class="card-content">
+                <h6>Rastreamento</h6>
+                <p>Acompanhe posições e rotas em tempo real</p>
+            </div>
+        </div>
+    </div>
+    
+    <app-grid [buscarTodosUrl]="buscarTodosUrl" [adicionarUrl]="adicionarUrl" [entidade]="entidade" [identificador]="'viagem-grid'"></app-grid>
+</div>
