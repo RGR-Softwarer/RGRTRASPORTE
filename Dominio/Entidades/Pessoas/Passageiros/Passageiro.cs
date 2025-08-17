@@ -2,14 +2,18 @@ using Dominio.Entidades.Localidades;
 using Dominio.Enums.Pessoas;
 using Dominio.Events.Base;
 using Dominio.ValueObjects;
+using Dominio.Interfaces;
+using Dominio.Services;
+using Dominio.Exceptions;
 
 namespace Dominio.Entidades.Pessoas.Passageiros;
 
 public class Passageiro : Pessoa
 {
-    protected Passageiro() { } // Construtor protegido para EF Core
+    private Passageiro() { } // Para EF Core
 
-    public Passageiro(
+    // Construtor privado - usar Factory Methods
+    private Passageiro(
         string nome,
         CPF cpf,
         string telefone,
@@ -27,6 +31,55 @@ public class Passageiro : Pessoa
         Situacao = situacao;
 
         AddDomainEvent(new PassageiroCriadoEvent(Id, nome, cpf.Numero));
+    }
+
+    // Factory Methods
+    public static Passageiro CriarPassageiro(
+        string nome,
+        CPF cpf,
+        string telefone,
+        string email,
+        SexoEnum sexo,
+        long localidadeId,
+        long localidadeEmbarqueId,
+        long localidadeDesembarqueId,
+        string observacao)
+    {
+        return new Passageiro(nome, cpf, telefone, email, sexo, localidadeId, 
+            localidadeEmbarqueId, localidadeDesembarqueId, observacao, true);
+    }
+
+    // Factory Method com validação por NotificationContext
+    public static (Passageiro? passageiro, bool sucesso) CriarPassageiroComValidacao(
+        string nome,
+        CPF cpf,
+        string telefone,
+        string email,
+        SexoEnum sexo,
+        long localidadeId,
+        long localidadeEmbarqueId,
+        long localidadeDesembarqueId,
+        string observacao,
+        INotificationContext notificationContext)
+    {
+        var validationService = new PassageiroValidationService();
+        var valido = validationService.ValidarCriacao(nome, cpf, telefone, email, sexo,
+            localidadeId, localidadeEmbarqueId, localidadeDesembarqueId, observacao, notificationContext);
+
+        if (!valido)
+            return (null, false);
+
+        try
+        {
+            var passageiro = CriarPassageiro(nome, cpf, telefone, email, sexo, localidadeId, 
+                localidadeEmbarqueId, localidadeDesembarqueId, observacao);
+            return (passageiro, true);
+        }
+        catch (DomainException ex)
+        {
+            notificationContext.AddNotification(ex.Message);
+            return (null, false);
+        }
     }
 
     public Localidade Localidade { get; private set; } = null!;
@@ -69,7 +122,7 @@ public class Passageiro : Pessoa
     }
 }
 
-// Eventos de dom�nio para Passageiro
+// Eventos de dom�nio para Passageiro
 public class PassageiroCriadoEvent : DomainEvent
 {
     public long PassageiroId { get; }

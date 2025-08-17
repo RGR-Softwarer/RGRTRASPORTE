@@ -5,14 +5,17 @@ using Dominio.Enums.Data;
 using Dominio.Enums.Viagens;
 using Dominio.Events.Base;
 using Dominio.Exceptions;
+using Dominio.Interfaces;
+using Dominio.Services;
 
 namespace Dominio.Entidades.Viagens.Gatilho
 {
     public class GatilhoViagem : AggregateRoot
     {
-        protected GatilhoViagem() { } // Construtor protegido para EF Core
+        private GatilhoViagem() { } // Para EF Core
 
-        public GatilhoViagem(
+        // Construtor privado - usar Factory Methods
+        private GatilhoViagem(
             string descricao,
             long veiculoId,
             long motoristaId,
@@ -50,6 +53,67 @@ namespace Dominio.Entidades.Viagens.Gatilho
             AddDomainEvent(new GatilhoViagemCriadoEvent(Id, descricao));
         }
 
+        // Factory Methods
+        public static GatilhoViagem CriarGatilhoViagem(
+            string descricao,
+            long veiculoId,
+            long motoristaId,
+            long localidadeOrigemId,
+            long localidadeDestinoId,
+            TimeSpan horarioSaida,
+            TimeSpan horarioChegada,
+            decimal valorPassagem,
+            int quantidadeVagas,
+            decimal distancia,
+            string descricaoViagem,
+            string polilinhaRota,
+            List<DiaSemanaEnum> diasSemana)
+        {
+            return new GatilhoViagem(descricao, veiculoId, motoristaId, localidadeOrigemId,
+                localidadeDestinoId, horarioSaida, horarioChegada, valorPassagem, quantidadeVagas,
+                distancia, descricaoViagem, polilinhaRota, diasSemana, true);
+        }
+
+        // Factory Method com validaÃ§Ã£o por NotificationContext
+        public static (GatilhoViagem? gatilho, bool sucesso) CriarGatilhoViagemComValidacao(
+            string descricao,
+            long veiculoId,
+            long motoristaId,
+            long localidadeOrigemId,
+            long localidadeDestinoId,
+            TimeSpan horarioSaida,
+            TimeSpan horarioChegada,
+            decimal valorPassagem,
+            int quantidadeVagas,
+            decimal distancia,
+            string descricaoViagem,
+            string polilinhaRota,
+            List<DiaSemanaEnum> diasSemana,
+            INotificationContext notificationContext)
+        {
+            var validationService = new GatilhoViagemValidationService();
+            var valido = validationService.ValidarCriacao(descricao, veiculoId, motoristaId,
+                localidadeOrigemId, localidadeDestinoId, horarioSaida, horarioChegada, valorPassagem,
+                quantidadeVagas, distancia, descricaoViagem, polilinhaRota, diasSemana, notificationContext);
+
+            if (!valido)
+                return (null, false);
+
+            try
+            {
+                var gatilho = CriarGatilhoViagem(descricao, veiculoId, motoristaId, localidadeOrigemId,
+                    localidadeDestinoId, horarioSaida, horarioChegada, valorPassagem, quantidadeVagas,
+                    distancia, descricaoViagem, polilinhaRota, diasSemana);
+                
+                return (gatilho, true);
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return (null, false);
+            }
+        }
+
         public string Descricao { get; private set; } = null!;
         public virtual Veiculo Veiculo { get; private set; } = null!;
         public long VeiculoId { get; private set; }
@@ -85,28 +149,28 @@ namespace Dominio.Entidades.Viagens.Gatilho
             List<DiaSemanaEnum> diasSemana)
         {
             if (string.IsNullOrEmpty(descricao))
-                throw new DomainException("A descrição é obrigatória");
+                throw new DomainException("A descriï¿½ï¿½o ï¿½ obrigatï¿½ria");
 
             if (diasSemana == null || !diasSemana.Any())
                 throw new DomainException("Pelo menos um dia da semana deve ser selecionado");
 
             if (horarioChegada <= horarioSaida)
-                throw new DomainException("O horário de chegada deve ser maior que o horário de saída");
+                throw new DomainException("O horï¿½rio de chegada deve ser maior que o horï¿½rio de saï¿½da");
 
             if (veiculoId <= 0)
-                throw new DomainException("O veículo é obrigatório");
+                throw new DomainException("O veï¿½culo ï¿½ obrigatï¿½rio");
 
             if (motoristaId <= 0)
-                throw new DomainException("O motorista é obrigatório");
+                throw new DomainException("O motorista ï¿½ obrigatï¿½rio");
 
             if (localidadeOrigemId <= 0)
-                throw new DomainException("A localidade de origem é obrigatória");
+                throw new DomainException("A localidade de origem ï¿½ obrigatï¿½ria");
 
             if (localidadeDestinoId <= 0)
-                throw new DomainException("A localidade de destino é obrigatória");
+                throw new DomainException("A localidade de destino ï¿½ obrigatï¿½ria");
 
             if (localidadeOrigemId == localidadeDestinoId)
-                throw new DomainException("A localidade de destino não pode ser igual à localidade de origem");
+                throw new DomainException("A localidade de destino nï¿½o pode ser igual ï¿½ localidade de origem");
 
             if (valorPassagem <= 0)
                 throw new DomainException("O valor da passagem deve ser maior que zero");
@@ -115,22 +179,22 @@ namespace Dominio.Entidades.Viagens.Gatilho
                 throw new DomainException("A quantidade de vagas deve ser maior que zero");
 
             if (distancia <= 0)
-                throw new DomainException("A distância deve ser maior que zero");
+                throw new DomainException("A distï¿½ncia deve ser maior que zero");
 
             if (string.IsNullOrEmpty(descricaoViagem))
-                throw new DomainException("A descrição da viagem é obrigatória");
+                throw new DomainException("A descriï¿½ï¿½o da viagem ï¿½ obrigatï¿½ria");
 
             if (descricaoViagem.Length > 500)
-                throw new DomainException("A descrição da viagem não pode ter mais que 500 caracteres");
+                throw new DomainException("A descriï¿½ï¿½o da viagem nï¿½o pode ter mais que 500 caracteres");
 
             if (string.IsNullOrEmpty(polilinhaRota))
-                throw new DomainException("A polilinha da rota é obrigatória");
+                throw new DomainException("A polilinha da rota ï¿½ obrigatï¿½ria");
         }
 
         public void AtualizarHorarios(TimeSpan horarioSaida, TimeSpan horarioChegada)
         {
             if (horarioChegada <= horarioSaida)
-                throw new DomainException("O horário de chegada deve ser maior que o horário de saída");
+                throw new DomainException("O horï¿½rio de chegada deve ser maior que o horï¿½rio de saï¿½da");
 
             HorarioSaida = horarioSaida;
             HorarioChegada = horarioChegada;
@@ -185,7 +249,7 @@ namespace Dominio.Entidades.Viagens.Gatilho
         public Viagem GerarViagem(DateTime data)
         {
             if (!DiasSemana.Contains((DiaSemanaEnum)data.DayOfWeek))
-                throw new DomainException("Data não corresponde aos dias da semana configurados");
+                throw new DomainException("Data nï¿½o corresponde aos dias da semana configurados");
 
             var viagem = Viagem.CriarViagemComGatilho(
                 data,
@@ -205,7 +269,7 @@ namespace Dominio.Entidades.Viagens.Gatilho
         protected override string DescricaoFormatada => Descricao;
     }
 
-    // Eventos de domínio para GatilhoViagem
+    // Eventos de domï¿½nio para GatilhoViagem
     public class GatilhoViagemCriadoEvent : DomainEvent
     {
         public long GatilhoId { get; }

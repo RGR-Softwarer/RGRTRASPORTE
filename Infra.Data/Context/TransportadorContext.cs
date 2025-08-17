@@ -25,28 +25,32 @@ namespace Infra.Data.Context
         public DbSet<ViagemPosicao> ViagemPosicoes { get; set; }
         public DbSet<GatilhoViagem> GatilhoViagens { get; set; }
 
-        // Entidades de Veículos
+        // Entidades de Veï¿½culos
         public DbSet<Veiculo> Veiculos { get; set; }
         public DbSet<ModeloVeicular> ModelosVeiculares { get; set; }
 
-        // Auditoria - Disponível em ambos os contextos
+        // Auditoria - Disponï¿½vel em ambos os contextos
         public DbSet<RegistroAuditoria> RegistrosAuditoria { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // Ignorar Value Objects que não devem ser mapeados como entidades
+            // Ignorar Value Objects que nï¿½o devem ser mapeados como entidades
             modelBuilder.Ignore<Dominio.ValueObjects.Endereco>();
             modelBuilder.Ignore<Dominio.ValueObjects.CPF>();
             modelBuilder.Ignore<Dominio.ValueObjects.Placa>();
+            modelBuilder.Ignore<Dominio.ValueObjects.CNH>();
+            modelBuilder.Ignore<Dominio.ValueObjects.Chassi>();
+            modelBuilder.Ignore<Dominio.ValueObjects.CapacidadeVeiculo>();
+            modelBuilder.Ignore<Dominio.ValueObjects.Dinheiro>();
             modelBuilder.Ignore<Dominio.ValueObjects.CodigoViagem>();
             modelBuilder.Ignore<Dominio.ValueObjects.Polilinha>();
             modelBuilder.Ignore<Dominio.ValueObjects.PeriodoViagem>();
             modelBuilder.Ignore<Dominio.ValueObjects.Distancia>();
             modelBuilder.Ignore<Dominio.Events.Base.DomainEvent>();
 
-            // Configurações das entidades
+            // Configuraï¿½ï¿½es das entidades
             modelBuilder.ApplyConfiguration(new ViagemConfigurator());
             modelBuilder.ApplyConfiguration(new ViagemPassageiroConfigurator());
             modelBuilder.ApplyConfiguration(new ViagemPosicaoConfigurator());

@@ -2,14 +2,17 @@ using Dominio.Enums.Veiculo;
 using Dominio.Exceptions;
 using Dominio.Events.Base;
 using Dominio.Events.Veiculos;
+using Dominio.Interfaces;
+using Dominio.Services;
 
 namespace Dominio.Entidades.Veiculos
 {
     public class ModeloVeicular : AggregateRoot
     {
-        protected ModeloVeicular() { } // Construtor protegido para EF Core
+        private ModeloVeicular() { } // Para EF Core
 
-        public ModeloVeicular(
+        // Construtor privado - usar Factory Methods
+        private ModeloVeicular(
             string descricaoModelo,
             TipoModeloVeiculoEnum tipo,
             int quantidadeAssento,
@@ -31,11 +34,58 @@ namespace Dominio.Entidades.Veiculos
             PassageirosEmPe = passageirosEmPe;
             PossuiBanheiro = possuiBanheiro;
             PossuiClimatizador = possuiClimatizador;
-            Situacao = situacao;
-            Situacao = true;
+            Situacao = true; // Sempre criado ativo
             Veiculos = new List<Veiculo>();
 
             AddDomainEvent(new ModeloVeicularCriadoEvent(Id, descricaoModelo, tipo));
+        }
+
+        // Factory Methods
+        public static ModeloVeicular CriarModeloVeicular(
+            string descricaoModelo,
+            TipoModeloVeiculoEnum tipo,
+            int quantidadeAssento,
+            int quantidadeEixo,
+            int capacidadeMaxima,
+            int passageirosEmPe,
+            bool possuiBanheiro,
+            bool possuiClimatizador)
+        {
+            return new ModeloVeicular(descricaoModelo, tipo, quantidadeAssento, quantidadeEixo,
+                capacidadeMaxima, passageirosEmPe, possuiBanheiro, possuiClimatizador, true);
+        }
+
+        // Factory Method com validaÃ§Ã£o por NotificationContext
+        public static (ModeloVeicular? modelo, bool sucesso) CriarModeloVeicularComValidacao(
+            string descricaoModelo,
+            TipoModeloVeiculoEnum tipo,
+            int quantidadeAssento,
+            int quantidadeEixo,
+            int capacidadeMaxima,
+            int passageirosEmPe,
+            bool possuiBanheiro,
+            bool possuiClimatizador,
+            INotificationContext notificationContext)
+        {
+            var validationService = new ModeloVeicularValidationService();
+            var valido = validationService.ValidarCriacao(descricaoModelo, tipo, quantidadeAssento,
+                quantidadeEixo, capacidadeMaxima, passageirosEmPe, possuiBanheiro, possuiClimatizador, notificationContext);
+
+            if (!valido)
+                return (null, false);
+
+            try
+            {
+                var modelo = CriarModeloVeicular(descricaoModelo, tipo, quantidadeAssento,
+                    quantidadeEixo, capacidadeMaxima, passageirosEmPe, possuiBanheiro, possuiClimatizador);
+                
+                return (modelo, true);
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return (null, false);
+            }
         }
 
         public bool Situacao { get; private set; }
@@ -81,7 +131,7 @@ namespace Dominio.Entidades.Veiculos
         public void Ativar()
         {
             if (Situacao)
-                throw new DomainException("Modelo já está ativo.");
+                throw new DomainException("Modelo jï¿½ estï¿½ ativo.");
 
             Situacao = true;
             UpdateTimestamp();
@@ -91,10 +141,10 @@ namespace Dominio.Entidades.Veiculos
         public void Inativar()
         {
             if (!Situacao)
-                throw new DomainException("Modelo já está inativo.");
+                throw new DomainException("Modelo jï¿½ estï¿½ inativo.");
 
             if (Veiculos.Any(v => v.Situacao))
-                throw new DomainException("Não é possível inativar um modelo que possui veículos ativos.");
+                throw new DomainException("Nï¿½o ï¿½ possï¿½vel inativar um modelo que possui veï¿½culos ativos.");
 
             Situacao = false;
             UpdateTimestamp();
@@ -104,10 +154,10 @@ namespace Dominio.Entidades.Veiculos
         private void ValidarDescricao(string descricao)
         {
             if (string.IsNullOrWhiteSpace(descricao))
-                throw new DomainException("Descrição é obrigatória.");
+                throw new DomainException("Descriï¿½ï¿½o ï¿½ obrigatï¿½ria.");
 
             if (descricao.Length > 100)
-                throw new DomainException("Descrição deve ter no máximo 100 caracteres.");
+                throw new DomainException("Descriï¿½ï¿½o deve ter no mï¿½ximo 100 caracteres.");
         }
 
         private void ValidarQuantidades(int quantidadeAssento, int quantidadeEixo, int capacidadeMaxima, int passageirosEmPe)
@@ -119,13 +169,13 @@ namespace Dominio.Entidades.Veiculos
                 throw new DomainException("Quantidade de eixos deve ser maior que zero.");
 
             if (capacidadeMaxima <= 0)
-                throw new DomainException("Capacidade máxima deve ser maior que zero.");
+                throw new DomainException("Capacidade mï¿½xima deve ser maior que zero.");
 
             if (passageirosEmPe < 0)
-                throw new DomainException("Quantidade de passageiros em pé não pode ser negativa.");
+                throw new DomainException("Quantidade de passageiros em pï¿½ nï¿½o pode ser negativa.");
 
             if (capacidadeMaxima < quantidadeAssento + passageirosEmPe)
-                throw new DomainException("Capacidade máxima deve ser maior ou igual à soma de assentos e passageiros em pé.");
+                throw new DomainException("Capacidade mï¿½xima deve ser maior ou igual ï¿½ soma de assentos e passageiros em pï¿½.");
         }
 
         protected override string DescricaoFormatada => $"{Descricao} ({Tipo})";

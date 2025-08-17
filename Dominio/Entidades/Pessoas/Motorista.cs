@@ -3,14 +3,17 @@ using Dominio.Enums.Veiculo;
 using Dominio.Events.Base;
 using Dominio.Exceptions;
 using Dominio.ValueObjects;
+using Dominio.Interfaces;
+using Dominio.Services;
 
 namespace Dominio.Entidades.Pessoas
 {
     public class Motorista : Pessoa
     {
-        protected Motorista() { } // Construtor protegido para EF Core
+        private Motorista() { } // Para EF Core
 
-        public Motorista(
+        // Construtor privado - usar Factory Methods
+        private Motorista(
             string nome,
             CPF cpf,
             string rg,
@@ -32,6 +35,55 @@ namespace Dominio.Entidades.Pessoas
             ValidadeCNH = validadeCNH;
 
             AddDomainEvent(new MotoristaCriadoEvent(Id, nome, cpf.Numero));
+        }
+
+        // Factory Methods
+        public static Motorista CriarMotorista(
+            string nome,
+            CPF cpf,
+            string rg,
+            string telefone,
+            string email,
+            SexoEnum sexo,
+            string cnh,
+            CategoriaCNHEnum categoriaCNH,
+            DateTime validadeCNH,
+            string observacao)
+        {
+            return new Motorista(nome, cpf, rg, telefone, email, sexo, cnh, categoriaCNH, validadeCNH, observacao);
+        }
+
+        // Factory Method com validação por NotificationContext
+        public static (Motorista? motorista, bool sucesso) CriarMotoristaComValidacao(
+            string nome,
+            CPF cpf,
+            string rg,
+            string telefone,
+            string email,
+            SexoEnum sexo,
+            string cnh,
+            CategoriaCNHEnum categoriaCNH,
+            DateTime validadeCNH,
+            string observacao,
+            INotificationContext notificationContext)
+        {
+            var validationService = new MotoristaValidationService();
+            var valido = validationService.ValidarCriacao(nome, cpf, rg, telefone, email, sexo,
+                cnh, categoriaCNH, validadeCNH, observacao, notificationContext);
+
+            if (!valido)
+                return (null, false);
+
+            try
+            {
+                var motorista = CriarMotorista(nome, cpf, rg, telefone, email, sexo, cnh, categoriaCNH, validadeCNH, observacao);
+                return (motorista, true);
+            }
+            catch (DomainException ex)
+            {
+                notificationContext.AddNotification(ex.Message);
+                return (null, false);
+            }
         }
 
         public string RG { get; private set; } = null!;

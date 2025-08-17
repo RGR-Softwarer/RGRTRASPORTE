@@ -1,6 +1,7 @@
 using Application.Commands.Passageiro;
 using Dominio.Enums.Pessoas;
 using Dominio.Interfaces.Infra.Data.Passageiros;
+using Dominio.Interfaces;
 using FluentAssertions;
 
 using Microsoft.Extensions.Logging;
@@ -12,15 +13,18 @@ namespace Teste.Handlers.Passageiro
     {
         private readonly Mock<IPassageiroRepository> _passageiroRepositoryMock;
         private readonly Mock<ILogger<CriarPassageiroCommandHandler>> _loggerMock;
+        private readonly Mock<INotificationContext> _notificationContextMock;
         private readonly CriarPassageiroCommandHandler _handler;
         public CriarPassageiroCommandHandlerTests()
         {
             _passageiroRepositoryMock = new Mock<IPassageiroRepository>();
             _loggerMock = new Mock<ILogger<CriarPassageiroCommandHandler>>();
+            _notificationContextMock = new Mock<INotificationContext>();
 
             _handler = new CriarPassageiroCommandHandler(
                 _passageiroRepositoryMock.Object,
-                _loggerMock.Object);
+                _loggerMock.Object,
+                _notificationContextMock.Object);
         }
 
 

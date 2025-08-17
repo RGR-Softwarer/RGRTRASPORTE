@@ -2,6 +2,8 @@ using Application.Common;
 using Dominio.Interfaces.Infra.Data.Passageiros;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Dominio.Interfaces;
+using PassageiroEntity = Dominio.Entidades.Pessoas.Passageiros.Passageiro;
 
 namespace Application.Commands.Passageiro;
 
@@ -9,13 +11,16 @@ public class CriarPassageiroCommandHandler : IRequestHandler<CriarPassageiroComm
 {
     private readonly IPassageiroRepository _passageiroRepository;
     private readonly ILogger<CriarPassageiroCommandHandler> _logger;
+    private readonly INotificationContext _notificationContext;
 
     public CriarPassageiroCommandHandler(
         IPassageiroRepository passageiroRepository,
-        ILogger<CriarPassageiroCommandHandler> logger)
+        ILogger<CriarPassageiroCommandHandler> logger,
+        INotificationContext notificationContext)
     {
         _passageiroRepository = passageiroRepository;
         _logger = logger;
+        _notificationContext = notificationContext;
     }
 
     public async Task<BaseResponse<long>> Handle(CriarPassageiroCommand request, CancellationToken cancellationToken)
@@ -24,7 +29,8 @@ public class CriarPassageiroCommandHandler : IRequestHandler<CriarPassageiroComm
         {
             _logger.LogInformation("Iniciando criação do passageiro {Nome}", request.Nome);
 
-            var passageiro = new Dominio.Entidades.Pessoas.Passageiros.Passageiro(
+            // Usar Factory Method com validação
+            var (passageiro, sucesso) = PassageiroEntity.CriarPassageiroComValidacao(
                 request.Nome,
                 request.CPF,
                 request.Telefone,
@@ -34,11 +40,19 @@ public class CriarPassageiroCommandHandler : IRequestHandler<CriarPassageiroComm
                 request.LocalidadeEmbarqueId,
                 request.LocalidadeDesembarqueId,
                 request.Observacao,
-                request.Situacao);
+                _notificationContext);
+
+            if (!sucesso || passageiro == null)
+            {
+                _logger.LogWarning("Falha na validação do passageiro {Nome}. Total de erros: {Count}", 
+                    request.Nome, _notificationContext.GetNotificationCount());
+                return BaseResponse<long>.Erro("Dados inválidos para criação do passageiro", new List<string> { "Falha na validação dos dados" });
+            }
 
             await _passageiroRepository.AdicionarAsync(passageiro);
 
-            _logger.LogInformation("Passageiro {Nome} criado com sucesso. ID: {PassageiroId}", request.Nome, passageiro.Id);
+            _logger.LogInformation("Passageiro {Nome} criado com sucesso. ID: {PassageiroId}", 
+                request.Nome, passageiro.Id);
 
             return BaseResponse<long>.Ok(passageiro.Id, "Passageiro criado com sucesso");
         }
