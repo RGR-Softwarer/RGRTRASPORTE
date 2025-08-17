@@ -52,7 +52,7 @@ namespace Teste.Entidades.Dominio
             var passageirosEmPe = 10;
             var possuiBanheiro = true;
             var possuiClimatizador = true;
-            var notificationContextMock = new Mock<INotificationContext>();
+            var notificationContextMock = new Mock<IDomainNotificationContext>();
 
             // Act
             var (modelo, sucesso) = ModeloVeicular.CriarModeloVeicularComValidacao(
@@ -79,7 +79,7 @@ namespace Teste.Entidades.Dominio
             var passageirosEmPe = 10;
             var possuiBanheiro = true;
             var possuiClimatizador = true;
-            var notificationContextMock = new Mock<INotificationContext>();
+            var notificationContextMock = new Mock<IDomainNotificationContext>();
 
             // Act
             var (modelo, sucesso) = ModeloVeicular.CriarModeloVeicularComValidacao(
