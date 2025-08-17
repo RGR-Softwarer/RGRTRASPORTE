@@ -1,7 +1,7 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
+// import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { AppContextService } from '../services/context/app.context';
 
 @NgModule({
@@ -10,7 +10,7 @@ import { AppContextService } from '../services/context/app.context';
     HttpClientModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    // { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     AppContextService
   ]
 })

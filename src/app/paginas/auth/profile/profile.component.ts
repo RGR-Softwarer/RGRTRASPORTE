@@ -47,7 +47,13 @@ export class ProfileComponent implements OnInit {
         telefone: this.user.telefone || ''
       });
     } else {
-      this.router.navigate(['/auth/login']);
+      // this.router.navigate(['/auth/login']);
+      // Temporariamente permitindo acesso sem usuário logado
+      this.profileForm.patchValue({
+        nome: 'Usuário Demo',
+        email: 'demo@exemplo.com',
+        telefone: '(11) 99999-9999'
+      });
     }
   }
 

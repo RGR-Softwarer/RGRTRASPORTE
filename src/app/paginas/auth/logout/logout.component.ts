@@ -54,14 +54,15 @@ export class LogoutComponent implements OnInit {
 
   private realizarLogout(): void {
     // Limpar dados do usuário
-    this.appContextService.logout();
+    // this.appContextService.logout();
     
     // Exibir mensagem de sucesso
     this.notificationService.success('Logout', 'Você foi desconectado com sucesso');
     
     // Aguardar um momento e redirecionar
     setTimeout(() => {
-      this.router.navigate(['/auth/login']);
+      // this.router.navigate(['/auth/login']);
+      this.router.navigate(['/']);
     }, 1500);
   }
 } 

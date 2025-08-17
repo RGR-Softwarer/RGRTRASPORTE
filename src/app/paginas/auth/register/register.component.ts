@@ -50,7 +50,8 @@ export class RegisterComponent {
       setTimeout(() => {
         this.isLoading = false;
         this.notificationService.success('Sucesso', 'Cadastro realizado com sucesso!');
-        this.router.navigate(['/auth/login']);
+        // this.router.navigate(['/auth/login']);
+        this.router.navigate(['/']);
       }, 2000);
     } else {
       this.notificationService.error('Erro', 'Por favor, preencha todos os campos corretamente');
@@ -58,6 +59,7 @@ export class RegisterComponent {
   }
 
   voltarParaLogin(): void {
-    this.router.navigate(['/auth/login']);
+    // this.router.navigate(['/auth/login']);
+    this.router.navigate(['/']);
   }
 } 
