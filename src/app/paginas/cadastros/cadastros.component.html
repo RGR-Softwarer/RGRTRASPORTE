@@ -1,0 +1,29 @@
+<div class="cadastros-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-database"></i>
+      Cadastros
+    </h1>
+    <p class="page-description">
+      Gerencie os cadastros básicos do sistema de transporte
+    </p>
+  </div>
+
+  <div class="cadastros-grid">
+    <div class="cadastro-card" 
+         *ngFor="let cadastro of cadastros" 
+         [routerLink]="cadastro.path"
+         [class]="'card-' + cadastro.color">
+      <div class="card-icon">
+        <i [class]="getIconClass(cadastro.icon)"></i>
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">{{ cadastro.breadcrumb }}</h3>
+        <p class="card-description">{{ cadastro.description }}</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-chevron-right"></i>
+      </div>
+    </div>
+  </div>
+</div>

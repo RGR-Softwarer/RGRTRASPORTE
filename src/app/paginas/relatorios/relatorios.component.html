@@ -1,0 +1,43 @@
+<div class="relatorios-container">
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="fas fa-chart-bar"></i>
+      Relatórios
+    </h1>
+    <p class="page-description">
+      Acesse relatórios detalhados sobre frota, financeiro e operações
+    </p>
+  </div>
+
+  <div class="relatorios-content">
+    <div class="categoria-section" *ngFor="let categoria of categorias">
+      <div class="categoria-header">
+        <h2 class="categoria-title">{{ categoria }}</h2>
+        <div class="categoria-line"></div>
+      </div>
+      
+      <div class="relatorios-grid">
+        <div class="relatorio-card" 
+             *ngFor="let relatorio of getRelatoriosPorCategoria(categoria)" 
+             [routerLink]="relatorio.path"
+             [class]="'card-' + relatorio.color">
+          <div class="card-icon">
+            <i [class]="getIconClass(relatorio.icon)"></i>
+          </div>
+          <div class="card-content">
+            <h3 class="card-title">{{ relatorio.breadcrumb }}</h3>
+            <p class="card-description">{{ relatorio.description }}</p>
+          </div>
+          <div class="card-actions">
+            <button class="btn-export" (click)="$event.stopPropagation()">
+              <i class="fas fa-download"></i>
+            </button>
+            <div class="card-arrow">
+              <i class="fas fa-chevron-right"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

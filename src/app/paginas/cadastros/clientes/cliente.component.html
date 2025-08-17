@@ -1,0 +1,128 @@
+<div class="cliente-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">
+          <i class="fas fa-users"></i>
+          Clientes
+        </h1>
+        <p class="page-description">
+          Gerencie o cadastro de clientes
+        </p>
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" routerLink="adicionar">
+          <i class="fas fa-plus"></i>
+          Novo Cliente
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters-section">
+    <div class="filters-content">
+      <div class="search-box">
+        <i class="fas fa-search search-icon"></i>
+        <input 
+          type="text" 
+          placeholder="Buscar por nome, CNPJ/CPF ou email..."
+          [(ngModel)]="termoBusca"
+          (input)="aplicarFiltros()"
+          class="search-input">
+      </div>
+      
+      <div class="filter-group">
+        <select 
+          [(ngModel)]="filtroTipo" 
+          (change)="aplicarFiltros()"
+          class="filter-select">
+          <option value="">Todos os Tipos</option>
+          <option value="PJ">Pessoa Jurídica</option>
+          <option value="PF">Pessoa Física</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <select 
+          [(ngModel)]="filtroStatus" 
+          (change)="aplicarFiltros()"
+          class="filter-select">
+          <option value="">Todos os Status</option>
+          <option value="Ativo">Ativo</option>
+          <option value="Inativo">Inativo</option>
+        </select>
+      </div>
+      
+      <button class="btn btn-secondary" (click)="limparFiltros()">
+        <i class="fas fa-times"></i>
+        Limpar
+      </button>
+    </div>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nome/Razão Social</th>
+          <th>Tipo</th>
+          <th>CNPJ/CPF</th>
+          <th>Email</th>
+          <th>Telefone</th>
+          <th>Cidade/UF</th>
+          <th>Status</th>
+          <th>Data Cadastro</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cliente of clientesFiltrados" class="table-row">
+          <td class="nome-cell">
+            <div class="nome-info">
+              <span class="nome">{{ cliente.nome }}</span>
+              <span *ngIf="cliente.observacoes" class="observacao">{{ cliente.observacoes }}</span>
+            </div>
+          </td>
+          <td>
+            <span class="tipo-badge" [class]="getTipoClass(cliente.tipo)">
+              {{ cliente.tipo }}
+            </span>
+          </td>
+          <td>{{ formatarDocumento(cliente) }}</td>
+          <td>{{ cliente.email }}</td>
+          <td>{{ cliente.telefone }}</td>
+          <td>{{ cliente.cidade }}/{{ cliente.estado }}</td>
+          <td>
+            <span class="status-badge" [class]="getStatusClass(cliente.status)">
+              {{ cliente.status }}
+            </span>
+          </td>
+          <td>{{ formatarData(cliente.dataCadastro) }}</td>
+          <td class="actions-cell">
+            <div class="actions">
+              <button class="btn-action" [routerLink]="['editar', cliente.id]" title="Editar">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn-action" title="Visualizar">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn-action btn-danger" title="Excluir">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="clientesFiltrados.length === 0" class="empty-state">
+      <i class="fas fa-users empty-icon"></i>
+      <h3>Nenhum cliente encontrado</h3>
+      <p>Não foram encontrados clientes com os filtros aplicados.</p>
+      <button class="btn btn-primary" routerLink="adicionar">
+        <i class="fas fa-plus"></i>
+        Adicionar Primeiro Cliente
+      </button>
+    </div>
+  </div>
+</div>

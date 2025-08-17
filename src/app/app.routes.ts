@@ -24,6 +24,26 @@ export const routes: Routes = [
                 loadComponent: () => import('./paginas/frota/veiculo/veiculo-formulario/veiculo-formulario.component').then(c => c.VeiculoFormularioComponent) 
             },
             { 
+                path: 'cadastros', 
+                loadComponent: () => import('./paginas/cadastros/cadastros.component').then(c => c.CadastrosComponent) 
+            },
+            { 
+                path: 'cadastros/motoristas', 
+                loadComponent: () => import('./paginas/cadastros/motoristas/motorista.component').then(c => c.MotoristaComponent) 
+            },
+            { 
+                path: 'cadastros/clientes', 
+                loadComponent: () => import('./paginas/cadastros/clientes/cliente.component').then(c => c.ClienteComponent) 
+            },
+            { 
+                path: 'relatorios', 
+                loadComponent: () => import('./paginas/relatorios/relatorios.component').then(c => c.RelatoriosComponent) 
+            },
+            { 
+                path: 'relatorios/gerencial/dashboard', 
+                loadComponent: () => import('./paginas/relatorios/gerencial/dashboard-gerencial.component').then(c => c.DashboardGerencialComponent) 
+            },
+            { 
                 path: 'inicio', 
                 loadComponent: () => import('./paginas/dashboard/dashboard.component').then(c => c.DashboardComponent) 
             },
