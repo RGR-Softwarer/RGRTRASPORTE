@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { HttpParams } from '@angular/common/http';
 import { ApiService } from '../../../../services/http/api.service';
 import { ConfigService } from '../../../../services/config/config.service';
 import { Passageiro } from '../../../../dominio/entidade/passageiro';
@@ -55,7 +56,13 @@ export class PassageiroApiService {
 
   // Buscar todos os passageiros (usando GET com body)
   buscarTodos(query?: ObterPassageirosQuery): Observable<Passageiro[]> {
-    return this.apiService.get<Passageiro[]>(this.baseUrl, query || {}).pipe(
+    let params = new HttpParams();
+    if (query) {
+      if (query.nome) params = params.set('nome', query.nome);
+      if (query.cpf) params = params.set('cpf', query.cpf);
+      if (query.situacao !== undefined) params = params.set('situacao', query.situacao.toString());
+    }
+    return this.apiService.get<Passageiro[]>(this.baseUrl, params).pipe(
       map(response => response.data || [])
     );
   }
