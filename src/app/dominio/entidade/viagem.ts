@@ -8,10 +8,10 @@ export class Viagem {
     @FiltroGrid('Data da Viagem', 'data', true)
     public dataViagem?: Date;
 
-    @FormCampo('Horário de Saída', 'tempo', true, true, undefined, 4)
+    @FormCampo('Horário de Saída', 'texto', true, true, undefined, 4)
     public horarioSaida?: string; // TimeSpan será representado como string no frontend
 
-    @FormCampo('Horário de Chegada', 'tempo', true, true, undefined, 4)
+    @FormCampo('Horário de Chegada', 'texto', true, true, undefined, 4)
     public horarioChegada?: string; // TimeSpan será representado como string no frontend
 
     @FormCampoEntidade('Veículo', true, undefined, 6)

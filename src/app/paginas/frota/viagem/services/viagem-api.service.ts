@@ -99,8 +99,13 @@ export class ViagemApiService {
 
   // Buscar viagem por ID
   buscarPorId(id: number, auditado: boolean = false): Observable<Viagem> {
-    const queryParams = auditado ? '?auditado=true' : '';
-    return this.apiService.getById<Viagem>(this.baseUrl, id, queryParams).pipe(
+    if (auditado) {
+      const url = `${this.baseUrl}/${id}?auditado=true`;
+      return this.apiService.get<Viagem>(url).pipe(
+        map(response => response.data)
+      );
+    }
+    return this.apiService.getById<Viagem>(this.baseUrl, id).pipe(
       map(response => response.data)
     );
   }

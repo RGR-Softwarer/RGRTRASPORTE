@@ -140,7 +140,7 @@ export class ModeloVeicularFormularioComponent implements OnInit {
     this.router.navigate(['/frota/modelo-veicular']);
   }
 
-  private getTipoLabel(tipo: TipoModeloVeiculoEnum): string {
+  getTipoLabel(tipo: TipoModeloVeiculoEnum): string {
     const labels: { [key in TipoModeloVeiculoEnum]: string } = {
       [TipoModeloVeiculoEnum.Onibus]: 'Ônibus',
       [TipoModeloVeiculoEnum.Microonibus]: 'Micro-ônibus',
