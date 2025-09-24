@@ -1,8 +1,11 @@
 <Project>
   <PropertyGroup>
     <!-- Ignorar avisos comuns de NuGet que são normais em projetos enterprise -->
-    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1603;NU1605</WarningsNotAsErrors>
-    <NoWarn>$(NoWarn);NU1603;NU1605</NoWarn>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1603;NU1605;NU1701</WarningsNotAsErrors>
+    <NoWarn>$(NoWarn);NU1603;NU1605;NU1701</NoWarn>
+    
+    <!-- Configurar para não tratar warnings como erros no build -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     
     <!-- Garantir que nullable está desabilitado globalmente -->
     <Nullable>disable</Nullable>
