@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 WORKDIR /build
 
@@ -14,9 +14,9 @@ COPY ./Application/ ./Application/
 
 WORKDIR /build/RGRTRASPORTE
 
-RUN dotnet restore
+RUN dotnet restore --verbosity normal
 
-RUN dotnet publish "RGRTRASPORTE.csproj" -c Release -o /app
+RUN dotnet publish "RGRTRASPORTE.csproj" -c Release -o /app --no-restore
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
@@ -26,5 +26,5 @@ WORKDIR /app
 
 COPY --from=build /app .
 
-# Define o ponto de entrada para o contêiner
+# Define o ponto de entrada para o contï¿½iner
 ENTRYPOINT ["dotnet", "RGRTRASPORTE.dll"]
