@@ -3,12 +3,14 @@ using Application.Queries.Viagem;
 using Hangfire;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace RGRTRASPORTE.Controllers.Viagens
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "PassageiroOuMotorista")]
     public class ViagemController : AbstractControllerBase
     {
         private readonly IBackgroundJobClient _backgroundJobClient;
@@ -19,7 +21,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
         {
             _backgroundJobClient = backgroundJobClient;
             _googleApiKey = configuration["GoogleMaps:ApiKey"] ??
-                string.Empty; //?? throw new InvalidOperationException("Google Maps API Key não configurada");
+                string.Empty; //?? throw new InvalidOperationException("Google Maps API Key nï¿½o configurada");
             _httpClient = new HttpClient();
         }
 
@@ -58,6 +60,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
         }
 
         [HttpPut("{id}/cancelar")]
+        [Authorize(Policy = "Motorista")]
         public async Task<IActionResult> Cancelar(long id, [FromBody] CancelarViagemCommand command)
         {
             if (id != command.Id)
@@ -68,6 +71,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
         }
 
         [HttpPut("{id}/iniciar")]
+        [Authorize(Policy = "Motorista")]
         public async Task<IActionResult> Iniciar(long id, [FromBody] IniciarViagemCommand command)
         {
             if (id != command.Id)
@@ -78,6 +82,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
         }
 
         [HttpPut("{id}/finalizar")]
+        [Authorize(Policy = "Motorista")]
         public async Task<IActionResult> Finalizar(long id, [FromBody] FinalizarViagemCommand command)
         {
             if (id != command.Id)
@@ -87,11 +92,51 @@ namespace RGRTRASPORTE.Controllers.Viagens
             return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
 
+        [HttpPost("{id}/confirmar-presenca")]
+        public async Task<IActionResult> ConfirmarPresenca(long id, [FromBody] ConfirmarPresencaCommand command, CancellationToken cancellationToken)
+        {
+            if (id != command.ViagemId)
+                return BadRequest("Id da rota diferente do Id do comando");
+
+            var result = await _mediator.Send(command, cancellationToken);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
+        }
+
+        [HttpPost("{id}/cancelar-presenca")]
+        public async Task<IActionResult> CancelarPresenca(long id, [FromBody] CancelarPresencaCommand command, CancellationToken cancellationToken)
+        {
+            if (id != command.ViagemId)
+                return BadRequest("Id da rota diferente do Id do comando");
+
+            var result = await _mediator.Send(command, cancellationToken);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
+        }
+
+        [HttpGet("motorista/{motoristaId}/viagens-hoje")]
+        public async Task<IActionResult> ObterViagensMotoristaHoje(long motoristaId, [FromQuery] DateTime? data = null, CancellationToken cancellationToken = default)
+        {
+            var query = new ObterViagensMotoristaQuery(motoristaId, data);
+            var result = await _mediator.Send(query, cancellationToken);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
+        }
+
+        [HttpGet("motorista/{motoristaId}/historico")]
+        public async Task<IActionResult> ObterHistoricoViagensMotorista(
+            long motoristaId, 
+            [FromQuery] DateTime? dataInicio = null, 
+            [FromQuery] DateTime? dataFim = null, 
+            CancellationToken cancellationToken = default)
+        {
+            var query = new ObterHistoricoViagensMotoristaQuery(motoristaId, dataInicio, dataFim);
+            var result = await _mediator.Send(query, cancellationToken);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
+        }
+
         [HttpGet("ObterRotaViagem/{id}")]
         public async Task<IActionResult> ObterRotaViagem(long id, CancellationToken cancellationToken)
         {
-            var latirudeOrigem = "-27.100"; // Latitude de Chapecó
-            var logidetudaOrigem = "-52.615"; // Longitude de Chapecó
+            var latirudeOrigem = "-27.100"; // Latitude de Chapecï¿½
+            var logidetudaOrigem = "-52.615"; // Longitude de Chapecï¿½
             var latirudeDestino = "-26.950"; // Latitude de Xaxim
             var logidetudaDestino = "-52.537"; // Longitude de Xaxim
             var latirudeParada = "-27.203"; // Latitude de Cordilheira Alta (parada)
@@ -102,7 +147,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
 
             try
             {
-                // ? MELHOR PRÁTICA: HttpClient com CancellationToken e timeout
+                // ? MELHOR PRï¿½TICA: HttpClient com CancellationToken e timeout
                 using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 timeoutCts.CancelAfter(TimeSpan.FromSeconds(30)); // Timeout de 30 segundos para APIs externas
 
@@ -115,7 +160,7 @@ namespace RGRTRASPORTE.Controllers.Viagens
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                return await RGRResult(System.Net.HttpStatusCode.RequestTimeout, "Requisição cancelada pelo cliente");
+                return await RGRResult(System.Net.HttpStatusCode.RequestTimeout, "Requisiï¿½ï¿½o cancelada pelo cliente");
             }
             catch (OperationCanceledException)
             {

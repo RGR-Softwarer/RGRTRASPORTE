@@ -41,6 +41,7 @@ public abstract class Pessoa : AggregateRoot, IPessoa
     public long LocalidadeDesembarqueId { get; protected set; }
     public bool Situacao { get; protected set; }
     public string Observacao { get; protected set; }
+    public string? Senha { get; protected set; }
 
     public string CPF_Formatado => CPF.NumeroFormatado;
 
@@ -87,6 +88,23 @@ public abstract class Pessoa : AggregateRoot, IPessoa
 
         Situacao = false;
         UpdateTimestamp();
+    }
+
+    public void DefinirSenha(string senhaHash)
+    {
+        if (string.IsNullOrWhiteSpace(senhaHash))
+            throw new DomainException("Hash de senha não pode ser vazio.");
+
+        Senha = senhaHash;
+        UpdateTimestamp();
+    }
+
+    public bool VerificarSenha(string senha, Func<string, string, bool> verificarHash)
+    {
+        if (string.IsNullOrWhiteSpace(Senha))
+            return false;
+
+        return verificarHash(senha, Senha);
     }
 
     protected override string DescricaoFormatada => $"{Nome} ({CPF.NumeroFormatado})";

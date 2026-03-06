@@ -21,8 +21,11 @@ public class AdicionarViagemPosicaoApiCommandHandler : IRequestHandler<Adicionar
     {
         _logger.LogInformation("API Command - Adicionando posição para a viagem {ViagemId}", request.ViagemId);
 
+        // Usa GetDataPosicao() que aceita tanto "dataPosicao" quanto "dataHora"
+        var dataPosicao = request.GetDataPosicao();
+        
         // Delega para o command handler existente
-        var command = new AdicionarViagemPosicaoCommand(request.ViagemId, request.Latitude, request.Longitude, request.DataPosicao);
+        var command = new AdicionarViagemPosicaoCommand(request.ViagemId, request.Latitude, request.Longitude, dataPosicao);
         return await _mediator.Send(command, cancellationToken);
     }
 } 

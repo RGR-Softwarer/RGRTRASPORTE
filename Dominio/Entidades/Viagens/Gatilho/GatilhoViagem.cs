@@ -260,6 +260,7 @@ namespace Dominio.Entidades.Viagens.Gatilho
                 Distancia,
                 DescricaoViagem,
                 PolilinhaRota,
+                TipoTrechoViagemEnum.Ida,
                 Ativo);
 
             AddDomainEvent(new ViagemGeradaPorGatilhoEvent(Id, viagem.Id, data));

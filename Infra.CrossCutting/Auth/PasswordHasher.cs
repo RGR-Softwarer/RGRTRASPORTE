@@ -1,0 +1,33 @@
+using BCrypt.Net;
+
+namespace Infra.CrossCutting.Auth;
+
+public class PasswordHasher : IPasswordHasher
+{
+    private const int WorkFactor = 12; // Nível de complexidade do hash (recomendado: 10-14)
+
+    public string HashPassword(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+            throw new ArgumentException("Senha não pode ser vazia", nameof(password));
+
+        return BCrypt.Net.BCrypt.HashPassword(password, WorkFactor);
+    }
+
+    public bool VerifyPassword(string password, string hashedPassword)
+    {
+        if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(hashedPassword))
+            return false;
+
+        try
+        {
+            return BCrypt.Net.BCrypt.Verify(password, hashedPassword);
+        }
+        catch
+        {
+            return false;
+        }
+    }
+}
+
+

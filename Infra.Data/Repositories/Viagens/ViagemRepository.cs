@@ -4,6 +4,7 @@ using Dominio.Interfaces.Infra.Data;
 using Dominio.Interfaces.Infra.Data.Viagens;
 using Infra.Data.Data;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.EF;
 
 namespace Infra.Data.Repositories.Viagens
 {
@@ -179,11 +180,19 @@ namespace Infra.Data.Repositories.Viagens
 
         public async Task<IEnumerable<Viagem>> ObterViagensPorMotoristaEPeriodoAsync(long motoristaId, DateTime dataInicio, DateTime dataFim)
         {
+            // Motorista, LocalidadeOrigem, LocalidadeDestino e Passageiro estão ignorados no mapeamento (estão em outro contexto), então não podem ser incluídos
+            // Periodo também está ignorado, usar shadow property DataViagem
+            // Garantir que as datas estejam em UTC para PostgreSQL
+            var dataInicioUtc = DateTime.SpecifyKind(dataInicio.Date, DateTimeKind.Utc);
+            var dataFimUtc = DateTime.SpecifyKind(dataFim.Date.AddDays(1).AddTicks(-1), DateTimeKind.Utc);
+            
             return await Query()
                 .Include(v => v.Veiculo)
-                .Include(v => v.LocalidadeOrigem)
-                .Include(v => v.LocalidadeDestino)
-                .Where(v => v.MotoristaId == motoristaId && v.Periodo.Data >= dataInicio && v.Periodo.Data <= dataFim)
+                .Include(v => v.Passageiros)
+                .Where(v => 
+                    v.MotoristaId == motoristaId && 
+                    EF.Property<DateTime>(v, "DataViagem") >= dataInicioUtc &&
+                    EF.Property<DateTime>(v, "DataViagem") <= dataFimUtc)
                 .ToListAsync();
         }
 
@@ -199,7 +208,7 @@ namespace Infra.Data.Repositories.Viagens
                 .ToListAsync();
         }
 
-        // REMOVIDO: ObterViagensPorValorPassagemAsync - ValorPassagem n�o existe mais na entidade Viagem
+        // REMOVIDO: ObterViagensPorValorPassagemAsync - ValorPassagem n�o existe mais na entidade Viagem
 
         public async Task<int> ContarViagensAtivas()
         {
@@ -250,15 +259,21 @@ namespace Infra.Data.Repositories.Viagens
 
         public async Task<IEnumerable<Viagem>> ObterViagensPassageiroAsync(long passageiroId, DateTime dataInicio, DateTime dataFim)
         {
+            // Motorista, LocalidadeOrigem, LocalidadeDestino e Passageiro estão ignorados no mapeamento (estão em outro contexto), então não podem ser incluídos
+            // Periodo também está ignorado, usar shadow property DataViagem
+            // As datas já devem vir em UTC do handler
+            // Para dataFim, incluir até o final do dia
+            var dataFimCompleta = dataFim.Date.AddDays(1).AddTicks(-1);
+            if (dataFimCompleta.Kind != DateTimeKind.Utc)
+                dataFimCompleta = DateTime.SpecifyKind(dataFimCompleta, DateTimeKind.Utc);
+            
             return await Query()
                 .Include(v => v.Veiculo)
-                .Include(v => v.Motorista)
-                .Include(v => v.LocalidadeOrigem)
-                .Include(v => v.LocalidadeDestino)
                 .Include(v => v.Passageiros)
                 .Where(v =>
                     v.Passageiros.Any(p => p.PassageiroId == passageiroId) &&
-                    v.Periodo.Data >= dataInicio && v.Periodo.Data <= dataFim)
+                    EF.Property<DateTime>(v, "DataViagem") >= dataInicio &&
+                    EF.Property<DateTime>(v, "DataViagem") <= dataFimCompleta)
                 .ToListAsync();
         }
 

@@ -17,7 +17,7 @@ namespace Infra.Data.Migrations.Cadastro
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -205,6 +205,11 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("text")
                         .HasColumnName("MOT_RG");
 
+                    b.Property<string>("Senha")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("MOT_SENHA");
+
                     b.Property<int>("Sexo")
                         .HasColumnType("integer")
                         .HasColumnName("MOT_SEXO");
@@ -272,13 +277,11 @@ namespace Infra.Data.Migrations.Cadastro
                         .HasColumnType("text")
                         .HasColumnName("PAS_EMAIL");
 
-                    b.Property<long?>("LocalidadeDesembarqueId")
-                        .IsRequired()
+                    b.Property<long>("LocalidadeDesembarqueId")
                         .HasColumnType("bigint")
                         .HasColumnName("LOC_DESEMBARQUE_ID");
 
-                    b.Property<long?>("LocalidadeEmbarqueId")
-                        .IsRequired()
+                    b.Property<long>("LocalidadeEmbarqueId")
                         .HasColumnType("bigint")
                         .HasColumnName("LOC_EMBARQUE_ID");
 
@@ -295,6 +298,11 @@ namespace Infra.Data.Migrations.Cadastro
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("PAS_OBSERVACAO");
+
+                    b.Property<string>("Senha")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("PAS_SENHA");
 
                     b.Property<int>("Sexo")
                         .HasColumnType("integer")

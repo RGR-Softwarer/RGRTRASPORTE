@@ -55,6 +55,11 @@ namespace Infra.Data.Configurators.Pessoa.Passageiros
             builder.Property(p => p.LocalidadeEmbarqueId)
                 .IsRequired()
                 .HasColumnName($"LOC_EMBARQUE_ID");
+
+            builder.Property(p => p.Senha)
+                .IsRequired(false)
+                .HasMaxLength(255)
+                .HasColumnName($"{prefixo}_SENHA");
         }
     }
 }

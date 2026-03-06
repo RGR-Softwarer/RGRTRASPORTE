@@ -1,6 +1,6 @@
 using Application.Common;
 using Application.Queries.Viagem.Models;
-using AutoMapper;
+using Application.Queries.Viagem.Mappers;
 using Dominio.Interfaces.Infra.Data.Viagens;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -10,16 +10,13 @@ namespace Application.Queries.Viagem;
 public class ObterViagensQueryHandler : IRequestHandler<ObterViagensQuery, BaseResponse<IEnumerable<ViagemDto>>>
 {
     private readonly IViagemRepository _viagemRepository;
-    private readonly IMapper _mapper;
     private readonly ILogger<ObterViagensQueryHandler> _logger;
 
     public ObterViagensQueryHandler(
         IViagemRepository viagemRepository,
-        IMapper mapper,
         ILogger<ObterViagensQueryHandler> logger)
     {
         _viagemRepository = viagemRepository;
-        _mapper = mapper;
         _logger = logger;
     }
 
@@ -53,7 +50,8 @@ public class ObterViagensQueryHandler : IRequestHandler<ObterViagensQuery, BaseR
                 viagens = await _viagemRepository.ObterTodosAsync();
             }
 
-            var viagensDto = _mapper.Map<IEnumerable<ViagemDto>>(viagens);
+            // Mapeamento manual explícito - alinhado com CQRS
+            var viagensDto = viagens.ToDto();
 
             _logger.LogInformation("Viagens encontradas com sucesso. Total: {Total}", viagensDto.Count());
 

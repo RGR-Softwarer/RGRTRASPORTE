@@ -18,6 +18,8 @@ public class CriarViagemCommand : BaseCommand<BaseResponse<long>>
     public string PolilinhaRota { get; private set; }
     public bool Ativo { get; private set; }
     public long? GatilhoViagemId { get; private set; }
+    public Dominio.Enums.Viagens.TipoTrechoViagemEnum TipoTrecho { get; private set; }
+    public long? ViagemParId { get; private set; }
 
     public CriarViagemCommand(
         DateTime dataViagem,
@@ -31,8 +33,10 @@ public class CriarViagemCommand : BaseCommand<BaseResponse<long>>
         decimal distancia,
         string descricaoViagem,
         string polilinhaRota,
+        Dominio.Enums.Viagens.TipoTrechoViagemEnum tipoTrecho,
         bool ativo,
-        long? gatilhoViagemId)
+        long? gatilhoViagemId = null,
+        long? viagemParId = null)
     {
         DataViagem = dataViagem;
         HorarioSaida = horarioSaida;
@@ -45,7 +49,9 @@ public class CriarViagemCommand : BaseCommand<BaseResponse<long>>
         Distancia = distancia;
         DescricaoViagem = descricaoViagem;
         PolilinhaRota = polilinhaRota;
+        TipoTrecho = tipoTrecho;
         Ativo = ativo;
         GatilhoViagemId = gatilhoViagemId;
+        ViagemParId = viagemParId;
     }
 } 

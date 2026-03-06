@@ -62,7 +62,10 @@ namespace Application.Queries.Viagem.ViagemPassageiro
                                 ViagemId = vp.ViagemId,
                                 PassageiroId = vp.PassageiroId,
                                 NomePassageiro = passageiro.Nome,
-                                CPFPassageiro = passageiro.CPF
+                                CPFPassageiro = passageiro.CPF,
+                                StatusConfirmacao = vp.StatusConfirmacao,
+                                DataLimiteConfirmacao = vp.DataLimiteConfirmacao,
+                                PassageiroFixo = vp.PassageiroFixo
                             });
                         }
                     }

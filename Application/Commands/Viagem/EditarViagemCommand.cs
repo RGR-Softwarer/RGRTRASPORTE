@@ -15,6 +15,7 @@ public class EditarViagemCommand : BaseCommand<BaseResponse<bool>>
     public int QuantidadeVagas { get; private set; }
     public bool Ativo { get; private set; }
     public long? GatilhoViagemId { get; private set; }
+    public long? ViagemParId { get; private set; }
 
     public EditarViagemCommand(
         long id,
@@ -26,7 +27,8 @@ public class EditarViagemCommand : BaseCommand<BaseResponse<bool>>
         long localidadeDestinoId,
         int quantidadeVagas,
         bool ativo,
-        long? gatilhoViagemId)
+        long? gatilhoViagemId = null,
+        long? viagemParId = null)
     {
         Id = id;
         DataViagem = dataViagem;
@@ -38,5 +40,6 @@ public class EditarViagemCommand : BaseCommand<BaseResponse<bool>>
         QuantidadeVagas = quantidadeVagas;
         Ativo = ativo;
         GatilhoViagemId = gatilhoViagemId;
+        ViagemParId = viagemParId;
     }
 } 

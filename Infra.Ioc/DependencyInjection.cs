@@ -102,14 +102,25 @@ namespace Infra.Ioc
             services.AddScoped<Dominio.Interfaces.IDomainNotificationContext, NotificationContext>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<IHangfireService, HangfireService>();
 
             // === CACHE DISTRIBUÍDO ===
-            services.AddStackExchangeRedisCache(options =>
+            // Configurar Redis apenas se a connection string estiver disponível
+            var redisConnectionString = configuration.GetConnectionString("Redis");
+            if (!string.IsNullOrWhiteSpace(redisConnectionString))
             {
-                options.Configuration = configuration.GetConnectionString("Redis");
-                options.InstanceName = "RGRTransporte:";
-            });
+                services.AddStackExchangeRedisCache(options =>
+                {
+                    options.Configuration = redisConnectionString;
+                    options.InstanceName = "RGRTransporte:";
+                });
+            }
+            else
+            {
+                // Fallback para cache em memória se Redis não estiver configurado
+                services.AddMemoryCache();
+            }
 
             // === HEALTHCHECKS ===
             var connectionString = configuration.GetConnectionString("RGRTRASPORTE") ?? string.Empty;

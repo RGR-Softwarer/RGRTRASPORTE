@@ -64,7 +64,12 @@ namespace Infra.Data.Configurators.Pessoa
                 .HasConversion<int>()
                 .HasColumnName($"{prefixo}_SEXO");
 
-            // Ignorar propriedades que não fazem sentido para Motorista
+            builder.Property(m => m.Senha)
+                .IsRequired(false)
+                .HasMaxLength(255)
+                .HasColumnName($"{prefixo}_SENHA");
+
+            // Ignorar propriedades que nÃ£o fazem sentido para Motorista
             builder.Ignore(m => m.LocalidadeEmbarqueId);
             builder.Ignore(m => m.LocalidadeDesembarqueId);
         }

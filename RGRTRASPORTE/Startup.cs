@@ -1,6 +1,7 @@
 using Hangfire;
 using Hangfire.PostgreSql;
 using Infra.Ioc;
+using Infra.Ioc.Auth;
 using System.Reflection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Infra.Ioc.HealthChecks;
@@ -42,6 +43,9 @@ namespace RGRTRASPORTE
             services.ConfigureApi();
 
             services.AddInfrastructure(_configuration);
+
+            // Autenticação e Autorização JWT
+            services.AddJwtAuthentication(_configuration);
 
             // Auditoria
             services.AddAuditoria();
@@ -85,6 +89,10 @@ namespace RGRTRASPORTE
 
             app.UseRouting();
 
+            // Middleware de Multitenancy (antes da autenticação)
+            app.UseMiddleware<Infra.CrossCutting.Multitenancy.TenantMiddleware>();
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

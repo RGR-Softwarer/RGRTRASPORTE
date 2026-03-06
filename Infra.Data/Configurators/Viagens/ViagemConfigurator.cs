@@ -13,7 +13,7 @@ namespace Infra.Data.Configurators.Viagens
 
             builder.ToTable("T_VIAGEM");
 
-            // Mapeamento básico do Codigo (será convertido internamente pela entidade)
+            // Mapeamento bï¿½sico do Codigo (serï¿½ convertido internamente pela entidade)
             builder.Property(v => v.Codigo)
                 .HasConversion(
                     codigo => codigo.Valor,
@@ -109,6 +109,28 @@ namespace Infra.Data.Configurators.Viagens
             builder.Property(v => v.DataFimViagem)
                 .HasColumnName($"{prefixo}_DATA_FIM");
 
+            builder.Property(v => v.TipoTrecho)
+                .IsRequired()
+                .HasColumnName($"{prefixo}_TIPO_TRECHO");
+
+            builder.Property(v => v.ViagemParId)
+                .HasColumnName($"{prefixo}_VIAGEM_PAR_ID");
+
+            builder.HasOne(v => v.ViagemPar)
+                .WithMany()
+                .HasForeignKey(v => v.ViagemParId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Ãndices adicionais para melhorar performance
+            builder.HasIndex(v => v.ViagemParId)
+                .HasDatabaseName("IX_T_VIAGEM_VIAGEM_PAR_ID");
+
+            builder.HasIndex(v => v.Situacao)
+                .HasDatabaseName("IX_T_VIAGEM_SITUACAO");
+
+            builder.HasIndex(v => new { v.VeiculoId, v.MotoristaId })
+                .HasDatabaseName("IX_T_VIAGEM_VEI_MOT");
+
             builder.HasMany(v => v.Passageiros)
                 .WithOne(p => p.Viagem)
                 .HasForeignKey(p => p.ViagemId)
@@ -128,7 +150,7 @@ namespace Infra.Data.Configurators.Viagens
                 .HasForeignKey(v => v.VeiculoId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Ignorar propriedades de navegação para entidades do CadastroContext
+            // Ignorar propriedades de navegaï¿½ï¿½o para entidades do CadastroContext
             builder.Ignore(v => v.Motorista);
             builder.Ignore(v => v.LocalidadeOrigem);
             builder.Ignore(v => v.LocalidadeDestino);

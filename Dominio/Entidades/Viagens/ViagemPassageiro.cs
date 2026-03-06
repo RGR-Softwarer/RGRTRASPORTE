@@ -1,4 +1,5 @@
 using Dominio.Entidades.Pessoas.Passageiros;
+using Dominio.Enums.Viagens;
 using Dominio.Exceptions;
 
 namespace Dominio.Entidades.Viagens
@@ -11,14 +12,17 @@ namespace Dominio.Entidades.Viagens
         public bool Confirmado { get; private set; }
         public DateTime? DataConfirmacao { get; private set; }
         public string? Observacao { get; private set; }
+        public StatusConfirmacaoEnum StatusConfirmacao { get; private set; }
+        public DateTime? DataLimiteConfirmacao { get; private set; }
+        public bool PassageiroFixo { get; private set; }
 
-        // Navegação
+        // Navegaï¿½ï¿½o
         public Viagem Viagem { get; private set; }
         public Passageiro Passageiro { get; private set; }
 
         private ViagemPassageiro() { } // Para EF
 
-        public ViagemPassageiro(Viagem viagem, long passageiroId)
+        public ViagemPassageiro(Viagem viagem, long passageiroId, bool passageiroFixo = false)
         {
             ValidarCriacao(viagem, passageiroId);
 
@@ -27,21 +31,27 @@ namespace Dominio.Entidades.Viagens
             PassageiroId = passageiroId;
             DataReserva = DateTime.UtcNow;
             Confirmado = false;
+            StatusConfirmacao = StatusConfirmacaoEnum.AguardandoConfirmacao;
+            PassageiroFixo = passageiroFixo;
+            
+            // Define data limite de confirmacao como 20h do dia anterior
+            var dataViagem = viagem.Periodo.Data.Date;
+            DataLimiteConfirmacao = dataViagem.AddDays(-1).AddHours(20);
         }
 
         private void ValidarCriacao(Viagem viagem, long passageiroId)
         {
             if (viagem == null)
-                throw new DomainException("Viagem é obrigatória");
+                throw new DomainException("Viagem ï¿½ obrigatï¿½ria");
 
             if (passageiroId <= 0)
-                throw new DomainException("Passageiro é obrigatório");
+                throw new DomainException("Passageiro ï¿½ obrigatï¿½rio");
         }
 
         public void ConfirmarReserva()
         {
             if (Confirmado)
-                throw new DomainException("Reserva já está confirmada");
+                throw new DomainException("Reserva jï¿½ estï¿½ confirmada");
 
             Confirmado = true;
             DataConfirmacao = DateTime.UtcNow;
@@ -50,19 +60,56 @@ namespace Dominio.Entidades.Viagens
         public void CancelarReserva()
         {
             if (!Confirmado)
-                throw new DomainException("Reserva não está confirmada");
+                throw new DomainException("Reserva nï¿½o estï¿½ confirmada");
 
             Confirmado = false;
             DataConfirmacao = null;
+            StatusConfirmacao = StatusConfirmacaoEnum.Cancelado;
+        }
+
+        public void ConfirmarPresenca()
+        {
+            if (StatusConfirmacao == StatusConfirmacaoEnum.Confirmado)
+                throw new DomainException("Presena j est confirmada");
+
+            if (DataLimiteConfirmacao.HasValue && DateTime.UtcNow > DataLimiteConfirmacao.Value)
+                throw new DomainException("Prazo para confirmao expirado");
+
+            StatusConfirmacao = StatusConfirmacaoEnum.Confirmado;
+            DataConfirmacao = DateTime.UtcNow;
+            Confirmado = true;
+        }
+
+        public void CancelarPresenca(string? motivo = null)
+        {
+            if (StatusConfirmacao == StatusConfirmacaoEnum.Cancelado)
+                throw new DomainException("Presena j est cancelada");
+
+            StatusConfirmacao = StatusConfirmacaoEnum.Cancelado;
+            DataConfirmacao = null;
+            Confirmado = false;
+            
+            if (!string.IsNullOrEmpty(motivo))
+                AdicionarObservacao($"Cancelado: {motivo}");
+        }
+
+        public void MarcarComoNaoVai()
+        {
+            if (StatusConfirmacao == StatusConfirmacaoEnum.NaoVai)
+                throw new DomainException("J est marcado como no vai");
+
+            StatusConfirmacao = StatusConfirmacaoEnum.NaoVai;
+            DataConfirmacao = null;
+            Confirmado = false;
         }
 
         public void AdicionarObservacao(string observacao)
         {
             if (string.IsNullOrEmpty(observacao))
-                throw new DomainException("Observação é obrigatória");
+                throw new DomainException("Observaï¿½ï¿½o ï¿½ obrigatï¿½ria");
 
             if (observacao.Length > 500)
-                throw new DomainException("Observação não pode ter mais que 500 caracteres");
+                throw new DomainException("Observaï¿½ï¿½o nï¿½o pode ter mais que 500 caracteres");
 
             Observacao = observacao;
         }

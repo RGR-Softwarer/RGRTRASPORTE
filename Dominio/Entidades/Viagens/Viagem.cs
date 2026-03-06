@@ -20,16 +20,16 @@ using Dominio.Interfaces;
 namespace Dominio.Entidades.Viagens
 {
     /// <summary>
-    /// Aggregate Root para entidade Viagem seguindo padrões DDD.
+    /// Aggregate Root para entidade Viagem seguindo padrï¿½es DDD.
     /// Representa uma viagem de transporte com passageiros, rotas e posicionamento.
     /// </summary>
     /// <remarks>
     /// Esta classe implementa:
-    /// - Factory Methods para criação controlada
+    /// - Factory Methods para criaï¿½ï¿½o controlada
     /// - Value Objects para tipos complexos
-    /// - Domain Events para comunicação
-    /// - Specifications para regras de negócio
-    /// - Notification Pattern para validações
+    /// - Domain Events para comunicaï¿½ï¿½o
+    /// - Specifications para regras de negï¿½cio
+    /// - Notification Pattern para validaï¿½ï¿½es
     /// </remarks>
     public class Viagem : AggregateRoot
     {
@@ -39,7 +39,7 @@ namespace Dominio.Entidades.Viagens
         public Distancia Distancia { get; private set; }
         public Polilinha PolilinhaRota { get; private set; }
 
-        // Propriedades primitivas que não justificam Value Objects
+        // Propriedades primitivas que nï¿½o justificam Value Objects
         public long VeiculoId { get; private set; }
         public long MotoristaId { get; private set; }
         public long LocalidadeOrigemId { get; private set; }
@@ -53,6 +53,8 @@ namespace Dominio.Entidades.Viagens
         public string DescricaoViagem { get; private set; }
         public bool Ativo { get; private set; }
         public long? GatilhoViagemId { get; private set; }
+        public TipoTrechoViagemEnum TipoTrecho { get; private set; }
+        public long? ViagemParId { get; private set; }
 
         // Entidades filhas
         private readonly List<ViagemPassageiro> _passageiros = new();
@@ -61,14 +63,15 @@ namespace Dominio.Entidades.Viagens
         private readonly List<ViagemPosicao> _posicoes = new();
         public IReadOnlyCollection<ViagemPosicao> Posicoes => _posicoes.AsReadOnly();
 
-        // Navegação
+        // Navegaï¿½ï¿½o
         public Veiculo Veiculo { get; private set; }
         public Motorista Motorista { get; private set; }
         public Localidade LocalidadeOrigem { get; private set; }
         public Localidade LocalidadeDestino { get; private set; }
         public GatilhoViagem GatilhoViagem { get; private set; }
+        public Viagem? ViagemPar { get; private set; }
 
-        // Specifications para consultas básicas
+        // Specifications para consultas bï¿½sicas
         private static readonly ViagemPodeSerIniciadaSpecification _podeSerIniciada = new();
         private static readonly ViagemPodeSerFinalizadaSpecification _podeSerFinalizada = new();
         private static readonly ViagemPodeSerCanceladaSpecification _podeSerCancelada = new();
@@ -88,12 +91,14 @@ namespace Dominio.Entidades.Viagens
             Distancia distancia,
             string descricaoViagem,
             Polilinha polilinhaRota,
+            TipoTrechoViagemEnum tipoTrecho,
             bool ativo,
-            long? gatilhoViagemId = null)
+            long? gatilhoViagemId = null,
+            long? viagemParId = null)
         {
-            // Validações básicas de integridade - as regras de negócio complexas são validadas no ValidationService
+            // Validaï¿½ï¿½es bï¿½sicas de integridade - as regras de negï¿½cio complexas sï¿½o validadas no ValidationService
             if (veiculoId <= 0 || motoristaId <= 0 || localidadeOrigemId <= 0 || localidadeDestinoId <= 0 || quantidadeVagas <= 0)
-                throw new DomainException("Dados obrigatórios não informados");
+                throw new DomainException("Dados obrigatï¿½rios nï¿½o informados");
 
             Periodo = periodo;
             VeiculoId = veiculoId;
@@ -105,8 +110,10 @@ namespace Dominio.Entidades.Viagens
             Distancia = distancia;
             DescricaoViagem = descricaoViagem;
             PolilinhaRota = polilinhaRota;
+            TipoTrecho = tipoTrecho;
             Ativo = ativo;
             GatilhoViagemId = gatilhoViagemId;
+            ViagemParId = viagemParId;
             Situacao = SituacaoViagemEnum.Agendada;
             Codigo = CodigoViagem.Gerar();
 
@@ -115,22 +122,22 @@ namespace Dominio.Entidades.Viagens
 
         // Factory Methods
         /// <summary>
-        /// Cria uma nova viagem regular através de Factory Method.
+        /// Cria uma nova viagem regular atravï¿½s de Factory Method.
         /// </summary>
         /// <param name="dataViagem">Data da viagem</param>
-        /// <param name="horarioSaida">Horário de saída</param>
-        /// <param name="horarioChegada">Horário de chegada</param>
-        /// <param name="veiculoId">ID do veículo</param>
+        /// <param name="horarioSaida">Horï¿½rio de saï¿½da</param>
+        /// <param name="horarioChegada">Horï¿½rio de chegada</param>
+        /// <param name="veiculoId">ID do veï¿½culo</param>
         /// <param name="motoristaId">ID do motorista</param>
         /// <param name="localidadeOrigemId">ID da localidade de origem</param>
         /// <param name="localidadeDestinoId">ID da localidade de destino</param>
-        /// <param name="quantidadeVagas">Quantidade de vagas disponíveis</param>
-        /// <param name="distanciaKm">Distância em quilômetros</param>
-        /// <param name="descricaoViagem">Descrição da viagem</param>
+        /// <param name="quantidadeVagas">Quantidade de vagas disponï¿½veis</param>
+        /// <param name="distanciaKm">Distï¿½ncia em quilï¿½metros</param>
+        /// <param name="descricaoViagem">Descriï¿½ï¿½o da viagem</param>
         /// <param name="polilinhaRota">Polilinha da rota</param>
-        /// <param name="ativo">Se a viagem está ativa</param>
-        /// <returns>Nova instância de Viagem</returns>
-        /// <exception cref="DomainException">Lançada quando dados obrigatórios não são informados</exception>
+        /// <param name="ativo">Se a viagem estï¿½ ativa</param>
+        /// <returns>Nova instï¿½ncia de Viagem</returns>
+        /// <exception cref="DomainException">Lanï¿½ada quando dados obrigatï¿½rios nï¿½o sï¿½o informados</exception>
         public static Viagem CriarViagemRegular(
             DateTime dataViagem,
             TimeSpan horarioSaida,
@@ -143,7 +150,9 @@ namespace Dominio.Entidades.Viagens
             decimal distanciaKm,
             string descricaoViagem,
             string polilinhaRota,
-            bool ativo = true)
+            TipoTrechoViagemEnum tipoTrecho,
+            bool ativo = true,
+            long? viagemParId = null)
         {
             var periodo = new PeriodoViagem(dataViagem, horarioSaida, horarioChegada);
             var distancia = new Distancia(distanciaKm);
@@ -151,10 +160,10 @@ namespace Dominio.Entidades.Viagens
 
             return new Viagem(periodo, veiculoId, motoristaId, localidadeOrigemId, 
                 localidadeDestinoId, quantidadeVagas, distancia, descricaoViagem, 
-                polilinha, ativo);
+                polilinha, tipoTrecho, ativo, null, viagemParId);
         }
 
-        // Factory Method com validação por NotificationContext
+        // Factory Method com validaï¿½ï¿½o por NotificationContext
         public static (Viagem? viagem, bool sucesso) CriarViagemRegularComValidacao(
             DateTime dataViagem,
             TimeSpan horarioSaida,
@@ -183,7 +192,8 @@ namespace Dominio.Entidades.Viagens
             {
                 var viagem = CriarViagemRegular(dataViagem, horarioSaida, horarioChegada,
                     veiculoId, motoristaId, localidadeOrigemId, localidadeDestinoId,
-                    quantidadeVagas, distanciaKm, descricaoViagem, polilinhaRota, ativo);
+                    quantidadeVagas, distanciaKm, descricaoViagem, polilinhaRota, 
+                    TipoTrechoViagemEnum.Ida, ativo);
                 
                 return (viagem, true);
             }
@@ -203,7 +213,9 @@ namespace Dominio.Entidades.Viagens
             decimal distanciaKm,
             string descricaoViagem,
             string polilinhaRota,
-            bool ativo = true)
+            TipoTrechoViagemEnum tipoTrecho,
+            bool ativo = true,
+            long? viagemParId = null)
         {
             var periodo = new PeriodoViagem(dataViagem, gatilho.HorarioSaida, gatilho.HorarioChegada);
             var distancia = new Distancia(distanciaKm);
@@ -212,10 +224,10 @@ namespace Dominio.Entidades.Viagens
             return new Viagem(periodo, veiculoId, motoristaId, 
                 gatilho.LocalidadeOrigemId, gatilho.LocalidadeDestinoId, 
                 quantidadeVagas, distancia, descricaoViagem, polilinha, 
-                ativo, gatilho.Id);
+                tipoTrecho, ativo, gatilho.Id, viagemParId);
         }
 
-        // Métodos de negócio
+        // Mï¿½todos de negï¿½cio
         public void AdicionarPassageiro(Passageiro passageiro)
         {
             EnsurePassageiroValido(passageiro);
@@ -234,7 +246,7 @@ namespace Dominio.Entidades.Viagens
                 AddDomainEvent(new ViagemLotadaEvent(Id, _passageiros.Count));
         }
 
-        // Método de negócio com validação por NotificationContext
+        // Mï¿½todo de negï¿½cio com validaï¿½ï¿½o por NotificationContext
         public bool AdicionarPassageiroComValidacao(Passageiro passageiro, IDomainNotificationContext notificationContext)
         {
             var validationService = new ViagemValidationService();
@@ -286,7 +298,7 @@ namespace Dominio.Entidades.Viagens
             AddDomainEvent(new PosicaoAdicionadaEvent(Id, latitude, longitude, dataHora));
         }
 
-        // Método de negócio com validação por NotificationContext
+        // Mï¿½todo de negï¿½cio com validaï¿½ï¿½o por NotificationContext
         public bool AdicionarPosicaoComValidacao(decimal latitude, decimal longitude, DateTime dataHora, IDomainNotificationContext notificationContext)
         {
             var validationService = new ViagemValidationService();
@@ -348,16 +360,17 @@ namespace Dominio.Entidades.Viagens
             long localidadeDestinoId,
             int quantidadeVagas,
             bool ativo,
-            long? gatilhoViagemId = null)
+            long? gatilhoViagemId = null,
+            long? viagemParId = null)
         {
             EnsureViagemPodeSerEditada();
 
             var horariosAnteriores = (Periodo.HoraSaida, Periodo.HoraChegada);
             var novosPeriodo = new PeriodoViagem(dataViagem, horarioSaida, horarioChegada);
 
-            // Validações básicas de integridade
+            // Validaï¿½ï¿½es bï¿½sicas de integridade
             if (veiculoId <= 0 || localidadeOrigemId <= 0 || localidadeDestinoId <= 0 || quantidadeVagas <= 0)
-                throw new DomainException("Dados obrigatórios não informados");
+                throw new DomainException("Dados obrigatï¿½rios nï¿½o informados");
 
             Periodo = novosPeriodo;
             VeiculoId = veiculoId;
@@ -367,6 +380,7 @@ namespace Dominio.Entidades.Viagens
             VagasDisponiveis = quantidadeVagas - _passageiros.Count;
             Ativo = ativo;
             GatilhoViagemId = gatilhoViagemId;
+            ViagemParId = viagemParId;
             
             UpdateTimestamp();
 
@@ -380,7 +394,7 @@ namespace Dominio.Entidades.Viagens
             }
         }
 
-        // Método de atualização com validação por NotificationContext
+        // Mï¿½todo de atualizaï¿½ï¿½o com validaï¿½ï¿½o por NotificationContext
         public bool AtualizarComValidacao(
             DateTime dataViagem,
             TimeSpan horarioSaida,
@@ -413,7 +427,7 @@ namespace Dominio.Entidades.Viagens
             }
         }
 
-        // Métodos de consulta
+        // Mï¿½todos de consulta
         public bool TemPassageiro(long passageiroId) 
             => _passageiros.Any(p => p.PassageiroId == passageiroId);
 
@@ -427,14 +441,14 @@ namespace Dominio.Entidades.Viagens
         public bool PodeSerFinalizada() => _podeSerFinalizada.IsSatisfiedBy(this);
         public bool PodeSerCancelada() => _podeSerCancelada.IsSatisfiedBy(this);
 
-        // Validações usando Specifications
+        // Validaï¿½ï¿½es usando Specifications
         private void EnsureViagemPodeReceberPassageiros()
         {
             if (Situacao != SituacaoViagemEnum.Agendada)
                 throw new DomainException("Viagem deve estar agendada para receber passageiros");
             
             if (VagasDisponiveis <= 0)
-                throw new DomainException("Não há vagas disponíveis na viagem");
+                throw new DomainException("Nï¿½o hï¿½ vagas disponï¿½veis na viagem");
         }
 
         private void EnsureViagemPodeSerIniciada()
@@ -470,27 +484,27 @@ namespace Dominio.Entidades.Viagens
         private void EnsurePassageiroValido(Passageiro passageiro)
         {
             if (passageiro == null)
-                throw new DomainException("Passageiro é obrigatório");
+                throw new DomainException("Passageiro ï¿½ obrigatï¿½rio");
         }
 
         private void EnsurePassageiroNaoEstaNaviagem(long passageiroId)
         {
             if (_passageiros.Any(p => p.PassageiroId == passageiroId))
-                throw new DomainException("Passageiro já está na viagem");
+                throw new DomainException("Passageiro jï¿½ estï¿½ na viagem");
         }
 
         private void EnsurePassageiroExiste(ViagemPassageiro? viagemPassageiro)
         {
             if (viagemPassageiro == null)
-                throw new DomainException("Passageiro não encontrado na viagem");
+                throw new DomainException("Passageiro nï¿½o encontrado na viagem");
         }
 
-        // Validações específicas de domínio - mantendo apenas as que são intrínsecas à entidade
+        // Validaï¿½ï¿½es especï¿½ficas de domï¿½nio - mantendo apenas as que sï¿½o intrï¿½nsecas ï¿½ entidade
 
         private void ValidarDataHoraPosicao(DateTime dataHora)
         {
             if (dataHora > DateTime.UtcNow)
-                throw new DomainException("Data/hora não pode ser futura");
+                throw new DomainException("Data/hora nï¿½o pode ser futura");
         }
 
         private void AtualizarVagasDisponiveis()

@@ -1,6 +1,7 @@
 using Application.Commands.Passageiro;
 using Application.Queries.Passageiros;
 using Application.Queries.Passageiros.Models;
+using Application.Queries.Viagem;
 using Infra.CrossCutting.Handlers.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -64,6 +65,22 @@ namespace RGRTRASPORTE.Controllers.Pessoas
         {
             var command = new RemoverPassageiroCommand(id);
             var result = await _mediator.Send(command);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
+        }
+
+        [HttpGet("{id}/viagens-pendentes")]
+        public async Task<IActionResult> ObterViagensPendentes(long id, CancellationToken cancellationToken)
+        {
+            var query = new ObterViagensPendentesConfirmacaoQuery(id);
+            var result = await _mediator.Send(query, cancellationToken);
+            return await RGRResult(System.Net.HttpStatusCode.OK, result);
+        }
+
+        [HttpGet("{id}/minhas-viagens")]
+        public async Task<IActionResult> ObterMinhasViagens(long id, [FromQuery] DateTime? dataInicio = null, [FromQuery] DateTime? dataFim = null, CancellationToken cancellationToken = default)
+        {
+            var query = new ObterViagensPassageiroQuery(id, dataInicio, dataFim);
+            var result = await _mediator.Send(query, cancellationToken);
             return await RGRResult(System.Net.HttpStatusCode.OK, result);
         }
     }
