@@ -13,11 +13,14 @@ export class AutenticacaoGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    // if (this.appContextService.obterUsuarioLogado()) {
-    //   return true;
-    // } else {
-    //   return this.router.createUrlTree(['/auth/login']);
-    // }
-    return true; // Temporariamente permitindo acesso sem autenticação
+    const usuarioLogado = this.appContextService.obterUsuarioLogado();
+    
+    if (usuarioLogado && usuarioLogado.token) {
+      return true;
+    }
+    
+    // Armazenar a URL de retorno para redirecionar após login
+    const returnUrl = state.url;
+    return this.router.createUrlTree(['/auth/login'], { queryParams: { returnUrl } });
   }
 }

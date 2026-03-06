@@ -1,0 +1,22 @@
+<div class="inner-content">
+    <div class="page-header">
+        <h1>{{ motorista.id ? 'Editar' : 'Novo' }} Motorista</h1>
+        <p class="page-description">
+            {{ motorista.id ? 'Atualize os dados do motorista' : 'Preencha os dados para cadastrar um novo motorista' }}
+        </p>
+    </div>
+    
+    <div class="form-container">
+        <app-formulario 
+            [objeto]="motorista" 
+            [salvarCallback]="salvar">
+        </app-formulario>
+    </div>
+</div>
+
+
+
+
+
+
+

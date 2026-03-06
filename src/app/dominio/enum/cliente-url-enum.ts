@@ -1,5 +1,5 @@
 import { environment } from '../../../environments/environment';
 
 export const ClienteUrls = {
-    Login: `${environment.apiBaseUrl}/Auth/login`,
+    Login: `${environment.apiTrasportador}auth/login`,
 } as const;

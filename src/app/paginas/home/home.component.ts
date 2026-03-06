@@ -46,6 +46,12 @@ export class HomeComponent implements OnInit, OnDestroy {
           submenu: []
         },
         {
+          path: 'frota/motorista',
+          breadcrumb: 'Motoristas',
+          icon: 'id-card',
+          submenu: []
+        },
+        {
           path: 'frota/passageiro',
           breadcrumb: 'Passageiros',
           icon: 'users',
@@ -54,7 +60,13 @@ export class HomeComponent implements OnInit, OnDestroy {
         {
           path: 'frota/viagem',
           breadcrumb: 'Viagens',
-          icon: 'location',
+          icon: 'route',
+          submenu: []
+        },
+        {
+          path: 'frota/gatilho-viagem',
+          breadcrumb: 'Gatilhos de Viagem',
+          icon: 'clock',
           submenu: []
         },
         {

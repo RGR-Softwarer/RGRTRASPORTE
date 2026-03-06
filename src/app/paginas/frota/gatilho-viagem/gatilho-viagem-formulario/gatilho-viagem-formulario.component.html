@@ -1,0 +1,31 @@
+<div class="inner-content">
+    <div class="page-header">
+        <h1>{{ gatilhoViagem.id ? 'Editar' : 'Novo' }} Gatilho de Viagem</h1>
+        <p class="page-description">
+            {{ gatilhoViagem.id ? 'Atualize as configurações do gatilho' : 'Configure um novo gatilho para criar viagens automaticamente' }}
+        </p>
+    </div>
+    
+    <div class="alert-info">
+        <i class="fas fa-lightbulb"></i>
+        <div class="alert-content">
+            <strong>Como funciona:</strong>
+            <p>O gatilho criará automaticamente uma viagem nos dias e horários configurados. 
+            Selecione os dias da semana desejados, defina origem/destino e o sistema fará o resto.</p>
+        </div>
+    </div>
+    
+    <div class="form-container">
+        <app-formulario 
+            [objeto]="gatilhoViagem" 
+            [salvarCallback]="salvar">
+        </app-formulario>
+    </div>
+</div>
+
+
+
+
+
+
+
