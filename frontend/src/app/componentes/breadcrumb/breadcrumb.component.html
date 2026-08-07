@@ -1,0 +1,58 @@
+<div class="breadcrumb-container">
+  <!-- Breadcrumb Principal -->
+  <nav class="breadcrumb-main" aria-label="Breadcrumb">
+    <ol class="breadcrumb-list">
+      <ng-container *ngFor="let breadcrumb of breadcrumbs$ | async; let isLast = last; let isFirst = first; trackBy: trackByBreadcrumb">
+        <li class="breadcrumb-item" [class]="obterClasseBreadcrumb(breadcrumb)">
+          
+          <!-- Item clicável (não é o último) -->
+          <ng-container *ngIf="podeNavegar(breadcrumb)">
+            <a 
+              class="breadcrumb-link"
+              (click)="navegarPara(breadcrumb)"
+              [attr.aria-label]="'Navegar para ' + breadcrumb.label"
+              [title]="obterTooltip(breadcrumb)"
+              role="button"
+              tabindex="0"
+              (keydown.enter)="navegarPara(breadcrumb)"
+              (keydown.space)="navegarPara(breadcrumb)">
+              
+              <!-- Ícone -->
+              <i 
+                *ngIf="breadcrumb.icon" 
+                [class]="'fas fa-' + breadcrumb.icon + ' breadcrumb-icon'">
+              </i>
+              
+              <!-- Label -->
+              <span class="breadcrumb-label">{{ breadcrumb.label }}</span>
+            </a>
+          </ng-container>
+          
+          <!-- Item atual (não clicável) -->
+          <ng-container *ngIf="!podeNavegar(breadcrumb)">
+            <span 
+              class="breadcrumb-current" 
+              [title]="obterTooltip(breadcrumb)"
+              [attr.aria-current]="isAtivo(breadcrumb) ? 'page' : null">
+              
+              <!-- Ícone -->
+              <i 
+                *ngIf="breadcrumb.icon" 
+                [class]="'fas fa-' + breadcrumb.icon + ' breadcrumb-icon'">
+              </i>
+              
+              <!-- Label -->
+              <span class="breadcrumb-label">{{ breadcrumb.label }}</span>
+            </span>
+          </ng-container>
+        </li>
+      </ng-container>
+    </ol>
+  </nav>
+
+  <!-- Indicador de loading simples -->
+  <div *ngIf="isLoading" class="breadcrumb-loading">
+    <span class="loading-text">Carregando...</span>
+  </div>
+</div>
+  

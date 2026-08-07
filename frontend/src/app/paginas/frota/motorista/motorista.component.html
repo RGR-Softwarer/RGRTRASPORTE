@@ -1,0 +1,50 @@
+<div class="inner-content">
+    <div class="page-header">
+        <h1>Cadastro de Motoristas</h1>
+        <p class="page-description">Gerencie os motoristas responsáveis pelo transporte dos universitários</p>
+    </div>
+    
+    <div class="info-cards">
+        <div class="info-card">
+            <div class="card-icon">
+                <i class="fas fa-id-card text-primary"></i>
+            </div>
+            <div class="card-content">
+                <h6>Documentação</h6>
+                <p>CNH válida e documentos em dia</p>
+            </div>
+        </div>
+        <div class="info-card">
+            <div class="card-icon">
+                <i class="fas fa-car text-success"></i>
+            </div>
+            <div class="card-content">
+                <h6>Habilitação</h6>
+                <p>Categoria compatível com o veículo</p>
+            </div>
+        </div>
+        <div class="info-card">
+            <div class="card-icon">
+                <i class="fas fa-user-check text-info"></i>
+            </div>
+            <div class="card-content">
+                <h6>Status</h6>
+                <p>Motoristas ativos e disponíveis</p>
+            </div>
+        </div>
+    </div>
+    
+    <app-grid 
+        [buscarTodosUrl]="buscarTodosUrl" 
+        [adicionarUrl]="adicionarUrl" 
+        [entidade]="entidade" 
+        [identificador]="'motorista-grid'">
+    </app-grid>
+</div>
+
+
+
+
+
+
+

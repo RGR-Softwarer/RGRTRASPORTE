@@ -1,0 +1,305 @@
+/* Reset e variáveis */
+* {
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-color: #667eea;
+  --secondary-color: #764ba2;
+  --success-color: #52c41a;
+  --error-color: #ff4d4f;
+  --text-primary: #333;
+  --text-secondary: #666;
+  --text-light: #999;
+  --border-color: #e1e5e9;
+  --background-light: #f8f9fa;
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+}
+
+/* Container principal */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--background-white);
+  padding: var(--spacing-xl);
+}
+
+/* Card de login */
+.login-card {
+  background: var(--background-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 8px 32px var(--shadow-light);
+  padding: var(--spacing-xl);
+  width: 100%;
+  max-width: 400px;
+}
+
+/* Header do card */
+.card-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+
+  h2 {
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    margin: 0;
+  }
+}
+
+/* Formulário */
+.login-form {
+  .form-group {
+    margin-bottom: var(--spacing-lg);
+
+    label {
+      display: block;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      font-size: var(--font-size-md);
+      transition: var(--transition-normal);
+          
+          &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.1);
+      }
+
+      &.error {
+        border-color: var(--error-color);
+          }
+          
+          &::placeholder {
+        color: var(--text-light);
+          }
+        }
+        
+    .error-message {
+      color: var(--error-color);
+      font-size: var(--font-size-xs);
+      margin-top: var(--spacing-xs);
+      }
+    }
+  }
+  
+/* Opções do formulário */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+
+  .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    
+    .checkbox-input {
+      display: none;
+
+      &:checked + .checkbox-custom {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        
+        &::after {
+          opacity: 1;
+        }
+      }
+    }
+
+    .checkbox-custom {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border-light);
+      border-radius: var(--border-radius-sm);
+      margin-right: var(--spacing-sm);
+      position: relative;
+      transition: var(--transition-normal);
+
+      &::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        opacity: 0;
+        transition: var(--transition-normal);
+      }
+    }
+
+    .checkbox-label {
+      user-select: none;
+    }
+  }
+
+  .forgot-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: var(--transition-normal);
+    
+    &:hover {
+      color: var(--primary-hover);
+      text-decoration: underline;
+    }
+  }
+}
+
+/* Botão de login */
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+
+  .btn {
+    padding: 12px 24px;
+  border: none;
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-md);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    &.btn-primary {
+      background: var(--primary-color);
+      color: white;
+  
+      &:hover:not(:disabled) {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+    }
+
+    &.btn-secondary {
+      background: var(--secondary-light);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-light);
+
+      &:hover:not(:disabled) {
+        background: var(--primary-light);
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+      }
+    }
+  }
+}
+
+/* Divisor */
+.divider {
+  text-align: center;
+  margin: var(--spacing-md) 0;
+  position: relative;
+  color: var(--text-light);
+  font-size: var(--font-size-sm);
+  
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 30%;
+    height: 1px;
+    background: var(--border-color);
+  }
+
+  &::before {
+    left: 0;
+  }
+
+  &::after {
+    right: 0;
+  }
+
+  span {
+    background: var(--background-white);
+    padding: 0 var(--spacing-md);
+  }
+}
+
+/* Link de registro */
+.register-link {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+
+  a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 4px;
+    transition: var(--transition);
+
+    &:hover {
+      color: var(--secondary-color);
+      text-decoration: underline;
+}
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .login-card {
+    max-width: 100%;
+    margin: var(--spacing-sm);
+  }
+
+  .form-options {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+}
+
+/* Estados de foco e hover melhorados */
+.form-input:focus {
+  outline: none;
+}
+
+.login-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  }
+
+/* Acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

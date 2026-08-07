@@ -1,0 +1,52 @@
+<div class="table-container" [class.table-bordered]="bordered" [class.table-small]="size === 'small'" [class.table-middle]="size === 'middle'">
+  <table class="table">
+    <thead>
+      <tr>
+        <th *ngFor="let col of columns">{{ col.label }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of data; trackBy: trackByFn">
+        <td *ngFor="let col of columns">
+          <!-- Renderização customizada baseada no tipo -->
+          <ng-container [ngSwitch]="col.type">
+            <!-- Status -->
+            <span *ngSwitchCase="'status'" 
+                  [class]="getStatusClass(row[col.key])"
+                  class="status-badge">
+              {{ getStatusText(row[col.key]) }}
+            </span>
+            
+            <!-- Ações -->
+            <div *ngSwitchCase="'actions'" class="table-actions">
+              <button *ngFor="let action of actions" 
+                      class="btn btn-link btn-sm"
+                      [class]="action.class"
+                      (click)="onActionClick(action, row)">
+                <i [class]="action.icon"></i>
+                {{ action.label }}
+              </button>
+            </div>
+            
+            <!-- Texto padrão -->
+            <span *ngSwitchDefault>
+              {{ col.render ? col.render(row[col.key], row) : row[col.key] }}
+            </span>
+          </ng-container>
+        </td>
+      </tr>
+      <tr *ngIf="data.length === 0 && !loading">
+        <td [attr.colspan]="columns.length" class="text-center no-data">
+          <i class="fas fa-inbox"></i>
+          <p>Nenhum dado encontrado.</p>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <!-- Loading -->
+  <div *ngIf="loading" class="table-loading">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Carregando dados...</p>
+  </div>
+</div> 

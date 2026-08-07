@@ -1,0 +1,122 @@
+<div class="profile-container">
+  <div class="profile-card">
+    <div class="card-header">
+      <h2>Meu Perfil</h2>
+      <p>Atualize suas informações pessoais</p>
+    </div>
+
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="profile-form">
+      <div class="form-group">
+        <label for="nome">Nome completo</label>
+        <input 
+          type="text" 
+          id="nome" 
+          formControlName="nome" 
+          placeholder="Digite seu nome completo"
+          class="form-control"
+          [class.error]="profileForm.get('nome')?.invalid && profileForm.get('nome')?.touched"
+        />
+        <div class="error-message" *ngIf="profileForm.get('nome')?.invalid && profileForm.get('nome')?.touched">
+          <span *ngIf="profileForm.get('nome')?.errors?.['required']">Nome é obrigatório</span>
+          <span *ngIf="profileForm.get('nome')?.errors?.['minlength']">Nome deve ter pelo menos 3 caracteres</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          placeholder="Digite seu email"
+          class="form-control"
+          [class.error]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
+        />
+        <div class="error-message" *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+          <span *ngIf="profileForm.get('email')?.errors?.['required']">Email é obrigatório</span>
+          <span *ngIf="profileForm.get('email')?.errors?.['email']">Email inválido</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="telefone">Telefone</label>
+        <input 
+          type="tel" 
+          id="telefone" 
+          formControlName="telefone" 
+          placeholder="Digite seu telefone"
+          class="form-control"
+          [class.error]="profileForm.get('telefone')?.invalid && profileForm.get('telefone')?.touched"
+        />
+        <div class="error-message" *ngIf="profileForm.get('telefone')?.invalid && profileForm.get('telefone')?.touched">
+          <span *ngIf="profileForm.get('telefone')?.errors?.['required']">Telefone é obrigatório</span>
+        </div>
+      </div>
+
+      <div class="password-section">
+        <h3>Alterar senha (opcional)</h3>
+        
+        <div class="form-group">
+          <label for="senhaAtual">Senha atual</label>
+          <input 
+            type="password" 
+            id="senhaAtual" 
+            formControlName="senhaAtual" 
+            placeholder="Digite sua senha atual"
+            class="form-control"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="novaSenha">Nova senha</label>
+          <input 
+            type="password" 
+            id="novaSenha" 
+            formControlName="novaSenha" 
+            placeholder="Digite a nova senha"
+            class="form-control"
+            [class.error]="profileForm.get('novaSenha')?.invalid && profileForm.get('novaSenha')?.touched"
+          />
+          <div class="error-message" *ngIf="profileForm.get('novaSenha')?.invalid && profileForm.get('novaSenha')?.touched">
+            <span *ngIf="profileForm.get('novaSenha')?.errors?.['minlength']">Senha deve ter pelo menos 6 caracteres</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirmarNovaSenha">Confirmar nova senha</label>
+          <input 
+            type="password" 
+            id="confirmarNovaSenha" 
+            formControlName="confirmarNovaSenha" 
+            placeholder="Confirme a nova senha"
+            class="form-control"
+            [class.error]="profileForm.get('confirmarNovaSenha')?.invalid && profileForm.get('confirmarNovaSenha')?.touched"
+          />
+          <div class="error-message" *ngIf="profileForm.get('confirmarNovaSenha')?.invalid && profileForm.get('confirmarNovaSenha')?.touched">
+            <span *ngIf="profileForm.get('confirmarNovaSenha')?.errors?.['passwordMismatch']">Senhas não coincidem</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="profileForm.invalid || isLoading"
+        >
+          <span *ngIf="isLoading">Salvando...</span>
+          <span *ngIf="!isLoading">Salvar alterações</span>
+        </button>
+        
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="voltarParaHome()"
+          [disabled]="isLoading"
+        >
+          Voltar
+        </button>
+      </div>
+    </form>
+  </div>
+</div> 

@@ -1,0 +1,91 @@
+// Estilos específicos para o componente de modelos veiculares
+.inner-content {
+  padding: 20px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  h1 {
+    margin: 0;
+    color: #333;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    
+    .btn {
+      font-size: 14px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 500;
+      
+      &.btn-outline-info {
+        color: #17a2b8;
+        border-color: #17a2b8;
+        
+        &:hover {
+          background-color: #17a2b8;
+          border-color: #17a2b8;
+          color: white;
+        }
+      }
+      
+      &.btn-outline-warning {
+        color: #ffc107;
+        border-color: #ffc107;
+        
+        &:hover {
+          background-color: #ffc107;
+          border-color: #ffc107;
+          color: #212529;
+        }
+      }
+      
+      &.btn-outline-secondary {
+        color: #6c757d;
+        border-color: #6c757d;
+        
+        &:hover {
+          background-color: #6c757d;
+          border-color: #6c757d;
+          color: white;
+        }
+      }
+      
+      i {
+        margin-right: 6px;
+      }
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    
+    h1 {
+      font-size: 20px;
+    }
+    
+    .header-actions {
+      width: 100%;
+      flex-wrap: wrap;
+      
+      .btn {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+      }
+    }
+  }
+}
