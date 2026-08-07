@@ -1,0 +1,32 @@
+.card {
+  background: #fff;
+  border: 1px solid #e1e5e9;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e1e5e9;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.card-title {
+  color: #333;
+}
+
+.card-extra {
+  color: #888;
+  font-size: 0.95em;
+}
+
+.card-body {
+  padding: 1.25rem;
+} 

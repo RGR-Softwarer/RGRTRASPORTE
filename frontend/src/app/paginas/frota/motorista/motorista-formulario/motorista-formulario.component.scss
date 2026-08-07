@@ -1,0 +1,53 @@
+.inner-content {
+    padding: 24px;
+    
+    .page-header {
+        margin-bottom: 24px;
+        
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-color, #333);
+            margin-bottom: 8px;
+        }
+        
+        .page-description {
+            color: var(--text-secondary, #666);
+            font-size: 14px;
+            margin: 0;
+        }
+    }
+    
+    .form-container {
+        background: var(--card-bg, #fff);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        padding: 24px;
+    }
+}
+
+// Dark theme support
+:host-context(.dark-theme) {
+    .inner-content {
+        .page-header {
+            h1 {
+                color: #fff;
+            }
+            
+            .page-description {
+                color: #aaa;
+            }
+        }
+        
+        .form-container {
+            background: #2d2d2d;
+        }
+    }
+}
+
+
+
+
+
+
+

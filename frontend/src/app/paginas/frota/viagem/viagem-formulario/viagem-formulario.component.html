@@ -1,0 +1,54 @@
+<div class="inner-content">
+    <div class="page-header">
+        <h1>{{ viagem.id ? 'Editar' : 'Nova' }} Viagem</h1>
+        <p class="page-description">
+            {{ viagem.id ? 'Atualize os dados da viagem' : 'Preencha os dados para agendar uma nova viagem' }}
+        </p>
+    </div>
+    
+    <div class="info-section">
+        <div class="info-cards">
+            <div class="info-card">
+                <div class="card-icon">
+                    <i class="fas fa-calendar-alt text-primary"></i>
+                </div>
+                <div class="card-content">
+                    <h6>Agendamento</h6>
+                    <p>Defina data e horários da viagem</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="card-icon">
+                    <i class="fas fa-route text-success"></i>
+                </div>
+                <div class="card-content">
+                    <h6>Rota</h6>
+                    <p>Selecione origem e destino</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="card-icon">
+                    <i class="fas fa-users text-info"></i>
+                </div>
+                <div class="card-content">
+                    <h6>Capacidade</h6>
+                    <p>Defina quantidade de vagas disponíveis</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-container">
+        <app-formulario 
+            [objeto]="viagem" 
+            [salvarCallback]="salvar">
+        </app-formulario>
+    </div>
+</div>
+
+
+
+
+
+
+

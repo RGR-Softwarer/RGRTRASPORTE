@@ -1,0 +1,86 @@
+// Container principal
+.inner-content {
+  padding: 24px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin: 16px;
+}
+
+// Cabeçalho da página
+.page-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+
+  .header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-text {
+    flex: 1;
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      font-weight: 600;
+      color: #262626;
+    }
+
+    .page-description {
+      margin: 0;
+      color: #8c8c8c;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      
+      i {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .inner-content {
+    margin: 8px;
+    padding: 16px;
+  }
+
+  .page-header {
+    .header-content {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+
+    .header-text {
+      h1 {
+        font-size: 20px;
+      }
+
+      .page-description {
+        font-size: 13px;
+      }
+    }
+
+    .header-actions {
+      justify-content: flex-end;
+    }
+  }
+}

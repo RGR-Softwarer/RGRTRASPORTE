@@ -1,0 +1,60 @@
+<div class="inner-content">
+    <div class="page-header">
+        <h1>Gatilhos de Viagem</h1>
+        <p class="page-description">
+            Configure viagens recorrentes que serão criadas automaticamente
+        </p>
+    </div>
+    
+    <div class="info-cards">
+        <div class="info-card">
+            <div class="card-icon">
+                <i class="fas fa-clock text-primary"></i>
+            </div>
+            <div class="card-content">
+                <h6>Agendamento Automático</h6>
+                <p>Viagens criadas automaticamente nos dias configurados</p>
+            </div>
+        </div>
+        <div class="info-card">
+            <div class="card-icon">
+                <i class="fas fa-calendar-alt text-success"></i>
+            </div>
+            <div class="card-content">
+                <h6>Dias da Semana</h6>
+                <p>Configure quais dias o gatilho deve executar</p>
+            </div>
+        </div>
+        <div class="info-card">
+            <div class="card-icon">
+                <i class="fas fa-route text-info"></i>
+            </div>
+            <div class="card-content">
+                <h6>Rotas Fixas</h6>
+                <p>Defina origem e destino para viagens recorrentes</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="alert-info">
+        <i class="fas fa-info-circle"></i>
+        <span>
+            Os gatilhos de viagem criam automaticamente viagens nos dias e horários configurados. 
+            Ideal para rotas universitárias com horários fixos.
+        </span>
+    </div>
+    
+    <app-grid 
+        [buscarTodosUrl]="buscarTodosUrl" 
+        [adicionarUrl]="adicionarUrl" 
+        [entidade]="entidade" 
+        [identificador]="'gatilho-viagem-grid'">
+    </app-grid>
+</div>
+
+
+
+
+
+
+
